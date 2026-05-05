@@ -3,12 +3,12 @@
 import { useState } from "react";
 import { ProductCard } from "./ProductCard";
 import { CategoriesSidebar } from "./CategoriesSidebar";
-// import { CategorySection } from "./CategorySection"; // 🔒 დროებით გამორთული
 
 export function ProductSectionClient({ products }: any) {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
-  const safeProducts = products ?? [];
+  // 🔥 მთავარი FIX
+  const safeProducts = Array.isArray(products) ? products : [];
 
   const allCategories = Array.from(
     new Set(
@@ -30,22 +30,16 @@ export function ProductSectionClient({ products }: any) {
     <section id="products" className="section-pad bg-black/25">
       <div className="container-page">
 
-        {/* 🔥 Sidebar */}
         <CategoriesSidebar
           selectedCategory={selectedCategory}
           onSelectCategory={setSelectedCategory}
         />
 
-        {/* 🔒 CategorySection დროებით გამორთულია */}
-        {/* <CategorySection onSelectCategory={setSelectedCategory} /> */}
-
-        {/* HEADER */}
         <div className="flex flex-col gap-6">
           <p className="small-label">featured products</p>
           <h2 className="section-title">რჩეული პროდუქტები</h2>
         </div>
 
-        {/* TOP FILTER BUTTONS */}
         <div className="flex flex-wrap gap-3 mt-6">
           <button
             type="button"
@@ -67,7 +61,6 @@ export function ProductSectionClient({ products }: any) {
           ))}
         </div>
 
-        {/* PRODUCTS */}
         <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {filteredProducts.map((product: any) => (
             <ProductCard key={product.id} product={product} />
