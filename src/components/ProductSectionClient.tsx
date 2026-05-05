@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ProductCard } from "./ProductCard";
 import { CategoriesSidebar } from "./CategoriesSidebar";
+import { CategorySection } from "./CategorySection";
 
 export function ProductSectionClient({ products }: any) {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -17,8 +18,8 @@ export function ProductSectionClient({ products }: any) {
 
   const filteredProducts = selectedCategory
     ? products.filter((product: any) =>
-        product.product_categories.some(
-          (pc: any) => pc.categories.name === selectedCategory
+        product.product_categories?.some(
+          (pc: any) => pc.categories?.name === selectedCategory
         )
       )
     : products;
@@ -32,6 +33,9 @@ export function ProductSectionClient({ products }: any) {
           selectedCategory={selectedCategory}
           onSelectCategory={setSelectedCategory}
         />
+
+        {/* 🔥 Category Cards (აქ გადავიტანეთ სწორად) */}
+        <CategorySection onSelectCategory={setSelectedCategory} />
 
         {/* HEADER */}
         <div className="flex flex-col gap-6">
