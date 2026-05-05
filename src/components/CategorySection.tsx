@@ -1,7 +1,12 @@
+"use client";
 import { categories } from "@/data/products";
 import { ArrowUpRight } from "lucide-react";
 
-export function CategorySection() {
+export function CategorySection({
+  onSelectCategory,
+}: {
+  onSelectCategory: (cat: string | null) => void;
+}) {
   return (
     <section id="categories" className="section-pad">
       <div className="container-page">
@@ -14,16 +19,21 @@ export function CategorySection() {
             </p>
           </div>
 
-          <a href="#" className="btn-outline w-fit">
+          <button
+            type="button"
+            onClick={() => onSelectCategory(null)}
+            className="btn-outline w-fit"
+          >
             ყველა კატეგორია
-          </a>
+          </button>
         </div>
 
         <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {categories.map((category, index) => (
             <article
               key={category.title}
-              className="group premium-card relative min-h-[250px] overflow-hidden p-6 transition hover:-translate-y-1 hover:border-brand-gold/50"
+              onClick={() => onSelectCategory(category.title)}
+              className="group premium-card relative min-h-[250px] cursor-pointer overflow-hidden p-6 transition hover:-translate-y-1 hover:border-brand-gold/50"
             >
               <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] to-transparent opacity-70" />
               <div className="absolute -right-10 -top-10 h-36 w-36 rounded-full bg-brand-orange/10 blur-2xl transition group-hover:bg-brand-orange/20" />

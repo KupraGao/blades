@@ -22,7 +22,9 @@ body {
     radial-gradient(circle at 90% 5%, rgba(214, 168, 79, 0.1), transparent 25%),
     #09090b;
 }
-
+.product-bg {
+  background-image: var(--bg-image);
+}
 @layer components {
   .container-page {
     @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
