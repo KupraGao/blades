@@ -3,26 +3,28 @@
 import { useState } from "react";
 import { ProductCard } from "./ProductCard";
 import { CategoriesSidebar } from "./CategoriesSidebar";
-import { CategorySection } from "./CategorySection";
+// import { CategorySection } from "./CategorySection"; // 🔒 დროებით გამორთული
 
 export function ProductSectionClient({ products }: any) {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
+  const safeProducts = products ?? [];
+
   const allCategories = Array.from(
     new Set(
-      products.flatMap((p: any) =>
-        p.product_categories.map((pc: any) => pc.categories?.name)
+      safeProducts.flatMap((p: any) =>
+        p.product_categories?.map((pc: any) => pc.categories?.name) ?? []
       )
     )
   ).filter((c): c is string => Boolean(c));
 
   const filteredProducts = selectedCategory
-    ? products.filter((product: any) =>
+    ? safeProducts.filter((product: any) =>
         product.product_categories?.some(
           (pc: any) => pc.categories?.name === selectedCategory
         )
       )
-    : products;
+    : safeProducts;
 
   return (
     <section id="products" className="section-pad bg-black/25">
@@ -34,8 +36,8 @@ export function ProductSectionClient({ products }: any) {
           onSelectCategory={setSelectedCategory}
         />
 
-        {/* 🔥 Category Cards (აქ გადავიტანეთ სწორად) */}
-        <CategorySection onSelectCategory={setSelectedCategory} />
+        {/* 🔒 CategorySection დროებით გამორთულია */}
+        {/* <CategorySection onSelectCategory={setSelectedCategory} /> */}
 
         {/* HEADER */}
         <div className="flex flex-col gap-6">
