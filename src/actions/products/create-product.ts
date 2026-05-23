@@ -6,12 +6,17 @@ export async function createProduct(
   formData: FormData
 ) {
 
-  // supabase client
+  // =================================================
+  // SUPABASE
+  // =================================================
 
   const supabase =
     await createClient();
 
-  // form values
+
+  // =================================================
+  // FORM VALUES
+  // =================================================
 
   const title =
     formData.get("title");
@@ -25,7 +30,80 @@ export async function createProduct(
   const description =
     formData.get("description");
 
-  // insert
+
+  // =================================================
+  // MAIN IMAGE
+  // =================================================
+
+  const mainImage =
+    formData.get("mainImage") as File;
+
+
+  // =================================================
+  // GALLERY IMAGES
+  // =================================================
+
+  const galleryImages =
+    formData.getAll(
+      "galleryImages"
+    ) as File[];
+
+
+  // =================================================
+  // IMAGE NAME
+  // =================================================
+
+  const fileName =
+    `${Date.now()}-${mainImage.name}`;
+
+
+  // =================================================
+  // STORAGE UPLOAD
+  // =================================================
+
+  const {
+    data: imageData,
+    error: imageError,
+  } = await supabase.storage
+    .from("product-images")
+    .upload(
+      fileName,
+      mainImage
+    );
+
+
+  // =================================================
+  // IMAGE ERROR
+  // =================================================
+
+  if (imageError) {
+
+    console.log(
+      "IMAGE ERROR:",
+      imageError
+    );
+
+    return;
+
+  }
+
+
+  // =================================================
+  // PUBLIC URL
+  // =================================================
+
+  const {
+    data: { publicUrl },
+  } = supabase.storage
+    .from("product-images")
+    .getPublicUrl(
+      fileName
+    );
+
+
+  // =================================================
+  // PRODUCT INSERT
+  // =================================================
 
   const { data, error } =
     await supabase
@@ -40,19 +118,151 @@ export async function createProduct(
       ])
       .select();
 
-  // error
+
+  // =================================================
+  // INSERT ERROR
+  // =================================================
 
   if (error) {
 
-    console.log("ERROR:", error);
+    console.log(
+      "ERROR:",
+      error
+    );
 
     return;
 
   }
 
-  // success
 
- console.log("DATA:", data);
+  // =================================================
+  // PRODUCT ID
+  // =================================================
 
+  const productId =
+    data[0].id;
+
+
+  // =================================================
+  // MAIN IMAGE INSERT
+  // =================================================
+
+  const {
+    error: imageInsertError,
+  } = await supabase
+    .from("product_images")
+    .insert([
+      {
+        product_id: productId,
+        image_url: publicUrl,
+        is_main: true,
+      },
+    ]);
+
+
+  // =================================================
+  // IMAGE INSERT ERROR
+  // =================================================
+
+  if (imageInsertError) {
+
+    console.log(
+      "IMAGE INSERT ERROR:",
+      imageInsertError
+    );
+
+    return;
+
+  }
+
+
+  // =================================================
+  // GALLERY LOOP
+  // =================================================
+
+  for (const image of galleryImages) {
+
+    // empty file skip
+
+    if (!image.name) continue;
+
+
+    // =================================================
+    // FILE NAME
+    // =================================================
+
+    const galleryFileName =
+      `${Date.now()}-${image.name}`;
+
+
+    // =================================================
+    // IMAGE UPLOAD
+    // =================================================
+
+    const {
+      error: galleryUploadError,
+    } = await supabase.storage
+      .from("product-images")
+      .upload(
+        galleryFileName,
+        image
+      );
+
+
+    // =================================================
+    // UPLOAD ERROR
+    // =================================================
+
+    if (galleryUploadError) {
+
+      console.log(
+        "GALLERY ERROR:",
+        galleryUploadError
+      );
+
+      continue;
+
+    }
+
+
+    // =================================================
+    // PUBLIC URL
+    // =================================================
+
+    const {
+      data: {
+        publicUrl: galleryUrl,
+      },
+    } = supabase.storage
+      .from("product-images")
+      .getPublicUrl(
+        galleryFileName
+      );
+
+
+    // =================================================
+    // IMAGE INSERT
+    // =================================================
+
+    await supabase
+      .from("product_images")
+      .insert([
+        {
+          product_id: productId,
+          image_url: galleryUrl,
+          is_main: false,
+        },
+      ]);
+
+  }
+
+
+  // =================================================
+  // SUCCESS
+  // =================================================
+
+  console.log(
+    "PRODUCT CREATED"
+  );
 
 }
