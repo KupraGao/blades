@@ -48,7 +48,6 @@ export default function CreateProductPage() {
 
       </div>
 
-
       {/* ================================================= */}
       {/* PRODUCT FORM */}
       {/* ================================================= */}
@@ -58,26 +57,41 @@ export default function CreateProductPage() {
         className="space-y-6"
       >
 
-
         {/* ================================================= */}
         {/* PRODUCT TITLE */}
         {/* ================================================= */}
 
         <div>
 
-          <label className="mb-2 block text-sm font-medium text-zinc-300">
+          <label
+            htmlFor="title"
+            className="
+              mb-2 block text-sm
+              font-medium text-zinc-300
+            "
+          >
             Product Title
           </label>
 
           <input
+            id="title"
             type="text"
             name="title"
             placeholder="Benchmade Knife"
-            className="w-full rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3 text-white outline-none transition focus:border-white"
+            title="Product Title"
+            className="
+              w-full rounded-xl
+              border border-zinc-800
+              bg-zinc-900
+              px-4 py-3
+              text-white
+              outline-none
+              transition
+              focus:border-white
+            "
           />
 
         </div>
-
 
         {/* ================================================= */}
         {/* PRODUCT PRICE */}
@@ -85,19 +99,35 @@ export default function CreateProductPage() {
 
         <div>
 
-          <label className="mb-2 block text-sm font-medium text-zinc-300">
+          <label
+            htmlFor="price"
+            className="
+              mb-2 block text-sm
+              font-medium text-zinc-300
+            "
+          >
             Price
           </label>
 
           <input
+            id="price"
             type="number"
             name="price"
             placeholder="320"
-            className="w-full rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3 text-white outline-none transition focus:border-white"
+            title="Product Price"
+            className="
+              w-full rounded-xl
+              border border-zinc-800
+              bg-zinc-900
+              px-4 py-3
+              text-white
+              outline-none
+              transition
+              focus:border-white
+            "
           />
 
         </div>
-
 
         {/* ================================================= */}
         {/* PRODUCT STOCK */}
@@ -105,19 +135,35 @@ export default function CreateProductPage() {
 
         <div>
 
-          <label className="mb-2 block text-sm font-medium text-zinc-300">
+          <label
+            htmlFor="stock"
+            className="
+              mb-2 block text-sm
+              font-medium text-zinc-300
+            "
+          >
             Stock
           </label>
 
           <input
+            id="stock"
             type="number"
             name="stock"
             placeholder="15"
-            className="w-full rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3 text-white outline-none transition focus:border-white"
+            title="Product Stock"
+            className="
+              w-full rounded-xl
+              border border-zinc-800
+              bg-zinc-900
+              px-4 py-3
+              text-white
+              outline-none
+              transition
+              focus:border-white
+            "
           />
 
         </div>
-
 
         {/* ================================================= */}
         {/* PRODUCT DESCRIPTION */}
@@ -125,19 +171,35 @@ export default function CreateProductPage() {
 
         <div>
 
-          <label className="mb-2 block text-sm font-medium text-zinc-300">
+          <label
+            htmlFor="description"
+            className="
+              mb-2 block text-sm
+              font-medium text-zinc-300
+            "
+          >
             Description
           </label>
 
           <textarea
+            id="description"
             rows={6}
             name="description"
             placeholder="Product description..."
-            className="w-full rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3 text-white outline-none transition focus:border-white"
+            title="Product Description"
+            className="
+              w-full rounded-xl
+              border border-zinc-800
+              bg-zinc-900
+              px-4 py-3
+              text-white
+              outline-none
+              transition
+              focus:border-white
+            "
           />
 
         </div>
-
 
         {/* ================================================= */}
         {/* MAIN IMAGE */}
@@ -145,19 +207,41 @@ export default function CreateProductPage() {
 
         <div>
 
-          <label className="mb-2 block text-sm font-medium text-zinc-300">
+          <label
+            htmlFor="mainImage"
+            className="
+              mb-2 block text-sm
+              font-medium text-zinc-300
+            "
+          >
             Main Image
           </label>
 
           <input
+            id="mainImage"
             type="file"
             name="mainImage"
             accept="image/*"
-            className="block w-full rounded-xl border border-zinc-800 bg-zinc-900 p-3 text-sm text-white file:mr-4 file:rounded-lg file:border-0 file:bg-white file:px-4 file:py-2 file:text-sm file:font-semibold file:text-black hover:file:bg-zinc-200"
+            title="Main Product Image"
+            className="
+              block w-full rounded-xl
+              border border-zinc-800
+              bg-zinc-900
+              p-3 text-sm text-white
+              file:mr-4
+              file:rounded-lg
+              file:border-0
+              file:bg-white
+              file:px-4
+              file:py-2
+              file:text-sm
+              file:font-semibold
+              file:text-black
+              hover:file:bg-zinc-200
+            "
           />
 
         </div>
-
 
         {/* ================================================= */}
         {/* GALLERY IMAGES */}
@@ -165,20 +249,42 @@ export default function CreateProductPage() {
 
         <div>
 
-          <label className="mb-2 block text-sm font-medium text-zinc-300">
+          <label
+            htmlFor="galleryImages"
+            className="
+              mb-2 block text-sm
+              font-medium text-zinc-300
+            "
+          >
             Gallery Images
           </label>
 
           <input
+            id="galleryImages"
             type="file"
             name="galleryImages"
             multiple
             accept="image/*"
-            className="block w-full rounded-xl border border-zinc-800 bg-zinc-900 p-3 text-sm text-white file:mr-4 file:rounded-lg file:border-0 file:bg-white file:px-4 file:py-2 file:text-sm file:font-semibold file:text-black hover:file:bg-zinc-200"
+            title="Gallery Product Images"
+            className="
+              block w-full rounded-xl
+              border border-zinc-800
+              bg-zinc-900
+              p-3 text-sm text-white
+              file:mr-4
+              file:rounded-lg
+              file:border-0
+              file:bg-white
+              file:px-4
+              file:py-2
+              file:text-sm
+              file:font-semibold
+              file:text-black
+              hover:file:bg-zinc-200
+            "
           />
 
         </div>
-
 
         {/* ================================================= */}
         {/* SUBMIT BUTTON */}
@@ -186,7 +292,12 @@ export default function CreateProductPage() {
 
         <button
           type="submit"
-          className="rounded-xl bg-white px-6 py-3 font-semibold text-black transition hover:bg-zinc-200"
+          className="
+            rounded-xl bg-white
+            px-6 py-3
+            font-semibold text-black
+            transition hover:bg-zinc-200
+          "
         >
           Create Product
         </button>
