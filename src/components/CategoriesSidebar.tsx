@@ -2,22 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { ChevronDown, ChevronUp, Menu } from "lucide-react";
-
-const categories = [
-  "ყველა დანა",
-  "დასაკეცი",
-  "ფიქსირებული",
-  "ექსკლუზიური / ლიმიტირებული",
-  "მაჩეტე / ნაჯახი",
-  "სამზარეულო",
-  "ტყავის აქსესუარები",
-  "ხელნაკეთი საფულეები",
-  "სანადირო აქსესუარები",
-  "ფანრები",
-  "სასაჩუქრე ნაკრებები",
-  "ფასდაკლება",
-  "აქსესუარები",
-];
+import { categories } from "@/data/categories";
 
 export function CategoriesSidebar({
   selectedCategory,
