@@ -6,7 +6,14 @@ import { PromoBanner } from "@/components/PromoBanner";
 import { FeatureStrip } from "@/components/FeatureStrip";
 import { Footer } from "@/components/Footer";
 
-export default function Home() {
+import { getProducts } from "@/actions/products/get-products";
+
+export default async function Home() {
+
+  const products = await getProducts();
+
+  console.log(products);
+
   return (
     <>
       <Header />

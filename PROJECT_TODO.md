@@ -1,77 +1,121 @@
 # BLADES CLONE — TODO
 
-## ✅ DONE
+## ✅ დასრულებული
 
-- Frontend UI
-- Categories Sidebar
-- Shared Categories
+- Frontend ინტერფეისი
+- კატეგორიების Sidebar
+- საერთო კატეგორიების სისტემა
 - Admin Panel
 - Admin Layout
-- Products Page
-- Create Product Page
-- Supabase Database
+- პროდუქტების გვერდი
+- პროდუქტის დამატების გვერდი
+- Supabase მონაცემთა ბაზა
 - Supabase Storage
-- Image Form Inputs
+- სურათების Form Inputs
 
 ---
 
-## ✅ COMPLETED BACKEND FLOW
+## ✅ დასრულებული Backend სისტემა
 
-### Real Product Create
+### რეალური პროდუქტის დამატება
 - form submit
 - FormData
 - server action
-- Supabase insert
-- products table save
+- Supabase-ში მონაცემის დამატება
+- products table-ში შენახვა
 
-### Real Image Upload
-- upload main image
-- upload gallery images
-- save image URLs
-- connect product_images table
-- multi image upload loop
+### რეალური სურათების ატვირთვა
+- მთავარი ფოტოს ატვირთვა
+- გალერიის ფოტოების ატვირთვა
+- image URL-ების შენახვა
+- product_images table-თან დაკავშირება
+- რამდენიმე ფოტოს loop-ით ატვირთვა
 
 ---
 
-## 🔥 NEXT PRIORITY
+## ✅ დასრულებული Frontend + Database სისტემა
 
-### 1. Products Fetch
-- fetch from database
-- fetch product_images
-- render products dynamically
-- show main image
+### პროდუქტების წამოღება
+- database-დან პროდუქტების fetch
+- product_images fetch
+- დინამიკური პროდუქტების render
+- მთავარი ფოტოს ჩვენება
 
-### 2. Frontend DB Integration
-- homepage products from DB
-- categories from DB
-- dynamic product cards
+### Frontend + Database ინტეგრაცია
+- homepage-ზე რეალური პროდუქტები
+- დინამიკური product cards
+- database render
+- fallback ფოტოს ლოგიკა
 
-### 3. Multi Category System
+### Product Card გალერეა
+- პატარა gallery preview
+- hover-ზე ფოტოს შეცვლა
+- active image state
+- dynamic gallery render
+
+### Product Card UI
+- wishlist ღილაკი
+- კალათაში დამატების ღილაკი
+- ფასის სექციის redesign
+- hover animations
+- responsive product cards
+
+---
+
+## 🔥 შემდეგი მთავარი ეტაპი
+
+### 1. დინამიკური პროდუქტის გვერდი
+- products/[id]
+- ერთი პროდუქტის fetch
+- სრული გალერიის render
+- პროდუქტის დეტალები
+- მარაგის ჩვენება
+- კატეგორიების ჩვენება
+
+### 2. პროდუქტის გალერიის Slider
+- ფოტოს შეცვლა
+- active image preview
+- thumbnails
+- slider navigation
+
+### 3. მრავალკატეგორიანი სისტემა
 - categories table
 - product_categories table
-- multi-select categories
-- connect products ↔ categories
+- multi-select კატეგორიები
+- products ↔ categories კავშირი
+- category filtering
 
 ---
 
-## 🟠 AFTER THAT
+## 🟠 ამის შემდეგ
 
-### Product Management
-- Edit Product
-- Delete Product
-- Product Status
-- Featured Products
-- Discount System
-- Slug System
+### კალათის სისტემა
+- add to cart logic
+- localStorage კალათა
+- რაოდენობის შეცვლა
+- remove from cart
+- cart drawer
+- cart გვერდი
+
+### პროდუქტის მართვა
+- პროდუქტის რედაქტირება
+- პროდუქტის წაშლა
+- პროდუქტის სტატუსი
+- Featured პროდუქტები
+- ფასდაკლების სისტემა
+- slug სისტემა
 
 ### UI / UX
-- Image Preview
-- Search
-- Filters
-- Sorting
+- ძებნა
+- ფილტრები
+- დალაგება
 - Pagination
+- Loading states
+- Empty states
 
-### Product Pages
-- Single Product Page
-- Gallery Slider
-- Related Products
+### Advanced Ecommerce
+- Wishlist სისტემა
+- Related პროდუქტები
+- Recently Viewed
+- პროდუქტის შეფასებები
+- Checkout პროცესი
