@@ -50,15 +50,7 @@ export function HomeClient({
 
     <>
 
-      <Header
-        categories={allCategories}
-        selectedCategory={
-          selectedCategory
-        }
-        onSelectCategory={
-          setSelectedCategory
-        }
-      />
+      <Header />
 
       <HeaderExtras />
 
