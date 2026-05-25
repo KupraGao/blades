@@ -30,35 +30,43 @@ export async function createProduct(
   const description =
     formData.get("description");
 
+  const brandId =
+    formData.get("brandId");
+
+  const categories =
+    formData.getAll("categories");
+
   const bladeSteel =
-  formData.get("bladeSteel");
+    formData.get("bladeSteel");
 
-const bladeThickness =
-  formData.get("bladeThickness");
+  const bladeThickness =
+    formData.get("bladeThickness");
 
-const bladeLength =
-  formData.get("bladeLength");
+  const bladeLength =
+    formData.get("bladeLength");
 
-const handleMaterial =
-  formData.get("handleMaterial");
+  const handleMaterial =
+    formData.get("handleMaterial");
 
-const lockingType =
-  formData.get("lockingType");
+  const lockingType =
+    formData.get("lockingType");
 
-const knifeType =
-  formData.get("knifeType");
+  const knifeType =
+    formData.get("knifeType");
 
-const bladeFinish =
-  formData.get("bladeFinish");
+  const bladeFinish =
+    formData.get("bladeFinish");
 
-const country =
-  formData.get("country");
+  const country =
+    formData.get("country");
 
-const weight =
-  formData.get("weight");
+  const weight =
+    formData.get("weight");
 
-const overallLength =
-  formData.get("overallLength");
+  const overallLength =
+    formData.get("overallLength");
+
+
   // =================================================
   // MAIN IMAGE
   // =================================================
@@ -90,7 +98,6 @@ const overallLength =
   // =================================================
 
   const {
-    data: imageData,
     error: imageError,
   } = await supabase.storage
     .from("product-images")
@@ -138,22 +145,37 @@ const overallLength =
       .from("products")
       .insert([
         {
-  title,
-  price,
-  stock,
-  description,
 
-  blade_steel: bladeSteel,
-  blade_thickness: bladeThickness,
-  blade_length: bladeLength,
-  handle_material: handleMaterial,
-  locking_type: lockingType,
-  knife_type: knifeType,
-  blade_finish: bladeFinish,
-  country,
-  weight,
-  overall_length: overallLength,
-},
+          title,
+          price,
+          stock,
+          description,
+
+          /* ====================================== */
+          /* BRAND */
+          /* ====================================== */
+
+          brand_id:
+            brandId
+              ? Number(brandId)
+              : null,
+
+          /* ====================================== */
+          /* SPECIFICATIONS */
+          /* ====================================== */
+
+          blade_steel: bladeSteel,
+          blade_thickness: bladeThickness,
+          blade_length: bladeLength,
+          handle_material: handleMaterial,
+          locking_type: lockingType,
+          knife_type: knifeType,
+          blade_finish: bladeFinish,
+          country,
+          weight,
+          overall_length: overallLength,
+
+        },
       ])
       .select();
 
@@ -180,6 +202,42 @@ const overallLength =
 
   const productId =
     data[0].id;
+
+
+  // =================================================
+  // PRODUCT CATEGORIES INSERT
+  // =================================================
+
+  if (categories.length > 0) {
+
+    const categoryRows =
+      categories.map((categoryId) => ({
+
+        product_id: productId,
+
+        category_id:
+          Number(categoryId),
+
+      }));
+
+
+    const {
+      error: categoriesError,
+    } = await supabase
+      .from("product_categories")
+      .insert(categoryRows);
+
+
+    if (categoriesError) {
+
+      console.log(
+        "CATEGORIES ERROR:",
+        categoriesError
+      );
+
+    }
+
+  }
 
 
   // =================================================
@@ -221,7 +279,9 @@ const overallLength =
 
   for (const image of galleryImages) {
 
-    // empty file skip
+    // =================================================
+    // EMPTY FILE SKIP
+    // =================================================
 
     if (!image.name) continue;
 
