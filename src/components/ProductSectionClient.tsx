@@ -31,9 +31,10 @@ export function ProductSectionClient({ products }: any) {
       <div className="container-page">
 
         <CategoriesSidebar
-          selectedCategory={selectedCategory}
-          onSelectCategory={setSelectedCategory}
-        />
+  categories={allCategories}
+  selectedCategory={selectedCategory}
+  onSelectCategory={setSelectedCategory}
+/>
 
         <div className="flex flex-col gap-6">
           <p className="small-label">featured products</p>

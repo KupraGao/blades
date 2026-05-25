@@ -12,10 +12,13 @@ export default async function ProductDetailsPage({
 
   const { id } = await params;
 
-  const product = await getSingleProduct(id);
+  const product =
+    await getSingleProduct(id);
 
   if (!product) {
+
     return (
+
       <main className="min-h-screen p-10">
 
         <h1 className="text-3xl font-bold">
@@ -23,10 +26,13 @@ export default async function ProductDetailsPage({
         </h1>
 
       </main>
+
     );
+
   }
 
   return (
+
     <main className="min-h-screen p-6 md:p-10">
 
       <div
@@ -84,6 +90,158 @@ export default async function ProductDetailsPage({
           </p>
 
           {/* ===================================== */}
+          {/* STOCK STATUS */}
+          {/* ===================================== */}
+
+          <div className="mt-4">
+
+            {product.stock > 0 ? (
+
+              <div
+                className="
+                  inline-flex
+                  items-center
+                  rounded-full
+                  bg-green-500/10
+                  px-4
+                  py-2
+                  text-sm
+                  font-medium
+                  text-green-500
+                "
+              >
+                მარაგშია • {product.stock} ცალი
+              </div>
+
+            ) : (
+
+              <div
+                className="
+                  inline-flex
+                  items-center
+                  rounded-full
+                  bg-red-500/10
+                  px-4
+                  py-2
+                  text-sm
+                  font-medium
+                  text-red-500
+                "
+              >
+                არ არის მარაგში
+              </div>
+
+            )}
+
+          </div>
+
+          {/* ===================================== */}
+          {/* BUY SECTION */}
+          {/* ===================================== */}
+
+          <div
+            className="
+              mt-8
+              rounded-3xl
+              border
+              border-zinc-800
+              bg-zinc-900/40
+              p-6
+            "
+          >
+
+            {/* QUANTITY */}
+
+            <div className="flex items-center gap-4">
+
+              <span className="text-sm font-medium">
+                რაოდენობა
+              </span>
+
+              <div
+                className="
+                  flex
+                  items-center
+                  overflow-hidden
+                  rounded-2xl
+                  border
+                  border-zinc-700
+                "
+              >
+
+                <button
+                  type="button"
+                  className="
+                    px-4
+                    py-2
+                    transition
+                    hover:bg-white/10
+                  "
+                >
+                  -
+                </button>
+
+                <span className="px-5">
+                  1
+                </span>
+
+                <button
+                  type="button"
+                  className="
+                    px-4
+                    py-2
+                    transition
+                    hover:bg-white/10
+                  "
+                >
+                  +
+                </button>
+
+              </div>
+
+            </div>
+
+            {/* BUTTONS */}
+
+            <div className="mt-6 flex gap-4">
+
+              <button
+                type="button"
+                className="
+                  flex-1
+                  rounded-2xl
+                  bg-white
+                  px-6
+                  py-4
+                  font-bold
+                  text-black
+                  transition
+                  hover:scale-[1.02]
+                "
+              >
+                კალათაში დამატება
+              </button>
+
+              <button
+                type="button"
+                className="
+                  rounded-2xl
+                  border
+                  border-zinc-700
+                  px-6
+                  py-4
+                  transition
+                  hover:bg-white/10
+                "
+              >
+                ♡
+              </button>
+
+            </div>
+
+          </div>
+
+          {/* ===================================== */}
           {/* DESCRIPTION */}
           {/* ===================================== */}
 
@@ -110,6 +268,7 @@ export default async function ProductDetailsPage({
             <div className="grid gap-4">
 
               <div className="flex justify-between border-b pb-2">
+
                 <span className="font-medium">
                   Blade Steel
                 </span>
@@ -117,9 +276,11 @@ export default async function ProductDetailsPage({
                 <span>
                   {product.blade_steel || "-"}
                 </span>
+
               </div>
 
               <div className="flex justify-between border-b pb-2">
+
                 <span className="font-medium">
                   Blade Thickness
                 </span>
@@ -127,9 +288,11 @@ export default async function ProductDetailsPage({
                 <span>
                   {product.blade_thickness || "-"}
                 </span>
+
               </div>
 
               <div className="flex justify-between border-b pb-2">
+
                 <span className="font-medium">
                   Blade Length
                 </span>
@@ -137,9 +300,11 @@ export default async function ProductDetailsPage({
                 <span>
                   {product.blade_length || "-"}
                 </span>
+
               </div>
 
               <div className="flex justify-between border-b pb-2">
+
                 <span className="font-medium">
                   Handle Material
                 </span>
@@ -147,9 +312,11 @@ export default async function ProductDetailsPage({
                 <span>
                   {product.handle_material || "-"}
                 </span>
+
               </div>
 
               <div className="flex justify-between border-b pb-2">
+
                 <span className="font-medium">
                   Locking Type
                 </span>
@@ -157,9 +324,11 @@ export default async function ProductDetailsPage({
                 <span>
                   {product.locking_type || "-"}
                 </span>
+
               </div>
 
               <div className="flex justify-between border-b pb-2">
+
                 <span className="font-medium">
                   Knife Type
                 </span>
@@ -167,9 +336,11 @@ export default async function ProductDetailsPage({
                 <span>
                   {product.knife_type || "-"}
                 </span>
+
               </div>
 
               <div className="flex justify-between border-b pb-2">
+
                 <span className="font-medium">
                   Blade Finish
                 </span>
@@ -177,9 +348,11 @@ export default async function ProductDetailsPage({
                 <span>
                   {product.blade_finish || "-"}
                 </span>
+
               </div>
 
               <div className="flex justify-between border-b pb-2">
+
                 <span className="font-medium">
                   Country
                 </span>
@@ -187,9 +360,11 @@ export default async function ProductDetailsPage({
                 <span>
                   {product.country || "-"}
                 </span>
+
               </div>
 
               <div className="flex justify-between border-b pb-2">
+
                 <span className="font-medium">
                   Weight
                 </span>
@@ -197,9 +372,11 @@ export default async function ProductDetailsPage({
                 <span>
                   {product.weight || "-"}
                 </span>
+
               </div>
 
               <div className="flex justify-between border-b pb-2">
+
                 <span className="font-medium">
                   Overall Length
                 </span>
@@ -207,6 +384,7 @@ export default async function ProductDetailsPage({
                 <span>
                   {product.overall_length || "-"}
                 </span>
+
               </div>
 
             </div>
@@ -218,5 +396,7 @@ export default async function ProductDetailsPage({
       </div>
 
     </main>
+
   );
+
 }

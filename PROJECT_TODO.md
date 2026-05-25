@@ -4,16 +4,20 @@
 
 # ✅ უკვე გაკეთებულია
 
-## Frontend — 78% პროფესიონალური
+## Frontend — 82% პროფესიონალური
 - ☑️ Frontend ინტერფეისი
 - ☑️ responsive layout
 - ☑️ კატეგორიების Sidebar
 - ☑️ საერთო კატეგორიების სისტემა
+- ☑️ shared filtering architecture
+- ☑️ desktop + mobile filtering foundation
+- ☑️ HomeClient shared state architecture
 
 ### შეფასება
-- კარგი architecture
+- უკვე რეალური ecommerce frontend architecture ჩანს
 - responsive კარგად მიდის
-- reusable მიმართულება ჩანს
+- reusable მიმართულება ძლიერია
+- filtering foundation ძალიან სწორადაა გაკეთებული
 - ჯერ აკლია:
   - design consistency
   - animations polish
@@ -40,18 +44,21 @@
 
 ---
 
-## Supabase / Backend — 84% პროფესიონალური
+## Supabase / Backend — 87% პროფესიონალური
 - ☑️ Supabase მონაცემთა ბაზა
 - ☑️ Supabase Storage
 - ☑️ products table
 - ☑️ product_images table
 - ☑️ brands table
 - ☑️ product_categories table
+- ☑️ UUID category relations
+- ☑️ relational ecommerce architecture
 
 ### შეფასება
 - architecture უკვე production მიმართულებით მიდის
 - relation-ები სწორია
 - image separation სწორია
+- relational filtering უკვე მუშაობს
 - აკლია:
   - indexes
   - advanced relations
@@ -60,7 +67,7 @@
 
 ---
 
-## პროდუქტის დამატების სისტემა — 86% პროფესიონალური
+## პროდუქტის დამატების სისტემა — 90% პროფესიონალური
 - ☑️ form submit
 - ☑️ FormData
 - ☑️ server action
@@ -68,11 +75,14 @@
 - ☑️ მრავალფოტოიანი upload
 - ☑️ gallery upload loop
 - ☑️ image URL save
+- ☑️ category relation insert
+- ☑️ dynamic category UUID support
 
 ### შეფასება
 - უკვე საკმაოდ პროფესიონალურია
 - multiple image flow კარგია
 - server actions სწორად გამოიყენე
+- ecommerce data flow უკვე რეალურია
 - აკლია:
   - validation
   - loading states
@@ -106,15 +116,18 @@
 
 ---
 
-## Frontend ↔ Database ინტეგრაცია — 83% პროფესიონალური
+## Frontend ↔ Database ინტეგრაცია — 86% პროფესიონალური
 - ☑️ homepage products fetch
 - ☑️ dynamic product cards
 - ☑️ product_images fetch
 - ☑️ fallback image logic
+- ☑️ dynamic categories
+- ☑️ shared category filtering
 
 ### შეფასება
 - dynamic data უკვე კარგად მუშაობს
 - reusable მიმართულებაა
+- shared state architecture უკვე სწორია
 - აკლია:
   - caching strategy
   - skeleton loading
@@ -162,6 +175,28 @@
 
 ---
 
+## Categories სისტემა — 72% პროფესიონალური
+- ☑️ dynamic categories fetch
+- ☑️ product_categories insert
+- ☑️ category filtering
+- ☑️ category sidebar
+- ☑️ responsive category filtering
+- ☑️ shared filtering state
+- ☑️ desktop + mobile filtering foundation
+
+### შეფასება
+- relational ecommerce filtering უკვე მუშაობს
+- categories უკვე source-of-truth გახდა
+- scalable filtering foundation გაქვს
+- ძალიან კარგი architecture მიმართულებაა
+- აკლია:
+  - category pages
+  - category/[slug]
+  - admin category management
+  - mobile drawer polish
+
+---
+
 ## Brands Architecture — 80% პროფესიონალური
 - ☑️ brands relation
 - ☑️ brand selection
@@ -179,7 +214,15 @@
 
 # 🚨 შემდეგი გასაკეთებელი (პრიორიტეტებით)
 
-## 🔥 1. Product Details Page დასრულება — 45%
+## 🔥 1. Mobile Header Categories დასრულება — 65%
+- ⬜ Header mobile categories → რეალური filtering trigger
+- ⬜ active mobile category state
+- ⬜ close drawer on category select
+- ⬜ smooth UX polish
+
+---
+
+## 🔥 2. Product Details Page დასრულება — 45%
 - ⬜ ბრენდის ჩვენება
 - ⬜ stock status
 - ⬜ category badges
@@ -190,22 +233,12 @@
 
 ---
 
-## 🔥 2. Product Gallery Slider — 35%
+## 🔥 3. Product Gallery Slider — 35%
 - ⬜ click image change
 - ⬜ active thumbnail state
 - ⬜ slider navigation
 - ⬜ fullscreen preview
 - ⬜ image animations
-
----
-
-## 🔥 3. სრული Categories სისტემა — 40%
-- ⬜ dynamic categories fetch
-- ⬜ product_categories insert
-- ⬜ category filtering
-- ⬜ category sidebar
-- ⬜ category pages
-- ⬜ category/[slug]
 
 ---
 
@@ -233,11 +266,11 @@
 
 ---
 
-## 🟠 7. Search + Filters — 15%
+## 🟠 7. Search + Filters — 22%
+- ☑️ category filter
 - ⬜ search
 - ⬜ sorting
 - ⬜ price filter
-- ⬜ category filter
 - ⬜ brand filter
 - ⬜ pagination
 
@@ -260,7 +293,8 @@
 
 ---
 
-## 🟣 10. სრული Admin CMS — 28%
+## 🟣 10. სრული Admin CMS — 35%
+- ☑️ dynamic categories foundation
 - ⬜ edit product
 - ⬜ delete product
 - ⬜ manage categories
@@ -270,7 +304,7 @@
 
 ---
 
-## ⚫ 11. Production Ready — 12%
+## ⚫ 11. Production Ready — 15%
 - ⬜ dynamic slugs
 - ⬜ SEO
 - ⬜ metadata
@@ -285,7 +319,7 @@
 # 🧠 საერთო შეფასება
 
 ## მიმდინარე საერთო დონე:
-### 78% პროფესიონალური ecommerce architecture
+### 82% პროფესიონალური ecommerce foundation
 
 ეს უკვე აღარ არის:
 - beginner project
@@ -298,13 +332,14 @@
 - production მიმართულების პროექტი
 
 ყველაზე ძლიერი ნაწილი:
-- data architecture
+- categories architecture
+- shared filtering system
 - specifications system
-- reusable structure
-- ecommerce mindset
+- relational database structure
+- reusable ecommerce structure
 
 ყველაზე სუსტი ნაწილი:
 - business logic
 - cart/orders
-- filtering/search
 - production polish
+- admin tooling

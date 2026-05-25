@@ -6,7 +6,19 @@ import { Menu, Search, ShoppingBag, UserRound } from "lucide-react";
 
 const navItems = ["მთავარი", "კატალოგი", "ბრენდები", "ფასდაკლება", "კონტაქტი"];
 
-export function Header() {
+export function Header(
+  {
+  categories,
+  selectedCategory,
+  onSelectCategory,
+}: {
+  categories: string[];
+  selectedCategory: string | null;
+  onSelectCategory: (
+    cat: string | null
+  ) => void;
+}
+) {
   const [open, setOpen] = useState(false);
   const [tab, setTab] = useState("menu");
 

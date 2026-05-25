@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { ST } from "next/dist/shared/lib/utils";
 
 export async function createProduct(
   formData: FormData
@@ -216,7 +217,7 @@ export async function createProduct(
         product_id: productId,
 
         category_id:
-          Number(categoryId),
+          String(categoryId),
 
       }));
 

@@ -1,69 +1,259 @@
 "use client";
-import { categories } from "@/data/products";
-import { ArrowUpRight } from "lucide-react";
 
-export function CategorySection({
+import { useEffect, useState } from "react";
+import {
+  ChevronDown,
+  ChevronUp,
+  Menu,
+} from "lucide-react";
+
+export function CategoriesSidebar({
+  categories,
+  selectedCategory,
   onSelectCategory,
 }: {
-  onSelectCategory: (cat: string | null) => void;
+  categories: string[];
+  selectedCategory: string | null;
+  onSelectCategory: (
+    cat: string | null
+  ) => void;
 }) {
+
+  const [collapsed, setCollapsed] =
+    useState(false);
+
+  // =====================================
+  // AUTO COLLAPSE ON SCROLL
+  // =====================================
+
+  useEffect(() => {
+
+    const handleScroll = () => {
+
+      setCollapsed(
+        window.scrollY > 100
+      );
+
+    };
+
+    window.addEventListener(
+      "scroll",
+      handleScroll
+    );
+
+    return () =>
+      window.removeEventListener(
+        "scroll",
+        handleScroll
+      );
+
+  }, []);
+
   return (
-    <section id="categories" className="section-pad">
-      <div className="container-page">
-        <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
-          <div>
-            <p className="small-label">shop by category</p>
-            <h2 className="section-title mt-3">კატეგორიები</h2>
-            <p className="section-subtitle">
-              საწყის ეტაპზე მონაცემები სტატიკურია. შემდეგ პროდუქტებს, კატეგორიებს და ფასებს ბაზიდან წამოვიღებთ.
-            </p>
+
+    <aside
+      className="
+        hidden
+        lg:block
+        fixed
+        top-[80px]
+        left-0
+        w-full
+        z-[41]
+        pointer-events-none
+      "
+    >
+
+      <div
+        className="
+          container-page
+          relative
+          pointer-events-auto
+        "
+      >
+
+        <div className="absolute left-7 w-64">
+
+          <div
+            className="
+              overflow-hidden
+              rounded-2xl
+              border
+              border-black
+              shadow-xl
+            "
+          >
+
+            {/* ===================================== */}
+            {/* HEADER */}
+            {/* ===================================== */}
+
+            <button
+              type="button"
+              onClick={() =>
+                setCollapsed(
+                  !collapsed
+                )
+              }
+              className="
+                flex
+                w-full
+                items-center
+                justify-between
+                bg-black
+                px-4
+                py-4
+                text-white
+              "
+            >
+
+              <span
+                className="
+                  flex
+                  items-center
+                  gap-2
+                  text-sm
+                  font-bold
+                "
+              >
+
+                <Menu size={18} />
+
+                კატეგორიები
+
+              </span>
+
+              {collapsed ? (
+
+                <ChevronDown
+                  size={20}
+                />
+
+              ) : (
+
+                <ChevronUp
+                  size={20}
+                />
+
+              )}
+
+            </button>
+
+            {/* ===================================== */}
+            {/* LIST */}
+            {/* ===================================== */}
+
+            <div
+              className={`
+                grid
+                bg-white
+                transition-all
+                duration-300
+                ease-in-out
+                ${
+                  collapsed
+                    ? "grid-rows-[0fr]"
+                    : "grid-rows-[1fr]"
+                }
+              `}
+            >
+
+              <div className="overflow-hidden">
+
+                <nav className="flex flex-col">
+
+                  {/* ALL PRODUCTS */}
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      onSelectCategory(
+                        null
+                      )
+                    }
+                    className={`
+                      border-b
+                      border-gray-200
+                      px-4
+                      py-3
+                      text-left
+                      text-sm
+                      font-medium
+                      transition
+
+                      ${
+                        selectedCategory ===
+                        null
+                          ? "bg-orange-100 text-orange-600"
+                          : "text-zinc-800 hover:bg-orange-50 hover:text-orange-500"
+                      }
+                    `}
+                  >
+
+                    ყველა
+
+                  </button>
+
+                  {/* DYNAMIC CATEGORIES */}
+
+                  {categories.map(
+                    (item) => {
+
+                      const isActive =
+                        selectedCategory ===
+                        item;
+
+                      return (
+
+                        <button
+                          key={item}
+                          type="button"
+                          onClick={() =>
+                            onSelectCategory(
+                              item
+                            )
+                          }
+                          className={`
+                            border-b
+                            border-gray-200
+                            px-4
+                            py-3
+                            text-left
+                            text-sm
+                            font-medium
+                            transition
+
+                            ${
+                              isActive
+                                ? "bg-orange-100 text-orange-600"
+                                : "text-zinc-800 hover:bg-orange-50 hover:text-orange-500"
+                            }
+                          `}
+                        >
+
+                          {item}
+
+                        </button>
+
+                      );
+
+                    }
+                  )}
+
+                </nav>
+
+              </div>
+
+            </div>
+
           </div>
 
-          <button
-            type="button"
-            onClick={() => onSelectCategory(null)}
-            className="btn-outline w-fit"
-          >
-            ყველა კატეგორია
-          </button>
         </div>
 
-        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {categories.map((category, index) => (
-            <article
-              key={category.title}
-              onClick={() => onSelectCategory(category.title)}
-              className="group premium-card relative min-h-[250px] cursor-pointer overflow-hidden p-6 transition hover:-translate-y-1 hover:border-brand-gold/50"
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] to-transparent opacity-70" />
-              <div className="absolute -right-10 -top-10 h-36 w-36 rounded-full bg-brand-orange/10 blur-2xl transition group-hover:bg-brand-orange/20" />
-
-              <div className="relative flex h-full flex-col justify-between">
-                <div className="flex items-start justify-between">
-                  <span className="text-6xl font-black text-white/5">
-                    0{index + 1}
-                  </span>
-                  <span className="grid h-11 w-11 place-items-center rounded-full border border-white/10 bg-white/5 text-zinc-300 transition group-hover:bg-brand-orange group-hover:text-white">
-                    <ArrowUpRight size={18} />
-                  </span>
-                </div>
-
-                <div>
-                  <h3 className="font-serif text-2xl font-bold text-white">
-                    {category.title}
-                  </h3>
-                  <p className="mt-3 text-sm leading-6 text-zinc-400">
-                    {category.description}
-                  </p>
-                  <p className="mt-5 text-xs font-bold uppercase tracking-[0.25em] text-brand-gold">
-                    {category.count} items
-                  </p>
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
       </div>
-    </section>
+
+    </aside>
+
   );
+
 }
