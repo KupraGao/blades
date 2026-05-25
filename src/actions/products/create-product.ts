@@ -30,7 +30,35 @@ export async function createProduct(
   const description =
     formData.get("description");
 
+  const bladeSteel =
+  formData.get("bladeSteel");
 
+const bladeThickness =
+  formData.get("bladeThickness");
+
+const bladeLength =
+  formData.get("bladeLength");
+
+const handleMaterial =
+  formData.get("handleMaterial");
+
+const lockingType =
+  formData.get("lockingType");
+
+const knifeType =
+  formData.get("knifeType");
+
+const bladeFinish =
+  formData.get("bladeFinish");
+
+const country =
+  formData.get("country");
+
+const weight =
+  formData.get("weight");
+
+const overallLength =
+  formData.get("overallLength");
   // =================================================
   // MAIN IMAGE
   // =================================================
@@ -110,11 +138,22 @@ export async function createProduct(
       .from("products")
       .insert([
         {
-          title,
-          price,
-          stock,
-          description,
-        },
+  title,
+  price,
+  stock,
+  description,
+
+  blade_steel: bladeSteel,
+  blade_thickness: bladeThickness,
+  blade_length: bladeLength,
+  handle_material: handleMaterial,
+  locking_type: lockingType,
+  knife_type: knifeType,
+  blade_finish: bladeFinish,
+  country,
+  weight,
+  overall_length: overallLength,
+},
       ])
       .select();
 

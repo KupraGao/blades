@@ -218,7 +218,7 @@ export default function CreateProductPage() {
             <div>
 
               <label htmlFor="overallLength" className="mb-2 block text-sm font-medium text-zinc-300">
-                Overall Length
+                მთლიანი სიგრძე
               </label>
 
               <input

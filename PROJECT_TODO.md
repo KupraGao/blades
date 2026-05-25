@@ -1,181 +1,201 @@
-# BLADES CLONE — TODO
-
-## ✅ დასრულებული
-
-- Frontend ინტერფეისი
-- კატეგორიების Sidebar
-- საერთო კატეგორიების სისტემა
-- Admin Panel
-- Admin Layout
-- პროდუქტების გვერდი
-- პროდუქტის დამატების გვერდი
-- Supabase მონაცემთა ბაზა
-- Supabase Storage
-- სურათების Form Inputs
+# BLADES CLONE — PROJECT STATUS
 
 ---
 
-## ✅ დასრულებული Backend სისტემა
+# ✅ უკვე გაკეთებულია
 
-### რეალური პროდუქტის დამატება
-- form submit
-- FormData
-- server action
-- Supabase-ში მონაცემის დამატება
-- products table-ში შენახვა
-
-### რეალური სურათების ატვირთვა
-- მთავარი ფოტოს ატვირთვა
-- გალერიის ფოტოების ატვირთვა
-- image URL-ების შენახვა
-- product_images table-თან დაკავშირება
-- რამდენიმე ფოტოს loop-ით ატვირთვა
+## Frontend
+- ☑️ Frontend ინტერფეისი
+- ☑️ responsive layout
+- ☑️ კატეგორიების Sidebar
+- ☑️ საერთო კატეგორიების სისტემა
 
 ---
 
-## ✅ დასრულებული Frontend + Database სისტემა
-
-### პროდუქტების წამოღება
-- database-დან პროდუქტების fetch
-- product_images fetch
-- დინამიკური პროდუქტების render
-- მთავარი ფოტოს ჩვენება
-
-### Frontend + Database ინტეგრაცია
-- homepage-ზე რეალური პროდუქტები
-- დინამიკური product cards
-- database render
-- fallback ფოტოს ლოგიკა
-
-### Product Card გალერეა
-- პატარა gallery preview
-- hover-ზე ფოტოს შეცვლა
-- active image state
-- dynamic gallery render
-
-### Product Card UI
-- wishlist ღილაკი
-- კალათაში დამატების ღილაკი
-- ფასის სექციის redesign
-- hover animations
-- responsive product cards
+## Admin სისტემა
+- ☑️ Admin Panel
+- ☑️ Admin Layout
+- ☑️ პროდუქტის დამატების გვერდი
+- ☑️ ecommerce-ready admin structure
 
 ---
 
-## ✅ დასრულებული Ecommerce Architecture
-
-### Brands სისტემა
-- brands table
-- products.brand_id relation
-- brand selection
-- მრავალბრენდიანი filtering architecture
-
-### Product Specifications სისტემა
-- blade steel
-- blade thickness
-- blade length
-- handle material
-- locking type
-- knife type
-- blade finish
-- country
-- weight
-- overall length
-
-### Advanced Product Create Page
-- ecommerce product form
-- multi-category selection
-- specifications section
-- optimized admin UI
-- admin-ready structure
+## Supabase / Backend
+- ☑️ Supabase მონაცემთა ბაზა
+- ☑️ Supabase Storage
+- ☑️ products table
+- ☑️ product_images table
+- ☑️ brands table
+- ☑️ product_categories table
 
 ---
 
-## 🔥 შემდეგი მთავარი ეტაპი
-
-### 1. დინამიკური პროდუქტის გვერდი
-- products/[id]
-- ერთი პროდუქტის fetch
-- სრული გალერიის render
-- პროდუქტის დეტალები
-- specifications render
-- ბრენდის ჩვენება
-- მარაგის ჩვენება
-- კატეგორიების ჩვენება
-
-### 2. პროდუქტის გალერიის Slider
-- ფოტოს შეცვლა
-- active image preview
-- thumbnails
-- slider navigation
-
-### 3. სრული კატეგორიების სისტემა
-- dynamic categories fetch
-- product_categories insert
-- მრავალკატეგორიანი კავშირი
-- category filtering
-- category გვერდები
-
-### 4. Brands სისტემა
-- dynamic brands fetch
-- brands page
-- brands/[slug]
-- მრავალბრენდიანი filter
-- brand filtering sidebar
+## პროდუქტის დამატების სისტემა
+- ☑️ form submit
+- ☑️ FormData
+- ☑️ server action
+- ☑️ database insert
+- ☑️ მრავალფოტოიანი upload
+- ☑️ gallery upload loop
+- ☑️ image URL save
 
 ---
 
-## 🟠 ამის შემდეგ
+## Product Specifications სისტემა
+- ☑️ blade steel
+- ☑️ blade thickness
+- ☑️ blade length
+- ☑️ handle material
+- ☑️ locking type
+- ☑️ knife type
+- ☑️ blade finish
+- ☑️ country
+- ☑️ weight
+- ☑️ overall length
 
-### Admin CMS
-- ბრენდების დამატება
-- ბრენდების წაშლა
-- კატეგორიების დამატება
-- კატეგორიების წაშლა
-- პროდუქტის რედაქტირება
-- პროდუქტის წაშლა
-- Featured პროდუქტები
-- ფასდაკლების სისტემა
-
-### კალათის სისტემა
-- add to cart logic
-- localStorage კალათა
-- რაოდენობის შეცვლა
-- remove from cart
-- cart drawer
-- cart გვერდი
-
-### UI / UX
-- ძებნა
-- ფილტრები
-- დალაგება
-- Pagination
-- Loading states
-- Empty states
-
-### Advanced Ecommerce
-- Wishlist სისტემა
-- Related პროდუქტები
-- Recently Viewed
-- პროდუქტის შეფასებები
-- Checkout პროცესი
-- შეკვეთების სისტემა
-- მომხმარებლის პროფილი
-- Order History
-- Payment ინტეგრაცია
+### Backend Logic
+- ☑️ specifications save
+- ☑️ specifications fetch
+- ☑️ products table columns
 
 ---
 
-## 🔥 გრძელვადიანი მიზანი
+## Frontend ↔ Database ინტეგრაცია
+- ☑️ homepage products fetch
+- ☑️ dynamic product cards
+- ☑️ product_images fetch
+- ☑️ fallback image logic
 
-### სრული Ecommerce CMS
-- Admin Dashboard
-- პროდუქტის მართვა
-- კატეგორიების მართვა
-- ბრენდების მართვა
-- შეკვეთების მართვა
-- მომხმარებლების მართვა
-- Analytics
-- SEO სისტემა
-- Dynamic Slugs
-- Production-ready Architecture
+---
+
+## Product Card სისტემა
+- ☑️ hover animations
+- ☑️ wishlist button
+- ☑️ add to cart button
+- ☑️ gallery preview
+- ☑️ hover image switch
+- ☑️ responsive cards
+
+---
+
+## Dynamic Product Page
+- ☑️ products/[id]
+- ☑️ UUID route
+- ☑️ single product fetch
+- ☑️ reusable ProductGallery component
+- ☑️ thumbnails gallery
+- ☑️ hover image switch
+- ☑️ specifications render
+- ☑️ responsive product layout
+
+---
+
+## Brands Architecture
+- ☑️ brands relation
+- ☑️ brand selection
+- ☑️ მრავალბრენდიანი architecture
+
+---
+
+# 🚨 შემდეგი გასაკეთებელი (პრიორიტეტებით)
+
+## 🔥 1. Product Details Page დასრულება
+- ⬜ ბრენდის ჩვენება
+- ⬜ stock status
+- ⬜ category badges
+- ⬜ add to cart section
+- ⬜ quantity selector
+- ⬜ sticky buy section
+- ⬜ mobile optimization
+
+---
+
+## 🔥 2. Product Gallery Slider
+- ⬜ click image change
+- ⬜ active thumbnail state
+- ⬜ slider navigation
+- ⬜ fullscreen preview
+- ⬜ image animations
+
+---
+
+## 🔥 3. სრული Categories სისტემა
+- ⬜ dynamic categories fetch
+- ⬜ product_categories insert
+- ⬜ category filtering
+- ⬜ category sidebar
+- ⬜ category pages
+- ⬜ category/[slug]
+
+---
+
+## 🔥 4. Brands სისტემა
+- ⬜ brands page
+- ⬜ brands/[slug]
+- ⬜ brand filtering
+- ⬜ sidebar brands
+
+---
+
+## 🟠 5. Cart სისტემა
+- ⬜ add to cart logic
+- ⬜ localStorage cart
+- ⬜ quantity update
+- ⬜ remove item
+- ⬜ cart drawer
+- ⬜ cart page
+
+---
+
+## 🟠 6. Wishlist სისტემა
+- ⬜ wishlist page
+- ⬜ wishlist persistence
+
+---
+
+## 🟠 7. Search + Filters
+- ⬜ search
+- ⬜ sorting
+- ⬜ price filter
+- ⬜ category filter
+- ⬜ brand filter
+- ⬜ pagination
+
+---
+
+## 🔵 8. Authentication
+- ⬜ login
+- ⬜ register
+- ⬜ protected routes
+- ⬜ sessions
+
+---
+
+## 🔵 9. Checkout + Orders
+- ⬜ checkout
+- ⬜ payment integration
+- ⬜ orders table
+- ⬜ order history
+- ⬜ shipping form
+
+---
+
+## 🟣 10. სრული Admin CMS
+- ⬜ edit product
+- ⬜ delete product
+- ⬜ manage categories
+- ⬜ manage brands
+- ⬜ manage orders
+- ⬜ analytics
+
+---
+
+## ⚫ 11. Production Ready
+- ⬜ dynamic slugs
+- ⬜ SEO
+- ⬜ metadata
+- ⬜ sitemap
+- ⬜ performance optimization
+- ⬜ loading states
+- ⬜ accessibility
+- ⬜ final polish
