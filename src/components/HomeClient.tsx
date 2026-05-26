@@ -45,12 +45,17 @@ export function HomeClient({
     (c): c is string =>
       Boolean(c)
   );
-
+  
+  console.log(products[0]);
   return (
 
     <>
 
-      <Header />
+      <Header
+  categories={allCategories}
+  selectedCategory={selectedCategory}
+  onSelectCategory={setSelectedCategory}
+/>
 
       <HeaderExtras />
 
@@ -79,5 +84,4 @@ export function HomeClient({
     </>
 
   );
-
 }

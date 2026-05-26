@@ -19,7 +19,19 @@ const navItems = [
   "კონტაქტი",
 ];
 
-export function Header() {
+type HeaderProps = {
+  categories: string[];
+  selectedCategory: string | null;
+  onSelectCategory: (
+    category: string | null
+  ) => void;
+};
+
+export function Header({
+  categories,
+  selectedCategory,
+  onSelectCategory,
+}: HeaderProps) {
 
   // =====================================
   // MOBILE DRAWER STATE
@@ -204,6 +216,9 @@ export function Header() {
         setOpen={setOpen}
         tab={tab}
         setTab={setTab}
+        categories={categories}
+        selectedCategory={selectedCategory}
+        onSelectCategory={onSelectCategory}
       />
 
     </>

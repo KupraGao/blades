@@ -27,7 +27,11 @@ export async function getProducts(
         is_main
       ),
       product_categories (
-        category_id
+        category_id,
+        categories (
+          id,
+          name
+        )
       )
     `)
     .order("created_at", {

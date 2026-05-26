@@ -17,7 +17,52 @@ export function MobileMenuDrawer({
   setOpen,
   tab,
   setTab,
+  categories,
+  selectedCategory,
+  onSelectCategory,
 }: any) {
+
+  // =====================================
+  // SAFE CATEGORIES
+  // =====================================
+
+  const safeCategories =
+    Array.isArray(categories)
+      ? categories
+      : [];
+
+  // =====================================
+  // CATEGORY CLICK
+  // =====================================
+
+  function handleCategoryClick(
+    category: string | null
+  ) {
+
+    // FILTER
+
+    onSelectCategory(category);
+
+    // CLOSE DRAWER
+
+    setOpen(false);
+
+    // SCROLL TO PRODUCTS
+
+    setTimeout(() => {
+
+      const productsSection =
+        document.getElementById(
+          "products"
+        );
+
+      productsSection?.scrollIntoView({
+        behavior: "smooth",
+      });
+
+    }, 100);
+
+  }
 
   return (
 
@@ -204,36 +249,75 @@ export function MobileMenuDrawer({
                 "
               >
 
-                {[
-                  "ყველა დანა",
-                  "დასაკეცი",
-                  "ფიქსირებული",
-                  "ექსკლუზიური / ლიმიტირებული",
-                  "მაჩეტე / ნაჯახი",
-                  "სამზარეულო",
-                  "ტყავის აქსესუარები",
-                  "ხელნაკეთი საფულეები",
-                  "სანადირო აქსესუარები",
-                  "ფანრები",
-                  "სასაჩუქრე ნაკრებები",
-                  "ფასდაკლება",
-                  "აქსესუარები",
-                ].map((item) => (
+                {/* ALL */}
 
-                  <a
-                    key={item}
-                    href="#"
-                    className="
-                      rounded-lg bg-gray-100
-                      px-4 py-2
-                    "
-                  >
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleCategoryClick(
+                      null
+                    )
+                  }
+                  className={`
+                    rounded-lg
+                    px-4 py-2
+                    text-left
+                    transition
 
-                    {item}
+                    ${
+                      selectedCategory ===
+                      null
+                        ? "bg-orange-500 text-white"
+                        : "bg-gray-100"
+                    }
+                  `}
+                >
 
-                  </a>
+                  ყველა
 
-                ))}
+                </button>
+
+                {/* DYNAMIC CATEGORIES */}
+
+                {safeCategories.map(
+                  (item: string) => {
+
+                    const isActive =
+                      selectedCategory ===
+                      item;
+
+                    return (
+
+                      <button
+                        key={item}
+                        type="button"
+                        onClick={() =>
+                          handleCategoryClick(
+                            item
+                          )
+                        }
+                        className={`
+                          rounded-lg
+                          px-4 py-2
+                          text-left
+                          transition
+
+                          ${
+                            isActive
+                              ? "bg-orange-500 text-white"
+                              : "bg-gray-100"
+                          }
+                        `}
+                      >
+
+                        {item}
+
+                      </button>
+
+                    );
+
+                  }
+                )}
 
               </div>
 

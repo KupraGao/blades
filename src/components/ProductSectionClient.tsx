@@ -1,74 +1,200 @@
 "use client";
 
-import { useState } from "react";
 import { ProductCard } from "./ProductCard";
 import { CategoriesSidebar } from "./CategoriesSidebar";
 
-export function ProductSectionClient({ products }: any) {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+type ProductSectionClientProps = {
+  products: any[];
+  selectedCategory: string | null;
+  onSelectCategory: (
+    category: string | null
+  ) => void;
+};
 
-  // 🔥 მთავარი FIX
-  const safeProducts = Array.isArray(products) ? products : [];
+export function ProductSectionClient({
+  products,
+  selectedCategory,
+  onSelectCategory,
+}: ProductSectionClientProps) {
+
+  // =====================================
+  // SAFE PRODUCTS
+  // =====================================
+
+  const safeProducts =
+    Array.isArray(products)
+      ? products
+      : [];
+
+  // =====================================
+  // ALL CATEGORIES
+  // =====================================
 
   const allCategories = Array.from(
     new Set(
-      safeProducts.flatMap((p: any) =>
-        p.product_categories?.map((pc: any) => pc.categories?.name) ?? []
+      safeProducts.flatMap(
+        (p: any) =>
+          p.product_categories?.map(
+            (pc: any) =>
+              pc.categories?.name
+          ) ?? []
       )
     )
-  ).filter((c): c is string => Boolean(c));
+  ).filter(
+    (c): c is string =>
+      Boolean(c)
+  );
 
-  const filteredProducts = selectedCategory
-    ? safeProducts.filter((product: any) =>
-        product.product_categories?.some(
-          (pc: any) => pc.categories?.name === selectedCategory
+  // =====================================
+  // FILTERED PRODUCTS
+  // =====================================
+
+  const filteredProducts =
+    selectedCategory
+      ? safeProducts.filter(
+          (product: any) =>
+            product.product_categories?.some(
+              (pc: any) =>
+                pc.categories?.name ===
+                selectedCategory
+            )
         )
-      )
-    : safeProducts;
+      : safeProducts;
 
   return (
-    <section id="products" className="section-pad bg-black/25">
+
+    <section
+      id="products"
+      className="
+        section-pad
+        bg-black/25
+      "
+    >
+
       <div className="container-page">
 
-        <CategoriesSidebar
-  categories={allCategories}
-  selectedCategory={selectedCategory}
-  onSelectCategory={setSelectedCategory}
-/>
+        {/* ===================================== */}
+        {/* DESKTOP SIDEBAR */}
+        {/* ===================================== */}
 
-        <div className="flex flex-col gap-6">
-          <p className="small-label">featured products</p>
-          <h2 className="section-title">რჩეული პროდუქტები</h2>
+        <CategoriesSidebar
+          categories={allCategories}
+          selectedCategory={
+            selectedCategory
+          }
+          onSelectCategory={
+            onSelectCategory
+          }
+        />
+
+        {/* ===================================== */}
+        {/* SECTION TITLE */}
+        {/* ===================================== */}
+
+        <div
+          className="
+            flex flex-col gap-6
+          "
+        >
+
+          <p className="small-label">
+            featured products
+          </p>
+
+          <h2 className="section-title">
+            რჩეული პროდუქტები
+          </h2>
+
         </div>
 
-        <div className="flex flex-wrap gap-3 mt-6">
+        {/* ===================================== */}
+        {/* TOP CATEGORY BUTTONS */}
+        {/* ===================================== */}
+
+        <div
+          className="
+            flex flex-wrap gap-3 mt-6
+          "
+        >
+
           <button
             type="button"
-            onClick={() => setSelectedCategory(null)}
-            className="btn-primary"
+            onClick={() =>
+              onSelectCategory(null)
+            }
+            className={`
+              btn-primary
+
+              ${
+                selectedCategory ===
+                null
+                  ? "ring-2 ring-orange-400"
+                  : ""
+              }
+            `}
           >
+
             ყველა
+
           </button>
 
           {allCategories.map((cat) => (
+
             <button
               key={cat}
               type="button"
-              onClick={() => setSelectedCategory(cat)}
-              className="btn-secondary"
+              onClick={() =>
+                onSelectCategory(cat)
+              }
+              className={`
+                btn-secondary
+
+                ${
+                  selectedCategory ===
+                  cat
+                    ? "bg-orange-500 text-white"
+                    : ""
+                }
+              `}
             >
+
               {cat}
+
             </button>
+
           ))}
+
         </div>
 
-        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {filteredProducts.map((product: any) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
+        {/* ===================================== */}
+        {/* PRODUCTS GRID */}
+        {/* ===================================== */}
+
+        <div
+          className="
+            mt-10 grid gap-6
+            sm:grid-cols-2
+            lg:grid-cols-4
+          "
+        >
+
+          {filteredProducts.map(
+            (product: any) => (
+
+              <ProductCard
+                key={product.id}
+                product={product}
+              />
+
+            )
+          )}
+
         </div>
 
       </div>
+
     </section>
+
   );
+
 }
