@@ -2,12 +2,14 @@
 
 import Image from "next/image";
 import { useState } from "react";
+
 import {
   Menu,
-  Search,
   ShoppingBag,
   UserRound,
 } from "lucide-react";
+
+import { MobileMenuDrawer } from "./MobileMenuDrawer";
 
 const navItems = [
   "მთავარი",
@@ -19,15 +21,27 @@ const navItems = [
 
 export function Header() {
 
+  // =====================================
+  // MOBILE DRAWER STATE
+  // =====================================
+
   const [open, setOpen] =
     useState(false);
+
+  // =====================================
+  // MOBILE TABS
+  // =====================================
 
   const [tab, setTab] =
     useState("menu");
 
   return (
+
     <>
+
+      {/* ===================================== */}
       {/* HEADER */}
+      {/* ===================================== */}
 
       <header
         className="
@@ -44,7 +58,9 @@ export function Header() {
           "
         >
 
+          {/* ===================================== */}
           {/* LOGO */}
+          {/* ===================================== */}
 
           <a
             href="#"
@@ -69,7 +85,9 @@ export function Header() {
 
           </a>
 
+          {/* ===================================== */}
           {/* DESKTOP NAV */}
+          {/* ===================================== */}
 
           <nav
             className="
@@ -98,7 +116,9 @@ export function Header() {
 
           </nav>
 
+          {/* ===================================== */}
           {/* ACTIONS */}
+          {/* ===================================== */}
 
           <div
             className="
@@ -175,206 +195,19 @@ export function Header() {
 
       </header>
 
-      {/* OVERLAY */}
+      {/* ===================================== */}
+      {/* MOBILE DRAWER */}
+      {/* ===================================== */}
 
-      {open && (
+      <MobileMenuDrawer
+        open={open}
+        setOpen={setOpen}
+        tab={tab}
+        setTab={setTab}
+      />
 
-        <div
-          className="
-            fixed inset-0 z-40
-            bg-black/60
-          "
-          onClick={() => setOpen(false)}
-        />
-
-      )}
-
-      {/* SIDEBAR */}
-
-      <div
-        className={`
-          fixed left-0 top-0 z-50
-          h-full w-80 bg-white text-black
-          transform transition-transform
-          duration-300
-          ${
-            open
-              ? "translate-x-0"
-              : "-translate-x-full"
-          }
-        `}
-      >
-
-        {/* SEARCH */}
-
-        <div className="border-b p-4">
-
-          <div className="flex gap-2">
-
-            <input
-              type="text"
-              placeholder="ძებნა..."
-              className="
-                flex-1 rounded-lg border
-                px-3 py-2 outline-none
-              "
-            />
-
-            <button
-              aria-label="ძებნა"
-              className="
-                rounded-lg bg-black
-                px-3 text-white
-              "
-            >
-
-              <Search size={18} />
-
-            </button>
-
-          </div>
-
-        </div>
-
-        {/* TABS */}
-
-        <div className="flex border-b">
-
-          <button
-            aria-label="მენიუ ტაბი"
-            onClick={() => setTab("menu")}
-            className={`
-              flex-1 py-2 font-bold
-              ${
-                tab === "menu"
-                  ? "border-b-2 border-black"
-                  : "text-gray-400"
-              }
-            `}
-          >
-
-            მენიუ
-
-          </button>
-
-          <button
-            aria-label="კატეგორიების ტაბი"
-            onClick={() => setTab("categories")}
-            className={`
-              flex-1 py-2 font-bold
-              ${
-                tab === "categories"
-                  ? "border-b-2 border-black"
-                  : "text-gray-400"
-              }
-            `}
-          >
-
-            კატეგორიები
-
-          </button>
-
-        </div>
-
-        {/* CONTENT */}
-
-        <div
-          className="
-            flex h-[calc(100vh-120px)]
-            flex-col
-          "
-        >
-
-          <div
-            className="
-              flex-1 overflow-y-auto p-4
-            "
-          >
-
-            {/* MENU */}
-
-            {tab === "menu" && (
-
-              <div
-                className="
-                  flex flex-col
-                  gap-1 sm:gap-2
-                "
-              >
-
-                {navItems.map((item) => (
-
-                  <a
-                    key={item}
-                    href="#"
-                    className="
-                      rounded-lg bg-gray-100
-                      px-4 py-2
-                    "
-                    onClick={() => setOpen(false)}
-                  >
-
-                    {item}
-
-                  </a>
-
-                ))}
-
-              </div>
-
-            )}
-
-            {/* CATEGORIES */}
-
-            {tab === "categories" && (
-
-              <div
-                className="
-                  flex flex-col
-                  gap-1 sm:gap-2
-                "
-              >
-
-                {[
-                  "ყველა დანა",
-                  "დასაკეცი",
-                  "ფიქსირებული",
-                  "ექსკლუზიური / ლიმიტირებული",
-                  "მაჩეტე / ნაჯახი",
-                  "სამზარეულო",
-                  "ტყავის აქსესუარები",
-                  "ხელნაკეთი საფულეები",
-                  "სანადირო აქსესუარები",
-                  "ფანრები",
-                  "სასაჩუქრე ნაკრებები",
-                  "ფასდაკლება",
-                  "აქსესუარები",
-                ].map((item) => (
-
-                  <a
-                    key={item}
-                    href="#"
-                    className="
-                      rounded-lg bg-gray-100
-                      px-4 py-2
-                    "
-                  >
-
-                    {item}
-
-                  </a>
-
-                ))}
-
-              </div>
-
-            )}
-
-          </div>
-
-        </div>
-
-      </div>
     </>
+
   );
+
 }

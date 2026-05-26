@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+
 import {
   ChevronDown,
   ChevronUp,
@@ -48,6 +49,35 @@ export function CategoriesSidebar({
       );
 
   }, []);
+
+  // =====================================
+  // CATEGORY CLICK
+  // =====================================
+
+  function handleCategoryClick(
+    category: string | null
+  ) {
+
+    // FILTER
+
+    onSelectCategory(category);
+
+    // SCROLL TO PRODUCTS
+
+    setTimeout(() => {
+
+      const productsSection =
+        document.getElementById(
+          "products"
+        );
+
+      productsSection?.scrollIntoView({
+        behavior: "smooth",
+      });
+
+    }, 100);
+
+  }
 
   return (
 
@@ -150,6 +180,7 @@ export function CategoriesSidebar({
                 bg-white
                 duration-300
                 ease-in-out
+
                 ${
                   collapsed
                     ? "grid-rows-[0fr]"
@@ -162,12 +193,14 @@ export function CategoriesSidebar({
 
                 <nav className="flex flex-col">
 
+                  {/* ===================================== */}
                   {/* ALL PRODUCTS */}
+                  {/* ===================================== */}
 
                   <button
                     type="button"
                     onClick={() =>
-                      onSelectCategory(
+                      handleCategoryClick(
                         null
                       )
                     }
@@ -194,7 +227,9 @@ export function CategoriesSidebar({
 
                   </button>
 
+                  {/* ===================================== */}
                   {/* DYNAMIC CATEGORIES */}
+                  {/* ===================================== */}
 
                   {categories.map(
                     (item) => {
@@ -209,7 +244,7 @@ export function CategoriesSidebar({
                           key={item}
                           type="button"
                           onClick={() =>
-                            onSelectCategory(
+                            handleCategoryClick(
                               item
                             )
                           }
