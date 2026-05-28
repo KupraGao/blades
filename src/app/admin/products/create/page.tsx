@@ -180,7 +180,38 @@ async function handleSubmit(
             {/* ====================================== */}
             {/* STOCK */}
             {/* ====================================== */}
+            {/* ====================================== */}
+{/* REVIEW LINK */}
+{/* ====================================== */}
 
+<div>
+
+  <label
+    htmlFor="reviewLink"
+    className="mb-2 block text-sm font-medium text-zinc-300"
+  >
+    განხილვის ლინკი
+  </label>
+
+  <input
+    id="reviewLink"
+    type="text"
+    name="reviewLink"
+    placeholder="https://youtube.com/watch?v=..."
+    title="განხილვის ლინკი"
+    className="
+      w-full rounded-xl
+      border border-zinc-800
+      bg-black/40
+      px-4 py-3
+      text-white
+      outline-none
+      transition
+      focus:border-white
+    "
+  />
+
+</div>
             <div>
 
               <label htmlFor="stock" className="mb-2 block text-sm font-medium text-zinc-300">

@@ -34,7 +34,7 @@ export default function ProductGallery({
       <div
         className="
           relative
-          aspect-square
+          aspect-[4/3]
           overflow-hidden
           rounded-2xl
           bg-gray-100

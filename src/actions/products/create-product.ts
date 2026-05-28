@@ -55,17 +55,20 @@ export async function createProduct(
   const knifeType =
     formData.get("knifeType");
 
-  const bladeFinish =
-    formData.get("bladeFinish");
+ const bladeFinish =
+  formData.get("bladeFinish");
 
-  const country =
-    formData.get("country");
+const country =
+  formData.get("country");
 
-  const weight =
-    formData.get("weight");
+const weight =
+  formData.get("weight");
 
-  const overallLength =
-    formData.get("overallLength");
+const overallLength =
+  formData.get("overallLength");
+
+const reviewLink =
+  formData.get("reviewLink");
 
 
   // =================================================
@@ -175,7 +178,7 @@ export async function createProduct(
           country,
           weight,
           overall_length: overallLength,
-
+          review_link: reviewLink,
         },
       ])
       .select();

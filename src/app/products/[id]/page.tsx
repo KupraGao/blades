@@ -240,7 +240,34 @@ export default async function ProductDetailsPage({
             </div>
 
           </div>
-
+            {/* ===================================== */}
+            {/* REVIEW LINK */}
+            {/* ===================================== */}
+                      
+            {product.review_link && (
+            
+              <a
+                href={product.review_link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="
+                  mt-6
+                  inline-flex
+                  items-center
+                  rounded-2xl
+                  border
+                  border-zinc-700
+                  px-6
+                  py-4
+                  font-medium
+                  transition
+                  hover:bg-white/10
+                "
+              >
+                🎥 განხილვის ნახვა
+              </a>
+            
+            )}
           {/* ===================================== */}
           {/* DESCRIPTION */}
           {/* ===================================== */}
