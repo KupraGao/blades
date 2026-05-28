@@ -4,10 +4,11 @@ import { useState } from "react";
 
 import { Header } from "@/components/Header";
 import { HeaderExtras } from "@/components/HeaderExtras";
+import { Footer } from "@/components/Footer";
+
 import { Hero } from "@/components/Hero";
 import { PromoBanner } from "@/components/PromoBanner";
 import { FeatureStrip } from "@/components/FeatureStrip";
-import { Footer } from "@/components/Footer";
 
 import { ProductSectionClient } from "@/components/ProductSectionClient";
 
@@ -45,17 +46,16 @@ export function HomeClient({
     (c): c is string =>
       Boolean(c)
   );
-  
-  console.log(products[0]);
+
   return (
 
     <>
 
       <Header
-  categories={allCategories}
-  selectedCategory={selectedCategory}
-  onSelectCategory={setSelectedCategory}
-/>
+        categories={allCategories}
+        selectedCategory={selectedCategory}
+        onSelectCategory={setSelectedCategory}
+      />
 
       <HeaderExtras />
 
@@ -67,12 +67,8 @@ export function HomeClient({
 
         <ProductSectionClient
           products={products}
-          selectedCategory={
-            selectedCategory
-          }
-          onSelectCategory={
-            setSelectedCategory
-          }
+          selectedCategory={selectedCategory}
+          onSelectCategory={setSelectedCategory}
         />
 
         <PromoBanner />

@@ -1,8 +1,6 @@
 "use client";
 
-import {
-  Search,
-} from "lucide-react";
+import { Search } from "lucide-react";
 
 const navItems = [
   "მთავარი",
@@ -12,42 +10,37 @@ const navItems = [
   "კონტაქტი",
 ];
 
+type MobileMenuDrawerProps = {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  tab: string;
+  setTab: (tab: string) => void;
+
+  categories: string[];
+  selectedCategory: string | null;
+  onSelectCategory: (
+    category: string | null
+  ) => void;
+};
+
 export function MobileMenuDrawer({
   open,
   setOpen,
   tab,
   setTab,
+
   categories,
   selectedCategory,
   onSelectCategory,
-}: any) {
-
-  // =====================================
-  // SAFE CATEGORIES
-  // =====================================
-
-  const safeCategories =
-    Array.isArray(categories)
-      ? categories
-      : [];
-
-  // =====================================
-  // CATEGORY CLICK
-  // =====================================
+}: MobileMenuDrawerProps) {
 
   function handleCategoryClick(
     category: string | null
   ) {
 
-    // FILTER
-
     onSelectCategory(category);
 
-    // CLOSE DRAWER
-
     setOpen(false);
-
-    // SCROLL TO PRODUCTS
 
     setTimeout(() => {
 
@@ -60,17 +53,13 @@ export function MobileMenuDrawer({
         behavior: "smooth",
       });
 
-    }, 100);
+    }, 150);
 
   }
 
   return (
 
     <>
-
-      {/* ===================================== */}
-      {/* OVERLAY */}
-      {/* ===================================== */}
 
       {open && (
 
@@ -83,10 +72,6 @@ export function MobileMenuDrawer({
         />
 
       )}
-
-      {/* ===================================== */}
-      {/* SIDEBAR */}
-      {/* ===================================== */}
 
       <div
         className={`
@@ -103,9 +88,7 @@ export function MobileMenuDrawer({
         `}
       >
 
-        {/* ===================================== */}
         {/* SEARCH */}
-        {/* ===================================== */}
 
         <div className="border-b p-4">
 
@@ -136,17 +119,14 @@ export function MobileMenuDrawer({
 
         </div>
 
-        {/* ===================================== */}
         {/* TABS */}
-        {/* ===================================== */}
 
         <div className="flex border-b">
 
           <button
-            aria-label="მენიუ ტაბი"
             onClick={() => setTab("menu")}
             className={`
-              flex-1 py-2 font-bold
+              flex-1 py-3 font-bold
 
               ${
                 tab === "menu"
@@ -161,12 +141,11 @@ export function MobileMenuDrawer({
           </button>
 
           <button
-            aria-label="კატეგორიების ტაბი"
             onClick={() =>
               setTab("categories")
             }
             className={`
-              flex-1 py-2 font-bold
+              flex-1 py-3 font-bold
 
               ${
                 tab === "categories"
@@ -182,9 +161,7 @@ export function MobileMenuDrawer({
 
         </div>
 
-        {/* ===================================== */}
         {/* CONTENT */}
-        {/* ===================================== */}
 
         <div
           className="
@@ -199,16 +176,12 @@ export function MobileMenuDrawer({
             "
           >
 
-            {/* ===================================== */}
-            {/* MENU */}
-            {/* ===================================== */}
-
             {tab === "menu" && (
 
               <div
                 className="
                   flex flex-col
-                  gap-1 sm:gap-2
+                  gap-2
                 "
               >
 
@@ -218,7 +191,8 @@ export function MobileMenuDrawer({
                     key={item}
                     href="#"
                     className="
-                      rounded-lg bg-gray-100
+                      rounded-lg
+                      bg-gray-100
                       px-4 py-2
                     "
                     onClick={() =>
@@ -236,20 +210,14 @@ export function MobileMenuDrawer({
 
             )}
 
-            {/* ===================================== */}
-            {/* CATEGORIES */}
-            {/* ===================================== */}
-
             {tab === "categories" && (
 
               <div
                 className="
                   flex flex-col
-                  gap-1 sm:gap-2
+                  gap-2
                 "
               >
-
-                {/* ALL */}
 
                 <button
                   type="button"
@@ -260,14 +228,13 @@ export function MobileMenuDrawer({
                   }
                   className={`
                     rounded-lg
-                    px-4 py-2
+                    px-4 py-3
                     text-left
-                    transition
 
                     ${
                       selectedCategory ===
                       null
-                        ? "bg-orange-500 text-white"
+                        ? "bg-orange-100 text-orange-600"
                         : "bg-gray-100"
                     }
                   `}
@@ -277,46 +244,36 @@ export function MobileMenuDrawer({
 
                 </button>
 
-                {/* DYNAMIC CATEGORIES */}
+                {categories.map(
+                  (category) => (
 
-                {safeCategories.map(
-                  (item: string) => {
+                    <button
+                      key={category}
+                      type="button"
+                      onClick={() =>
+                        handleCategoryClick(
+                          category
+                        )
+                      }
+                      className={`
+                        rounded-lg
+                        px-4 py-3
+                        text-left
 
-                    const isActive =
-                      selectedCategory ===
-                      item;
-
-                    return (
-
-                      <button
-                        key={item}
-                        type="button"
-                        onClick={() =>
-                          handleCategoryClick(
-                            item
-                          )
+                        ${
+                          selectedCategory ===
+                          category
+                            ? "bg-orange-100 text-orange-600"
+                            : "bg-gray-100"
                         }
-                        className={`
-                          rounded-lg
-                          px-4 py-2
-                          text-left
-                          transition
+                      `}
+                    >
 
-                          ${
-                            isActive
-                              ? "bg-orange-500 text-white"
-                              : "bg-gray-100"
-                          }
-                        `}
-                      >
+                      {category}
 
-                        {item}
+                    </button>
 
-                      </button>
-
-                    );
-
-                  }
+                  )
                 )}
 
               </div>

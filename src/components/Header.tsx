@@ -75,7 +75,7 @@ export function Header({
           {/* ===================================== */}
 
           <a
-            href="#"
+            href="/"
             aria-label="მთავარი გვერდი - Blades"
             className="
               flex items-center gap-3
@@ -138,8 +138,6 @@ export function Header({
             "
           >
 
-            {/* CART */}
-
             <button
               aria-label="კალათა"
               className="
@@ -166,8 +164,6 @@ export function Header({
 
             </button>
 
-            {/* USER */}
-
             <button
               aria-label="პროფილი"
               className="
@@ -182,8 +178,6 @@ export function Header({
               <UserRound size={19} />
 
             </button>
-
-            {/* MOBILE MENU */}
 
             <button
               aria-label="მენიუ"
@@ -206,10 +200,6 @@ export function Header({
         </div>
 
       </header>
-
-      {/* ===================================== */}
-      {/* MOBILE DRAWER */}
-      {/* ===================================== */}
 
       <MobileMenuDrawer
         open={open}

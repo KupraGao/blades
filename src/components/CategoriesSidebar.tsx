@@ -8,17 +8,37 @@ import {
   Menu,
 } from "lucide-react";
 
+type CategoriesSidebarProps = {
+  categories?: string[];
+  selectedCategory?: string | null;
+  onSelectCategory?: (
+    cat: string | null
+  ) => void;
+};
+
 export function CategoriesSidebar({
   categories,
   selectedCategory,
   onSelectCategory,
-}: {
-  categories: string[];
-  selectedCategory: string | null;
-  onSelectCategory: (
-    cat: string | null
-  ) => void;
-}) {
+}: CategoriesSidebarProps) {
+
+  // =====================================
+  // SAFE PROPS
+  // =====================================
+
+  const safeCategories =
+    categories || [];
+
+  const safeSelectedCategory =
+    selectedCategory || null;
+
+  const safeOnSelectCategory =
+    onSelectCategory ||
+    (() => {});
+
+  // =====================================
+  // COLLAPSE STATE
+  // =====================================
 
   const [collapsed, setCollapsed] =
     useState(false);
@@ -58,11 +78,9 @@ export function CategoriesSidebar({
     category: string | null
   ) {
 
-    // FILTER
-
-    onSelectCategory(category);
-
-    // SCROLL TO PRODUCTS
+    safeOnSelectCategory(
+      category
+    );
 
     setTimeout(() => {
 
@@ -215,7 +233,7 @@ export function CategoriesSidebar({
                       transition
 
                       ${
-                        selectedCategory ===
+                        safeSelectedCategory ===
                         null
                           ? "bg-orange-100 text-orange-600"
                           : "text-zinc-800 hover:bg-orange-50 hover:text-orange-500"
@@ -231,11 +249,11 @@ export function CategoriesSidebar({
                   {/* DYNAMIC CATEGORIES */}
                   {/* ===================================== */}
 
-                  {categories.map(
+                  {safeCategories.map(
                     (item) => {
 
                       const isActive =
-                        selectedCategory ===
+                        safeSelectedCategory ===
                         item;
 
                       return (
