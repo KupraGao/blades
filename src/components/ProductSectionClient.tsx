@@ -111,60 +111,7 @@ export function ProductSectionClient({
         {/* TOP CATEGORY BUTTONS */}
         {/* ===================================== */}
 
-        <div
-          className="
-            flex flex-wrap gap-3 mt-6
-          "
-        >
 
-          <button
-            type="button"
-            onClick={() =>
-              onSelectCategory(null)
-            }
-            className={`
-              btn-primary
-
-              ${
-                selectedCategory ===
-                null
-                  ? "ring-2 ring-orange-400"
-                  : ""
-              }
-            `}
-          >
-
-            ყველა
-
-          </button>
-
-          {allCategories.map((cat) => (
-
-            <button
-              key={cat}
-              type="button"
-              onClick={() =>
-                onSelectCategory(cat)
-              }
-              className={`
-                btn-secondary
-
-                ${
-                  selectedCategory ===
-                  cat
-                    ? "bg-orange-500 text-white"
-                    : ""
-                }
-              `}
-            >
-
-              {cat}
-
-            </button>
-
-          ))}
-
-        </div>
 
         {/* ===================================== */}
         {/* PRODUCTS GRID */}
@@ -173,8 +120,10 @@ export function ProductSectionClient({
         <div
           className="
             mt-10 grid gap-6
-            sm:grid-cols-2
-            lg:grid-cols-4
+           grid-cols-2
+           sm:grid-cols-3
+           lg:grid-cols-4
+           2xl:grid-cols-5
           "
         >
 

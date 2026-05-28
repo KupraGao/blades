@@ -30,11 +30,11 @@ export function ProductCard({
   return (
     <article
       className="
-        group overflow-hidden rounded-3xl
+        group overflow-hidden rounded-2xl
         border border-white/10
         bg-white/[0.04]
         transition
-        hover:-translate-y-1
+        hover:
         hover:border-brand-gold/50
         hover:bg-white/[0.06]
       "
@@ -46,7 +46,7 @@ export function ProductCard({
 
       <div
         className="
-          relative aspect-square
+          relative aspect-[5/4]
           overflow-hidden bg-zinc-900
         "
       >
@@ -58,7 +58,7 @@ export function ProductCard({
             absolute inset-0
             h-full w-full
             object-cover
-            transition duration-500
+            transition duration-1000 ease-out
             group-hover:scale-110
           "
         />
@@ -70,7 +70,7 @@ export function ProductCard({
             absolute inset-0
             bg-gradient-to-t
             from-black
-            via-black/20
+            via-black/10
             to-transparent
           "
         />
@@ -81,8 +81,11 @@ export function ProductCard({
 
         <div
           className="
-            absolute bottom-4 left-4
+            absolute left-4 bottom-4
             flex gap-2
+            opacity-0
+            transition duration-300
+            group-hover:opacity-100
           "
         >
 
@@ -101,9 +104,10 @@ export function ProductCard({
                   h-12 w-12
                   cursor-pointer
                   rounded-lg
-                  border border-white/20
+                  border border-zinc-200
+                  bg-white
                   object-cover
-                  backdrop-blur
+                  shadow-md
                   transition
                   hover:scale-110
                   hover:border-brand-gold
@@ -146,7 +150,7 @@ export function ProductCard({
 
       <div className="p-5">
 
-        <p
+        {/* <p
           className="
             text-xs font-bold uppercase
             tracking-[0.25em]
@@ -158,7 +162,7 @@ export function ProductCard({
             ? categories.join(" • ")
             : "—"}
 
-        </p>
+        </p> */}
 
         <h3
           className="
