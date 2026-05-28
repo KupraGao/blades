@@ -46,13 +46,70 @@ export default async function ProductDetailsPage({
       >
 
         {/* ===================================== */}
-        {/* PRODUCT GALLERY */}
+        {/* PRODUCT GALLERY + REVIEW VIDEO */}
         {/* ===================================== */}
 
-        <ProductGallery
-          title={product.title}
-          images={product.product_images || []}
-        />
+        <div>
+
+          <ProductGallery
+            title={product.title}
+            images={product.product_images || []}
+          />
+
+          {/* ===================================== */}
+          {/* REVIEW VIDEO */}
+          {/* ===================================== */}
+
+          {product.review_link && (
+
+            <div className="mt-8">
+
+              <h2
+                className="
+                  mb-4
+                  text-2xl
+                  font-bold
+                "
+              >
+                ვიდეო განხილვა
+              </h2>
+
+              <div
+                className="
+                  overflow-hidden
+                  rounded-3xl
+                  border
+                  border-zinc-800
+                "
+              >
+
+                <iframe
+                  width="100%"
+                  height="450"
+                  src={
+                    product.review_link
+                      .replace(
+                        "watch?v=",
+                        "embed/"
+                      )
+                      .replace(
+                        "youtu.be/",
+                        "youtube.com/embed/"
+                      )
+                  }
+                  title="Product Review"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="aspect-video w-full"
+                />
+
+              </div>
+
+            </div>
+
+          )}
+
+        </div>
 
         {/* ===================================== */}
         {/* PRODUCT INFO */}
@@ -240,34 +297,7 @@ export default async function ProductDetailsPage({
             </div>
 
           </div>
-            {/* ===================================== */}
-            {/* REVIEW LINK */}
-            {/* ===================================== */}
-                      
-            {product.review_link && (
-            
-              <a
-                href={product.review_link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="
-                  mt-6
-                  inline-flex
-                  items-center
-                  rounded-2xl
-                  border
-                  border-zinc-700
-                  px-6
-                  py-4
-                  font-medium
-                  transition
-                  hover:bg-white/10
-                "
-              >
-                🎥 განხილვის ნახვა
-              </a>
-            
-            )}
+
           {/* ===================================== */}
           {/* DESCRIPTION */}
           {/* ===================================== */}

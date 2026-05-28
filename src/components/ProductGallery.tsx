@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-
 import { useState } from "react";
 
 type ProductImage = {
@@ -25,6 +24,7 @@ export default function ProductGallery({
   );
 
   return (
+
     <div>
 
       {/* ===================================== */}
@@ -48,56 +48,64 @@ export default function ProductGallery({
           className="object-cover"
         />
 
-      </div>
+        {/* ===================================== */}
+        {/* GALLERY OVERLAY */}
+        {/* ===================================== */}
 
-      {/* ===================================== */}
-      {/* GALLERY */}
-      {/* ===================================== */}
+        <div
+          className="
+            absolute
+            left-4
+            top-4
+            z-10
+            flex
+            flex-col
+            gap-2
+          "
+        >
 
-      <div
-        className="
-          mt-4
-          flex
-          gap-4
-          overflow-x-auto
-        "
-      >
+          {images?.map((image) => (
 
-        {images?.map((image) => (
+            <button
+              key={image.id}
+              type="button"
+              aria-label="პროდუქტის ფოტო"
+              onMouseEnter={() =>
+                setActiveImage(image.image_url)
+              }
+              className="
+                relative
+                h-16
+                w-16
+                overflow-hidden
+                rounded-lg
+                border
+                border-white/40
+                bg-black/20
+                backdrop-blur
+                transition
+                hover:scale-105
+                hover:border-white
+              "
+            >
 
-          <button 
-            key={image.id}
-            type="button"
-            aria-label="პროდუქტის ფოტო"
-            onMouseEnter={() =>
-              setActiveImage(image.image_url)
-            }
-            className="
-              relative
-              h-24
-              w-24
-              overflow-hidden
-              rounded-xl
-              border
-              bg-gray-100
-              transition
-              hover:scale-105
-            "
-          >
+              <Image
+                src={image.image_url}
+                alt={title}
+                fill
+                className="object-cover"
+              />
 
-            <Image
-              src={image.image_url}
-              alt={title}
-              fill
-              className="object-cover"
-            />
+            </button>
 
-          </button>
+          ))}
 
-        ))}
+        </div>
 
       </div>
 
     </div>
+
   );
+
 }
