@@ -316,137 +316,113 @@ export default async function ProductDetailsPage({
           {/* SPECIFICATIONS */}
           {/* ===================================== */}
 
-          <div className="mt-10 space-y-4">
+       <div className="mt-10 space-y-4">
 
-            <h2 className="text-2xl font-bold">
-              Specifications
-            </h2>
+  <h2 className="text-2xl font-bold">
+    მახასიათებლები
+  </h2>
 
-            <div className="grid gap-4">
+  <div className="grid gap-4">
 
-              <div className="flex justify-between border-b pb-2">
+    <div className="flex justify-between border-b pb-2">
 
-                <span className="font-medium">
-                  Blade Steel
-                </span>
+      <span className="font-medium">
+        ფოლადის ტიპი
+      </span>
 
-                <span>
-                  {product.blade_steel || "-"}
-                </span>
+      <span>
+        {product.blade_steel || "-"}
+      </span>
 
-              </div>
+    </div>
 
-              <div className="flex justify-between border-b pb-2">
+    <div className="flex justify-between border-b pb-2">
 
-                <span className="font-medium">
-                  Blade Thickness
-                </span>
+      <span className="font-medium">
+        პირის სისქე
+      </span>
 
-                <span>
-                  {product.blade_thickness || "-"}
-                </span>
+      <span>
+        {product.blade_thickness || "-"}
+      </span>
 
-              </div>
+    </div>
 
-              <div className="flex justify-between border-b pb-2">
+    <div className="flex justify-between border-b pb-2">
 
-                <span className="font-medium">
-                  Blade Length
-                </span>
+      <span className="font-medium">
+        პირის სიგრძე
+      </span>
 
-                <span>
-                  {product.blade_length || "-"}
-                </span>
+      <span>
+        {product.blade_length || "-"}
+      </span>
 
-              </div>
+    </div>
 
-              <div className="flex justify-between border-b pb-2">
+    <div className="flex justify-between border-b pb-2">
 
-                <span className="font-medium">
-                  Handle Material
-                </span>
+      <span className="font-medium">
+        ტარის მასალა
+      </span>
 
-                <span>
-                  {product.handle_material || "-"}
-                </span>
+      <span>
+        {product.handle_material || "-"}
+      </span>
 
-              </div>
+    </div>
 
-              <div className="flex justify-between border-b pb-2">
+    <div className="flex justify-between border-b pb-2">
 
-                <span className="font-medium">
-                  Locking Type
-                </span>
+      <span className="font-medium">
+        ჩაკეტვის მექანიზმი
+      </span>
 
-                <span>
-                  {product.locking_type || "-"}
-                </span>
+      <span>
+        {product.locking_type || "-"}
+      </span>
 
-              </div>
+    </div>
 
-              <div className="flex justify-between border-b pb-2">
+    <div className="flex justify-between border-b pb-2">
 
-                <span className="font-medium">
-                  Knife Type
-                </span>
+      <span className="font-medium">
+        დანის ტიპი
+      </span>
 
-                <span>
-                  {product.knife_type || "-"}
-                </span>
+      <span>
+        {product.knife_type || "-"}
+      </span>
 
-              </div>
+    </div>
 
-              <div className="flex justify-between border-b pb-2">
+    <div className="flex justify-between border-b pb-2">
 
-                <span className="font-medium">
-                  Blade Finish
-                </span>
+      <span className="font-medium">
+        წონა
+      </span>
 
-                <span>
-                  {product.blade_finish || "-"}
-                </span>
+      <span>
+        {product.weight || "-"}
+      </span>
 
-              </div>
+    </div>
 
-              <div className="flex justify-between border-b pb-2">
+    <div className="flex justify-between border-b pb-2">
 
-                <span className="font-medium">
-                  Country
-                </span>
+      <span className="font-medium">
+        მთლიანი სიგრძე
+      </span>
 
-                <span>
-                  {product.country || "-"}
-                </span>
+      <span>
+        {product.overall_length || "-"}
+      </span>
 
-              </div>
+    </div>
 
-              <div className="flex justify-between border-b pb-2">
+  </div>
 
-                <span className="font-medium">
-                  Weight
-                </span>
-
-                <span>
-                  {product.weight || "-"}
-                </span>
-
-              </div>
-
-              <div className="flex justify-between border-b pb-2">
-
-                <span className="font-medium">
-                  Overall Length
-                </span>
-
-                <span>
-                  {product.overall_length || "-"}
-                </span>
-
-              </div>
-
-            </div>
-
-          </div>
+</div>
 
         </div>
 

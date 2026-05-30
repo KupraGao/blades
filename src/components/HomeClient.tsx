@@ -6,6 +6,7 @@ import { Header } from "@/components/Header";
 import { HeaderExtras } from "@/components/HeaderExtras";
 
 import { Hero } from "@/components/Hero";
+import { LatestProductsSlider } from "@/components/LatestProductsSlider";
 import { PromoBanner } from "@/components/PromoBanner";
 import { FeatureStrip } from "@/components/FeatureStrip";
 
@@ -60,7 +61,11 @@ export function HomeClient({
 
       <main>
 
-        <Hero />
+        {/* <Hero /> */}
+        <LatestProductsSlider
+          products={products.slice(0, 10)}
+        />
+
 
         <FeatureStrip />
 
@@ -77,4 +82,5 @@ export function HomeClient({
     </>
 
   );
+
 }

@@ -440,24 +440,6 @@ async function handleSubmit(
 
             </div>
 
-            {/* ====================================== */}
-            {/* BLADE FINISH */}
-            {/* ====================================== */}
-
-            <div>
-
-              <label htmlFor="bladeFinish" className="mb-2 block text-sm font-medium text-zinc-300">
-                პირის ზედაპირი
-              </label>
-
-              <input
-                id="bladeFinish" type="text" name="bladeFinish"
-                placeholder="Stonewash"
-                title="პირის ზედაპირი"
-                className="w-full rounded-xl border border-zinc-800 bg-black/40 px-4 py-3 text-white outline-none transition focus:border-white"
-              />
-
-            </div>
 
             {/* ====================================== */}
             {/* KNIFE TYPE */}
@@ -478,24 +460,6 @@ async function handleSubmit(
 
             </div>
 
-            {/* ====================================== */}
-            {/* COUNTRY */}
-            {/* ====================================== */}
-
-            <div>
-
-              <label htmlFor="country" className="mb-2 block text-sm font-medium text-zinc-300">
-                ქვეყანა
-              </label>
-
-              <input
-                id="country" type="text" name="country"
-                placeholder="USA"
-                title="ქვეყანა"
-                className="w-full rounded-xl border border-zinc-800 bg-black/40 px-4 py-3 text-white outline-none transition focus:border-white"
-              />
-
-            </div>
 
             {/* ====================================== */}
             {/* WEIGHT */}
