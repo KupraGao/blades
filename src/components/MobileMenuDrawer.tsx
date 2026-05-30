@@ -121,45 +121,45 @@ export function MobileMenuDrawer({
 
         {/* TABS */}
 
-        <div className="flex border-b">
+<div className="flex border-b">
 
-          <button
-            onClick={() => setTab("menu")}
-            className={`
-              flex-1 py-3 font-bold
+  <button
+    onClick={() =>
+      setTab("categories")
+    }
+    className={`
+      flex-1 py-3 font-bold
 
-              ${
-                tab === "menu"
-                  ? "border-b-2 border-black"
-                  : "text-gray-400"
-              }
-            `}
-          >
+      ${
+        tab === "categories"
+          ? "border-b-2 border-black"
+          : "text-gray-400"
+      }
+    `}
+  >
 
-            მენიუ
+    კატეგორიები
 
-          </button>
+  </button>
 
-          <button
-            onClick={() =>
-              setTab("categories")
-            }
-            className={`
-              flex-1 py-3 font-bold
+  <button
+    onClick={() => setTab("menu")}
+    className={`
+      flex-1 py-3 font-bold
 
-              ${
-                tab === "categories"
-                  ? "border-b-2 border-black"
-                  : "text-gray-400"
-              }
-            `}
-          >
+      ${
+        tab === "menu"
+          ? "border-b-2 border-black"
+          : "text-gray-400"
+      }
+    `}
+  >
 
-            კატეგორიები
+    მენიუ
 
-          </button>
+  </button>
 
-        </div>
+</div>
 
         {/* CONTENT */}
 
@@ -240,7 +240,7 @@ export function MobileMenuDrawer({
                   `}
                 >
 
-                  ყველა
+                  სრული პროდუცქია
 
                 </button>
 

@@ -45,7 +45,7 @@ export function Header({
   // =====================================
 
   const [tab, setTab] =
-    useState("menu");
+    useState("categories");
 
   return (
 

@@ -241,7 +241,7 @@ export function CategoriesSidebar({
                     `}
                   >
 
-                    ყველა
+                    სრული პროდუცქია
 
                   </button>
 
