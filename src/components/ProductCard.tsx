@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { Heart, ShoppingBag } from "lucide-react";
 
@@ -28,201 +29,206 @@ export function ProductCard({
     ) || [];
 
   return (
-    <article
-      className="
-        group overflow-hidden rounded-2xl
-        border border-white/10
-        bg-white/[0.04]
-        transition
-        hover:
-        hover:border-brand-gold/50
-        hover:bg-white/[0.06]
-      "
-    >
+    <Link href={`/products/${product.id}`}>
 
-      {/* ========================================= */}
-      {/* IMAGE */}
-      {/* ========================================= */}
-
-      <div
+      <article
         className="
-          relative aspect-[5/4]
-          overflow-hidden bg-zinc-900
+          group overflow-hidden rounded-2xl
+          border border-white/10
+          bg-white/[0.04]
+          transition
+          hover:border-brand-gold/50
+          hover:bg-white/[0.06]
         "
       >
 
-        <img
-          src={activeImage}
-          alt={product.title}
-          className="
-            absolute inset-0
-            h-full w-full
-            object-cover
-            transition duration-1000 ease-out
-            group-hover:scale-110
-          "
-        />
-
-        {/* OVERLAY */}
-
-        <div
-          className="
-            absolute inset-0
-            bg-gradient-to-t
-            from-black
-            via-black/10
-            to-transparent
-          "
-        />
-
         {/* ========================================= */}
-        {/* GALLERY PREVIEW */}
+        {/* IMAGE */}
         {/* ========================================= */}
 
         <div
           className="
-            absolute left-4 bottom-4
-            flex gap-2
-            opacity-0
-            transition duration-300
-            group-hover:opacity-100
+            relative aspect-[5/4]
+            overflow-hidden bg-zinc-900
           "
         >
 
-          {product.product_images
-            ?.slice(0, 3)
-            .map((img: any) => (
-
-              <img
-                key={img.id}
-                src={img.image_url}
-                alt=""
-                onMouseEnter={() =>
-                  setActiveImage(img.image_url)
-                }
-                className="
-                  h-12 w-12
-                  cursor-pointer
-                  rounded-lg
-                  border border-zinc-200
-                  bg-white
-                  object-cover
-                  shadow-md
-                  transition
-                  hover:scale-110
-                  hover:border-brand-gold
-                "
-              />
-
-            ))}
-
-        </div>
-
-        {/* WISHLIST */}
-
-        <button
-          type="button"
-          aria-label="Add to wishlist"
-          title="Add to wishlist"
-          className="
-            absolute right-4 top-4
-            grid h-10 w-10
-            place-items-center
-            rounded-full
-            border border-white/10
-            bg-black/40
-            text-white
-            backdrop-blur
-            transition
-            hover:bg-brand-orange
-          "
-        >
-
-          <Heart size={18} />
-
-        </button>
-
-      </div>
-
-      {/* ========================================= */}
-      {/* CONTENT */}
-      {/* ========================================= */}
-
-      <div className="p-5">
-
-        {/* <p
-          className="
-            text-xs font-bold uppercase
-            tracking-[0.25em]
-            text-zinc-500
-          "
-        >
-
-          {categories.length
-            ? categories.join(" • ")
-            : "—"}
-
-        </p> */}
-
-        <h3
-          className="
-            mt-2 line-clamp-1
-            font-serif text-xl
-            font-bold text-white
-          "
-        >
-
-          {product.title}
-
-        </h3>
-
-        {/* PRICE + ADD TO CART */}
-
-        <div
-          className="
-            mt-4 flex
-            items-center
-            justify-between
-            gap-3
-          "
-        >
-
-          <span
+          <img
+            src={activeImage}
+            alt={product.title}
             className="
-              text-lg font-black
-              text-brand-gold
+              absolute inset-0
+              h-full w-full
+              object-cover
+              transition duration-1000 ease-out
+              group-hover:scale-110
+            "
+          />
+
+          {/* OVERLAY */}
+
+          <div
+            className="
+              absolute inset-0
+              bg-gradient-to-t
+              from-black
+              via-black/10
+              to-transparent
+            "
+          />
+
+          {/* ========================================= */}
+          {/* GALLERY PREVIEW */}
+          {/* ========================================= */}
+
+          <div
+            className="
+              absolute left-4 bottom-4
+              flex gap-2
+              opacity-0
+              transition duration-300
+              group-hover:opacity-100
             "
           >
 
-            ₾{product.price}
+            {product.product_images
+              ?.slice(0, 3)
+              .map((img: any) => (
 
-          </span>
+                <img
+                  key={img.id}
+                  src={img.image_url}
+                  alt=""
+                  onMouseEnter={() =>
+                    setActiveImage(img.image_url)
+                  }
+                  className="
+                    h-12 w-12
+                    cursor-pointer
+                    rounded-lg
+                    border border-zinc-200
+                    bg-white
+                    object-cover
+                    shadow-md
+                    transition
+                    hover:scale-110
+                    hover:border-brand-gold
+                  "
+                />
+
+              ))}
+
+          </div>
+
+          {/* WISHLIST */}
 
           <button
             type="button"
-            aria-label="Add to cart"
-            title="Add to cart"
+            aria-label="Add to wishlist"
+            title="Add to wishlist"
+            onClick={(e) => e.preventDefault()}
             className="
-              flex items-center
-              gap-2 rounded-full
-              bg-white px-4 py-2
-              text-sm font-black
-              text-black
+              absolute right-4 top-4
+              grid h-10 w-10
+              place-items-center
+              rounded-full
+              border border-white/10
+              bg-black/40
+              text-white
+              backdrop-blur
               transition
-              hover:bg-brand-gold
+              hover:bg-brand-orange
             "
           >
 
-            <ShoppingBag size={16} />
-
-            Add
+            <Heart size={18} />
 
           </button>
 
         </div>
 
-      </div>
+        {/* ========================================= */}
+        {/* CONTENT */}
+        {/* ========================================= */}
 
-    </article>
+        <div className="p-5">
+
+          {/* <p
+            className="
+              text-xs font-bold uppercase
+              tracking-[0.25em]
+              text-zinc-500
+            "
+          >
+
+            {categories.length
+              ? categories.join(" • ")
+              : "—"}
+
+          </p> */}
+
+          <h3
+            className="
+              mt-2 line-clamp-1
+              font-serif text-xl
+              font-bold text-white
+            "
+          >
+
+            {product.title}
+
+          </h3>
+
+          {/* PRICE + ADD TO CART */}
+
+          <div
+            className="
+              mt-4 flex
+              items-center
+              justify-between
+              gap-3
+            "
+          >
+
+            <span
+              className="
+                text-lg font-black
+                text-brand-gold
+              "
+            >
+
+              ₾{product.price}
+
+            </span>
+
+            <button
+              type="button"
+              aria-label="Add to cart"
+              title="Add to cart"
+              onClick={(e) => e.preventDefault()}
+              className="
+                flex items-center
+                gap-2 rounded-full
+                bg-white px-4 py-2
+                text-sm font-black
+                text-black
+                transition
+                hover:bg-brand-gold
+              "
+            >
+
+              <ShoppingBag size={16} />
+
+              Add
+
+            </button>
+
+          </div>
+
+        </div>
+
+      </article>
+
+    </Link>
   );
 }
