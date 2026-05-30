@@ -4,7 +4,6 @@ import { useState } from "react";
 
 import { Header } from "@/components/Header";
 import { HeaderExtras } from "@/components/HeaderExtras";
-import { Footer } from "@/components/Footer";
 
 import { Hero } from "@/components/Hero";
 import { PromoBanner } from "@/components/PromoBanner";
@@ -74,8 +73,6 @@ export function HomeClient({
         <PromoBanner />
 
       </main>
-
-      <Footer />
 
     </>
 
