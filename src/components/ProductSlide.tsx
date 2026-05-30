@@ -78,70 +78,85 @@ export function ProductSlide({
 <div
   className="
     absolute
-    top-10
-    left-10
-    max-w-xl
+    top-4
+    left-4
+    md:top-10
+    md:left-10
+    max-w-[280px]
+    md:max-w-xl
     rounded-xl
     border border-white/10
     bg-black/30
-    p-6
+    p-4
+    md:p-6
     backdrop-blur-md
   "
 >
 
-          <p
-            className="
-              mb-4
-              text-xs
-              uppercase
-              tracking-[0.3em]
-              text-brand-gold
-            "
-          >
-            ახალი დმატებული
-          </p>
+  <p
+    className="
+      mb-2
+      md:mb-4
+      text-[10px]
+      md:text-xs
+      uppercase
+      tracking-[0.2em]
+      md:tracking-[0.3em]
+      text-brand-gold
+    "
+  >
+    ახალი დამატებული
+  </p>
 
-          <h2
-            className="
-              text-3xl
-              font-black
-              text-white
-              md:text-5xl
-            "
-          >
-            {product.title}
-          </h2>
+  <h2
+    className="
+      text-xl
+      font-black
+      text-white
+      leading-tight
+      md:text-5xl
+    "
+  >
+    {product.title}
+  </h2>
 
-          <p
-            className="
-              mt-4
-              text-2xl
-              font-black
-              text-brand-gold
-            "
-          >
-            ₾{product.price}
-          </p>
+  <p
+    className="
+      mt-2
+      md:mt-4
+      text-lg
+      md:text-2xl
+      font-black
+      text-brand-gold
+    "
+  >
+    ₾{product.price}
+  </p>
 
-          <Link
-            href={`/products/${product.id}`}
-            className="
-              mt-8
-              inline-flex
-              rounded-xl
-              bg-brand-gold
-              px-6
-              py-3
-              font-bold
-              text-black
-              transition
-              hover:scale-105
-            "
-          >
-            პროდუქტის ნახვა
-          </Link>
+  <Link
+    href={`/products/${product.id}`}
+    className="
+      mt-4
+      md:mt-8
+      inline-flex
+      rounded-xl
+      bg-brand-gold
+      px-4
+      py-2
+      md:px-6
+      md:py-3
+      text-sm
+      md:text-base
+      font-bold
+      text-black
+      transition
+      hover:scale-105
+    "
+  >
+    პროდუქტის ნახვა
+  </Link>
 
-        </div>
+</div>
 
       </div>
 
