@@ -29,6 +29,36 @@
 
 ---
 
+# 🌙 Theme System — 0%
+
+* ⬜ Theme Provider
+* ⬜ Dark Mode Toggle
+* ⬜ Theme Persistence
+* ⬜ System Theme Detection
+* ⬜ Header Theme Integration
+* ⬜ Product Cards Theme Support
+* ⬜ Product Page Theme Support
+* ⬜ Admin Theme Support
+* ⬜ Global Dark Mode
+
+---
+
+# 🌍 Multilanguage System — 0%
+
+* ⬜ i18n Foundation
+* ⬜ Translation Architecture
+* ⬜ Georgian Dictionary
+* ⬜ English Dictionary
+* ⬜ Russian Dictionary
+* ⬜ Language Switcher
+* ⬜ Header Language Selector
+* ⬜ Product Pages Translation
+* ⬜ Categories Translation
+* ⬜ Admin Translation Strategy
+* ⬜ SEO Language Support
+
+---
+
 # ✅ Categories სისტემა — 91% პროფესიონალური
 
 * ☑️ Dynamic Categories Fetch
@@ -110,7 +140,38 @@
 
 # 🚨 შემდეგი გასაკეთებელი
 
-## 🔥 1. Cart სისტემა — 20%
+## 🌙 1. Dark Mode — 0%
+
+* ⬜ Install next-themes
+* ⬜ Theme Provider
+* ⬜ Theme Toggle Component
+* ⬜ LocalStorage Persistence
+* ⬜ Header Integration
+* ⬜ Footer Integration
+* ⬜ Product Cards Integration
+* ⬜ Product Page Integration
+* ⬜ Admin Integration
+* ⬜ Full Site Testing
+
+---
+
+## 🌍 2. Multilanguage — 0%
+
+* ⬜ i18n Setup
+* ⬜ Translation Dictionaries
+* ⬜ Georgian Support
+* ⬜ English Support
+* ⬜ Russian Support
+* ⬜ Language Switcher
+* ⬜ Header Integration
+* ⬜ Product Translation Layer
+* ⬜ Categories Translation Layer
+* ⬜ SEO Language Support
+* ⬜ URL Localization
+
+---
+
+## 🛒 3. Cart სისტემა — 20%
 
 * ⬜ Add To Cart Logic
 * ⬜ LocalStorage Cart
@@ -122,7 +183,7 @@
 
 ---
 
-## 🔥 2. Wishlist სისტემა — 25%
+## ❤️ 4. Wishlist სისტემა — 25%
 
 * ⬜ Wishlist Page
 * ⬜ Wishlist Persistence
@@ -130,15 +191,7 @@
 
 ---
 
-## 🔥 3. Brands სისტემა — 35%
-
-* ⬜ Brands Page
-* ⬜ Brands/[Slug]
-* ⬜ Brand Filtering
-
----
-
-## 🔥 4. Search + Filters — 32%
+## 🔍 5. Search + Filters — 32%
 
 * ☑️ Category Filter
 * ☑️ Search UI
@@ -151,7 +204,15 @@
 
 ---
 
-## 🔥 5. Architecture Refactor — 76%
+## 🏷️ 6. Brands სისტემა — 35%
+
+* ⬜ Brands Page
+* ⬜ Brands/[Slug]
+* ⬜ Brand Filtering
+
+---
+
+## 🏗️ 7. Architecture Refactor — 76%
 
 * ☑️ Shared Category Architecture
 * ☑️ Mobile + Desktop Sync
@@ -167,7 +228,7 @@
 
 ---
 
-## 🔵 6. Authentication — 10%
+## 🔐 8. Authentication — 10%
 
 * ⬜ Login
 * ⬜ Register
@@ -175,7 +236,7 @@
 
 ---
 
-## 🔵 7. Checkout + Orders — 5%
+## 💳 9. Checkout + Orders — 5%
 
 * ⬜ Checkout
 * ⬜ BOG Payment
@@ -184,7 +245,7 @@
 
 ---
 
-## 🟣 8. სრული Admin CMS — 40%
+## 🟣 10. სრული Admin CMS — 40%
 
 * ☑️ Create Product
 * ☑️ Product Image Upload
@@ -197,7 +258,7 @@
 
 ---
 
-## ⚫ 9. Production Ready — 27%
+## ⚫ 11. Production Ready — 27%
 
 * ⬜ SEO
 * ⬜ Metadata
@@ -205,6 +266,29 @@
 * ⬜ Loading States
 * ☑️ Basic Accessibility Fixes
 * ⬜ Performance Optimization
+
+---
+
+# 🎯 უახლოესი Roadmap
+
+### Phase 1 — UX Upgrade
+
+1. 🌙 Dark Mode
+2. 🌍 Multilanguage (KA / EN / RU)
+
+### Phase 2 — Ecommerce Core
+
+3. 🛒 Cart
+4. ❤️ Wishlist
+5. 🔍 Search
+
+### Phase 3 — Store Growth
+
+6. 🏷️ Brands
+7. 🔐 Authentication
+8. 💳 Checkout
+9. 📦 Orders
+10. 🟣 Admin CMS
 
 ---
 
@@ -223,6 +307,8 @@
 
 # ⚠️ ყველაზე სუსტი ნაწილი
 
+* Dark Mode — 0%
+* Multilanguage — 0%
 * Cart — 20%
 * Checkout — 5%
 * Authentication — 10%
