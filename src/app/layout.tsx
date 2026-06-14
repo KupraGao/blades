@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
+
 import "./globals.css";
+
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -24,11 +27,29 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ka">
+    <html
+      lang="ka"
+      suppressHydrationWarning
+    >
       <body
-        className={`${inter.variable} ${playfair.variable} bg-brand-dark text-zinc-100 antialiased`}
+        className={`
+          ${inter.variable}
+          ${playfair.variable}
+
+          bg-white
+          text-zinc-900
+
+          dark:bg-black
+          dark:text-zinc-100
+
+          antialiased
+          transition-colors
+          duration-300
+        `}
       >
-        {children}
+        <ThemeProvider>
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -32,14 +32,21 @@ export function ProductCard({
     <Link href={`/products/${product.id}`}>
 
       <article
-        className="
-          group overflow-hidden rounded-2xl
-          border border-white/10
-          bg-white/[0.04]
-          transition
-          hover:border-brand-gold/50
-          hover:bg-white/[0.06]
-        "
+       className="
+  group overflow-hidden rounded-2xl
+
+  border border-zinc-200
+  bg-white
+
+  dark:border-white/10
+  dark:bg-white/[0.04]
+
+  transition
+
+  hover:border-brand-gold/50
+
+  dark:hover:bg-white/[0.06]
+"
       >
 
         {/* ========================================= */}
@@ -49,7 +56,8 @@ export function ProductCard({
         <div
           className="
             relative aspect-[5/4]
-            overflow-hidden bg-zinc-900
+            overflow-hidden bg-zinc-100
+dark:bg-zinc-900
           "
         >
 
@@ -127,18 +135,26 @@ export function ProductCard({
             aria-label="Add to wishlist"
             title="Add to wishlist"
             onClick={(e) => e.preventDefault()}
-            className="
-              absolute right-4 top-4
-              grid h-10 w-10
-              place-items-center
-              rounded-full
-              border border-white/10
-              bg-black/40
-              text-white
-              backdrop-blur
-              transition
-              hover:bg-brand-orange
-            "
+           className="
+  absolute right-4 top-4
+  grid h-10 w-10
+  place-items-center
+  rounded-full
+
+  border border-zinc-300
+  bg-white/90
+  text-zinc-900
+
+  dark:border-white/10
+  dark:bg-black/40
+  dark:text-white
+
+  backdrop-blur
+  transition
+
+  hover:bg-brand-orange
+  hover:text-white
+"
           >
 
             <Heart size={18} />
@@ -171,7 +187,8 @@ export function ProductCard({
             className="
               mt-2 line-clamp-1
               font-serif text-xl
-              font-bold text-white
+              font-bold text-zinc-900
+dark:text-white
             "
           >
 
@@ -209,9 +226,13 @@ export function ProductCard({
               className="
                 flex items-center
                 gap-2 rounded-full
-                bg-white px-4 py-2
+               px-4 py-2
                 text-sm font-black
-                text-black
+                bg-zinc-900
+text-white
+
+dark:bg-white
+dark:text-black
                 transition
                 hover:bg-brand-gold
               "

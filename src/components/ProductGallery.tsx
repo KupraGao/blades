@@ -19,9 +19,11 @@ export default function ProductGallery({
   images,
 }: ProductGalleryProps) {
 
-  const [activeImage, setActiveImage] = useState(
-    images?.[0]?.image_url || "/placeholder.png"
-  );
+  const [activeImage, setActiveImage] =
+    useState(
+      images?.[0]?.image_url ||
+      "/placeholder.png"
+    );
 
   return (
 
@@ -37,7 +39,9 @@ export default function ProductGallery({
           aspect-[4/3]
           overflow-hidden
           rounded-2xl
-          bg-gray-100
+
+          bg-zinc-100
+          dark:bg-zinc-900
         "
       >
 
@@ -71,7 +75,9 @@ export default function ProductGallery({
               type="button"
               aria-label="პროდუქტის ფოტო"
               onMouseEnter={() =>
-                setActiveImage(image.image_url)
+                setActiveImage(
+                  image.image_url
+                )
               }
               className="
                 relative
@@ -79,11 +85,15 @@ export default function ProductGallery({
                 w-16
                 overflow-hidden
                 rounded-lg
+
                 border
                 border-white/40
+
                 bg-black/20
                 backdrop-blur
+
                 transition
+
                 hover:scale-105
                 hover:border-white
               "

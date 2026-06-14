@@ -79,8 +79,8 @@ export default async function ProductDetailsPage({
                   overflow-hidden
                   rounded-3xl
                   border
-                  border-zinc-800
-                "
+                border-zinc-200
+                dark:border-zinc-800                "
               >
 
                 <iframe
@@ -198,12 +198,17 @@ export default async function ProductDetailsPage({
 
           <div
             className="
-              mt-8
-              rounded-3xl
-              border
-              border-zinc-800
-              bg-zinc-900/40
-              p-6
+            mt-8
+            rounded-3xl
+            border
+
+            border-zinc-200
+            bg-zinc-100
+
+            dark:border-zinc-800
+            dark:bg-zinc-900/40
+
+            p-6
             "
           >
 
@@ -222,7 +227,8 @@ export default async function ProductDetailsPage({
                   overflow-hidden
                   rounded-2xl
                   border
-                  border-zinc-700
+                border-zinc-300
+                dark:border-zinc-700
                 "
               >
 
@@ -232,8 +238,8 @@ export default async function ProductDetailsPage({
                     px-4
                     py-2
                     transition
-                    hover:bg-white/10
-                  "
+                  hover:bg-zinc-200
+                  dark:hover:bg-white/10                  "
                 >
                   -
                 </button>
@@ -245,11 +251,12 @@ export default async function ProductDetailsPage({
                 <button
                   type="button"
                   className="
-                    px-4
-                    py-2
-                    transition
-                    hover:bg-white/10
-                  "
+                  px-4
+                  py-2
+                  transition
+                  hover:bg-zinc-200
+                  dark:hover:bg-white/10
+                  "               
                 >
                   +
                 </button>
@@ -267,13 +274,16 @@ export default async function ProductDetailsPage({
                 className="
                   flex-1
                   rounded-2xl
-                  bg-white
                   px-6
                   py-4
                   font-bold
-                  text-black
                   transition
                   hover:scale-[1.02]
+                  bg-zinc-900
+                text-white
+
+                dark:bg-white
+                dark:text-black
                 "
               >
                 კალათაში დამატება
@@ -284,12 +294,13 @@ export default async function ProductDetailsPage({
                 className="
                   rounded-2xl
                   border
-                  border-zinc-700
+                  border-zinc-300
+                  dark:border-zinc-700 
                   px-6
                   py-4
                   transition
-                  hover:bg-white/10
-                "
+                hover:bg-zinc-200
+                dark:hover:bg-white/10                "
               >
                 ♡
               </button>
@@ -306,8 +317,8 @@ export default async function ProductDetailsPage({
             className="
               mt-6
               leading-7
-              text-gray-600
-            "
+            text-gray-700
+            dark:text-gray-400            "
           >
             {product.description}
           </p>
@@ -324,7 +335,7 @@ export default async function ProductDetailsPage({
 
   <div className="grid gap-4">
 
-    <div className="flex justify-between border-b pb-2">
+    <div className="flex justify-between border-b border-zinc-200 dark:border-zinc-800 pb-2">
 
       <span className="font-medium">
         ფოლადის ტიპი
@@ -336,7 +347,7 @@ export default async function ProductDetailsPage({
 
     </div>
 
-    <div className="flex justify-between border-b pb-2">
+    <div className="flex justify-between border-b border-zinc-200 dark:border-zinc-800 pb-2">
 
       <span className="font-medium">
         პირის სისქე
@@ -348,7 +359,7 @@ export default async function ProductDetailsPage({
 
     </div>
 
-    <div className="flex justify-between border-b pb-2">
+    <div className="flex justify-between border-b border-zinc-200 dark:border-zinc-800 pb-2">
 
       <span className="font-medium">
         პირის სიგრძე
@@ -360,7 +371,7 @@ export default async function ProductDetailsPage({
 
     </div>
 
-    <div className="flex justify-between border-b pb-2">
+    <div className="flex justify-between border-b border-zinc-200 dark:border-zinc-800 pb-2">
 
       <span className="font-medium">
         ტარის მასალა
@@ -372,7 +383,7 @@ export default async function ProductDetailsPage({
 
     </div>
 
-    <div className="flex justify-between border-b pb-2">
+    <div className="flex justify-between border-b border-zinc-200 dark:border-zinc-800 pb-2">
 
       <span className="font-medium">
         ჩაკეტვის მექანიზმი
@@ -384,7 +395,7 @@ export default async function ProductDetailsPage({
 
     </div>
 
-    <div className="flex justify-between border-b pb-2">
+    <div className="flex justify-between border-b border-zinc-200 dark:border-zinc-800 pb-2">
 
       <span className="font-medium">
         დანის ტიპი
@@ -396,7 +407,7 @@ export default async function ProductDetailsPage({
 
     </div>
 
-    <div className="flex justify-between border-b pb-2">
+    <div className="flex justify-between border-b border-zinc-200 dark:border-zinc-800 pb-2">
 
       <span className="font-medium">
         წონა
@@ -408,7 +419,7 @@ export default async function ProductDetailsPage({
 
     </div>
 
-    <div className="flex justify-between border-b pb-2">
+    <div className="flex justify-between border-b border-zinc-200 dark:border-zinc-800 pb-2">
 
       <span className="font-medium">
         მთლიანი სიგრძე

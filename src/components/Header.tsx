@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 
 import { MobileMenuDrawer } from "./MobileMenuDrawer";
+import { ThemeToggle } from "./ThemeToggle";
 
 const navItems = [
   "მთავარი",
@@ -57,10 +58,13 @@ export function Header({
 
       <header
         className="
-          sticky top-0 z-50
-          border-b border-white/10
-          bg-black/70 backdrop-blur-xl
-        "
+  sticky top-0 z-50
+  border-b border-zinc-200
+  bg-white/80 backdrop-blur-xl
+
+  dark:border-white/10
+  dark:bg-black/70
+"
       >
 
         <div
@@ -114,10 +118,12 @@ export function Header({
                 key={item}
                 href="#"
                 className="
-                  text-sm font-semibold
-                  text-zinc-300 transition
-                  hover:text-brand-gold
-                "
+  text-sm font-semibold
+  text-zinc-700 transition
+  hover:text-brand-gold
+
+  dark:text-zinc-300
+"
               >
 
                 {item}
@@ -137,6 +143,8 @@ export function Header({
               flex items-center gap-2
             "
           >
+
+            <ThemeToggle />
 
             <button
               aria-label="კალათა"
@@ -167,12 +175,21 @@ export function Header({
             <button
               aria-label="პროფილი"
               className="
-                hidden h-11 w-11
-                place-items-center rounded-full
-                border border-white/10
-                bg-white/5 text-zinc-300
-                hover:bg-white/10 sm:grid
-              "
+  hidden h-11 w-11
+  place-items-center rounded-full
+
+  border border-zinc-300
+  bg-zinc-100
+  text-zinc-700
+  hover:bg-zinc-200
+
+  dark:border-white/10
+  dark:bg-white/5
+  dark:text-zinc-300
+  dark:hover:bg-white/10
+
+  sm:grid
+"
             >
 
               <UserRound size={19} />
@@ -183,12 +200,19 @@ export function Header({
               aria-label="მენიუ"
               onClick={() => setOpen(true)}
               className="
-                grid h-11 w-11
-                place-items-center rounded-full
-                border border-white/10
-                bg-white/5 text-white
-                lg:hidden
-              "
+  grid h-11 w-11
+  place-items-center rounded-full
+
+  border border-zinc-300
+  bg-zinc-100
+  text-zinc-900
+
+  dark:border-white/10
+  dark:bg-white/5
+  dark:text-white
+
+  lg:hidden
+"
             >
 
               <Menu size={21} />
