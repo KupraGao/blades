@@ -3,14 +3,15 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Heart, ShoppingBag } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
 
 type ProductCardProps = {
   product: any;
 };
 
-export function ProductCard({
-  product,
-}: ProductCardProps) {
+export function ProductCard({ product }: ProductCardProps) {
+
+  const { t } = useLanguage();
 
   const defaultImage =
     product.product_images?.find(
@@ -100,7 +101,7 @@ export function ProductCard({
               className="flex items-center justify-center h-10 w-10 md:h-auto md:w-auto md:px-4 md:py-2 gap-2 rounded-full text-sm font-black bg-zinc-900 dark:bg-white dark:text-black transition hover:bg-brand-gold">
                 <ShoppingBag size={16} />
                 <span className="hidden md:inline">
-                  Add
+                   {t.addToCart}
                 </span>
             </button>
           </div>

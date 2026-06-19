@@ -4,6 +4,7 @@ import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { LanguageProvider } from "@/context/LanguageContext";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -35,20 +36,11 @@ export default function RootLayout({
         className={`
           ${inter.variable}
           ${playfair.variable}
-
-          bg-white
-          text-zinc-900
-
-          dark:bg-black
-          dark:text-zinc-100
-
-          antialiased
-          transition-colors
-          duration-300
-        `}
-      >
+         bg-white  text-zinc-9  dark:bg-black  dark:text-zinc-1  antialiased  transition-colors  duration-300 `} >
         <ThemeProvider>
-          {children}
+          <LanguageProvider>
+            {children}
+          </LanguageProvider>
         </ThemeProvider>
       </body>
     </html>

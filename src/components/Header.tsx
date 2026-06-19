@@ -11,14 +11,9 @@ import {
 
 import { MobileMenuDrawer } from "./MobileMenuDrawer";
 import { ThemeToggle } from "./ThemeToggle";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 
-const navItems = [
-  "მთავარი",
-  "კატალოგი",
-  "ბრენდები",
-  "ფასდაკლება",
-  "კონტაქტი",
-];
+import { useLanguage } from "@/context/LanguageContext";
 
 type HeaderProps = {
   categories: string[];
@@ -33,6 +28,8 @@ export function Header({
   selectedCategory,
   onSelectCategory,
 }: HeaderProps) {
+
+  const { t } = useLanguage();
 
   // =====================================
   // MOBILE DRAWER STATE
@@ -56,22 +53,10 @@ export function Header({
       {/* HEADER */}
       {/* ===================================== */}
 
-      <header
-        className="
-  sticky top-0 z-50
-  border-b border-zinc-200
-  bg-white/80 backdrop-blur-xl
-
-  dark:border-white/10
-  dark:bg-black/70
-"
-      >
+      <header className="sticky top-0 z-50 border-b border-zinc-200 bg-white/80 backdrop-blur-x dark:border-white/10 dark:bg-black/70">
 
         <div
-          className="
-            container-page flex h-20
-            items-center justify-between gap-6
-          "
+          className="container-page flex h-20 items-center justify-between gap-6"
         >
 
           {/* ===================================== */}
@@ -81,11 +66,7 @@ export function Header({
           <a
             href="/"
             aria-label="მთავარი გვერდი - Blades"
-            className="
-              flex items-center gap-3
-              rounded-xl bg-white
-              px-3 py-2
-            "
+            className="flex items-center gap-3 rounded-xl bg-white px-3 py-2"
           >
 
             <Image
@@ -93,10 +74,7 @@ export function Header({
               alt="Blades ლოგო"
               width={120}
               height={40}
-              className="
-                h-10 w-auto
-                object-contain
-              "
+              className="h-10 w-auto object-contain"
             />
 
           </a>
@@ -105,32 +83,35 @@ export function Header({
           {/* DESKTOP NAV */}
           {/* ===================================== */}
 
-          <nav
-            className="
-              hidden items-center
-              gap-8 lg:flex
-            "
-          >
+          <nav className="hidden items-center gap-8 lg:flex">
 
-            {navItems.map((item) => (
+            <a
+              href="#"
+              className="text-sm font-semibold text-zinc-700 transition hover:text-brand-gold dark:text-zinc-300"
+            >
+              {t.home}
+            </a>
 
-              <a
-                key={item}
-                href="#"
-                className="
-  text-sm font-semibold
-  text-zinc-700 transition
-  hover:text-brand-gold
+            <a
+              href="#"
+              className="text-sm font-semibold text-zinc-700 transition hover:text-brand-gold dark:text-zinc-300"
+            >
+              {t.products}
+            </a>
 
-  dark:text-zinc-300
-"
-              >
+            <a
+              href="#"
+              className="text-sm font-semibold text-zinc-700 transition hover:text-brand-gold dark:text-zinc-300"
+            >
+              {t.brands}
+            </a>
 
-                {item}
-
-              </a>
-
-            ))}
+            <a
+              href="#"
+              className="text-sm font-semibold text-zinc-700 transition hover:text-brand-gold dark:text-zinc-300"
+            >
+              {t.contact}
+            </a>
 
           </nav>
 
@@ -144,26 +125,19 @@ export function Header({
             "
           >
 
+            <LanguageSwitcher />
+
             <ThemeToggle />
 
             <button
               aria-label="კალათა"
-              className="
-                relative grid h-11 w-11
-                place-items-center rounded-full
-                bg-brand-orange text-white
-              "
+              className="relative grid h-11 w-11 place-items-center rounded-full bg-brand-orange text-white"
             >
 
               <ShoppingBag size={19} />
 
               <span
-                className="
-                  absolute -right-1 -top-1
-                  grid h-5 w-5 place-items-center
-                  rounded-full bg-white
-                  text-[11px] text-black
-                "
+                className="absolute -right-1 -top-1 grid h-5 w-5 place-items-center rounded-full bg-white text-[11px] text-black"
               >
 
                 0
@@ -174,22 +148,7 @@ export function Header({
 
             <button
               aria-label="პროფილი"
-              className="
-  hidden h-11 w-11
-  place-items-center rounded-full
-
-  border border-zinc-300
-  bg-zinc-100
-  text-zinc-700
-  hover:bg-zinc-200
-
-  dark:border-white/10
-  dark:bg-white/5
-  dark:text-zinc-300
-  dark:hover:bg-white/10
-
-  sm:grid
-"
+              className="hidden h-11 w-11 place-items-center rounded-full border border-zinc-300 bg-zinc-100 text-zinc-700 hover:bg-zinc-200 dark:border-white/10 dark:bg-white/5 dark:text-zinc-300 dark:hover:bg-white/10 sm:grid"
             >
 
               <UserRound size={19} />
@@ -199,20 +158,7 @@ export function Header({
             <button
               aria-label="მენიუ"
               onClick={() => setOpen(true)}
-              className="
-  grid h-11 w-11
-  place-items-center rounded-full
-
-  border border-zinc-300
-  bg-zinc-100
-  text-zinc-900
-
-  dark:border-white/10
-  dark:bg-white/5
-  dark:text-white
-
-  lg:hidden
-"
+              className="grid h-11 w-11 place-items-center rounded-full border border-zinc-300 bg-zinc-100 text-zinc-900 dark:border-white/10 dark:bg-white/5 dark:text-white lg:hidden"
             >
 
               <Menu size={21} />
