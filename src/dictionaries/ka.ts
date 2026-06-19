@@ -11,5 +11,11 @@ export const ka = {
   categories: "კატეგორიები",
 menu: "მენიუ",
 allProducts: "სრული პროდუქცია",
+search: "ძებნა...",
+support247: "24/7 დახმარება",
+featuredProducts: "რჩეული პროდუქტები",
+newArrival: "ახალი დამატებული",
+viewProduct: "პროდუქტის ნახვა",
+productPhoto: "პროდუქტის ფოტო",
 
 };

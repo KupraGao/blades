@@ -2,24 +2,15 @@
 
 import { createProduct } from "@/actions/products/create-product";
 
-/* ====================================== */
 /* BLADE STEELS */
-/* ====================================== */
-
 const bladeSteels = [ "1055 Carbon Steel", "1075 High Carbon", "1095 Carbon Steel", "10Cr15CoMov", "12C28N", "14C28N", "154CM", "420HC", "440C", "52100", "8Cr13MoV", "9Cr18MoV", "AUS-8", "AUS-10", "CPM 3V", "CPM S30V", "CPM S35VN", "CPM S45VN", "CPM S90V", "CPM S110V", "CTS-XHP", "D2", "Damascus", "Elmax", "K390", "LC200N", "M390", "MagnaCut", "N690", "Nitro-V", "VG-10", "Vanax", "ZDP-189",
 ];
 
-/* ====================================== */
 /* LOCKING TYPES */
-/* ====================================== */
-
 const lockingTypes = [ "Back Lock", "Ball Bearing Lock", "Bar Lock", "Bolster Lock", "Button Lock", "Button / Compression Lock", "Button / Frame Lock", "Click Lock", "Clutch Lock", "Compression Lock", "Crossbar Lock", "Double Detent", "Frame Lock", "Friction Lock", "ILS (Ikoma Locking System)", "Latch Lock", "Leverage Lock", "Liner Lock", "OTF Automatic", "Pivot Lock", "Push Button", "Rail Lock", "Ram Lock", "Ring Lock", "Rockback Lock", "Rotoblock Safety System", "Shark Lock", "Slide Lock", "Slip Joint", "Super Lock", "Tactical Operation Lock", "Top Liner Lock", "Track Lock", "Tri-Ad Lock",
 ];
 
-/* ====================================== */
 /* PAGE */
-/* ====================================== */
-
 export default function CreateProductPage() {
 
 async function handleSubmit(
@@ -38,16 +29,10 @@ async function handleSubmit(
 
     await createProduct(formData);
 
-    /* ====================================== */
     /* RESET FORM */
-    /* ====================================== */
-
     form.reset();
 
-    /* ====================================== */
     /* SUCCESS */
-    /* ====================================== */
-
     alert(
       "პროდუქტი წარმატებით დაემატა ✅"
     );
@@ -68,10 +53,7 @@ async function handleSubmit(
 
     <div className="mx-auto max-w-5xl">
 
-      {/* ====================================== */}
       {/* PAGE TOP */}
-      {/* ====================================== */}
-
       <div className="mb-8">
 
         <h1 className="text-4xl font-bold text-white">
@@ -84,19 +66,13 @@ async function handleSubmit(
 
       </div>
 
-      {/* ====================================== */}
       {/* FORM */}
-      {/* ====================================== */}
-
       <form
         onSubmit={handleSubmit}
         className="space-y-8"
       >
 
-        {/* ====================================== */}
         {/* BASIC INFO */}
-        {/* ====================================== */}
-
         <div className="rounded-3xl border border-zinc-800 bg-zinc-900/40 p-6">
 
           <h2 className="mb-6 text-xl font-bold text-white">
@@ -105,10 +81,7 @@ async function handleSubmit(
 
           <div className="grid gap-5 md:grid-cols-2">
 
-            {/* ====================================== */}
             {/* TITLE */}
-            {/* ====================================== */}
-
             <div>
 
               <label htmlFor="title" className="mb-2 block text-sm font-medium text-zinc-300">
@@ -124,10 +97,7 @@ async function handleSubmit(
 
             </div>
 
-            {/* ====================================== */}
             {/* BRAND */}
-            {/* ====================================== */}
-
             <div>
 
               <label htmlFor="brandId" className="mb-2 block text-sm font-medium text-zinc-300">
@@ -158,10 +128,7 @@ async function handleSubmit(
 
             </div>
 
-            {/* ====================================== */}
             {/* PRICE */}
-            {/* ====================================== */}
-
             <div>
 
               <label htmlFor="price" className="mb-2 block text-sm font-medium text-zinc-300">
@@ -177,13 +144,8 @@ async function handleSubmit(
 
             </div>
 
-            {/* ====================================== */}
             {/* STOCK */}
-            {/* ====================================== */}
-            {/* ====================================== */}
-{/* REVIEW LINK */}
-{/* ====================================== */}
-
+            {/* REVIEW LINK */}
 <div>
 
   <label
@@ -199,16 +161,7 @@ async function handleSubmit(
     name="reviewLink"
     placeholder="https://youtube.com/watch?v=..."
     title="განხილვის ლინკი"
-    className="
-      w-full rounded-xl
-      border border-zinc-800
-      bg-black/40
-      px-4 py-3
-      text-white
-      outline-none
-      transition
-      focus:border-white
-    "
+    className="w-full rounded-xl border border-zinc-800 bg-black/40 px-4 py-3 text-white outline-none transition focus:border-white"
   />
 
 </div>
@@ -231,10 +184,7 @@ async function handleSubmit(
 
         </div>
 
-        {/* ====================================== */}
         {/* CATEGORIES */}
-        {/* ====================================== */}
-
         <div className="rounded-3xl border border-zinc-800 bg-zinc-900/40 p-6">
 
           <h2 className="mb-6 text-xl font-bold text-white">
@@ -282,10 +232,7 @@ async function handleSubmit(
 
         </div>
 
-        {/* ====================================== */}
         {/* SPECIFICATIONS */}
-        {/* ====================================== */}
-
         <div className="rounded-3xl border border-zinc-800 bg-zinc-900/40 p-6">
 
           <h2 className="mb-6 text-xl font-bold text-white">
@@ -294,10 +241,7 @@ async function handleSubmit(
 
           <div className="grid gap-5 md:grid-cols-2">
 
-            {/* ====================================== */}
             {/* OVERALL LENGTH */}
-            {/* ====================================== */}
-
             <div>
 
               <label htmlFor="overallLength" className="mb-2 block text-sm font-medium text-zinc-300">
@@ -313,10 +257,7 @@ async function handleSubmit(
 
             </div>
 
-            {/* ====================================== */}
             {/* BLADE LENGTH */}
-            {/* ====================================== */}
-
             <div>
 
               <label htmlFor="bladeLength" className="mb-2 block text-sm font-medium text-zinc-300">
@@ -332,10 +273,7 @@ async function handleSubmit(
 
             </div>
 
-            {/* ====================================== */}
             {/* BLADE THICKNESS */}
-            {/* ====================================== */}
-
             <div>
 
               <label htmlFor="bladeThickness" className="mb-2 block text-sm font-medium text-zinc-300">
@@ -351,10 +289,7 @@ async function handleSubmit(
 
             </div>
 
-            {/* ====================================== */}
             {/* BLADE STEEL */}
-            {/* ====================================== */}
-
             <div>
 
               <label htmlFor="bladeSteel" className="mb-2 block text-sm font-medium text-zinc-300">
@@ -386,10 +321,7 @@ async function handleSubmit(
 
             </div>
 
-            {/* ====================================== */}
             {/* HANDLE MATERIAL */}
-            {/* ====================================== */}
-
             <div>
 
               <label htmlFor="handleMaterial" className="mb-2 block text-sm font-medium text-zinc-300">
@@ -405,10 +337,7 @@ async function handleSubmit(
 
             </div>
 
-            {/* ====================================== */}
             {/* LOCKING TYPE */}
-            {/* ====================================== */}
-
             <div>
 
               <label htmlFor="lockingType" className="mb-2 block text-sm font-medium text-zinc-300">
@@ -440,11 +369,7 @@ async function handleSubmit(
 
             </div>
 
-
-            {/* ====================================== */}
             {/* KNIFE TYPE */}
-            {/* ====================================== */}
-
             <div>
 
               <label htmlFor="knifeType" className="mb-2 block text-sm font-medium text-zinc-300">
@@ -460,11 +385,7 @@ async function handleSubmit(
 
             </div>
 
-
-            {/* ====================================== */}
             {/* WEIGHT */}
-            {/* ====================================== */}
-
             <div>
 
               <label htmlFor="weight" className="mb-2 block text-sm font-medium text-zinc-300">
@@ -483,10 +404,7 @@ async function handleSubmit(
           </div>
 
         </div>
-{/* ====================================== */}
 {/* PRODUCT IMAGES */}
-{/* ====================================== */}
-
 <div className="rounded-3xl border border-zinc-800 bg-zinc-900/40 p-6">
 
   <h2 className="mb-6 text-xl font-bold text-white">
@@ -495,10 +413,7 @@ async function handleSubmit(
 
   <div className="grid gap-5 md:grid-cols-2">
 
-    {/* ====================================== */}
     {/* MAIN IMAGE */}
-    {/* ====================================== */}
-
     <div>
 
       <label
@@ -519,10 +434,7 @@ async function handleSubmit(
 
     </div>
 
-    {/* ====================================== */}
     {/* GALLERY IMAGES */}
-    {/* ====================================== */}
-
     <div>
 
       <label
@@ -547,10 +459,7 @@ async function handleSubmit(
   </div>
 
 </div>
-        {/* ====================================== */}
         {/* SUBMIT */}
-        {/* ====================================== */}
-
         <button
           type="submit"
           className="rounded-2xl bg-white px-6 py-3 font-bold text-black transition hover:scale-[1.02]"

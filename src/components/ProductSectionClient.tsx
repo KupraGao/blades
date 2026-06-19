@@ -2,15 +2,12 @@
 
 import { ProductCard } from "./ProductCard";
 import { CategoriesSidebar } from "./CategoriesSidebar";
+import { useLanguage } from "@/context/LanguageContext";
 
 type ProductSectionClientProps = {
   products: any[];
-
   selectedCategory: string | null;
-
-  onSelectCategory: (
-    category: string | null
-  ) => void;
+  onSelectCategory: (category: string | null) => void;
 };
 
 export function ProductSectionClient({
@@ -18,128 +15,47 @@ export function ProductSectionClient({
   selectedCategory,
   onSelectCategory,
 }: ProductSectionClientProps) {
+  const { t } = useLanguage();
 
-  // =====================================
-  // SAFE PRODUCTS
-  // =====================================
-
-  const safeProducts =
-    Array.isArray(products)
-      ? products
-      : [];
-
-  // =====================================
-  // ALL CATEGORIES
-  // =====================================
+  const safeProducts = Array.isArray(products) ? products : [];
 
   const allCategories = Array.from(
     new Set(
       safeProducts.flatMap(
         (p: any) =>
-          p.product_categories?.map(
-            (pc: any) =>
-              pc.categories?.name
-          ) ?? []
+          p.product_categories?.map((pc: any) => pc.categories?.name) ?? []
       )
     )
-  ).filter(
-    (c): c is string =>
-      Boolean(c)
-  );
+  ).filter((c): c is string => Boolean(c));
 
-  // =====================================
-  // FILTERED PRODUCTS
-  // =====================================
-
-  const filteredProducts =
-    selectedCategory
-      ? safeProducts.filter(
-          (product: any) =>
-            product.product_categories?.some(
-              (pc: any) =>
-                pc.categories?.name ===
-                selectedCategory
-            )
+  const filteredProducts = selectedCategory
+    ? safeProducts.filter((product: any) =>
+        product.product_categories?.some(
+          (pc: any) => pc.categories?.name === selectedCategory
         )
-      : safeProducts;
+      )
+    : safeProducts;
 
   return (
-
-    <section
-      id="products"
-      className="
-        section-pad
-        bg-black/25
-      "
-    >
-
+    <section id="products" className="section-pad bg-black/25">
       <div className="container-page">
-
-        {/* ===================================== */}
-        {/* DESKTOP SIDEBAR */}
-        {/* ===================================== */}
-
         <CategoriesSidebar
           categories={allCategories}
-          selectedCategory={
-            selectedCategory
-          }
-          onSelectCategory={
-            onSelectCategory
-          }
+          selectedCategory={selectedCategory}
+          onSelectCategory={onSelectCategory}
         />
 
-        {/* ===================================== */}
-        {/* SECTION TITLE */}
-        {/* ===================================== */}
-
-        <div
-          className="
-            flex flex-col gap-6
-          "
-        >
-
-          <p className="small-label">
-            featured products
-          </p>
-
-          <h2 className="section-title">
-            რჩეული პროდუქტები
-          </h2>
-
+        <div className="flex flex-col gap-6">
+          <p className="small-label">{t.featuredProducts}</p>
+          <h2 className="section-title">{t.featuredProducts}</h2>
         </div>
 
-        {/* ===================================== */}
-        {/* PRODUCTS GRID */}
-        {/* ===================================== */}
-
-        <div
-          className="
-            mt-10 grid gap-6
-            grid-cols-2
-            sm:grid-cols-3
-            lg:grid-cols-4
-            2xl:grid-cols-5
-          "
-        >
-
-          {filteredProducts.map(
-            (product: any) => (
-
-              <ProductCard
-                key={product.id}
-                product={product}
-              />
-
-            )
-          )}
-
+        <div className="mt-10 grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
+          {filteredProducts.map((product: any) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
         </div>
-
       </div>
-
     </section>
-
   );
-
 }

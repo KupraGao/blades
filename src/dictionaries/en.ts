@@ -11,5 +11,10 @@ export const en = {
   categories: "Categories",
 menu: "Menu",
 allProducts: "All Products",
-
+search: "Search...",
+support247: "24/7 Support",
+featuredProducts: "Featured Products",
+newArrival: "New Arrival",
+viewProduct: "View Product",
+productPhoto: "Product Photo",
 };

@@ -1,5 +1,4 @@
 import ProductGallery from "@/components/ProductGallery";
-
 import { getSingleProduct } from "@/actions/products/get-single-product";
 
 export default async function ProductDetailsPage({
@@ -9,237 +8,82 @@ export default async function ProductDetailsPage({
     id: string;
   }>;
 }) {
-
   const { id } = await params;
-
-  const product =
-    await getSingleProduct(id);
+  const product = await getSingleProduct(id);
 
   if (!product) {
-
     return (
-
       <main className="min-h-screen p-10">
-
         <h1 className="text-3xl font-bold">
           პროდუქტი ვერ მოიძებნა
         </h1>
-
       </main>
-
     );
-
   }
 
   return (
-
     <main className="min-h-screen p-6 md:p-10">
-
-      <div
-        className="
-          mx-auto
-          grid
-          max-w-7xl
-          gap-10
-          md:grid-cols-2
-        "
-      >
-
-        {/* ===================================== */}
-        {/* PRODUCT GALLERY + REVIEW VIDEO */}
-        {/* ===================================== */}
-
+      <div className="mx-auto grid max-w-7xl gap-10 md:grid-cols-2">
         <div>
-
           <ProductGallery
             title={product.title}
             images={product.product_images || []}
           />
 
-          {/* ===================================== */}
-          {/* REVIEW VIDEO */}
-          {/* ===================================== */}
-
           {product.review_link && (
-
             <div className="mt-8">
-
-              <h2
-                className="
-                  mb-4
-                  text-2xl
-                  font-bold
-                "
-              >
+              <h2 className="mb-4 text-2xl font-bold">
                 ვიდეო განხილვა
               </h2>
 
-              <div
-                className="
-                  overflow-hidden
-                  rounded-3xl
-                  border
-                border-zinc-200
-                dark:border-zinc-800                "
-              >
-
+              <div className="overflow-hidden rounded-3xl border border-zinc-200 dark:border-zinc-800">
                 <iframe
                   width="100%"
                   height="450"
-                  src={
-                    product.review_link
-                      .replace(
-                        "watch?v=",
-                        "embed/"
-                      )
-                      .replace(
-                        "youtu.be/",
-                        "youtube.com/embed/"
-                      )
-                  }
+                  src={product.review_link
+                    .replace("watch?v=", "embed/")
+                    .replace("youtu.be/", "youtube.com/embed/")}
                   title="Product Review"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                   className="aspect-video w-full"
                 />
-
               </div>
-
             </div>
-
           )}
-
         </div>
 
-        {/* ===================================== */}
-        {/* PRODUCT INFO */}
-        {/* ===================================== */}
-
         <div>
-
-          {/* ===================================== */}
-          {/* TITLE */}
-          {/* ===================================== */}
-
-          <h1
-            className="
-              text-3xl
-              font-bold
-              leading-tight
-              md:text-5xl
-            "
-          >
+          <h1 className="text-3xl font-bold leading-tight md:text-5xl">
             {product.title}
           </h1>
 
-          {/* ===================================== */}
-          {/* PRICE */}
-          {/* ===================================== */}
-
-          <p
-            className="
-              mt-6
-              text-3xl
-              font-semibold
-            "
-          >
+          <p className="mt-6 text-3xl font-semibold">
             ₾ {product.price}
           </p>
 
-          {/* ===================================== */}
-          {/* STOCK STATUS */}
-          {/* ===================================== */}
-
           <div className="mt-4">
-
             {product.stock > 0 ? (
-
-              <div
-                className="
-                  inline-flex
-                  items-center
-                  rounded-full
-                  bg-green-500/10
-                  px-4
-                  py-2
-                  text-sm
-                  font-medium
-                  text-green-500
-                "
-              >
+              <div className="inline-flex items-center rounded-full bg-green-500/10 px-4 py-2 text-sm font-medium text-green-500">
                 მარაგშია • {product.stock} ცალი
               </div>
-
             ) : (
-
-              <div
-                className="
-                  inline-flex
-                  items-center
-                  rounded-full
-                  bg-red-500/10
-                  px-4
-                  py-2
-                  text-sm
-                  font-medium
-                  text-red-500
-                "
-              >
+              <div className="inline-flex items-center rounded-full bg-red-500/10 px-4 py-2 text-sm font-medium text-red-500">
                 არ არის მარაგში
               </div>
-
             )}
-
           </div>
 
-          {/* ===================================== */}
-          {/* BUY SECTION */}
-          {/* ===================================== */}
-
-          <div
-            className="
-            mt-8
-            rounded-3xl
-            border
-
-            border-zinc-200
-            bg-zinc-100
-
-            dark:border-zinc-800
-            dark:bg-zinc-900/40
-
-            p-6
-            "
-          >
-
-            {/* QUANTITY */}
-
+          <div className="mt-8 rounded-3xl border border-zinc-200 bg-zinc-100 p-6 dark:border-zinc-800 dark:bg-zinc-900/40">
             <div className="flex items-center gap-4">
-
               <span className="text-sm font-medium">
                 რაოდენობა
               </span>
 
-              <div
-                className="
-                  flex
-                  items-center
-                  overflow-hidden
-                  rounded-2xl
-                  border
-                border-zinc-300
-                dark:border-zinc-700
-                "
-              >
-
+              <div className="flex items-center overflow-hidden rounded-2xl border border-zinc-300 dark:border-zinc-700">
                 <button
                   type="button"
-                  className="
-                    px-4
-                    py-2
-                    transition
-                  hover:bg-zinc-200
-                  dark:hover:bg-white/10                  "
+                  className="px-4 py-2 transition hover:bg-zinc-200 dark:hover:bg-white/10"
                 >
                   -
                 </button>
@@ -250,197 +94,83 @@ export default async function ProductDetailsPage({
 
                 <button
                   type="button"
-                  className="
-                  px-4
-                  py-2
-                  transition
-                  hover:bg-zinc-200
-                  dark:hover:bg-white/10
-                  "               
+                  className="px-4 py-2 transition hover:bg-zinc-200 dark:hover:bg-white/10"
                 >
                   +
                 </button>
-
               </div>
-
             </div>
 
-            {/* BUTTONS */}
-
             <div className="mt-6 flex gap-4">
-
               <button
                 type="button"
-                className="
-                  flex-1
-                  rounded-2xl
-                  px-6
-                  py-4
-                  font-bold
-                  transition
-                  hover:scale-[1.02]
-                  bg-zinc-900
-                text-white
-
-                dark:bg-white
-                dark:text-black
-                "
+                className="flex-1 rounded-2xl bg-zinc-900 px-6 py-4 font-bold text-white transition hover:scale-[1.02] dark:bg-white dark:text-black"
               >
                 კალათაში დამატება
               </button>
 
               <button
                 type="button"
-                className="
-                  rounded-2xl
-                  border
-                  border-zinc-300
-                  dark:border-zinc-700 
-                  px-6
-                  py-4
-                  transition
-                hover:bg-zinc-200
-                dark:hover:bg-white/10                "
+                className="rounded-2xl border border-zinc-300 px-6 py-4 transition hover:bg-zinc-200 dark:border-zinc-700 dark:hover:bg-white/10"
               >
                 ♡
               </button>
-
             </div>
-
           </div>
 
-          {/* ===================================== */}
-          {/* DESCRIPTION */}
-          {/* ===================================== */}
-
-          <p
-            className="
-              mt-6
-              leading-7
-            text-gray-700
-            dark:text-gray-400            "
-          >
+          <p className="mt-6 leading-7 text-gray-700 dark:text-gray-400">
             {product.description}
           </p>
 
-          {/* ===================================== */}
-          {/* SPECIFICATIONS */}
-          {/* ===================================== */}
+          <div className="mt-10 space-y-4">
+            <h2 className="text-2xl font-bold">
+              მახასიათებლები
+            </h2>
 
-       <div className="mt-10 space-y-4">
+            <div className="grid gap-4">
+              <div className="flex justify-between border-b border-zinc-200 pb-2 dark:border-zinc-800">
+                <span className="font-medium">ფოლადის ტიპი</span>
+                <span>{product.blade_steel || "-"}</span>
+              </div>
 
-  <h2 className="text-2xl font-bold">
-    მახასიათებლები
-  </h2>
+              <div className="flex justify-between border-b border-zinc-200 pb-2 dark:border-zinc-800">
+                <span className="font-medium">პირის სისქე</span>
+                <span>{product.blade_thickness || "-"}</span>
+              </div>
 
-  <div className="grid gap-4">
+              <div className="flex justify-between border-b border-zinc-200 pb-2 dark:border-zinc-800">
+                <span className="font-medium">პირის სიგრძე</span>
+                <span>{product.blade_length || "-"}</span>
+              </div>
 
-    <div className="flex justify-between border-b border-zinc-200 dark:border-zinc-800 pb-2">
+              <div className="flex justify-between border-b border-zinc-200 pb-2 dark:border-zinc-800">
+                <span className="font-medium">ტარის მასალა</span>
+                <span>{product.handle_material || "-"}</span>
+              </div>
 
-      <span className="font-medium">
-        ფოლადის ტიპი
-      </span>
+              <div className="flex justify-between border-b border-zinc-200 pb-2 dark:border-zinc-800">
+                <span className="font-medium">ჩაკეტვის მექანიზმი</span>
+                <span>{product.locking_type || "-"}</span>
+              </div>
 
-      <span>
-        {product.blade_steel || "-"}
-      </span>
+              <div className="flex justify-between border-b border-zinc-200 pb-2 dark:border-zinc-800">
+                <span className="font-medium">დანის ტიპი</span>
+                <span>{product.knife_type || "-"}</span>
+              </div>
 
-    </div>
+              <div className="flex justify-between border-b border-zinc-200 pb-2 dark:border-zinc-800">
+                <span className="font-medium">წონა</span>
+                <span>{product.weight || "-"}</span>
+              </div>
 
-    <div className="flex justify-between border-b border-zinc-200 dark:border-zinc-800 pb-2">
-
-      <span className="font-medium">
-        პირის სისქე
-      </span>
-
-      <span>
-        {product.blade_thickness || "-"}
-      </span>
-
-    </div>
-
-    <div className="flex justify-between border-b border-zinc-200 dark:border-zinc-800 pb-2">
-
-      <span className="font-medium">
-        პირის სიგრძე
-      </span>
-
-      <span>
-        {product.blade_length || "-"}
-      </span>
-
-    </div>
-
-    <div className="flex justify-between border-b border-zinc-200 dark:border-zinc-800 pb-2">
-
-      <span className="font-medium">
-        ტარის მასალა
-      </span>
-
-      <span>
-        {product.handle_material || "-"}
-      </span>
-
-    </div>
-
-    <div className="flex justify-between border-b border-zinc-200 dark:border-zinc-800 pb-2">
-
-      <span className="font-medium">
-        ჩაკეტვის მექანიზმი
-      </span>
-
-      <span>
-        {product.locking_type || "-"}
-      </span>
-
-    </div>
-
-    <div className="flex justify-between border-b border-zinc-200 dark:border-zinc-800 pb-2">
-
-      <span className="font-medium">
-        დანის ტიპი
-      </span>
-
-      <span>
-        {product.knife_type || "-"}
-      </span>
-
-    </div>
-
-    <div className="flex justify-between border-b border-zinc-200 dark:border-zinc-800 pb-2">
-
-      <span className="font-medium">
-        წონა
-      </span>
-
-      <span>
-        {product.weight || "-"}
-      </span>
-
-    </div>
-
-    <div className="flex justify-between border-b border-zinc-200 dark:border-zinc-800 pb-2">
-
-      <span className="font-medium">
-        მთლიანი სიგრძე
-      </span>
-
-      <span>
-        {product.overall_length || "-"}
-      </span>
-
-    </div>
-
-  </div>
-
-</div>
-
+              <div className="flex justify-between border-b border-zinc-200 pb-2 dark:border-zinc-800">
+                <span className="font-medium">მთლიანი სიგრძე</span>
+                <span>{product.overall_length || "-"}</span>
+              </div>
+            </div>
+          </div>
         </div>
-
       </div>
-
     </main>
-
   );
-
 }
