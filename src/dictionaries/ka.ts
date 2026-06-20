@@ -4,7 +4,7 @@ export const ka = {
   brands: "ბრენდები",
   contact: "კონტაქტი",
 
-  addToCart: "კალათაში დამატება",
+  addToCart: "დამატება",
   wishlist: "ფავორიტები",
 
   latestProducts: "ახალი პროდუქტები",

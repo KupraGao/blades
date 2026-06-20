@@ -4,7 +4,7 @@ export const en = {
   brands: "Brands",
   contact: "Contact",
 
-  addToCart: "Add To Cart",
+  addToCart: "Add",
   wishlist: "Wishlist",
 
   latestProducts: "Latest Products",
