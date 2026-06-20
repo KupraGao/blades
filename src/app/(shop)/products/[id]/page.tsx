@@ -1,5 +1,6 @@
 import ProductGallery from "@/components/ProductGallery";
 import { getSingleProduct } from "@/actions/products/get-single-product";
+import ProductDetailsContent from "@/components/ProductDetailsContent";
 
 export default async function ProductDetailsPage({
   params,
@@ -33,7 +34,9 @@ export default async function ProductDetailsPage({
           {product.review_link && (
             <div className="mt-8">
               <h2 className="mb-4 text-2xl font-bold">
-                ვიდეო განხილვა
+                <ProductDetailsContent
+                  label="videoReview"
+                />
               </h2>
 
               <div className="overflow-hidden rounded-3xl border border-zinc-200 dark:border-zinc-800">
@@ -65,11 +68,10 @@ export default async function ProductDetailsPage({
           <div className="mt-4">
             {product.stock > 0 ? (
               <div className="inline-flex items-center rounded-full bg-green-500/10 px-4 py-2 text-sm font-medium text-green-500">
-                მარაგშია • {product.stock} ცალი
-              </div>
+                <ProductDetailsContent label="inStock" /> • {product.stock} <ProductDetailsContent label="pieces" />              </div>
             ) : (
               <div className="inline-flex items-center rounded-full bg-red-500/10 px-4 py-2 text-sm font-medium text-red-500">
-                არ არის მარაგში
+                <ProductDetailsContent label="outOfStock" />
               </div>
             )}
           </div>
@@ -77,7 +79,7 @@ export default async function ProductDetailsPage({
           <div className="mt-8 rounded-3xl border border-zinc-200 bg-zinc-100 p-6 dark:border-zinc-800 dark:bg-zinc-900/40">
             <div className="flex items-center gap-4">
               <span className="text-sm font-medium">
-                რაოდენობა
+                <ProductDetailsContent label="quantity" />
               </span>
 
               <div className="flex items-center overflow-hidden rounded-2xl border border-zinc-300 dark:border-zinc-700">
@@ -102,11 +104,10 @@ export default async function ProductDetailsPage({
             </div>
 
             <div className="mt-6 flex gap-4">
-              <button
-                type="button"
+              <button aria-label="Add to wishlist" title="Add to wishlist" type="button"
                 className="flex-1 rounded-2xl bg-zinc-900 px-6 py-4 font-bold text-white transition hover:scale-[1.02] dark:bg-white dark:text-black"
               >
-                კალათაში დამატება
+                <ProductDetailsContent label="addToCart" />
               </button>
 
               <button
@@ -124,50 +125,68 @@ export default async function ProductDetailsPage({
 
           <div className="mt-10 space-y-4">
             <h2 className="text-2xl font-bold">
-              მახასიათებლები
+              <ProductDetailsContent label="specifications" />
             </h2>
 
             <div className="grid gap-4">
-              <div className="flex justify-between border-b border-zinc-200 pb-2 dark:border-zinc-800">
-                <span className="font-medium">ფოლადის ტიპი</span>
-                <span>{product.blade_steel || "-"}</span>
-              </div>
 
-              <div className="flex justify-between border-b border-zinc-200 pb-2 dark:border-zinc-800">
-                <span className="font-medium">პირის სისქე</span>
-                <span>{product.blade_thickness || "-"}</span>
-              </div>
+  <div className="flex justify-between border-b border-zinc-200 pb-2 dark:border-zinc-800">
+    <span className="font-medium">
+      <ProductDetailsContent label="bladeSteel" />
+    </span>
+    <span>{product.blade_steel || "-"}</span>
+  </div>
 
-              <div className="flex justify-between border-b border-zinc-200 pb-2 dark:border-zinc-800">
-                <span className="font-medium">პირის სიგრძე</span>
-                <span>{product.blade_length || "-"}</span>
-              </div>
+  <div className="flex justify-between border-b border-zinc-200 pb-2 dark:border-zinc-800">
+    <span className="font-medium">
+      <ProductDetailsContent label="bladeThickness" />
+    </span>
+    <span>{product.blade_thickness || "-"}</span>
+  </div>
 
-              <div className="flex justify-between border-b border-zinc-200 pb-2 dark:border-zinc-800">
-                <span className="font-medium">ტარის მასალა</span>
-                <span>{product.handle_material || "-"}</span>
-              </div>
+  <div className="flex justify-between border-b border-zinc-200 pb-2 dark:border-zinc-800">
+    <span className="font-medium">
+      <ProductDetailsContent label="bladeLength" />
+    </span>
+    <span>{product.blade_length || "-"}</span>
+  </div>
 
-              <div className="flex justify-between border-b border-zinc-200 pb-2 dark:border-zinc-800">
-                <span className="font-medium">ჩაკეტვის მექანიზმი</span>
-                <span>{product.locking_type || "-"}</span>
-              </div>
+  <div className="flex justify-between border-b border-zinc-200 pb-2 dark:border-zinc-800">
+    <span className="font-medium">
+      <ProductDetailsContent label="handleMaterial" />
+    </span>
+    <span>{product.handle_material || "-"}</span>
+  </div>
 
-              <div className="flex justify-between border-b border-zinc-200 pb-2 dark:border-zinc-800">
-                <span className="font-medium">დანის ტიპი</span>
-                <span>{product.knife_type || "-"}</span>
-              </div>
+  <div className="flex justify-between border-b border-zinc-200 pb-2 dark:border-zinc-800">
+    <span className="font-medium">
+      <ProductDetailsContent label="lockingType" />
+    </span>
+    <span>{product.locking_type || "-"}</span>
+  </div>
 
-              <div className="flex justify-between border-b border-zinc-200 pb-2 dark:border-zinc-800">
-                <span className="font-medium">წონა</span>
-                <span>{product.weight || "-"}</span>
-              </div>
+  <div className="flex justify-between border-b border-zinc-200 pb-2 dark:border-zinc-800">
+    <span className="font-medium">
+      <ProductDetailsContent label="knifeType" />
+    </span>
+    <span>{product.knife_type || "-"}</span>
+  </div>
 
-              <div className="flex justify-between border-b border-zinc-200 pb-2 dark:border-zinc-800">
-                <span className="font-medium">მთლიანი სიგრძე</span>
-                <span>{product.overall_length || "-"}</span>
-              </div>
-            </div>
+  <div className="flex justify-between border-b border-zinc-200 pb-2 dark:border-zinc-800">
+    <span className="font-medium">
+      <ProductDetailsContent label="weight" />
+    </span>
+    <span>{product.weight || "-"}</span>
+  </div>
+
+  <div className="flex justify-between border-b border-zinc-200 pb-2 dark:border-zinc-800">
+    <span className="font-medium">
+      <ProductDetailsContent label="overallLength" />
+    </span>
+    <span>{product.overall_length || "-"}</span>
+  </div>
+
+</div>
           </div>
         </div>
       </div>
