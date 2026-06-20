@@ -131,7 +131,7 @@ export function Header({
 
             <button
               aria-label="კალათა"
-              className="relative grid h-11 w-11 place-items-center rounded-full bg-brand-orange text-white"
+              className="relative grid h-10 w-10 place-items-center rounded-full bg-brand-orange text-white"
             >
 
               <ShoppingBag size={19} />
@@ -148,7 +148,7 @@ export function Header({
 
             <button
               aria-label="პროფილი"
-              className="hidden h-11 w-11 place-items-center rounded-full border border-zinc-300 bg-zinc-100 text-zinc-700 hover:bg-zinc-200 dark:border-white/10 dark:bg-white/5 dark:text-zinc-300 dark:hover:bg-white/10 sm:grid"
+              className="hidden h-10 w-10 place-items-center rounded-full border border-zinc-300 bg-zinc-100 text-zinc-700 hover:bg-zinc-200 dark:border-white/10 dark:bg-white/5 dark:text-zinc-300 dark:hover:bg-white/10 sm:grid"
             >
 
               <UserRound size={19} />

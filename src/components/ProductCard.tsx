@@ -91,18 +91,23 @@ export function ProductCard({ product }: ProductCardProps) {
             {product.title}
           </h3>
           {/* PRICE + ADD TO CART */}
-          <div
-            className=" mt-4 flex items-center justify-between gap-3 ">
-            <span className=" text-lg font-black text-brand-gold"            >
+          <div className="mt-4 flex items-center justify-between gap-3">
+            <span className="text-lg font-black text-brand-gold">
               ₾{product.price}
             </span>
-           <button type="button" aria-label="Add to cart" title="Add to cart" 
+                    
+            <button
+              type="button"
+              aria-label="Add to cart"
+              title="Add to cart"
               onClick={(e) => e.preventDefault()}
-              className="flex items-center justify-center h-10 w-10 md:h-auto md:w-auto md:px-4 md:py-2 gap-2 rounded-full text-sm font-black bg-zinc-900 dark:bg-white dark:text-black transition hover:bg-brand-gold">
-                <ShoppingBag size={16} />
-                <span className="hidden md:inline">
-                   {t.addToCart}
-                </span>
+              className="flex h-10 w-10 items-center justify-center gap-2 rounded-full bg-zinc-900 text-sm font-black text-white transition-all duration-300 hover:scale-105 hover:bg-brand-gold hover:text-black md:h-auto md:w-auto md:px-4 md:py-2 dark:bg-white dark:text-black dark:hover:bg-brand-gold dark:hover:text-black"
+            >
+              <ShoppingBag size={16} />
+                    
+              <span className="hidden md:inline">
+                {t.addToCart}
+              </span>
             </button>
           </div>
         </div>

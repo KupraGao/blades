@@ -15,27 +15,34 @@ export function ProductSectionClient({
   selectedCategory,
   onSelectCategory,
 }: ProductSectionClientProps) {
-  const { t } = useLanguage();
-
+  const { t, language } = useLanguage();
   const safeProducts = Array.isArray(products) ? products : [];
 
   const allCategories = Array.from(
     new Set(
       safeProducts.flatMap(
         (p: any) =>
-          p.product_categories?.map((pc: any) => pc.categories?.name) ?? []
+          p.product_categories?.map((pc: any) =>
+            language === "ka"
+              ? pc.categories?.name_ka
+              : pc.categories?.name_en
+          ) ?? []
       )
     )
   ).filter((c): c is string => Boolean(c));
 
   const filteredProducts = selectedCategory
-    ? safeProducts.filter((product: any) =>
-        product.product_categories?.some(
-          (pc: any) => pc.categories?.name === selectedCategory
-        )
+  ? safeProducts.filter((product: any) =>
+      product.product_categories?.some(
+        (pc: any) =>
+          (
+            language === "ka"
+              ? pc.categories?.name_ka
+              : pc.categories?.name_en
+          ) === selectedCategory
       )
-    : safeProducts;
-
+    )
+  : safeProducts;
   return (
     <section id="products" className="section-pad bg-black/25">
       <div className="container-page">

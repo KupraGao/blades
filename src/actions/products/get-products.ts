@@ -2,16 +2,13 @@
 
 import { createClient } from "@/lib/supabase/server";
 
-export async function getProducts(
-  categoryId?: string
-) {
+export async function getProducts(categoryId?: string) {
 
   // ======================================
   // SUPABASE
   // ======================================
 
-  const supabase =
-    await createClient();
+  const supabase = await createClient();
 
   // ======================================
   // BASE QUERY
@@ -30,7 +27,9 @@ export async function getProducts(
         category_id,
         categories (
           id,
-          name
+          name,
+          name_ka,
+          name_en
         )
       )
     `)
@@ -55,10 +54,7 @@ export async function getProducts(
   // EXECUTE QUERY
   // ======================================
 
-  const {
-    data,
-    error,
-  } = await query;
+  const { data, error } = await query;
 
   // ======================================
   // ERROR

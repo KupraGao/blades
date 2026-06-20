@@ -12,11 +12,20 @@ import { FeatureStrip } from "@/components/FeatureStrip";
 
 import { ProductSectionClient } from "@/components/ProductSectionClient";
 
+import { useLanguage } from "@/context/LanguageContext";
+
 export function HomeClient({
   products,
 }: {
   products: any[];
 }) {
+
+  // =====================================
+  // LANGUAGE
+  // =====================================
+
+  const { language } =
+    useLanguage();
 
   // =====================================
   // SHARED CATEGORY STATE
@@ -38,7 +47,9 @@ export function HomeClient({
       products.flatMap((p: any) =>
         p.product_categories?.map(
           (pc: any) =>
-            pc.categories?.name
+            language === "ka"
+              ? pc.categories?.name_ka
+              : pc.categories?.name_en
         ) ?? []
       )
     )
@@ -62,10 +73,10 @@ export function HomeClient({
       <main>
 
         {/* <Hero /> */}
+
         <LatestProductsSlider
           products={products.slice(0, 10)}
         />
-
 
         <FeatureStrip />
 
