@@ -47,7 +47,16 @@ export default function CartPageContent() {
             <div key={item.id} className="flex gap-4 rounded-2xl border border-zinc-200 bg-white p-4 dark:border-white/10 dark:bg-white/[0.04]">
 
               {/* PRODUCT IMAGE */}
-              <img src={item.image} alt={item.title} className="h-28 w-28 shrink-0 rounded-xl object-cover" />
+              <Link
+                href={`/products/${item.id}`}
+                className="shrink-0 overflow-hidden rounded-xl"
+              >
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  className="h-28 w-28 rounded-xl object-cover transition duration-300 hover:scale-105"
+                />
+              </Link>
 
               {/* PRODUCT INFO */}
               <div className="flex min-w-0 flex-1 flex-col justify-between">

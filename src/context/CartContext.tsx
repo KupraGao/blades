@@ -64,45 +64,97 @@ export function CartProvider({ children }: { children: ReactNode }) {
     localStorage.setItem("cart", JSON.stringify(cartItems));
   }, [cartItems]);
 
-  // =====================================
-  // ADD TO CART
-  // =====================================
-  function addToCart(product: any) {
-    setCartItems((currentItems) => {
-      const existingItem = currentItems.find((item) => item.id === product.id);
-      const productStock = Number(product.stock) || 0;
+// =====================================
+// ADD TO CART
+// =====================================
 
-      // პროდუქტი მარაგში აღარ არის.
-      if (productStock <= 0) return currentItems;
+function addToCart(product: any) {
+  setCartItems((currentItems) => {
 
-      // თუ პროდუქტი უკვე კალათაშია.
-      if (existingItem) {
-        // Stock-ზე მეტს აღარ ვამატებთ.
-        if (existingItem.quantity >= productStock) return currentItems;
+    const existingItem =
+      currentItems.find(
+        (item) => item.id === product.id
+      );
 
-        return currentItems.map((item) =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + 1, stock: productStock }
-            : item
-        );
+    const productStock =
+      Number(product.stock) || 0;
+
+    // =====================================
+    // OUT OF STOCK
+    // =====================================
+
+    // თუ პროდუქტი მარაგში აღარ არის,
+    // კალათაში ვერ დაემატება.
+
+    if (productStock <= 0) {
+      return currentItems;
+    }
+
+    // =====================================
+    // PRODUCT ALREADY EXISTS
+    // =====================================
+
+    if (existingItem) {
+
+      // Stock-ზე მეტს აღარ ვამატებთ.
+
+      if (
+        existingItem.quantity >= productStock
+      ) {
+        return currentItems;
       }
 
-      // მთავარი სურათი.
-      const defaultImage = product.product_images?.find((img: any) => img.is_main) || product.product_images?.[0];
+      return currentItems.map((item) =>
+        item.id === product.id
+          ? {
+              ...item,
+              quantity: item.quantity + 1,
+              stock: productStock,
+            }
+          : item
+      );
+    }
 
-      // ახალი პროდუქტი.
-      const newItem: CartItem = {
-        id: product.id,
-        title: product.title,
-        price: Number(product.price),
-        image: defaultImage?.image_url || "/placeholder.png",
-        quantity: 1,
-        stock: productStock,
-      };
+    // =====================================
+    // PRODUCT IMAGE
+    // =====================================
 
-      return [...currentItems, newItem];
-    });
-  }
+    // ProductCard / ProductDetails შემთხვევაში
+    // სურათი მოდის product_images-დან.
+    //
+    // Wishlist შემთხვევაში კი სურათი
+    // უკვე პირდაპირ product.image-ში გვაქვს.
+
+    const defaultImage =
+      product.product_images?.find(
+        (img: any) => img.is_main
+      ) ||
+      product.product_images?.[0];
+
+    const productImage =
+      product.image ||
+      defaultImage?.image_url ||
+      "/placeholder.png";
+
+    // =====================================
+    // NEW CART ITEM
+    // =====================================
+
+    const newItem: CartItem = {
+      id: product.id,
+      title: product.title,
+      price: Number(product.price),
+      image: productImage,
+      quantity: 1,
+      stock: productStock,
+    };
+
+    return [
+      ...currentItems,
+      newItem,
+    ];
+  });
+}
 
   // =====================================
   // INCREASE QUANTITY

@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Heart, ShoppingBag } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { useCart } from "@/context/CartContext";
+import { useWishlist } from "@/context/WishlistContext";
 
 type ProductCardProps = {
   product: any;
@@ -12,10 +13,16 @@ type ProductCardProps = {
 
 export function ProductCard({ product }: ProductCardProps) {
   // =========================================
-  // LANGUAGE + CART
+  // LANGUAGE + CART + WISHLIST
   // =========================================
   const { t } = useLanguage();
   const { addToCart } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
+
+  // =========================================
+  // WISHLIST STATUS
+  // =========================================
+  const liked = isInWishlist(product.id);
 
   // =========================================
   // DEFAULT IMAGE
@@ -34,34 +41,44 @@ export function ProductCard({ product }: ProductCardProps) {
 
   return (
     <Link href={`/products/${product.id}`}>
-      <article className="group overflow-hidden rounded-2xl border border-zinc-200 bg-white transition 
-      hover:border-brand-gold/50 dark:border-white/10 dark:bg-white/[0.04] dark:hover:bg-white/[0.06]">
+      <article className="group overflow-hidden rounded-2xl border border-zinc-200 bg-white transition hover:border-brand-gold/50 dark:border-white/10 dark:bg-white/[0.04] dark:hover:bg-white/[0.06]">
+
         {/* ========================================= */}
         {/* IMAGE */}
         {/* ========================================= */}
         <div className="relative aspect-[5/4] overflow-hidden bg-zinc-100 dark:bg-zinc-900">
-          <img src={activeImage} alt={product.title} className="absolute inset-0 h-full w-full object-cover transition duration-1000
-          ease-out group-hover:scale-110" />
+          <img src={activeImage} alt={product.title} className="absolute inset-0 h-full w-full object-cover transition duration-1000 ease-out group-hover:scale-110" />
+
           {/* OVERLAY */}
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/10 to-transparent" />
+
           {/* ========================================= */}
           {/* GALLERY PREVIEW */}
           {/* ========================================= */}
           <div className="absolute bottom-4 left-4 flex gap-2 opacity-0 transition duration-300 group-hover:opacity-100">
             {product.product_images?.slice(0, 3).map((img: any) => (
-              <img key={img.id} src={img.image_url} alt="" onMouseEnter={() => setActiveImage(img.image_url)} 
-              className="h-12 w-12 cursor-pointer rounded-lg border border-zinc-200 bg-white object-cover shadow-md 
-              transition hover:scale-110 hover:border-brand-gold" />
+              <img key={img.id} src={img.image_url} alt="" onMouseEnter={() => setActiveImage(img.image_url)} className="h-12 w-12 cursor-pointer rounded-lg border border-zinc-200 bg-white object-cover shadow-md transition hover:scale-110 hover:border-brand-gold" />
             ))}
           </div>
+
           {/* ========================================= */}
           {/* WISHLIST */}
           {/* ========================================= */}
-          <button type="button" aria-label="Add to wishlist" title="Add to wishlist" onClick={(e) => e.preventDefault()} 
-          className="absolute right-4 top-4 grid h-10 w-10 place-items-center rounded-full border border-zinc-300 bg-white/90 
-          text-zinc-900 backdrop-blur transition hover:bg-brand-orange hover:text-white dark:border-white/10 
-          dark:bg-black/40 dark:text-white">
-            <Heart size={18} />
+          <button
+            type="button"
+            aria-label={liked ? "Remove from wishlist" : "Add to wishlist"}
+            title={liked ? "Remove from wishlist" : "Add to wishlist"}
+            onClick={(e) => {
+              e.preventDefault();
+              toggleWishlist(product);
+            }}
+            className={`absolute right-4 top-4 grid h-10 w-10 place-items-center rounded-full border backdrop-blur transition ${
+              liked
+                ? "border-brand-orange bg-brand-orange text-white"
+                : "border-zinc-300 bg-white/90 text-zinc-900 hover:bg-brand-orange hover:text-white dark:border-white/10 dark:bg-black/40 dark:text-white"
+            }`}
+          >
+            <Heart size={18} fill={liked ? "currentColor" : "none"} />
           </button>
         </div>
 
@@ -70,25 +87,22 @@ export function ProductCard({ product }: ProductCardProps) {
         {/* ========================================= */}
         <div className="p-5">
           <h3 className="mt-2 line-clamp-1 font-serif text-xl font-bold text-zinc-900 dark:text-white">{product.title}</h3>
+
           {/* ========================================= */}
           {/* PRICE + ADD TO CART */}
           {/* ========================================= */}
           <div className="mt-4 flex items-center justify-between gap-3">
             <span className="text-lg font-black text-brand-gold">₾{product.price}</span>
+
             <button
               type="button"
               aria-label="Add to cart"
               title="Add to cart"
               onClick={(e) => {
-                // Card მთლიანად Link-შია, ამიტომ გვერდზე გადასვლას ვაჩერებთ.
                 e.preventDefault();
-                // პროდუქტს ვამატებთ CartContext-ში.
                 addToCart(product);
               }}
-              className="flex h-10 w-10 items-center justify-center gap-2 rounded-full bg-zinc-900 text-sm 
-              font-black text-white transition-all duration-300 hover:scale-105 hover:bg-brand-gold 
-              hover:text-black md:h-auto md:w-auto md:px-4 md:py-2 dark:bg-white dark:text-black 
-              dark:hover:bg-brand-gold dark:hover:text-black"
+              className="flex h-10 w-10 items-center justify-center gap-2 rounded-full bg-zinc-900 text-sm font-black text-white transition-all duration-300 hover:scale-105 hover:bg-brand-gold hover:text-black md:h-auto md:w-auto md:px-4 md:py-2 dark:bg-white dark:text-black dark:hover:bg-brand-gold dark:hover:text-black"
             >
               <ShoppingBag size={16} />
               <span className="hidden md:inline">{t.addToCart}</span>

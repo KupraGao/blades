@@ -21,7 +21,6 @@ export const en = {
   // =====================================
   // PRODUCT DETAILS
   // =====================================
-
   videoReview: "Video Review",
   inStock: "In Stock",
   outOfStock: "Out of Stock",
@@ -40,7 +39,6 @@ export const en = {
   // =====================================
   // CART
   // =====================================
-
   cart: "Cart",
   emptyCart: "Your cart is empty",
   emptyCartDescription: "You haven't added any products to your cart yet.",
@@ -53,4 +51,12 @@ export const en = {
   orderSummary: "Order Summary",
   continueShopping: "Continue Shopping",
   checkout: "Proceed to Checkout",
+
+  // =====================================
+  // WISHLIST
+  // =====================================
+  emptyWishlist: "Your wishlist is empty",
+  emptyWishlistDescription: "You haven't added any products to your wishlist yet.",
+  savedProducts: "Saved products",
+  removeFromWishlist: "Remove from wishlist",
 };

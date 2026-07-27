@@ -1,59 +1,189 @@
 "use client";
 
 import { useState } from "react";
+import { Heart, Minus, Plus, ShoppingBag } from "lucide-react";
+
 import { useCart } from "@/context/CartContext";
+import { useWishlist } from "@/context/WishlistContext";
+
 import ProductDetailsContent from "@/components/ProductDetailsContent";
 
 type ProductPurchaseActionsProps = {
   product: any;
 };
 
-export default function ProductPurchaseActions({ product }: ProductPurchaseActionsProps) {
+export default function ProductPurchaseActions({
+  product,
+}: ProductPurchaseActionsProps) {
+
+  // =====================================
+  // CART + WISHLIST
+  // =====================================
+
   const { addToCart } = useCart();
+
+  const {
+    toggleWishlist,
+    isInWishlist,
+  } = useWishlist();
+
+  // =====================================
+  // QUANTITY
+  // =====================================
+
   const [quantity, setQuantity] = useState(1);
+
+  // =====================================
+  // PRODUCT DATA
+  // =====================================
+
+  const stock = Number(product.stock) || 0;
+
+  const liked = isInWishlist(product.id);
 
   // =====================================
   // DECREASE
   // =====================================
+
   function decrease() {
-    if (quantity > 1) setQuantity(quantity - 1);
+    if (quantity <= 1) return;
+
+    setQuantity((current) => current - 1);
   }
 
   // =====================================
   // INCREASE
   // =====================================
+
   function increase() {
-    if (quantity < product.stock) setQuantity(quantity + 1);
+    if (quantity >= stock) return;
+
+    setQuantity((current) => current + 1);
   }
 
   // =====================================
   // ADD TO CART
   // =====================================
+
   function handleAddToCart() {
-    for (let i = 0; i < quantity; i++) addToCart(product);
+    if (stock <= 0) return;
+
+    for (let i = 0; i < quantity; i++) {
+      addToCart(product);
+    }
   }
 
-  return (
-    <div className="mt-8 rounded-3xl border border-zinc-200 bg-zinc-100 p-6 dark:border-zinc-800 dark:bg-zinc-900/40">
-      {/* QUANTITY */}
-      <div className="flex items-center gap-4">
-        <span className="text-sm font-medium"><ProductDetailsContent label="quantity" /></span>
+  // =====================================
+  // RENDER
+  // =====================================
 
-        <div className="flex items-center overflow-hidden rounded-2xl border border-zinc-300 dark:border-zinc-700">
-          <button type="button" aria-label="რაოდენობის შემცირება" onClick={decrease} disabled={quantity === 1} className="px-4 py-2 transition hover:bg-zinc-200 disabled:cursor-not-allowed disabled:opacity-40 dark:hover:bg-white/10">-</button>
-          <span className="min-w-12 px-5 text-center">{quantity}</span>
-          <button type="button" aria-label="რაოდენობის გაზრდა" onClick={increase} disabled={quantity >= product.stock} className="px-4 py-2 transition hover:bg-zinc-200 disabled:cursor-not-allowed disabled:opacity-40 dark:hover:bg-white/10">+</button>
+  return (
+    <div className="mt-8 overflow-hidden rounded-3xl border border-zinc-200 bg-zinc-50 dark:border-white/10 dark:bg-white/[0.04]">
+
+      {/* ===================================== */}
+      {/* QUANTITY */}
+      {/* ===================================== */}
+
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-zinc-200 p-5 dark:border-white/10">
+
+        <div>
+          <p className="text-sm font-semibold text-zinc-900 dark:text-white">
+            <ProductDetailsContent label="quantity" />
+          </p>
+
+          <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+            მაქსიმუმ {stock} ცალი
+          </p>
         </div>
+
+        <div className="flex items-center overflow-hidden rounded-xl border border-zinc-300 bg-white dark:border-white/10 dark:bg-black/30">
+
+          {/* MINUS */}
+
+          <button
+            type="button"
+            aria-label="რაოდენობის შემცირება"
+            onClick={decrease}
+            disabled={quantity <= 1}
+            className="grid h-11 w-11 place-items-center transition hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-30 dark:hover:bg-white/10"
+          >
+            <Minus size={17} />
+          </button>
+
+          {/* QUANTITY */}
+
+          <span className="grid h-11 min-w-12 place-items-center border-x border-zinc-300 px-3 text-sm font-bold dark:border-white/10">
+            {quantity}
+          </span>
+
+          {/* PLUS */}
+
+          <button
+            type="button"
+            aria-label="რაოდენობის გაზრდა"
+            onClick={increase}
+            disabled={quantity >= stock}
+            className="grid h-11 w-11 place-items-center transition hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-30 dark:hover:bg-white/10"
+          >
+            <Plus size={17} />
+          </button>
+
+        </div>
+
       </div>
 
+      {/* ===================================== */}
       {/* ACTIONS */}
-      <div className="mt-6 flex gap-4">
-        <button type="button" disabled={product.stock <= 0} onClick={handleAddToCart} className="flex-1 rounded-2xl bg-zinc-900 px-6 py-4 font-bold text-white transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-40 dark:bg-white dark:text-black">
+      {/* ===================================== */}
+
+      <div className="flex gap-3 p-5">
+
+        {/* ===================================== */}
+        {/* ADD TO CART */}
+        {/* ===================================== */}
+
+        <button
+          type="button"
+          disabled={stock <= 0}
+          onClick={handleAddToCart}
+          className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-brand-orange px-5 py-4 font-bold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          <ShoppingBag size={19} />
+
           <ProductDetailsContent label="addToCart" />
         </button>
 
-        <button type="button" aria-label="Add to wishlist" title="Add to wishlist" className="rounded-2xl border border-zinc-300 px-6 py-4 transition hover:bg-zinc-200 dark:border-zinc-700 dark:hover:bg-white/10">♡</button>
+        {/* ===================================== */}
+        {/* WISHLIST */}
+        {/* ===================================== */}
+
+        <button
+          type="button"
+          aria-label={
+            liked
+              ? "Remove from wishlist"
+              : "Add to wishlist"
+          }
+          title={
+            liked
+              ? "Remove from wishlist"
+              : "Add to wishlist"
+          }
+          onClick={() => toggleWishlist(product)}
+          className={`grid h-14 w-14 shrink-0 place-items-center rounded-xl border transition ${
+            liked
+              ? "border-brand-orange bg-brand-orange text-white"
+              : "border-zinc-300 bg-white text-zinc-700 hover:border-brand-orange hover:text-brand-orange dark:border-white/10 dark:bg-white/5 dark:text-white"
+          }`}
+        >
+          <Heart
+            size={21}
+            fill={liked ? "currentColor" : "none"}
+          />
+        </button>
+
       </div>
+
     </div>
   );
 }

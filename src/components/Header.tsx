@@ -1,14 +1,16 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
-import { Menu, ShoppingBag, UserRound } from "lucide-react";
+import { Heart, Menu, ShoppingBag, UserRound } from "lucide-react";
 import { MobileMenuDrawer } from "./MobileMenuDrawer";
 import { CartDrawer } from "./CartDrawer";
 import { ThemeToggle } from "./ThemeToggle";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { useLanguage } from "@/context/LanguageContext";
 import { useCart } from "@/context/CartContext";
+import { useWishlist } from "@/context/WishlistContext";
 
 type HeaderProps = {
   categories: string[];
@@ -19,6 +21,7 @@ type HeaderProps = {
 export function Header({ categories, selectedCategory, onSelectCategory }: HeaderProps) {
   const { t } = useLanguage();
   const { cartCount } = useCart();
+  const { wishlistCount } = useWishlist();
 
   // =====================================
   // CART DRAWER STATE
@@ -66,6 +69,16 @@ export function Header({ categories, selectedCategory, onSelectCategory }: Heade
           <div className="flex items-center gap-2">
             <LanguageSwitcher />
             <ThemeToggle />
+
+            {/* ===================================== */}
+            {/* WISHLIST */}
+            {/* ===================================== */}
+            <Link href="/wishlist" aria-label={t.wishlist} title={t.wishlist} className="relative grid h-10 w-10 place-items-center rounded-full border border-zinc-300 bg-zinc-100 text-zinc-700 transition hover:bg-brand-orange hover:text-white dark:border-white/10 dark:bg-white/5 dark:text-white">
+              <Heart size={19} />
+              {wishlistCount > 0 && (
+                <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-brand-orange px-1 text-[11px] font-bold text-white">{wishlistCount}</span>
+              )}
+            </Link>
 
             {/* ===================================== */}
             {/* CART */}
