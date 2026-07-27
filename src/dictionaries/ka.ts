@@ -23,15 +23,11 @@ export const ka = {
   // =====================================
 
   videoReview: "ვიდეო განხილვა",
-
   inStock: "მარაგშია",
   outOfStock: "არ არის მარაგში",
   pieces: "ცალი",
-
   quantity: "რაოდენობა",
-
   specifications: "მახასიათებლები",
-
   bladeSteel: "ფოლადის ტიპი",
   bladeThickness: "პირის სისქე",
   bladeLength: "პირის სიგრძე",
@@ -40,4 +36,21 @@ export const ka = {
   knifeType: "დანის ტიპი",
   weight: "წონა",
   overallLength: "მთლიანი სიგრძე",
+
+  // =====================================
+  // CART
+  // =====================================
+
+  cart: "კალათა",
+  emptyCart: "კალათა ცარიელია",
+  emptyCartDescription: "კალათაში ჯერ პროდუქტი არ დაგიმატებია.",
+  unitPrice: "ერთეულის ფასი",
+  total: "სულ",
+  viewCart: "კალათის ნახვა",
+  removeProduct: "პროდუქტის წაშლა",
+  decreaseQuantity: "რაოდენობის შემცირება",
+  increaseQuantity: "რაოდენობის გაზრდა",
+  orderSummary: "შეკვეთის შეჯამება",
+  continueShopping: "პროდუქტების დათვალიერება",
+  checkout: "შეკვეთის გაგრძელება",
 };

@@ -23,15 +23,11 @@ export const en = {
   // =====================================
 
   videoReview: "Video Review",
-
   inStock: "In Stock",
   outOfStock: "Out of Stock",
   pieces: "pcs",
-
   quantity: "Quantity",
-
   specifications: "Specifications",
-
   bladeSteel: "Blade Steel",
   bladeThickness: "Blade Thickness",
   bladeLength: "Blade Length",
@@ -40,4 +36,21 @@ export const en = {
   knifeType: "Knife Type",
   weight: "Weight",
   overallLength: "Overall Length",
+
+  // =====================================
+  // CART
+  // =====================================
+
+  cart: "Cart",
+  emptyCart: "Your cart is empty",
+  emptyCartDescription: "You haven't added any products to your cart yet.",
+  unitPrice: "Unit Price",
+  total: "Total",
+  viewCart: "View Cart",
+  removeProduct: "Remove Product",
+  decreaseQuantity: "Decrease Quantity",
+  increaseQuantity: "Increase Quantity",
+  orderSummary: "Order Summary",
+  continueShopping: "Continue Shopping",
+  checkout: "Proceed to Checkout",
 };
