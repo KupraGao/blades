@@ -1,7 +1,14 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import { ST } from "next/dist/shared/lib/utils";
+import { parseProductForm } from "@/lib/products/parse-product-form";
+import { validateProduct } from "@/lib/products/validate-product";
+import { productMapper } from "@/lib/products/product-mapper";
+import { uploadMainImage } from "@/lib/products/upload-main-image";
+import { uploadGalleryImages } from "@/lib/products/upload-gallery-images";
+import { attachProductCategories } from "@/lib/products/attach-product-categories";
+import { insertMainImage } from "@/lib/products/insert-main-image";
+import { insertProduct } from "@/lib/products/insert-product";
 
 export async function createProduct(
   formData: FormData
@@ -16,59 +23,15 @@ export async function createProduct(
 
 
   // =================================================
-  // FORM VALUES
+  // PRODUCT
   // =================================================
 
-  const title =
-    formData.get("title");
+  const product = parseProductForm(formData);
 
-  const price =
-    formData.get("price");
+validateProduct(product);
 
-  const stock =
-    formData.get("stock");
+const productData = productMapper(product);
 
-  const description =
-    formData.get("description");
-
-  const brandId =
-    formData.get("brandId");
-
-  const categories =
-    formData.getAll("categories");
-
-  const bladeSteel =
-    formData.get("bladeSteel");
-
-  const bladeThickness =
-    formData.get("bladeThickness");
-
-  const bladeLength =
-    formData.get("bladeLength");
-
-  const handleMaterial =
-    formData.get("handleMaterial");
-
-  const lockingType =
-    formData.get("lockingType");
-
-  const knifeType =
-    formData.get("knifeType");
-
- const bladeFinish =
-  formData.get("bladeFinish");
-
-const country =
-  formData.get("country");
-
-const weight =
-  formData.get("weight");
-
-const overallLength =
-  formData.get("overallLength");
-
-const reviewLink =
-  formData.get("reviewLink");
 
 
   // =================================================
@@ -89,283 +52,63 @@ const reviewLink =
     ) as File[];
 
 
-  // =================================================
-  // IMAGE NAME
-  // =================================================
-
-  const fileName =
-    `${Date.now()}-${mainImage.name}`;
-
-
-  // =================================================
-  // STORAGE UPLOAD
-  // =================================================
-
-  const {
-    error: imageError,
-  } = await supabase.storage
-    .from("product-images")
-    .upload(
-      fileName,
-      mainImage
-    );
-
-
-  // =================================================
-  // IMAGE ERROR
-  // =================================================
-
-  if (imageError) {
-
-    console.log(
-      "IMAGE ERROR:",
-      imageError
-    );
-
-    return;
-
-  }
-
-
-  // =================================================
-  // PUBLIC URL
-  // =================================================
-
-  const {
-    data: { publicUrl },
-  } = supabase.storage
-    .from("product-images")
-    .getPublicUrl(
-      fileName
-    );
-
-
-  // =================================================
-  // PRODUCT INSERT
-  // =================================================
-
-  const { data, error } =
-    await supabase
-      .from("products")
-      .insert([
-        {
-
-          title,
-          price,
-          stock,
-          description,
-
-          /* ====================================== */
-          /* BRAND */
-          /* ====================================== */
-
-          brand_id:
-            brandId
-              ? Number(brandId)
-              : null,
-
-          /* ====================================== */
-          /* SPECIFICATIONS */
-          /* ====================================== */
-
-          blade_steel: bladeSteel,
-          blade_thickness: bladeThickness,
-          blade_length: bladeLength,
-          handle_material: handleMaterial,
-          locking_type: lockingType,
-          knife_type: knifeType,
-          blade_finish: bladeFinish,
-          country,
-          weight,
-          overall_length: overallLength,
-          review_link: reviewLink,
-        },
-      ])
-      .select();
-
-
-  // =================================================
-  // INSERT ERROR
-  // =================================================
-
-  if (error) {
-
-    console.log(
-      "ERROR:",
-      error
-    );
-
-    return;
-
-  }
-
-
-  // =================================================
-  // PRODUCT ID
-  // =================================================
-
-  const productId =
-    data[0].id;
-
-
-  // =================================================
-  // PRODUCT CATEGORIES INSERT
-  // =================================================
-
-  if (categories.length > 0) {
-
-    const categoryRows =
-      categories.map((categoryId) => ({
-
-        product_id: productId,
-
-        category_id:
-          String(categoryId),
-
-      }));
-
-
-    const {
-      error: categoriesError,
-    } = await supabase
-      .from("product_categories")
-      .insert(categoryRows);
-
-
-    if (categoriesError) {
-
-      console.log(
-        "CATEGORIES ERROR:",
-        categoriesError
-      );
-
-    }
-
-  }
-
-
-  // =================================================
-  // MAIN IMAGE INSERT
-  // =================================================
-
-  const {
-    error: imageInsertError,
-  } = await supabase
-    .from("product_images")
-    .insert([
-      {
-        product_id: productId,
-        image_url: publicUrl,
-        is_main: true,
-      },
-    ]);
-
-
-  // =================================================
-  // IMAGE INSERT ERROR
-  // =================================================
-
-  if (imageInsertError) {
-
-    console.log(
-      "IMAGE INSERT ERROR:",
-      imageInsertError
-    );
-
-    return;
-
-  }
-
-
-  // =================================================
-  // GALLERY LOOP
-  // =================================================
-
-  for (const image of galleryImages) {
-
-    // =================================================
-    // EMPTY FILE SKIP
-    // =================================================
-
-    if (!image.name) continue;
-
-
-    // =================================================
-    // FILE NAME
-    // =================================================
-
-    const galleryFileName =
-      `${Date.now()}-${image.name}`;
-
-
-    // =================================================
-    // IMAGE UPLOAD
-    // =================================================
-
-    const {
-      error: galleryUploadError,
-    } = await supabase.storage
-      .from("product-images")
-      .upload(
-        galleryFileName,
-        image
-      );
-
-
-    // =================================================
-    // UPLOAD ERROR
-    // =================================================
-
-    if (galleryUploadError) {
-
-      console.log(
-        "GALLERY ERROR:",
-        galleryUploadError
-      );
-
-      continue;
-
-    }
-
-
-    // =================================================
-    // PUBLIC URL
-    // =================================================
-
-    const {
-      data: {
-        publicUrl: galleryUrl,
-      },
-    } = supabase.storage
-      .from("product-images")
-      .getPublicUrl(
-        galleryFileName
-      );
-
-
-    // =================================================
-    // IMAGE INSERT
-    // =================================================
-
-    await supabase
-      .from("product_images")
-      .insert([
-        {
-          product_id: productId,
-          image_url: galleryUrl,
-          is_main: false,
-        },
-      ]);
-
-  }
-
-
-  // =================================================
-  // SUCCESS
-  // =================================================
-
-  console.log(
-    "PRODUCT CREATED"
+// =================================================
+// MAIN IMAGE UPLOAD
+// =================================================
+
+const publicUrl =
+  await uploadMainImage(
+    supabase,
+    mainImage
   );
 
-}
+// =================================================
+// PRODUCT
+// =================================================
+
+const productId =
+  await insertProduct(
+    supabase,
+    productData
+  );
+
+// =================================================
+// PRODUCT CATEGORIES
+// =================================================
+
+await attachProductCategories(
+  supabase,
+  productId,
+  product.categories
+);
+
+// =================================================
+// MAIN IMAGE
+// =================================================
+
+await insertMainImage(
+  supabase,
+  productId,
+  publicUrl
+);
+
+
+
+// =================================================
+// GALLERY IMAGES
+// =================================================
+
+await uploadGalleryImages(
+  supabase,
+  productId,
+  galleryImages
+);
+
+// =================================================
+// SUCCESS
+// =================================================
+
+console.log(
+  "PRODUCT CREATED"
+)
+};
