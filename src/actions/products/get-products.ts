@@ -8,67 +8,41 @@ export async function getProducts(categoryId?: string) {
   // SUPABASE
   // ======================================
 
-  const supabase = await createClient();
+  const supabase=await createClient();
 
   // ======================================
   // BASE QUERY
   // ======================================
 
-  let query = supabase
+  let query=supabase
     .from("products")
     .select(`
       *,
-      product_images (
-        id,
-        image_url,
-        is_main
-      ),
-      product_categories (
-        category_id,
-        categories (
-          id,
-          name,
-          name_ka,
-          name_en
-        )
-      )
+      brands(id,name,slug,logo),
+      product_images(id,image_url,is_main),
+      product_categories(category_id,categories(id,name,name_ka,name_en))
     `)
-    .order("created_at", {
-      ascending: false,
-    });
+    .order("created_at",{ascending:false});
 
   // ======================================
   // CATEGORY FILTER
   // ======================================
 
-  if (categoryId) {
-
-    query = query.eq(
-      "product_categories.category_id",
-      categoryId
-    );
-
-  }
+  if(categoryId) query=query.eq("product_categories.category_id",categoryId);
 
   // ======================================
   // EXECUTE QUERY
   // ======================================
 
-  const { data, error } = await query;
+  const {data,error}=await query;
 
   // ======================================
   // ERROR
   // ======================================
 
-  if (error) {
-
-    console.log(
-      "PRODUCTS FETCH ERROR:",
-      error.message
-    );
-
+  if(error){
+    console.log("PRODUCTS FETCH ERROR:",error.message);
     return [];
-
   }
 
   // ======================================
