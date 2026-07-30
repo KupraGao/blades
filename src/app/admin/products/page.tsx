@@ -80,28 +80,43 @@ export default async function ProductsPage(){
               {/* IMAGE */}
               <div>
 
-                {mainImage?(
-                  <img
-                    src={mainImage.image_url}
-                    alt={product.title}
-                    className="h-14 w-14 rounded-lg object-cover"
-                  />
-                ):(
-                  <div className="h-14 w-14 rounded-lg bg-zinc-800"/>
-                )}
+                <Link
+                  href={`/products/${product.id}`}
+                  target="_blank"
+                >
+
+                  {mainImage?(
+                    <img
+                      src={mainImage.image_url}
+                      alt={product.title}
+                      className="h-14 w-14 rounded-lg object-cover transition duration-300 hover:scale-105"
+                    />
+                  ):(
+                    <div className="h-14 w-14 rounded-lg bg-zinc-800"/>
+                  )}
+
+                </Link>
 
               </div>
 
               {/* PRODUCT */}
               <div>
 
-                <h3 className="font-semibold text-white">
-                  {product.title}
-                </h3>
+                <Link
+                  href={`/products/${product.id}`}
+                  target="_blank"
+                  className="group"
+                >
 
-                <p className="text-sm text-zinc-400">
-                  {product.knife_type||"-"}
-                </p>
+                  <h3 className="font-semibold text-white transition group-hover:text-zinc-300">
+                    {product.title}
+                  </h3>
+
+                  <p className="text-sm text-zinc-400">
+                    {product.knife_type||"-"}
+                  </p>
+
+                </Link>
 
               </div>
 
