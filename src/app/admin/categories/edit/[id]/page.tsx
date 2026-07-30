@@ -1,5 +1,5 @@
-import { getSingleBrand } from "@/actions/brands/get-single-brand";
-import { updateBrand } from "@/actions/brands/update-brand";
+import { getSingleCategory } from "@/actions/categories/get-single-category";
+import { updateCategory } from "@/actions/categories/update-category";
 
 type Props = {
   params: Promise<{
@@ -7,29 +7,39 @@ type Props = {
   }>;
 };
 
-export default async function EditBrandPage({ params }: Props) {
+export default async function EditCategoryPage({
+  params,
+}: Props) {
+
   const { id } = await params;
 
-  const brand = await getSingleBrand(Number(id));
-
-  if (!brand) {
-    return <h1 className="text-2xl font-bold text-white">Brand not found</h1>;
+const category = await getSingleCategory(id);
+  if (!category) {
+    return (
+      <h1 className="text-2xl font-bold text-white">
+        Category not found
+      </h1>
+    );
   }
 
   async function update(formData: FormData) {
     "use server";
-    await updateBrand(Number(id), formData);
-  }
+await updateCategory(id, formData);  }
 
   return (
     <div>
+
       {/* TOP */}
       <div className="mb-8">
-        <h1 className="text-4xl font-bold text-white">Edit Brand</h1>
+
+        <h1 className="text-4xl font-bold text-white">
+          Edit Category
+        </h1>
 
         <p className="mt-2 text-zinc-400">
-          Update brand information
+          Update category information
         </p>
+
       </div>
 
       {/* FORM */}
@@ -37,60 +47,47 @@ export default async function EditBrandPage({ params }: Props) {
         action={update}
         className="space-y-6 rounded-2xl border border-zinc-800 bg-zinc-900 p-8"
       >
-        {/* NAME */}
+
+        {/* GEORGIAN */}
         <div>
+
           <label
-            htmlFor="name"
+            htmlFor="name_ka"
             className="mb-2 block text-sm font-medium text-zinc-300"
           >
-            Brand Name
+            Georgian Name
           </label>
 
           <input
-            id="name"
-            name="name"
+            id="name_ka"
+            name="name_ka"
             type="text"
-            defaultValue={brand.name}
+            defaultValue={category.name_ka}
             className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white outline-none transition focus:border-white"
             required
           />
+
         </div>
 
-        {/* SLUG */}
+        {/* ENGLISH */}
         <div>
+
           <label
-            htmlFor="slug"
+            htmlFor="name_en"
             className="mb-2 block text-sm font-medium text-zinc-300"
           >
-            Slug
+            English Name
           </label>
 
           <input
-            id="slug"
-            name="slug"
+            id="name_en"
+            name="name_en"
             type="text"
-            defaultValue={brand.slug}
+            defaultValue={category.name_en}
             className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white outline-none transition focus:border-white"
             required
           />
-        </div>
 
-        {/* LOGO */}
-        <div>
-          <label
-            htmlFor="logo"
-            className="mb-2 block text-sm font-medium text-zinc-300"
-          >
-            Logo URL
-          </label>
-
-          <input
-            id="logo"
-            name="logo"
-            type="text"
-            defaultValue={brand.logo ?? ""}
-            className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white outline-none transition focus:border-white"
-          />
         </div>
 
         {/* BUTTON */}
@@ -98,9 +95,12 @@ export default async function EditBrandPage({ params }: Props) {
           type="submit"
           className="rounded-xl bg-white px-6 py-3 font-semibold text-black transition hover:bg-zinc-200"
         >
-          Update Brand
+          Update Category
         </button>
+
       </form>
+
     </div>
   );
+
 }
