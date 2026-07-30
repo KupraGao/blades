@@ -1,22 +1,22 @@
 import { ProductInput } from "@/types/product.types";
 
-export function validateProduct(product: ProductInput) {
+export function validateProduct(product:ProductInput){
 
-  if (!product.title)
+  if(!product.title)
     throw new Error("პროდუქტის დასახელება აუცილებელია.");
 
-  if (product.title.length < 2)
+  if(product.title.length<2)
     throw new Error("დასახელება მინიმუმ 2 სიმბოლო უნდა იყოს.");
 
-  if (!Number.isFinite(product.price) || product.price <= 0)
+  if(!Number.isFinite(product.price)||product.price<=0)
     throw new Error("ფასი არასწორია.");
 
-  if (!Number.isInteger(product.stock) || product.stock < 0)
+  if(!Number.isInteger(product.stock)||product.stock<0)
     throw new Error("მარაგი არასწორია.");
 
-  if (
-    product.brandId !== null &&
-    (!Number.isInteger(product.brandId) || product.brandId <= 0)
+  if(
+    product.brandId!==null&&
+    (!Number.isInteger(product.brandId)||product.brandId<=0)
   )
     throw new Error("ბრენდი არასწორია.");
 
@@ -24,9 +24,9 @@ export function validateProduct(product: ProductInput) {
   // CATEGORIES
   // =========================================
 
-  if (
+  if(
     product.categories.some(
-      id => id.trim() === ""
+      id=>!Number.isInteger(id)||id<=0
     )
   )
     throw new Error("კატეგორია არასწორია.");
@@ -35,18 +35,12 @@ export function validateProduct(product: ProductInput) {
   // REVIEW LINK
   // =========================================
 
-  if (product.reviewLink) {
-
-    try {
-
+  if(product.reviewLink){
+    try{
       new URL(product.reviewLink);
-
-    } catch {
-
+    }catch{
       throw new Error("ლინკი არასწორია.");
-
     }
-
   }
 
 }

@@ -2,41 +2,46 @@
 // PRODUCT FORM INPUT
 // ======================================================
 
-export interface ProductInput {
-  title: string;
-  description: string;
-  price: number;
-  stock: number;
+export interface ProductInput{
+  title:string;
+  description:string;
+  price:number;
+  stock:number;
+  brandId:number|null;
+  categories:number[];
+  bladeSteel:string;
+  bladeThickness:string;
+  bladeLength:string;
+  handleMaterial:string;
+  lockingType:string;
+  knifeType:string;
+  bladeFinish:string;
+  country:string;
+  weight:string;
+  overallLength:string;
+  reviewLink:string;
+}
 
-  brandId: number | null;
+// ======================================================
+// PARSED PRODUCT FORM
+// ======================================================
 
-  categories: string[];
-
-  bladeSteel: string;
-  bladeThickness: string;
-  bladeLength: string;
-  handleMaterial: string;
-  lockingType: string;
-  knifeType: string;
-  bladeFinish: string;
-
-  country: string;
-  weight: string;
-  overallLength: string;
-
-  reviewLink: string;
+export interface ParsedProductForm{
+  product:ProductInput;
+  mainImage:File;
+  galleryImages:File[];
 }
 
 // ======================================================
 // CREATE PRODUCT
 // ======================================================
 
-export interface CreateProductInput extends ProductInput {}
+export interface CreateProductInput extends ProductInput{}
 
 // ======================================================
 // UPDATE PRODUCT
 // ======================================================
 
-export interface UpdateProductInput extends ProductInput {
-  id: number;
+export interface UpdateProductInput extends ProductInput{
+  id:number;
 }

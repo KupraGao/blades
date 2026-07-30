@@ -10,105 +10,88 @@ import { attachProductCategories } from "@/lib/products/attach-product-categorie
 import { insertMainImage } from "@/lib/products/insert-main-image";
 import { insertProduct } from "@/lib/products/insert-product";
 
-export async function createProduct(
-  formData: FormData
-) {
+export async function createProduct(formData:FormData){
 
   // =================================================
   // SUPABASE
   // =================================================
 
-  const supabase =
-    await createClient();
+  const supabase=await createClient();
 
+  // =================================================
+  // FORM DATA
+  // =================================================
+
+  const{
+    product,
+    mainImage,
+    galleryImages,
+  }=parseProductForm(formData);
+
+  // =================================================
+  // VALIDATION
+  // =================================================
+
+  validateProduct(product);
 
   // =================================================
   // PRODUCT
   // =================================================
 
-  const product = parseProductForm(formData);
+  const productData=productMapper(product);
 
-validateProduct(product);
+  // =================================================
+  // MAIN IMAGE UPLOAD
+  // =================================================
 
-const productData = productMapper(product);
+  const publicUrl=await uploadMainImage(
+    supabase,
+    mainImage
+  );
 
+  // =================================================
+  // PRODUCT
+  // =================================================
 
+  const productId=await insertProduct(
+    supabase,
+    productData
+  );
+
+  // =================================================
+  // PRODUCT CATEGORIES
+  // =================================================
+
+  await attachProductCategories(
+    supabase,
+    productId,
+    product.categories
+  );
 
   // =================================================
   // MAIN IMAGE
   // =================================================
 
-  const mainImage =
-    formData.get("mainImage") as File;
-
+  await insertMainImage(
+    supabase,
+    productId,
+    publicUrl
+  );
 
   // =================================================
   // GALLERY IMAGES
   // =================================================
 
-  const galleryImages =
-    formData.getAll(
-      "galleryImages"
-    ) as File[];
-
-
-// =================================================
-// MAIN IMAGE UPLOAD
-// =================================================
-
-const publicUrl =
-  await uploadMainImage(
+  await uploadGalleryImages(
     supabase,
-    mainImage
+    productId,
+    galleryImages
   );
 
-// =================================================
-// PRODUCT
-// =================================================
+  // =================================================
+  // SUCCESS
+  // =================================================
 
-const productId =
-  await insertProduct(
-    supabase,
-    productData
-  );
+  console.log("PRODUCT CREATED");
 
-// =================================================
-// PRODUCT CATEGORIES
-// =================================================
-
-await attachProductCategories(
-  supabase,
-  productId,
-  product.categories
-);
-
-// =================================================
-// MAIN IMAGE
-// =================================================
-
-await insertMainImage(
-  supabase,
-  productId,
-  publicUrl
-);
-
-
-
-// =================================================
-// GALLERY IMAGES
-// =================================================
-
-await uploadGalleryImages(
-  supabase,
-  productId,
-  galleryImages
-);
-
-// =================================================
-// SUCCESS
-// =================================================
-
-console.log(
-  "PRODUCT CREATED"
-)
-};
+}

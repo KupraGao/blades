@@ -1,90 +1,72 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 
 export async function uploadGalleryImages(
-  supabase: SupabaseClient,
-  productId: number,
-  galleryImages: File[]
-) {
+  supabase:SupabaseClient,
+  productId:number,
+  galleryImages:File[]
+){
 
   // =================================================
   // GALLERY LOOP
   // =================================================
 
-  for (const image of galleryImages) {
+  for(const image of galleryImages){
 
     // =================================================
     // EMPTY FILE SKIP
     // =================================================
 
-    if (!image.name) continue;
-
+    if(!image.name)continue;
 
     // =================================================
     // FILE NAME
     // =================================================
 
-    const galleryFileName =
-      `${Date.now()}-${image.name}`;
-
+    const fileName=`${crypto.randomUUID()}-${image.name}`;
 
     // =================================================
     // IMAGE UPLOAD
     // =================================================
 
-    const {
-      error: galleryUploadError,
-    } = await supabase.storage
+    const{error:galleryUploadError}=await supabase.storage
       .from("product-images")
-      .upload(
-        galleryFileName,
-        image
-      );
-
+      .upload(fileName,image);
 
     // =================================================
     // UPLOAD ERROR
     // =================================================
 
-    if (galleryUploadError) {
-
-      console.log(
-        "GALLERY ERROR:",
-        galleryUploadError
-      );
-
-      continue;
-
+    if(galleryUploadError){
+      console.log("GALLERY ERROR:",galleryUploadError);
+      throw galleryUploadError;
     }
-
 
     // =================================================
     // PUBLIC URL
     // =================================================
 
-    const {
-      data: {
-        publicUrl: galleryUrl,
-      },
-    } = supabase.storage
+    const{
+      data:{publicUrl},
+    }=supabase.storage
       .from("product-images")
-      .getPublicUrl(
-        galleryFileName
-      );
-
+      .getPublicUrl(fileName);
 
     // =================================================
     // IMAGE INSERT
     // =================================================
 
-    await supabase
+    const{error:imageInsertError}=await supabase
       .from("product_images")
-      .insert([
-        {
-          product_id: productId,
-          image_url: galleryUrl,
-          is_main: false,
-        },
-      ]);
+      .insert([{
+        product_id:productId,
+        image_url:publicUrl,
+        is_main:false,
+      }]);
+
+    if(imageInsertError){
+      console.log("IMAGE INSERT ERROR:",imageInsertError);
+      throw imageInsertError;
+    }
 
   }
 

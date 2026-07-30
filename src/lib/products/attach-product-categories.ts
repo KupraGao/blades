@@ -1,36 +1,41 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 
 export async function attachProductCategories(
-  supabase: SupabaseClient,
-  productId: number,
-  categories: string[]
-) {
+  supabase:SupabaseClient,
+  productId:number,
+  categories:number[]
+){
 
-  if (categories.length === 0) {
+  // =================================================
+  // EMPTY CATEGORIES
+  // =================================================
 
-    return;
+  if(!categories.length)return;
 
-  }
+  // =================================================
+  // CATEGORY ROWS
+  // =================================================
 
-  const categoryRows =
-    categories.map(categoryId => ({
-      product_id: productId,
-      category_id: categoryId,
-    }));
+  const categoryRows=categories.map(categoryId=>({
+    product_id:productId,
+    category_id:categoryId,
+  }));
 
-  const {
-    error: categoriesError,
-  } = await supabase
+  // =================================================
+  // INSERT
+  // =================================================
+
+  const{error:categoriesError}=await supabase
     .from("product_categories")
     .insert(categoryRows);
 
-  if (categoriesError) {
+  // =================================================
+  // INSERT ERROR
+  // =================================================
 
-    console.log(
-      "CATEGORIES ERROR:",
-      categoriesError
-    );
-
+  if(categoriesError){
+    console.log("CATEGORIES ERROR:",categoriesError);
+    throw categoriesError;
   }
 
 }
