@@ -1,16 +1,25 @@
-type Category = {
-  id: string;
-  name: string;
+type Category={
+  id:string;
+  name_ka:string;
+  name_en:string;
 };
 
-type CategoriesSectionProps = {
-  categories: Category[];
+type ProductCategory={
+  category_id:string;
+};
+
+type CategoriesSectionProps={
+  categories:Category[];
+  productCategories?:ProductCategory[];
 };
 
 export default function CategoriesSection({
   categories,
-}: CategoriesSectionProps) {
-  return (
+  productCategories,
+}:CategoriesSectionProps){
+
+  return(
+
     <div className="rounded-3xl border border-zinc-800 bg-zinc-900/40 p-6">
 
       <h2 className="mb-6 text-xl font-bold text-white">
@@ -19,7 +28,7 @@ export default function CategoriesSection({
 
       <div className="grid gap-4 md:grid-cols-3">
 
-        {categories.map((category) => (
+        {categories.map((category)=>(
 
           <label
             key={category.id}
@@ -30,10 +39,13 @@ export default function CategoriesSection({
               type="checkbox"
               name="categories"
               value={category.id}
+              defaultChecked={productCategories?.some(
+                item=>item.category_id===category.id
+              )}
               className="h-5 w-5"
             />
 
-            {category.name}
+            {category.name_ka}
 
           </label>
 
@@ -42,5 +54,7 @@ export default function CategoriesSection({
       </div>
 
     </div>
+
   );
+
 }

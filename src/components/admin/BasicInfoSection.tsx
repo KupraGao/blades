@@ -1,16 +1,28 @@
-type Brand = {
-  id: number;
-  name: string;
+type Brand={
+  id:number;
+  name:string;
 };
 
-type BasicInfoSectionProps = {
-  brands: Brand[];
+type Product={
+  title:string;
+  brand_id:number|null;
+  price:number;
+  review_link:string|null;
+  stock:number;
+};
+
+type BasicInfoSectionProps={
+  brands:Brand[];
+  product?:Product;
 };
 
 export default function BasicInfoSection({
   brands,
-}: BasicInfoSectionProps) {
-  return (
+  product,
+}:BasicInfoSectionProps){
+
+  return(
+
     <div className="rounded-3xl border border-zinc-800 bg-zinc-900/40 p-6">
 
       <h2 className="mb-6 text-xl font-bold text-white">
@@ -33,6 +45,7 @@ export default function BasicInfoSection({
             id="title"
             type="text"
             name="title"
+            defaultValue={product?.title}
             placeholder="Spyderco Paramilitary 2"
             title="პროდუქტის დასახელება"
             className="w-full rounded-xl border border-zinc-800 bg-black/40 px-4 py-3 text-white outline-none transition focus:border-white"
@@ -53,6 +66,7 @@ export default function BasicInfoSection({
           <select
             id="brandId"
             name="brandId"
+            defaultValue={product?.brand_id ?? ""}
             title="ბრენდის არჩევა"
             className="w-full rounded-xl border border-zinc-800 bg-black/40 px-4 py-3 text-white outline-none transition focus:border-white"
           >
@@ -61,7 +75,7 @@ export default function BasicInfoSection({
               აირჩიე ბრენდი
             </option>
 
-            {brands.map((brand) => (
+            {brands.map((brand)=>(
 
               <option
                 key={brand.id}
@@ -90,6 +104,7 @@ export default function BasicInfoSection({
             id="price"
             type="number"
             name="price"
+            defaultValue={product?.price}
             placeholder="320"
             title="ფასი"
             className="w-full rounded-xl border border-zinc-800 bg-black/40 px-4 py-3 text-white outline-none transition focus:border-white"
@@ -107,12 +122,8 @@ export default function BasicInfoSection({
             განხილვის ლინკი
           </label>
 
-          <input
-            id="reviewLink"
-            type="text"
-            name="reviewLink"
-            placeholder="https://youtube.com/watch?v=..."
-            title="განხილვის ლინკი"
+          <input id="reviewLink" type="text" name="reviewLink" defaultValue={product?.review_link ?? ""} 
+          placeholder="https://youtube.com/watch?v=..." title="განხილვის ლინკი"
             className="w-full rounded-xl border border-zinc-800 bg-black/40 px-4 py-3 text-white outline-none transition focus:border-white"
           />
 
@@ -128,12 +139,7 @@ export default function BasicInfoSection({
             მარაგი
           </label>
 
-          <input
-            id="stock"
-            type="number"
-            name="stock"
-            placeholder="15"
-            title="მარაგი"
+          <input id="stock" type="number" name="stock" defaultValue={product?.stock} placeholder="15" title="მარაგი"
             className="w-full rounded-xl border border-zinc-800 bg-black/40 px-4 py-3 text-white outline-none transition focus:border-white"
           />
 
@@ -142,5 +148,7 @@ export default function BasicInfoSection({
       </div>
 
     </div>
+
   );
+
 }

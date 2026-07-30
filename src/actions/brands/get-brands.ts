@@ -2,30 +2,20 @@
 
 import { createClient } from "@/lib/supabase/server";
 
-export async function getBrands() {
+export async function getBrands(){
 
-  const supabase =
-    await createClient();
+  const supabase=await createClient();
 
-  const {
-    data,
-    error,
-  } = await supabase
+  const{data,error}=await supabase
     .from("brands")
     .select("*")
     .order("name");
 
-  if (error) {
-
-    console.log(
-      "BRANDS ERROR:",
-      error
-    );
-
+  if(error){
+    console.log("BRANDS ERROR:",error);
     return [];
-
   }
 
   return data;
 
-} 
+}

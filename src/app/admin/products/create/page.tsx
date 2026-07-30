@@ -1,16 +1,16 @@
 import { getBrands } from "@/actions/brands/get-brands";
 import { getCategories } from "@/actions/categories/get-categories";
 
-import CreateProductForm from "@/components/admin/CreateProductForm";
+import ProductForm from "@/components/admin/ProductForm";
 
 /* PAGE */
-export default async function CreateProductPage() {
+export default async function CreateProductPage(){
 
-  const brands = await getBrands();
+  const brands=await getBrands();
 
-  const categories = await getCategories();
+  const categories=await getCategories();
 
-  return (
+  return(
 
     <div className="mx-auto max-w-5xl">
 
@@ -27,7 +27,7 @@ export default async function CreateProductPage() {
 
       </div>
 
-      <CreateProductForm
+      <ProductForm
         brands={brands}
         categories={categories}
       />

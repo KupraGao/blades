@@ -8,7 +8,7 @@ export function parseProductForm(formData:FormData):ParsedProductForm{
       price:Number(formData.get("price")??0),
       stock:Number(formData.get("stock")??0),
       brandId:formData.get("brandId")?Number(formData.get("brandId")):null,
-      categories:formData.getAll("categories").map(category=>Number(category)),
+      categories:formData.getAll("categories").map(category=>String(category)),
       bladeSteel:String(formData.get("bladeSteel")??"").trim(),
       bladeThickness:String(formData.get("bladeThickness")??"").trim(),
       bladeLength:String(formData.get("bladeLength")??"").trim(),

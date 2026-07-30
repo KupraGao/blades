@@ -24,13 +24,16 @@ export function validateProduct(product:ProductInput){
   // CATEGORIES
   // =========================================
 
-  if(
-    product.categories.some(
-      id=>!Number.isInteger(id)||id<=0
-    )
-  )
-    throw new Error("კატეგორია არასწორია.");
+const uuidRegex=
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
+if(
+  product.categories.some(
+    id=>!uuidRegex.test(id)
+  )
+){
+  throw new Error("კატეგორია არასწორია.");
+}
   // =========================================
   // REVIEW LINK
   // =========================================

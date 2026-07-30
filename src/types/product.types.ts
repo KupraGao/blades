@@ -8,7 +8,7 @@ export interface ProductInput{
   price:number;
   stock:number;
   brandId:number|null;
-  categories:number[];
+  categories:string[];
   bladeSteel:string;
   bladeThickness:string;
   bladeLength:string;

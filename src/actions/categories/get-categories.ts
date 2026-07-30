@@ -2,23 +2,19 @@
 
 import { createClient } from "@/lib/supabase/server";
 
-export async function getCategories() {
+export async function getCategories(){
 
   // =========================================
   // SUPABASE
   // =========================================
 
-  const supabase =
-    await createClient();
+  const supabase=await createClient();
 
   // =========================================
   // FETCH CATEGORIES
   // =========================================
 
-  const {
-    data,
-    error,
-  } = await supabase
+  const{data,error}=await supabase
     .from("categories")
     .select("*")
     .order("id");
@@ -27,15 +23,9 @@ export async function getCategories() {
   // ERROR
   // =========================================
 
-  if (error) {
-
-    console.log(
-      "CATEGORIES ERROR:",
-      error
-    );
-
+  if(error){
+    console.log("CATEGORIES ERROR:",error);
     return [];
-
   }
 
   // =========================================

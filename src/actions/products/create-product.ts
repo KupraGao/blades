@@ -1,5 +1,8 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+
 import { createClient } from "@/lib/supabase/server";
 import { parseProductForm } from "@/lib/products/parse-product-form";
 import { validateProduct } from "@/lib/products/validate-product";
@@ -89,9 +92,15 @@ export async function createProduct(formData:FormData){
   );
 
   // =================================================
-  // SUCCESS
+  // CACHE
   // =================================================
 
-  console.log("PRODUCT CREATED");
+  revalidatePath("/admin/products");
+
+  // =================================================
+  // REDIRECT
+  // =================================================
+
+  redirect("/admin/products");
 
 }

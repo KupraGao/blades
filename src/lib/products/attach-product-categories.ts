@@ -3,7 +3,7 @@ import { SupabaseClient } from "@supabase/supabase-js";
 export async function attachProductCategories(
   supabase:SupabaseClient,
   productId:number,
-  categories:number[]
+  categories:string[]
 ){
 
   // =================================================
