@@ -1,4 +1,15 @@
-export default function BasicInfoSection() {
+type Brand = {
+  id: number;
+  name: string;
+};
+
+type BasicInfoSectionProps = {
+  brands: Brand[];
+};
+
+export default function BasicInfoSection({
+  brands,
+}: BasicInfoSectionProps) {
   return (
     <div className="rounded-3xl border border-zinc-800 bg-zinc-900/40 p-6">
 
@@ -50,15 +61,16 @@ export default function BasicInfoSection() {
               აირჩიე ბრენდი
             </option>
 
-            <option value="1">Olamic</option>
-            <option value="2">Kansept Knives</option>
-            <option value="3">Maxace</option>
-            <option value="4">Spyderco</option>
-            <option value="5">Cold Steel</option>
-            <option value="6">Cheburkov</option>
-            <option value="7">Microtech</option>
-            <option value="8">Tuotown</option>
-            <option value="9">Freetiger</option>
+            {brands.map((brand) => (
+
+              <option
+                key={brand.id}
+                value={brand.id}
+              >
+                {brand.name}
+              </option>
+
+            ))}
 
           </select>
 

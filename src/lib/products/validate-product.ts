@@ -20,19 +20,33 @@ export function validateProduct(product: ProductInput) {
   )
     throw new Error("ბრენდი არასწორია.");
 
+  // =========================================
+  // CATEGORIES
+  // =========================================
+
   if (
     product.categories.some(
-      id => !Number.isInteger(id) || id <= 0
+      id => id.trim() === ""
     )
   )
     throw new Error("კატეგორია არასწორია.");
 
+  // =========================================
+  // REVIEW LINK
+  // =========================================
+
   if (product.reviewLink) {
+
     try {
+
       new URL(product.reviewLink);
+
     } catch {
+
       throw new Error("ლინკი არასწორია.");
+
     }
+
   }
 
 }

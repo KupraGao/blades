@@ -10,7 +10,7 @@ export interface ProductInput {
 
   brandId: number | null;
 
-  categories: number[];
+  categories: string[];
 
   bladeSteel: string;
   bladeThickness: string;

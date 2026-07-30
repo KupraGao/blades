@@ -20,7 +20,7 @@ export function parseProductForm(
 
     categories: formData
       .getAll("categories")
-      .map(category => Number(category)),
+      .map(category => String(category)),
 
     bladeSteel: String(formData.get("bladeSteel") ?? "").trim(),
 
