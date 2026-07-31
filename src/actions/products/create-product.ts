@@ -13,23 +13,23 @@ import { attachProductCategories } from "@/lib/products/attach-product-categorie
 import { insertMainImage } from "@/lib/products/insert-main-image";
 import { insertProduct } from "@/lib/products/insert-product";
 
-export async function createProduct(formData:FormData){
+export async function createProduct(formData: FormData) {
 
   // =================================================
   // SUPABASE
   // =================================================
 
-  const supabase=await createClient();
+  const supabase = await createClient();
 
   // =================================================
   // FORM DATA
   // =================================================
 
-  const{
+  const {
     product,
     mainImage,
     galleryImages,
-  }=parseProductForm(formData);
+  } = parseProductForm(formData);
 
   // =================================================
   // VALIDATION
@@ -38,16 +38,24 @@ export async function createProduct(formData:FormData){
   validateProduct(product);
 
   // =================================================
+  // MAIN IMAGE REQUIRED
+  // =================================================
+
+  if (!mainImage) {
+    throw new Error("მთავარი ფოტო აუცილებელია.");
+  }
+
+  // =================================================
   // PRODUCT
   // =================================================
 
-  const productData=productMapper(product);
+  const productData = productMapper(product);
 
   // =================================================
   // MAIN IMAGE UPLOAD
   // =================================================
 
-  const publicUrl=await uploadMainImage(
+  const publicUrl = await uploadMainImage(
     supabase,
     mainImage
   );
@@ -56,7 +64,7 @@ export async function createProduct(formData:FormData){
   // PRODUCT
   // =================================================
 
-  const productId=await insertProduct(
+  const productId = await insertProduct(
     supabase,
     productData
   );
