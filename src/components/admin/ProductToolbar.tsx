@@ -1,23 +1,20 @@
 "use client";
 
-import Link from "next/link";
-
 import ProductSearch from "./ProductSearch";
+import ProductSort from "./ProductSort";
+import ProductLimit from "./ProductLimit";
 
 export default function ProductToolbar(){
 
   return(
 
-    <div className="flex items-center justify-between gap-4">
+    <div className="mb-8 flex items-center gap-3">
 
       <ProductSearch />
 
-      <Link
-        href="/admin/products/create"
-        className="rounded-xl bg-white px-5 py-3 font-semibold text-black transition hover:bg-zinc-200"
-      >
-        + Add Product
-      </Link>
+      <ProductSort />
+
+      <ProductLimit />
 
     </div>
 
