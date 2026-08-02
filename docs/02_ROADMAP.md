@@ -18,8 +18,6 @@
 
 ⬜ Product Filters
 
-⬜ Pagination
-
 ⬜ Stock Management
 
 ⬜ Bulk Actions

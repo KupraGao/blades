@@ -14,6 +14,21 @@
 
 ---
 
+## v1.2.0
+
+### Product Pagination ✅
+
+- Server-side Pagination
+- Product Page Size Selector
+- URL Page Params
+- URL Limit Params
+- Previous / Next Navigation
+- Dynamic Page Numbers
+- Search + Pagination Integration
+- Sorting + Pagination Integration
+
+---
+
 ## v1.1.0
 
 ### Product Search ✅

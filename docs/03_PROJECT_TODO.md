@@ -16,7 +16,7 @@
 
 ## მიმდინარე სამუშაო
 
-⬜ Pagination
+⬜ Product Filters
 
 ---
 

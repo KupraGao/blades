@@ -6,12 +6,16 @@ type GetProductsOptions={
   categoryId?:string;
   search?:string;
   sort?:string;
+  page?:number;
+  limit?:number;
 };
 
 export async function getProducts({
   categoryId,
   search,
   sort,
+  page=1,
+  limit=20,
 }:GetProductsOptions={}){
 
   const supabase=await createClient();
@@ -23,7 +27,9 @@ export async function getProducts({
       brands(id,name,slug,logo),
       product_images(id,image_url,is_main),
       product_categories(category_id,categories(id,name_ka,name_en))
-    `);
+    `,{
+      count:"exact",
+    });
 
   if(categoryId){
     query=query.eq("product_categories.category_id",categoryId);
@@ -62,13 +68,29 @@ export async function getProducts({
 
   }
 
-  const{data,error}=await query;
+  const from=(page-1)*limit;
+  const to=from+limit-1;
+
+  query=query.range(from,to);
+
+  const{
+    data,
+    error,
+    count,
+  }=await query;
 
   if(error){
     console.log("PRODUCTS FETCH ERROR:",error);
-    return [];
+
+    return{
+      products:[],
+      totalPages:0,
+    };
   }
 
-  return data;
+  return{
+    products:data,
+    totalPages:Math.ceil((count??0)/limit),
+  };
 
 }

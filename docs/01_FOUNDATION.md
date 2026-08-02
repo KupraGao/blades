@@ -59,6 +59,8 @@ Foundation დასრულების შემდეგ ეს ფაილ
 - UUID Images
 - Product Search
 - Product Sorting
+- Product Pagination
+- Product Page Size Selector
 
 ---
 
@@ -92,6 +94,10 @@ Foundation დასრულების შემდეგ ეს ფაილ
 ## Admin CMS
 
 - Products
+- Product Search
+- Product Sorting
+- Product Pagination
+- Product Page Size Selector
 - Brands
 - Categories
 - Dashboard Foundation

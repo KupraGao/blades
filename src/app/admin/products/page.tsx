@@ -3,6 +3,8 @@ import Link from "next/link";
 import { getProducts } from "@/actions/products/get-products";
 import ProductSearch from "@/components/admin/ProductSearch";
 import ProductSort from "@/components/admin/ProductSort";
+import Pagination from "@/components/admin/Pagination";
+import ProductLimit from "@/components/admin/ProductLimit";
 import DeleteProductButton from "./DeleteProductButton";
 
 type ProductImage={
@@ -24,6 +26,8 @@ type Props={
   searchParams:Promise<{
     search?:string;
     sort?:string;
+    page?:string;
+    limit?:string;
   }>;
 };
 
@@ -31,15 +35,22 @@ export default async function ProductsPage({
   searchParams,
 }:Props){
 
-  const{
-    search,
-    sort,
-  }=await searchParams;
+const{
+  search,
+  sort,
+  page,
+  limit,
+}=await searchParams;
 
-  const products=await getProducts({
-    search,
-    sort,
-  });
+const{
+  products,
+  totalPages,
+}=await getProducts({
+  search,
+  sort,
+  page:Number(page??1),
+  limit:Number(limit??20),
+});
 
   return(
 
@@ -75,6 +86,8 @@ export default async function ProductsPage({
         <ProductSearch />
 
         <ProductSort />
+
+        <ProductLimit />
 
       </div>
 
@@ -115,13 +128,17 @@ export default async function ProductsPage({
                 >
 
                   {mainImage?(
+
                     <img
                       src={mainImage.image_url}
                       alt={product.title}
                       className="h-14 w-14 rounded-lg object-cover transition duration-300 hover:scale-105"
                     />
+
                   ):(
+
                     <div className="h-14 w-14 rounded-lg bg-zinc-800"/>
+
                   )}
 
                 </Link>
@@ -194,6 +211,13 @@ export default async function ProductsPage({
         })}
 
       </div>
+
+      {/* PAGINATION */}
+
+      <Pagination
+        currentPage={Number(page??1)}
+        totalPages={totalPages}
+      />
 
     </div>
 
