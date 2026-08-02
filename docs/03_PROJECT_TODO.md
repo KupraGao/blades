@@ -9,6 +9,7 @@
 სამუშაოს დასრულების შემდეგ ჩანაწერები აქედან იშლება.
 
 ---
+
 # 🚧 Current Sprint
 
 ---
@@ -21,20 +22,24 @@
 
 ## შემდეგი სპრინტი
 
-⬜ Product Search UI
+### 🎯 Product Filters
 
-⬜ Search Logic
+⬜ Brand Filter
 
-⬜ Debounce
+⬜ Category Filter
 
-⬜ URL Search Params
+⬜ Stock Filter
+
+⬜ Multiple Filters
 
 ---
 
 ## შემდეგ
 
-⬜ Product Filters
+### 📄 Product Listing
 
 ⬜ Sorting
 
 ⬜ Pagination
+
+⬜ Results Counter

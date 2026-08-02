@@ -10,14 +10,11 @@
 
 ---
 
-
 # 🚀 Ecommerce Advanced Roadmap
 
 ---
 
 ## Products
-
-⬜ Product Search
 
 ⬜ Product Filters
 

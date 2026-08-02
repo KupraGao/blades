@@ -9,7 +9,20 @@
 ეს საშუალებას იძლევა მომავალში ზუსტად ვიცოდეთ რა შეიცვალა და როდის.
 
 ---
+
 # Changelog
+
+---
+
+## v1.1.0
+
+### Product Search ✅
+
+- Search UI
+- Server-side Search
+- URL Search Params
+- Debounce
+- Global Search (Product Fields)
 
 ---
 

@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { getProducts } from "@/actions/products/get-products";
+import ProductSearch from "@/components/admin/ProductSearch";
 import DeleteProductButton from "./DeleteProductButton";
 
 type ProductImage={
@@ -18,16 +19,28 @@ type Product={
   product_images:ProductImage[];
 };
 
-export default async function ProductsPage(){
+type Props={
+  searchParams:Promise<{
+    search?:string;
+  }>;
+};
 
-  const products=await getProducts();
+export default async function ProductsPage({
+  searchParams,
+}:Props){
+
+  const{search}=await searchParams;
+
+  const products=await getProducts({
+    search,
+  });
 
   return(
 
     <div>
 
       {/* TOP */}
-      <div className="mb-8 flex items-center justify-between">
+      <div className="mb-8 flex items-center justify-between gap-6">
 
         <div>
 
@@ -40,6 +53,8 @@ export default async function ProductsPage(){
           </p>
 
         </div>
+
+        <ProductSearch />
 
         <Link
           href="/admin/products/create"

@@ -2,7 +2,15 @@
 
 import { createClient } from "@/lib/supabase/server";
 
-export async function getProducts(categoryId?:string){
+type GetProductsOptions={
+  categoryId?:string;
+  search?:string;
+};
+
+export async function getProducts({
+  categoryId,
+  search,
+}:GetProductsOptions={}){
 
   const supabase=await createClient();
 
@@ -19,6 +27,12 @@ export async function getProducts(categoryId?:string){
   if(categoryId){
     query=query.eq("product_categories.category_id",categoryId);
   }
+
+if(search){
+  query=query.or(
+    `title.ilike.%${search}%,knife_type.ilike.%${search}%,blade_steel.ilike.%${search}%,handle_material.ilike.%${search}%,country.ilike.%${search}%`
+  );
+}
 
   const{data,error}=await query;
 
