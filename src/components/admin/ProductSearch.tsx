@@ -17,7 +17,7 @@ export default function ProductSearch(){
 
     const timeout=setTimeout(()=>{
 
-      const params=new URLSearchParams(searchParams.toString());
+      const params=new URLSearchParams(window.location.search);
 
       if(value){
         params.set("search",value);
@@ -25,13 +25,13 @@ export default function ProductSearch(){
         params.delete("search");
       }
 
-      router.push(`/admin/products?${params.toString()}`);
+      router.replace(`/admin/products?${params.toString()}`);
 
     },300);
 
     return()=>clearTimeout(timeout);
 
-  },[value,router,searchParams]);
+  },[value]);
 
   return(
 

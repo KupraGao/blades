@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { getProducts } from "@/actions/products/get-products";
 import ProductSearch from "@/components/admin/ProductSearch";
+import ProductSort from "@/components/admin/ProductSort";
 import DeleteProductButton from "./DeleteProductButton";
 
 type ProductImage={
@@ -22,6 +23,7 @@ type Product={
 type Props={
   searchParams:Promise<{
     search?:string;
+    sort?:string;
   }>;
 };
 
@@ -29,17 +31,21 @@ export default async function ProductsPage({
   searchParams,
 }:Props){
 
-  const{search}=await searchParams;
+  const{
+    search,
+    sort,
+  }=await searchParams;
 
   const products=await getProducts({
     search,
+    sort,
   });
 
   return(
 
     <div>
 
-      {/* TOP */}
+      {/* PAGE HEADER */}
       <div className="mb-8 flex items-center justify-between gap-6">
 
         <div>
@@ -54,8 +60,6 @@ export default async function ProductsPage({
 
         </div>
 
-        <ProductSearch />
-
         <Link
           href="/admin/products/create"
           className="rounded-xl bg-white px-5 py-3 font-semibold text-black transition hover:bg-zinc-200"
@@ -65,10 +69,19 @@ export default async function ProductsPage({
 
       </div>
 
-      {/* TABLE */}
+      {/* PRODUCT CONTROLS */}
+      <div className="mb-8 flex items-center gap-3">
+
+        <ProductSearch />
+
+        <ProductSort />
+
+      </div>
+
+      {/* PRODUCTS TABLE */}
       <div className="overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900">
 
-        {/* HEADER */}
+        {/* TABLE HEADER */}
         <div className="grid grid-cols-[80px_1fr_140px_120px_140px] border-b border-zinc-800 bg-zinc-950 px-6 py-4 text-sm font-semibold text-zinc-400">
 
           <div>Image</div>
@@ -79,6 +92,7 @@ export default async function ProductsPage({
 
         </div>
 
+        {/* TABLE BODY */}
         {products.map((product:Product)=>{
 
           const mainImage=

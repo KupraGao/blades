@@ -57,6 +57,8 @@ Foundation დასრულების შემდეგ ეს ფაილ
 - Product Mapper
 - Validation
 - UUID Images
+- Product Search
+- Product Sorting
 
 ---
 

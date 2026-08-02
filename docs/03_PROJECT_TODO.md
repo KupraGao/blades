@@ -16,7 +16,7 @@
 
 ## მიმდინარე სამუშაო
 
-⬜ არაფერი
+⬜ Pagination
 
 ---
 
@@ -37,9 +37,5 @@
 ## შემდეგ
 
 ### 📄 Product Listing
-
-⬜ Sorting
-
-⬜ Pagination
 
 ⬜ Results Counter

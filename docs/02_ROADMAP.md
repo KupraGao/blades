@@ -18,8 +18,6 @@
 
 ⬜ Product Filters
 
-⬜ Sorting
-
 ⬜ Pagination
 
 ⬜ Stock Management
