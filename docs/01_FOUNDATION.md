@@ -81,6 +81,7 @@ Foundation დასრულების შემდეგ ეს ფაილ
 
 - App Router
 - Server Components
+- Client Components
 - Server Actions
 - SRP
 - Separation of Concerns
@@ -88,12 +89,17 @@ Foundation დასრულების შემდეგ ეს ფაილ
 - Service Layer
 - Orchestrator Pattern
 - Reusable Components
+- Responsive Admin Layout Architecture
 
 ---
 
 ## Admin CMS
 
-- Products
+- Responsive Admin Layout
+- Responsive Admin Navigation
+- Responsive Products
+- Responsive Product Toolbar
+- Responsive Product Forms
 - Product Search
 - Product Sorting
 - Product Pagination

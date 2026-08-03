@@ -40,6 +40,8 @@
 
 ## Dashboard
 
+⬜ Dashboard Widgets
+
 ⬜ Analytics
 
 ⬜ Statistics

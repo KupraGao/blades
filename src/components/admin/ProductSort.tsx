@@ -3,28 +3,28 @@
 import { ArrowUpDown } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-export default function ProductSort(){
+export default function ProductSort() {
 
-  const router=useRouter();
-  const searchParams=useSearchParams();
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
-  function handleSort(value:string){
+  function handleSort(value: string) {
 
-    const params=new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams(searchParams.toString());
 
-    if(value==="newest"){
+    if (value === "newest") {
       params.delete("sort");
-    }else{
-      params.set("sort",value);
+    } else {
+      params.set("sort", value);
     }
 
     router.push(`/admin/products?${params.toString()}`);
 
   }
 
-  return(
+  return (
 
-    <div className="relative">
+    <div className="relative w-full lg:w-auto">
 
       <ArrowUpDown
         size={18}
@@ -32,9 +32,9 @@ export default function ProductSort(){
       />
 
       <select
-        value={searchParams.get("sort")??"newest"}
-        onChange={(e)=>handleSort(e.target.value)}
-        className="appearance-none rounded-xl border border-zinc-800 bg-zinc-900 py-3 pl-11 pr-10 text-white outline-none transition focus:border-zinc-600"
+        value={searchParams.get("sort") ?? "newest"}
+        onChange={(e) => handleSort(e.target.value)}
+        className="w-full appearance-none rounded-xl border border-zinc-800 bg-zinc-900 py-3 pl-11 pr-10 text-white outline-none transition focus:border-zinc-600"
       >
 
         <option value="newest">

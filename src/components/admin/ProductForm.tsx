@@ -162,7 +162,7 @@ export default function ProductForm({
 
       <button
         type="submit"
-        className="rounded-2xl bg-white px-6 py-3 font-bold text-black transition hover:scale-[1.02]"
+        className="w-full rounded-2xl bg-white px-6 py-3 font-bold text-black transition hover:scale-[1.02] md:w-auto"
       >
         {mode === "edit"
           ? "პროდუქტის განახლება"

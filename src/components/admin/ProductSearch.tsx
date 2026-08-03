@@ -4,38 +4,38 @@ import { Search } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function ProductSearch(){
+export default function ProductSearch() {
 
-  const router=useRouter();
-  const searchParams=useSearchParams();
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
-  const[value,setValue]=useState(
-    searchParams.get("search")??""
+  const [value, setValue] = useState(
+    searchParams.get("search") ?? ""
   );
 
-  useEffect(()=>{
+  useEffect(() => {
 
-    const timeout=setTimeout(()=>{
+    const timeout = setTimeout(() => {
 
-      const params=new URLSearchParams(window.location.search);
+      const params = new URLSearchParams(window.location.search);
 
-      if(value){
-        params.set("search",value);
-      }else{
+      if (value) {
+        params.set("search", value);
+      } else {
         params.delete("search");
       }
 
       router.replace(`/admin/products?${params.toString()}`);
 
-    },300);
+    }, 300);
 
-    return()=>clearTimeout(timeout);
+    return () => clearTimeout(timeout);
 
-  },[value]);
+  }, [value]);
 
-  return(
+  return (
 
-    <div className="relative w-full max-w-md">
+    <div className="relative w-full lg:w-80">
 
       <Search
         size={18}
@@ -46,7 +46,7 @@ export default function ProductSearch(){
         type="text"
         placeholder="Search products..."
         value={value}
-        onChange={(e)=>setValue(e.target.value)}
+        onChange={(e) => setValue(e.target.value)}
         className="w-full rounded-xl border border-zinc-800 bg-zinc-900 py-3 pl-11 pr-4 text-white outline-none transition focus:border-zinc-600"
       />
 

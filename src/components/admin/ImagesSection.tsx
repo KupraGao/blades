@@ -28,7 +28,7 @@ export default function ImagesSection({
   return (
     <>
       {/* PRODUCT IMAGES */}
-      <div className="rounded-3xl border border-zinc-800 bg-zinc-900/40 p-6">
+      <div className="rounded-3xl border border-zinc-800 bg-zinc-900/40 p-4 md:p-6">
 
         <h2 className="mb-6 text-xl font-bold text-white">
           პროდუქტის ფოტოები

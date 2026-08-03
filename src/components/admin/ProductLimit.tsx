@@ -2,28 +2,28 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 
-export default function ProductLimit(){
+export default function ProductLimit() {
 
-  const router=useRouter();
-  const searchParams=useSearchParams();
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
-  function handleLimit(limit:string){
+  function handleLimit(limit: string) {
 
-    const params=new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams(searchParams.toString());
 
-    params.set("limit",limit);
-    params.set("page","1");
+    params.set("limit", limit);
+    params.set("page", "1");
 
     router.push(`/admin/products?${params.toString()}`);
 
   }
 
-  return(
+  return (
 
     <select
-      value={searchParams.get("limit")??"20"}
-      onChange={(e)=>handleLimit(e.target.value)}
-      className="rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3 text-white outline-none transition focus:border-zinc-600"
+      value={searchParams.get("limit") ?? "20"}
+      onChange={(e) => handleLimit(e.target.value)}
+      className="w-full rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3 text-white outline-none transition focus:border-zinc-600 lg:w-auto"
     >
 
       <option value="5">

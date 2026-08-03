@@ -14,6 +14,24 @@
 
 ---
 
+## v1.4.0
+
+### Responsive Admin CMS ✅
+
+- Responsive Admin Layout
+- Responsive Product Toolbar
+- Responsive Products Table
+- Responsive Product Forms
+- Responsive Brands Page
+- Responsive Categories Page
+- Responsive Pagination
+- Improved Mobile & Tablet UX
+- Admin Header
+- Mobile Sidebar Foundation
+- Client Admin Layout Architecture
+
+---
+
 ## v1.3.0
 
 ### Product Filters & Product Validation ✅

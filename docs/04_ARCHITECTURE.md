@@ -112,6 +112,32 @@ Page Size
 
 ---
 
+## Admin Layout
+
+app/admin/layout.tsx (Server)
+
+↓
+
+components/admin/AdminLayout.tsx (Client)
+
+↓
+
+AdminHeader
+
+↓
+
+Sidebar (Desktop)
+
+↓
+
+MobileSidebar (Mobile)
+
+↓
+
+Admin Pages
+
+---
+
 ## Architecture Principles
 
 - Single Responsibility Principle (SRP)
@@ -129,6 +155,8 @@ Page Size
 - Orchestrator Pattern
 
 - Server Components
+
+- Client Components
 
 - Server Actions
 

@@ -16,28 +16,26 @@
 
 ## მიმდინარე სამუშაო
 
-⬜ Multiple Filters Testing
+⬜ Mobile Sidebar Drawer
 
 ---
 
 ## შემდეგი სპრინტი
 
-### 📱 Admin Responsive Polish
+### 📄 Product Listing
 
-⬜ Sidebar Responsive
-
-⬜ Product Toolbar Responsive
-
-⬜ Tables Responsive
-
-⬜ Forms Responsive
-
-⬜ Mobile & Tablet Polish
+⬜ Results Counter
 
 ---
 
 ## შემდეგ
 
-### 📄 Product Listing
+### 📊 Dashboard
 
-⬜ Results Counter
+⬜ Dashboard Widgets
+
+⬜ Statistics
+
+⬜ Analytics
+
+⬜ Latest Orders

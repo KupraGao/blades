@@ -1,23 +1,13 @@
-import Sidebar from "@/components/admin/Sidebar";
+import AdminLayout from "@/components/admin/AdminLayout";
 
-export default function AdminLayout({
+export default function Layout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <main className="min-h-screen bg-zinc-950">
-
-      <div className="flex">
-
-        <Sidebar />
-
-        <section className="flex-1 p-10">
-          {children}
-        </section>
-
-      </div>
-
-    </main>
+    <AdminLayout>
+      {children}
+    </AdminLayout>
   );
 }
