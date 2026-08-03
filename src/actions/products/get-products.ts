@@ -4,6 +4,8 @@ import { createClient } from "@/lib/supabase/server";
 
 type GetProductsOptions={
   categoryId?:string;
+  brandId?:string;
+  stock?:string;
   search?:string;
   sort?:string;
   page?:number;
@@ -12,6 +14,8 @@ type GetProductsOptions={
 
 export async function getProducts({
   categoryId,
+  brandId,
+  stock,
   search,
   sort,
   page=1,
@@ -26,15 +30,31 @@ export async function getProducts({
       *,
       brands(id,name,slug,logo),
       product_images(id,image_url,is_main),
-      product_categories(category_id,categories(id,name_ka,name_en))
+      product_categories!inner(category_id,categories(id,name_ka,name_en))
     `,{
       count:"exact",
     });
 
+  // კატეგორიის მიხედვით გაფილტვრა
   if(categoryId){
     query=query.eq("product_categories.category_id",categoryId);
   }
 
+  // ბრენდის მიხედვით გაფილტვრა
+  if(brandId){
+    query=query.eq("brand_id",brandId);
+  }
+
+  // მარაგის მიხედვით გაფილტვრა
+  if(stock==="in-stock"){
+    query=query.gt("stock",0);
+  }
+
+  if(stock==="out-of-stock"){
+    query=query.eq("stock",0);
+  }
+
+  // პროდუქტის მახასიათებლების მიხედვით ძებნა
   if(search){
     query=query.or(
       `title.ilike.%${search}%,knife_type.ilike.%${search}%,blade_steel.ilike.%${search}%,handle_material.ilike.%${search}%,country.ilike.%${search}%`

@@ -64,11 +64,11 @@ export async function updateProduct(
   await supabase
     .from("product_categories")
     .delete()
-    .eq("product_id", Number(productId));
+    .eq("product_id", productId);
 
   await attachProductCategories(
     supabase,
-    Number(productId),
+    productId,
     product.categories
   );
 

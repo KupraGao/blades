@@ -1,18 +1,26 @@
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
-  images: {
-    remotePatterns: [
+const nextConfig:NextConfig={
+
+  experimental:{
+    serverActions:{
+      bodySizeLimit:"10mb",
+    },
+  },
+
+  images:{
+    remotePatterns:[
       {
-        protocol: "https",
-        hostname: "kkdbbhddjfcacvtlitmw.supabase.co",
+        protocol:"https",
+        hostname:"kkdbbhddjfcacvtlitmw.supabase.co",
       },
       {
-        protocol: "https",
-        hostname: "www.benchmade.com",
+        protocol:"https",
+        hostname:"www.benchmade.com",
       },
     ],
   },
+
 };
 
 export default nextConfig;

@@ -94,14 +94,36 @@ export default function ProductForm({
 
       }
 
-    } catch (error: any) {
+    } catch (error: unknown) {
 
-      // Next.js redirect არ არის შეცდომა
-      if (error?.digest?.startsWith("NEXT_REDIRECT")) {
+      // =================================================
+      // NEXT.JS REDIRECT
+      // =================================================
+
+      if (
+        typeof error === "object" &&
+        error !== null &&
+        "digest" in error &&
+        typeof (error as any).digest === "string" &&
+        (error as any).digest.startsWith("NEXT_REDIRECT")
+      ) {
         throw error;
       }
 
       console.log(error);
+
+      // =================================================
+      // VALIDATION ERROR
+      // =================================================
+
+      if (error instanceof Error) {
+        alert(error.message);
+        return;
+      }
+
+      // =================================================
+      // UNKNOWN ERROR
+      // =================================================
 
       alert(
         mode === "edit"

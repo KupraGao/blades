@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { getBrands } from "@/actions/brands/get-brands";
+import { getCategories } from "@/actions/categories/get-categories";
 import { getProducts } from "@/actions/products/get-products";
 import Pagination from "@/components/admin/Pagination";
 import ProductsTable from "@/components/admin/ProductsTable";
@@ -9,6 +11,9 @@ type Props={
   searchParams:Promise<{
     search?:string;
     sort?:string;
+    brand?:string;
+    category?:string;
+    stock?:string;
     page?:string;
     limit?:string;
   }>;
@@ -21,19 +26,33 @@ export default async function ProductsPage({
   const{
     search,
     sort,
+    brand,
+    category,
+    stock,
     page,
     limit,
   }=await searchParams;
 
-  const{
-    products,
-    totalPages,
-  }=await getProducts({
-    search,
-    sort,
-    page:Number(page??1),
-    limit:Number(limit??5),
-  });
+  const[
+    brands,
+    categories,
+    {
+      products,
+      totalPages,
+    },
+  ]=await Promise.all([
+    getBrands(),
+    getCategories(),
+    getProducts({
+      search,
+      sort,
+      brandId:brand,
+      categoryId:category,
+      stock,
+      page:Number(page??1),
+      limit:Number(limit??5),
+    }),
+  ]);
 
   return(
 
@@ -65,7 +84,10 @@ export default async function ProductsPage({
 
       {/* PRODUCT TOOLBAR */}
 
-      <ProductToolbar />
+      <ProductToolbar
+        brands={brands}
+        categories={categories}
+      />
 
       {/* PRODUCTS TABLE */}
 

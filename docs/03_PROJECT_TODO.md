@@ -16,21 +16,23 @@
 
 ## მიმდინარე სამუშაო
 
-⬜ Product Filters
+⬜ Multiple Filters Testing
 
 ---
 
 ## შემდეგი სპრინტი
 
-### 🎯 Product Filters
+### 📱 Admin Responsive Polish
 
-⬜ Brand Filter
+⬜ Sidebar Responsive
 
-⬜ Category Filter
+⬜ Product Toolbar Responsive
 
-⬜ Stock Filter
+⬜ Tables Responsive
 
-⬜ Multiple Filters
+⬜ Forms Responsive
+
+⬜ Mobile & Tablet Polish
 
 ---
 

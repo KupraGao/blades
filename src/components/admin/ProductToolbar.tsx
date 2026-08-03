@@ -1,10 +1,34 @@
 "use client";
 
+import ProductBrandFilter from "./ProductBrandFilter";
+import ProductCategoryFilter from "./ProductCategoryFilter";
+import ProductLimit from "./ProductLimit";
 import ProductSearch from "./ProductSearch";
 import ProductSort from "./ProductSort";
-import ProductLimit from "./ProductLimit";
+import ProductStockFilter from "./ProductStockFilter";
 
-export default function ProductToolbar(){
+type Brand={
+  id:number;
+  name:string;
+  slug:string;
+  logo:string|null;
+};
+
+type Category={
+  id:number;
+  name_ka:string;
+  name_en:string;
+};
+
+type Props={
+  brands:Brand[];
+  categories:Category[];
+};
+
+export default function ProductToolbar({
+  brands,
+  categories,
+}:Props){
 
   return(
 
@@ -13,6 +37,16 @@ export default function ProductToolbar(){
       <ProductSearch />
 
       <ProductSort />
+
+      <ProductBrandFilter
+        brands={brands}
+      />
+
+      <ProductCategoryFilter
+        categories={categories}
+      />
+
+      <ProductStockFilter />
 
       <ProductLimit />
 

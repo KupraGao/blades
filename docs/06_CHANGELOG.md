@@ -14,6 +14,20 @@
 
 ---
 
+## v1.3.0
+
+### Product Filters & Product Validation ✅
+
+- Brand Filter
+- Category Filter
+- Stock Filter
+- Category Required Validation
+- Improved Validation Error Messages
+- Fixed Product Category Update (UUID)
+- Increased Server Action Upload Limit (10 MB)
+
+---
+
 ## v1.2.0
 
 ### Product Pagination ✅

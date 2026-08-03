@@ -15,6 +15,7 @@
 ეს დოკუმენტი აღწერს როგორ არის აგებული პროექტი და რა წესებით ვითარდება.
 
 ---
+
 # Project Architecture
 
 ---
@@ -53,7 +54,19 @@ productMapper
 
 ↓
 
-updateProductRecord
+insertProduct / updateProductRecord
+
+↓
+
+attachProductCategories
+
+↓
+
+uploadMainImage
+
+↓
+
+insertMainImage
 
 ↓
 
@@ -66,6 +79,36 @@ revalidatePath
 ↓
 
 redirect
+
+---
+
+## Product Listing
+
+Search
+
+↓
+
+Brand Filter
+
+↓
+
+Category Filter
+
+↓
+
+Stock Filter
+
+↓
+
+Sorting
+
+↓
+
+Pagination
+
+↓
+
+Page Size
 
 ---
 
