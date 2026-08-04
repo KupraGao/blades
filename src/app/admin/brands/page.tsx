@@ -70,10 +70,17 @@ export default async function BrandsPage() {
         {/* BODY */}
         {brands.length === 0 ? (
 
-          <div className="py-20 text-center text-zinc-500">
-            No brands found.
-          </div>
+          <div className="flex flex-col items-center justify-center px-6 py-20 text-center">
 
+            <p className="text-lg font-semibold text-white">
+              No brands found
+            </p>
+                  
+            <p className="mt-2 text-sm text-zinc-500">
+              Try changing your search.
+            </p>
+                  
+          </div>
         ) : (
 
           brands.map((brand) => (

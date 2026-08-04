@@ -104,12 +104,14 @@ export async function getProducts({
 
     return{
       products:[],
+      total:0,
       totalPages:0,
     };
   }
 
   return{
     products:data,
+    total:count??0,
     totalPages:Math.ceil((count??0)/limit),
   };
 

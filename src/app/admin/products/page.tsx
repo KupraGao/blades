@@ -34,11 +34,15 @@ export default async function ProductsPage({
     limit,
   } = await searchParams;
 
+  const currentPage = Number(page ?? 1);
+  const pageSize = Number(limit ?? 5);
+
   const [
     brands,
     categories,
     {
       products,
+      total,
       totalPages,
     },
   ] = await Promise.all([
@@ -50,10 +54,13 @@ export default async function ProductsPage({
       brandId: brand,
       categoryId: category,
       stock,
-      page: Number(page ?? 1),
-      limit: Number(limit ?? 5),
+      page: currentPage,
+      limit: pageSize,
     }),
   ]);
+
+  const from = total === 0 ? 0 : (currentPage - 1) * pageSize + 1;
+  const to = Math.min(currentPage * pageSize, total);
 
   return (
 
@@ -105,6 +112,11 @@ export default async function ProductsPage({
         categories={categories}
       />
 
+      {/* RESULTS COUNTER */}
+      <div className="mb-4 text-sm text-zinc-400">
+        Showing {from}–{to} of {total} products
+      </div>
+
       {/* PRODUCTS TABLE */}
       <ProductsTable
         products={products}
@@ -112,7 +124,7 @@ export default async function ProductsPage({
 
       {/* PAGINATION */}
       <Pagination
-        currentPage={Number(page ?? 1)}
+        currentPage={currentPage}
         totalPages={totalPages}
       />
 

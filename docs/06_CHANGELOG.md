@@ -14,6 +14,18 @@
 
 ---
 
+## v1.5.0
+
+### Product Listing Polish ✅
+
+- Results Counter
+- Products Empty State
+- Brands Empty State
+- Categories Empty State
+- Product Total Count
+
+---
+
 ## v1.4.0
 
 ### Responsive Admin CMS ✅

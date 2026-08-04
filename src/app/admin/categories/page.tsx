@@ -64,8 +64,16 @@ export default async function CategoriesPage() {
         {/* BODY */}
         {categories.length === 0 ? (
 
-          <div className="py-20 text-center text-zinc-500">
-            No categories found.
+          <div className="flex flex-col items-center justify-center px-6 py-20 text-center">
+                  
+            <p className="text-lg font-semibold text-white">
+              No categories found
+            </p>
+                  
+            <p className="mt-2 text-sm text-zinc-500">
+              Try changing your search.
+            </p>
+                  
           </div>
 
         ) : (

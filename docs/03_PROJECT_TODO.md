@@ -16,26 +16,22 @@
 
 ## მიმდინარე სამუშაო
 
-⬜ Mobile Sidebar Drawer
+⬜ Bulk Actions
 
 ---
 
 ## შემდეგი სპრინტი
 
-### 📄 Product Listing
+🚀 Orders System
 
-⬜ Results Counter
+⬜ Orders List
 
----
+⬜ Order Details
 
-## შემდეგ
+⬜ Order Status
 
-### 📊 Dashboard
+⬜ Order Timeline
 
-⬜ Dashboard Widgets
+⬜ Invoice
 
-⬜ Statistics
-
-⬜ Analytics
-
-⬜ Latest Orders
+⬜ Order Actions
