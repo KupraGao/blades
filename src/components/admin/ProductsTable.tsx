@@ -27,37 +27,58 @@ export default function ProductsTable({
 
   return (
 
-    <div className="overflow-x-auto rounded-2xl border border-zinc-800 bg-zinc-900">
+    <div className="overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900">
 
-      <div className="min-w-[900px]">
+      {/* TABLE HEADER */}
+      <div className="hidden border-b border-zinc-800 bg-zinc-950 px-4 py-4 text-sm font-semibold text-zinc-400 sm:grid sm:grid-cols-[minmax(0,1fr)_150px] sm:gap-4 md:grid-cols-[minmax(0,1fr)_110px_150px] lg:grid-cols-[80px_minmax(0,1fr)_120px_130px_150px] lg:px-6">
 
-        {/* TABLE HEADER */}
-        <div className="grid grid-cols-[80px_1fr_140px_120px_140px] border-b border-zinc-800 bg-zinc-950 px-6 py-4 text-sm font-semibold text-zinc-400">
-
-          <div>Image</div>
-          <div>Product</div>
-          <div>Price</div>
-          <div>Stock</div>
-          <div>Actions</div>
-
+        <div className="hidden lg:block">
+          Image
         </div>
 
-        {/* TABLE BODY */}
-        {products.map((product) => {
+        <div>
+          Product
+        </div>
+
+        <div className="hidden md:block">
+          Price
+        </div>
+
+        <div className="hidden lg:block">
+          Stock
+        </div>
+
+        <div className="text-right">
+          Actions
+        </div>
+
+      </div>
+
+      {/* TABLE BODY */}
+      {products.length === 0 ? (
+
+        <div className="py-20 text-center text-zinc-500">
+          No products found.
+        </div>
+
+      ) : (
+
+        products.map((product) => {
 
           const mainImage =
-            product.product_images.find(image => image.is_main)
-            ?? product.product_images[0];
+            product.product_images.find(
+              image => image.is_main
+            ) ?? product.product_images[0];
 
           return (
 
             <div
               key={product.id}
-              className="grid grid-cols-[80px_1fr_140px_120px_140px] items-center border-b border-zinc-800 px-6 py-4"
+              className="flex flex-col gap-4 border-b border-zinc-800 px-4 py-4 last:border-b-0 sm:grid sm:grid-cols-[minmax(0,1fr)_150px] sm:items-center sm:gap-4 md:grid-cols-[minmax(0,1fr)_110px_150px] lg:grid-cols-[80px_minmax(0,1fr)_120px_130px_150px] lg:px-6"
             >
 
-              {/* IMAGE */}
-              <div>
+              {/* DESKTOP IMAGE */}
+              <div className="hidden lg:block">
 
                 <Link
                   href={`/products/${product.id}`}
@@ -83,36 +104,85 @@ export default function ProductsTable({
               </div>
 
               {/* PRODUCT */}
-              <div>
+              <div className="flex min-w-0 items-center gap-4">
 
+                {/* MOBILE / TABLET IMAGE */}
                 <Link
                   href={`/products/${product.id}`}
                   target="_blank"
-                  className="group"
+                  className="shrink-0 lg:hidden"
                 >
 
-                  <h3 className="font-semibold text-white transition group-hover:text-zinc-300">
-                    {product.title}
-                  </h3>
+                  {mainImage ? (
 
-                  <p className="text-sm text-zinc-400">
-                    {product.knife_type || "-"}
-                  </p>
+                    <img
+                      src={mainImage.image_url}
+                      alt={product.title}
+                      className="h-14 w-14 rounded-lg object-cover transition duration-300 hover:scale-105"
+                    />
+
+                  ) : (
+
+                    <div className="h-14 w-14 rounded-lg bg-zinc-800" />
+
+                  )}
 
                 </Link>
 
+                <div className="min-w-0">
+
+                  <Link
+                    href={`/products/${product.id}`}
+                    target="_blank"
+                    className="group"
+                  >
+
+                    <h3 className="truncate font-semibold text-white transition group-hover:text-zinc-300">
+                      {product.title}
+                    </h3>
+
+                    <p className="truncate text-sm text-zinc-400">
+                      {product.knife_type || "-"}
+                    </p>
+
+                  </Link>
+
+                  {/* MOBILE PRICE */}
+                  <p className="mt-2 font-medium text-white md:hidden">
+                    ${product.price}
+                  </p>
+
+                  {/* MOBILE / TABLET STOCK */}
+                  <div className="mt-2 lg:hidden">
+
+                    <span
+                      className={`inline-flex rounded-full px-3 py-1 text-xs ${
+                        product.stock > 0
+                          ? "bg-green-500/20 text-green-400"
+                          : "bg-red-500/20 text-red-400"
+                      }`}
+                    >
+                      {product.stock > 0
+                        ? "In Stock"
+                        : "Out Of Stock"}
+                    </span>
+
+                  </div>
+
+                </div>
+
               </div>
 
-              {/* PRICE */}
-              <div className="font-medium text-white">
+              {/* TABLET / DESKTOP PRICE */}
+              <div className="hidden font-medium text-white md:block">
                 ${product.price}
               </div>
 
-              {/* STOCK */}
-              <div>
+              {/* DESKTOP STOCK */}
+              <div className="hidden lg:block">
 
                 <span
-                  className={`rounded-full px-3 py-1 text-sm ${
+                  className={`inline-flex rounded-full px-3 py-1 text-sm ${
                     product.stock > 0
                       ? "bg-green-500/20 text-green-400"
                       : "bg-red-500/20 text-red-400"
@@ -120,13 +190,13 @@ export default function ProductsTable({
                 >
                   {product.stock > 0
                     ? "In Stock"
-                    : "Out OfStock"}
+                    : "Out Of Stock"}
                 </span>
 
               </div>
 
               {/* ACTIONS */}
-              <div className="flex gap-2">
+              <div className="flex shrink-0 gap-2 sm:justify-end">
 
                 <Link
                   href={`/admin/products/edit/${product.id}`}
@@ -145,9 +215,9 @@ export default function ProductsTable({
 
           );
 
-        })}
+        })
 
-      </div>
+      )}
 
     </div>
 

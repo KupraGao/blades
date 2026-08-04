@@ -3,7 +3,6 @@
 import ProductBrandFilter from "./ProductBrandFilter";
 import ProductCategoryFilter from "./ProductCategoryFilter";
 import ProductLimit from "./ProductLimit";
-import ProductSearch from "./ProductSearch";
 import ProductSort from "./ProductSort";
 import ProductStockFilter from "./ProductStockFilter";
 
@@ -29,31 +28,27 @@ export default function ProductToolbar({
   brands,
   categories,
 }: Props) {
+
   return (
-    <div className="mb-8 flex flex-col gap-3 lg:flex-row lg:flex-wrap lg:items-center">
 
-      <div className="w-full lg:w-auto">
-        <ProductSearch />
-      </div>
+    <div className="mb-8 grid gap-3 sm:grid-cols-2 xl:flex xl:flex-wrap xl:items-center">
 
-      <div className="w-full sm:grid sm:grid-cols-2 sm:gap-3 lg:flex lg:w-auto lg:items-center">
+      <ProductSort />
 
-        <ProductSort />
+      <ProductBrandFilter
+        brands={brands}
+      />
 
-        <ProductBrandFilter
-          brands={brands}
-        />
+      <ProductCategoryFilter
+        categories={categories}
+      />
 
-        <ProductCategoryFilter
-          categories={categories}
-        />
+      <ProductStockFilter />
 
-        <ProductStockFilter />
-
-        <ProductLimit />
-
-      </div>
+      <ProductLimit />
 
     </div>
+
   );
+
 }

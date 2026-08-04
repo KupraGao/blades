@@ -1,4 +1,5 @@
 import Link from "next/link";
+
 import { getCategories } from "@/actions/categories/get-categories";
 import DeleteCategoryButton from "@/app/admin/categories/DeleteCategoryButton";
 
@@ -17,7 +18,7 @@ export default async function CategoriesPage() {
     <div>
 
       {/* TOP */}
-      <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <div className="mb-8 flex items-center justify-between gap-4">
 
         <div>
 
@@ -33,7 +34,8 @@ export default async function CategoriesPage() {
 
         <Link
           href="/admin/categories/create"
-className="rounded-xl bg-white px-5 py-3 font-semibold text-black transition hover:bg-zinc-200"        >
+          className="shrink-0 rounded-xl bg-white px-5 py-3 font-semibold text-black transition hover:bg-zinc-200"
+        >
           + Add Category
         </Link>
 

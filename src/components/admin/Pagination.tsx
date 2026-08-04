@@ -25,11 +25,16 @@ export default function Pagination({
 
   }
 
+  const pages = Array.from(
+    { length: totalPages },
+    (_, index) => index + 1
+  );
+
   return (
 
-    <div className="mt-8 overflow-x-auto">
+    <div className="mt-8">
 
-      <div className="flex min-w-max flex-wrap items-center justify-center gap-2">
+      <div className="flex flex-wrap items-center justify-center gap-2">
 
         <button
           disabled={currentPage === 1}
@@ -39,30 +44,47 @@ export default function Pagination({
           Previous
         </button>
 
-        {Array.from(
-          { length: totalPages },
-          (_, index) => {
+        {pages.map((page) => {
 
-            const page = index + 1;
+          const showDesktop = true;
 
-            return (
+          const showTablet =
+            page >= currentPage - 2 &&
+            page <= currentPage + 2;
 
-              <button
-                key={page}
-                onClick={() => goToPage(page)}
-                className={
-                  page === currentPage
-                    ? "rounded-lg bg-white px-4 py-2 text-sm font-semibold text-black"
-                    : "rounded-lg border border-zinc-800 bg-zinc-900 px-4 py-2 text-sm text-zinc-400 transition hover:border-zinc-700 hover:text-white"
-                }
-              >
-                {page}
-              </button>
+          const showMobile =
+            page >= currentPage - 1 &&
+            page <= currentPage + 1;
 
-            );
+          return (
 
-          }
-        )}
+            <button
+              key={page}
+              onClick={() => goToPage(page)}
+              className={[
+                page === currentPage
+                  ? "rounded-lg bg-white px-4 py-2 text-sm font-semibold text-black"
+                  : "rounded-lg border border-zinc-800 bg-zinc-900 px-4 py-2 text-sm text-zinc-400 transition hover:border-zinc-700 hover:text-white",
+
+                showDesktop
+                  ? ""
+                  : "",
+
+                !showTablet
+                  ? "hidden md:inline-flex"
+                  : "",
+
+                !showMobile
+                  ? "hidden sm:inline-flex"
+                  : "",
+              ].join(" ")}
+            >
+              {page}
+            </button>
+
+          );
+
+        })}
 
         <button
           disabled={currentPage === totalPages}
