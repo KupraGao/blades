@@ -59,11 +59,7 @@ export default function ProductForm({
   mode = "create",
   product,
 }: ProductFormProps) {
-
-  async function handleSubmit(
-    event: React.FormEvent<HTMLFormElement>
-  ) {
-
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const form = event.currentTarget;
@@ -80,22 +76,12 @@ export default function ProductForm({
     }
 
     try {
-
       if (mode === "edit" && product) {
-
-        await updateProduct(
-          product.id,
-          formData
-        );
-
+        await updateProduct(product.id, formData);
       } else {
-
         await createProduct(formData);
-
       }
-
     } catch (error: unknown) {
-
       // =================================================
       // NEXT.JS REDIRECT
       // =================================================
@@ -128,49 +114,30 @@ export default function ProductForm({
       alert(
         mode === "edit"
           ? "პროდუქტის განახლება ვერ მოხერხდა ❌"
-          : "პროდუქტის დამატება ვერ მოხერხდა ❌"
+          : "პროდუქტის დამატება ვერ მოხერხდა ❌",
       );
-
     }
-
   }
 
   return (
-
-    <form
-      onSubmit={handleSubmit}
-      className="space-y-8"
-    >
-
-      <BasicInfoSection
-        brands={brands}
-        product={product}
-      />
+    <form onSubmit={handleSubmit} className="space-y-8">
+      <BasicInfoSection brands={brands} product={product} />
 
       <CategoriesSection
         categories={categories}
         productCategories={product?.product_categories}
       />
 
-      <SpecificationsSection
-        product={product}
-      />
+      <SpecificationsSection product={product} />
 
-      <ImagesSection
-        product={product}
-      />
+      <ImagesSection product={product} />
 
       <button
         type="submit"
         className="w-full rounded-2xl bg-white px-6 py-3 font-bold text-black transition hover:scale-[1.02] md:w-auto"
       >
-        {mode === "edit"
-          ? "პროდუქტის განახლება"
-          : "პროდუქტის შექმნა"}
+        {mode === "edit" ? "პროდუქტის განახლება" : "პროდუქტის შექმნა"}
       </button>
-
     </form>
-
   );
-
 }

@@ -24,31 +24,18 @@ type Props = {
   categories: Category[];
 };
 
-export default function ProductToolbar({
-  brands,
-  categories,
-}: Props) {
-
+export default function ProductToolbar({ brands, categories }: Props) {
   return (
-
     <div className="mb-8 grid gap-3 sm:grid-cols-2 xl:flex xl:flex-wrap xl:items-center">
-
       <ProductSort />
 
-      <ProductBrandFilter
-        brands={brands}
-      />
+      <ProductBrandFilter brands={brands} />
 
-      <ProductCategoryFilter
-        categories={categories}
-      />
+      <ProductCategoryFilter categories={categories} />
 
       <ProductStockFilter />
 
       <ProductLimit />
-
     </div>
-
   );
-
 }

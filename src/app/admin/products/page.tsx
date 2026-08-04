@@ -4,8 +4,8 @@ import { getBrands } from "@/actions/brands/get-brands";
 import { getCategories } from "@/actions/categories/get-categories";
 import { getProducts } from "@/actions/products/get-products";
 import Pagination from "@/components/admin/Pagination";
+import ProductBulkTable from "@/components/admin/ProductBulkTable";
 import ProductSearch from "@/components/admin/ProductSearch";
-import ProductsTable from "@/components/admin/ProductsTable";
 import ProductToolbar from "@/components/admin/ProductToolbar";
 
 type Props = {
@@ -118,8 +118,9 @@ export default async function ProductsPage({
       </div>
 
       {/* PRODUCTS TABLE */}
-      <ProductsTable
+      <ProductBulkTable
         products={products}
+        categories={categories}
       />
 
       {/* PAGINATION */}

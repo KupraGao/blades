@@ -7,35 +7,23 @@ type Props = {
   totalPages: number;
 };
 
-export default function Pagination({
-  currentPage,
-  totalPages,
-}: Props) {
-
+export default function Pagination({ currentPage, totalPages }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
   function goToPage(page: number) {
-
     const params = new URLSearchParams(searchParams.toString());
 
     params.set("page", page.toString());
 
     router.push(`/admin/products?${params.toString()}`);
-
   }
 
-  const pages = Array.from(
-    { length: totalPages },
-    (_, index) => index + 1
-  );
+  const pages = Array.from({ length: totalPages }, (_, index) => index + 1);
 
   return (
-
     <div className="mt-8">
-
       <div className="flex flex-wrap items-center justify-center gap-2">
-
         <button
           disabled={currentPage === 1}
           onClick={() => goToPage(currentPage - 1)}
@@ -45,19 +33,13 @@ export default function Pagination({
         </button>
 
         {pages.map((page) => {
-
           const showDesktop = true;
 
-          const showTablet =
-            page >= currentPage - 2 &&
-            page <= currentPage + 2;
+          const showTablet = page >= currentPage - 2 && page <= currentPage + 2;
 
-          const showMobile =
-            page >= currentPage - 1 &&
-            page <= currentPage + 1;
+          const showMobile = page >= currentPage - 1 && page <= currentPage + 1;
 
           return (
-
             <button
               key={page}
               onClick={() => goToPage(page)}
@@ -66,24 +48,16 @@ export default function Pagination({
                   ? "rounded-lg bg-white px-4 py-2 text-sm font-semibold text-black"
                   : "rounded-lg border border-zinc-800 bg-zinc-900 px-4 py-2 text-sm text-zinc-400 transition hover:border-zinc-700 hover:text-white",
 
-                showDesktop
-                  ? ""
-                  : "",
+                showDesktop ? "" : "",
 
-                !showTablet
-                  ? "hidden md:inline-flex"
-                  : "",
+                !showTablet ? "hidden md:inline-flex" : "",
 
-                !showMobile
-                  ? "hidden sm:inline-flex"
-                  : "",
+                !showMobile ? "hidden sm:inline-flex" : "",
               ].join(" ")}
             >
               {page}
             </button>
-
           );
-
         })}
 
         <button
@@ -93,11 +67,7 @@ export default function Pagination({
         >
           Next
         </button>
-
       </div>
-
     </div>
-
   );
-
 }

@@ -9,11 +9,7 @@ type Props = {
   onClose: () => void;
 };
 
-export default function MobileSidebar({
-  isOpen,
-  onClose,
-}: Props) {
-
+export default function MobileSidebar({ isOpen, onClose }: Props) {
   const pathname = usePathname();
 
   const linkClass = (href: string) =>
@@ -24,32 +20,23 @@ export default function MobileSidebar({
     }`;
 
   return (
-
     <>
       {/* Overlay */}
       <div
         onClick={onClose}
         className={`fixed inset-0 z-40 bg-black/60 transition-opacity lg:hidden ${
-          isOpen
-            ? "opacity-100"
-            : "pointer-events-none opacity-0"
+          isOpen ? "opacity-100" : "pointer-events-none opacity-0"
         }`}
       />
 
       {/* Drawer */}
       <aside
         className={`fixed left-0 top-0 z-50 flex h-screen w-[280px] flex-col border-r border-zinc-800 bg-black p-6 transition-transform duration-300 lg:hidden ${
-          isOpen
-            ? "translate-x-0"
-            : "-translate-x-full"
+          isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-
         <div className="mb-10 flex items-center justify-between">
-
-          <h2 className="text-2xl font-bold text-white">
-            Admin Panel
-          </h2>
+          <h2 className="text-2xl font-bold text-white">Admin Panel</h2>
 
           <button
             type="button"
@@ -59,16 +46,10 @@ export default function MobileSidebar({
           >
             <X size={20} />
           </button>
-
         </div>
 
         <nav className="flex flex-col gap-3">
-
-          <Link
-            href="/admin"
-            className={linkClass("/admin")}
-            onClick={onClose}
-          >
+          <Link href="/admin" className={linkClass("/admin")} onClick={onClose}>
             Dashboard
           </Link>
 
@@ -119,12 +100,8 @@ export default function MobileSidebar({
           >
             Settings
           </Link>
-
         </nav>
-
       </aside>
     </>
-
   );
-
 }

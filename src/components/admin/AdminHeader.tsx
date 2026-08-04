@@ -6,16 +6,10 @@ type Props = {
   onMenuClick: () => void;
 };
 
-export default function AdminHeader({
-  onMenuClick,
-}: Props) {
+export default function AdminHeader({ onMenuClick }: Props) {
   return (
-
     <header className="sticky top-0 z-30 flex items-center justify-between border-b border-zinc-800 bg-black px-4 py-4 lg:hidden">
-
-      <h1 className="text-xl font-bold text-white">
-        Admin Panel
-      </h1>
+      <h1 className="text-xl font-bold text-white">Admin Panel</h1>
 
       <button
         type="button"
@@ -25,8 +19,6 @@ export default function AdminHeader({
       >
         <Menu size={22} />
       </button>
-
     </header>
-
   );
 }

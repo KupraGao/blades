@@ -13,16 +13,12 @@ type Props = {
   brands: Brand[];
 };
 
-export default function ProductBrandFilter({
-  brands,
-}: Props) {
-
+export default function ProductBrandFilter({ brands }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
   function handleChange(value: string) {
-
     const params = new URLSearchParams(searchParams.toString());
 
     if (value) {
@@ -38,30 +34,18 @@ export default function ProductBrandFilter({
   }
 
   return (
-
     <select
       value={searchParams.get("brand") ?? ""}
       onChange={(e) => handleChange(e.target.value)}
       className="w-full rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-3 text-white outline-none transition focus:border-white lg:w-auto"
     >
-
-      <option value="">
-        All Brands
-      </option>
+      <option value="">All Brands</option>
 
       {brands.map((brand) => (
-
-        <option
-          key={brand.id}
-          value={brand.id}
-        >
+        <option key={brand.id} value={brand.id}>
           {brand.name}
         </option>
-
       ))}
-
     </select>
-
   );
-
 }
