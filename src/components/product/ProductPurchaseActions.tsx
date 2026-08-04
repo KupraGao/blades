@@ -6,7 +6,7 @@ import { Heart, Minus, Plus, ShoppingBag } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 
-import ProductDetailsContent from "@/components/ProductDetailsContent";
+import ProductDetailsContent from "@/components/product/ProductDetailsContent";
 
 type ProductPurchaseActionsProps = {
   product: any;

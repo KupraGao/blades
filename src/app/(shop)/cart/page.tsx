@@ -1,4 +1,4 @@
-import CartPageContent from "@/components/CartPageContent";
+import CartPageContent from "@/components/cart/CartPageContent";
 
 export default function CartPage() {
   return (

@@ -1,7 +1,7 @@
-import ProductGallery from "@/components/ProductGallery";
+import ProductGallery from "@/components/product/ProductGallery";
 import { getSingleProduct } from "@/actions/products/get-single-product";
-import ProductDetailsContent from "@/components/ProductDetailsContent";
-import ProductPurchaseActions from "@/components/ProductPurchaseActions";
+import ProductDetailsContent from "@/components/product/ProductDetailsContent";
+import ProductPurchaseActions from "@/components/product/ProductPurchaseActions";
 
 export default async function ProductDetailsPage({
   params,
