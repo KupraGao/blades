@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 import { updateProductCategoriesBulk } from "@/actions/products/update-product-categories-bulk";
 
@@ -15,6 +16,7 @@ type Props = {
   onClose: () => void;
   categories: Category[];
   selectedProducts: string[];
+  onSuccess: () => void;
 };
 
 export default function ChangeCategoriesModal({
@@ -22,7 +24,10 @@ export default function ChangeCategoriesModal({
   onClose,
   categories,
   selectedProducts,
+  onSuccess,
 }: Props) {
+  const router = useRouter();
+
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -38,43 +43,54 @@ export default function ChangeCategoriesModal({
     );
   }
 
-async function saveChanges() {
-  if (selectedProducts.length === 0 || selectedCategories.length === 0) {
-    return;
+  async function saveChanges() {
+    if (selectedProducts.length === 0 || selectedCategories.length === 0) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      await updateProductCategoriesBulk({
+        productIds: selectedProducts,
+        categoryIds: selectedCategories,
+      });
+
+      router.refresh();
+
+      setSelectedCategories([]);
+
+      // მონიშნული პროდუქტების გასუფთავება
+      onSuccess();
+
+      onClose();
+
+    } finally {
+      setLoading(false);
+    }
   }
-
-  console.log("SELECTED PRODUCTS:", selectedProducts);
-  console.log("SELECTED CATEGORIES:", selectedCategories);
-
-  try {
-    setLoading(true);
-
-    await updateProductCategoriesBulk({
-      productIds: selectedProducts,
-      categoryIds: selectedCategories,
-    });
-
-    onClose();
-  } finally {
-    setLoading(false);
-  }
-}
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
       <div className="mx-4 max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-2xl border border-zinc-800 bg-zinc-900 p-6">
-        <h2 className="text-2xl font-bold text-white">Change Categories</h2>
+
+        <h2 className="text-2xl font-bold text-white">
+          Change Categories
+        </h2>
 
         <p className="mt-2 text-sm text-zinc-400">
           Select one or more categories for the selected products.
         </p>
 
         <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+
           {categories.map((category) => (
+
             <label
               key={category.id}
               className="flex cursor-pointer items-center gap-3 rounded-lg border border-zinc-800 bg-zinc-950 p-4 transition hover:bg-zinc-800"
             >
+
               <input
                 type="checkbox"
                 checked={selectedCategories.includes(category.id)}
@@ -82,12 +98,18 @@ async function saveChanges() {
                 className="h-4 w-4 shrink-0 rounded border-zinc-600 bg-zinc-800"
               />
 
-              <span className="truncate text-white">{category.name_ka}</span>
+              <span className="truncate text-white">
+                {category.name_ka}
+              </span>
+
             </label>
+
           ))}
+
         </div>
 
         <div className="mt-8 flex justify-end gap-3">
+
           <button
             type="button"
             onClick={onClose}
@@ -104,7 +126,9 @@ async function saveChanges() {
           >
             {loading ? "Saving..." : "Save Changes"}
           </button>
+
         </div>
+
       </div>
     </div>
   );

@@ -3,10 +3,10 @@ import Link from "next/link";
 import { getBrands } from "@/actions/brands/get-brands";
 import { getCategories } from "@/actions/categories/get-categories";
 import { getProducts } from "@/actions/products/get-products";
-import Pagination from "@/components/admin/Pagination";
-import ProductBulkTable from "@/components/admin/ProductBulkTable";
-import ProductSearch from "@/components/admin/ProductSearch";
-import ProductToolbar from "@/components/admin/ProductToolbar";
+import Pagination from "@/components/admin/products/list/Pagination";
+import ProductBulkTable from "@/components/admin/products/list/ProductBulkTable";
+import ProductSearch from "@/components/admin/products/list/ProductSearch";
+import ProductToolbar from "@/components/admin/products/list/ProductToolbar";
 
 type Props = {
   searchParams: Promise<{

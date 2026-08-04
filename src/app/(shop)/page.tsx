@@ -1,22 +1,18 @@
-import { HomeClient } from "@/components/HomeClient";
+import { HomeClient } from "@/components/home/HomeClient";
 
 import { getProducts } from "@/actions/products/get-products";
 
-export default async function Home(){
-
-  const{
+export default async function Home() {
+  const {
     products,
-  }=await getProducts({
-    page:1,
-    limit:12,
+  } = await getProducts({
+    page: 1,
+    limit: 12,
   });
 
-  return(
-
+  return (
     <HomeClient
       products={products}
     />
-
   );
-
 }

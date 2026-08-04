@@ -4,14 +4,16 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { Heart, Menu, ShoppingBag, UserRound } from "lucide-react";
+
 import { MobileMenuDrawer } from "./MobileMenuDrawer";
-import { CartDrawer } from "./CartDrawer";
-import { ThemeToggle } from "./ThemeToggle";
-import { LanguageSwitcher } from "./LanguageSwitcher";
+
+import { CartDrawer } from "@/components/cart/CartDrawer";
+import { ThemeToggle } from "@/components/common/ThemeToggle";
+import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
+
 import { useLanguage } from "@/context/LanguageContext";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
-
 type HeaderProps = {
   categories: string[];
   selectedCategory: string | null;

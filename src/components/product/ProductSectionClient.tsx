@@ -1,9 +1,8 @@
 "use client";
 
 import { ProductCard } from "./ProductCard";
-import { CategoriesSidebar } from "./CategoriesSidebar";
+import { CategoriesSidebar } from "@/components/common/CategoriesSidebar";
 import { useLanguage } from "@/context/LanguageContext";
-
 type ProductSectionClientProps = {
   products: any[];
   selectedCategory: string | null;

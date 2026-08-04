@@ -2,18 +2,17 @@
 
 import { useState } from "react";
 
-import { Header } from "@/components/Header";
-import { HeaderExtras } from "@/components/HeaderExtras";
+import { Header } from "@/components/layout/Header";
+import { HeaderExtras } from "@/components/layout/HeaderExtras";
 
-import { Hero } from "@/components/Hero";
-import { LatestProductsSlider } from "@/components/LatestProductsSlider";
-import { PromoBanner } from "@/components/PromoBanner";
-import { FeatureStrip } from "@/components/FeatureStrip";
+import { Hero } from "@/components/home/Hero";
+import { LatestProductsSlider } from "@/components/product/LatestProductsSlider";
+import { PromoBanner } from "@/components/home/PromoBanner";
+import { FeatureStrip } from "@/components/home/FeatureStrip";
 
-import { ProductSectionClient } from "@/components/ProductSectionClient";
+import { ProductSectionClient } from "@/components/product/ProductSectionClient";
 
 import { useLanguage } from "@/context/LanguageContext";
-
 export function HomeClient({
   products,
 }: {

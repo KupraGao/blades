@@ -14,6 +14,32 @@
 
 ---
 
+## v1.6.0
+
+### Component Architecture Refactor ✅
+
+- Reorganized frontend component structure
+- Introduced domain-based component organization
+- Separated admin components into dedicated modules
+- Created admin layout and product management structure
+- Separated product form components
+- Separated product listing components
+- Organized global layout components
+- Organized home page components
+- Organized cart components
+- Organized wishlist components
+- Organized common reusable components
+
+### Architecture Improvements
+
+- Improved project scalability
+- Reduced component folder complexity
+- Improved code discoverability
+- Clear separation of responsibilities
+- Prepared structure for future feature expansion
+
+---
+
 ## v1.5.0
 
 ### Product Listing Polish ✅

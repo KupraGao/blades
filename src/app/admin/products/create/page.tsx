@@ -1,7 +1,7 @@
 import { getBrands } from "@/actions/brands/get-brands";
 import { getCategories } from "@/actions/categories/get-categories";
 
-import ProductForm from "@/components/admin/ProductForm";
+import ProductForm from "@/components/admin/products/form/ProductForm";
 
 /* PAGE */
 export default async function CreateProductPage(){

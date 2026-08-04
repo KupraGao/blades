@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 
-import ChangeCategoriesModal from "@/components/admin/ChangeCategoriesModal";
-import ProductsTable from "@/components/admin/ProductsTable";
+import { deleteProductsBulk } from "@/actions/products/delete-products-bulk";
+import ChangeCategoriesModal from "@/components/admin/products/list/ChangeCategoriesModal";
+import ProductsTable from "@/components/admin/products/list/ProductsTable";
 
 type ProductImage = {
   id: number;
@@ -40,9 +41,13 @@ type Props = {
   categories: Category[];
 };
 
-export default function ProductBulkTable({ products, categories }: Props) {
+export default function ProductBulkTable({
+  products,
+  categories,
+}: Props) {
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
   const [isCategoriesModalOpen, setIsCategoriesModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   function toggleProduct(productId: string) {
     setSelectedProducts((prev) =>
@@ -60,15 +65,43 @@ export default function ProductBulkTable({ products, categories }: Props) {
     );
   }
 
+  function clearSelectedProducts() {
+    setSelectedProducts([]);
+  }
+
+  async function deleteSelectedProducts() {
+    if (selectedProducts.length === 0) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      await deleteProductsBulk({
+        productIds: selectedProducts,
+      });
+
+      clearSelectedProducts();
+
+      window.location.reload();
+
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <>
       {selectedProducts.length > 0 && (
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3">
+
           <span className="text-sm text-zinc-300">
             {selectedProducts.length} selected
           </span>
 
+
           <div className="flex flex-wrap gap-2">
+
             <button
               type="button"
               onClick={() => setIsCategoriesModalOpen(true)}
@@ -77,15 +110,21 @@ export default function ProductBulkTable({ products, categories }: Props) {
               Change Categories
             </button>
 
+
             <button
               type="button"
-              className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700"
+              onClick={deleteSelectedProducts}
+              disabled={loading}
+              className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              Delete Selected
+              {loading ? "Deleting..." : "Delete Selected"}
             </button>
+
           </div>
+
         </div>
       )}
+
 
       <ProductsTable
         products={products}
@@ -94,12 +133,15 @@ export default function ProductBulkTable({ products, categories }: Props) {
         onToggleAll={toggleAll}
       />
 
+
       <ChangeCategoriesModal
         open={isCategoriesModalOpen}
         onClose={() => setIsCategoriesModalOpen(false)}
         categories={categories}
         selectedProducts={selectedProducts}
+        onSuccess={clearSelectedProducts}
       />
+
     </>
   );
 }

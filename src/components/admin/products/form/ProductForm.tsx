@@ -3,10 +3,10 @@
 import { createProduct } from "@/actions/products/create-product";
 import { updateProduct } from "@/actions/products/update-product";
 
-import BasicInfoSection from "@/components/admin/BasicInfoSection";
-import CategoriesSection from "@/components/admin/CategoriesSection";
-import SpecificationsSection from "@/components/admin/SpecificationsSection";
-import ImagesSection from "@/components/admin/ImagesSection";
+import BasicInfoSection from "@/components/admin/products/form/BasicInfoSection";
+import CategoriesSection from "@/components/admin/products/form/CategoriesSection";
+import SpecificationsSection from "@/components/admin/products/form/SpecificationsSection";
+import ImagesSection from "@/components/admin/products/form/ImagesSection";
 
 type Brand = {
   id: number;

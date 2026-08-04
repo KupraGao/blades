@@ -2,7 +2,7 @@ import { getBrands } from "@/actions/brands/get-brands";
 import { getCategories } from "@/actions/categories/get-categories";
 import { getSingleProduct } from "@/actions/products/get-single-product";
 
-import ProductForm from "@/components/admin/ProductForm";
+import ProductForm from "@/components/admin/products/form/ProductForm";
 
 type Props={
   params:Promise<{
