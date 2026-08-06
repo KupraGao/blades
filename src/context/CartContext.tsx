@@ -1,215 +1,147 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from "react";
 
-// =====================================
-// CART ITEM TYPE
-// =====================================
-type CartItem = {
-  id: string;
-  title: string;
-  price: number;
-  image: string;
-  quantity: number;
-  stock: number;
-};
+import { CartItem, CartContextType } from "./cart/types";
 
-// =====================================
-// CART CONTEXT TYPE
-// =====================================
-type CartContextType = {
-  cartItems: CartItem[];
-  addToCart: (product: any) => void;
-  increaseQuantity: (id: string) => void;
-  decreaseQuantity: (id: string) => void;
-  removeFromCart: (id: string) => void;
-  cartCount: number;
-  cartTotal: number;
-};
+import { addToCart as addToCartAction } from "./cart/actions/add-to-cart";
+import { increaseQuantity as increaseQuantityAction } from "./cart/actions/increase-quantity";
+import { decreaseQuantity as decreaseQuantityAction } from "./cart/actions/decrease-quantity";
+import { removeFromCart as removeFromCartAction } from "./cart/actions/remove-from-cart";
+import { clearCart as clearCartAction } from "./cart/actions/clear-cart";
+
+import { getCartCount } from "./cart/selectors/cart-count";
+import { getCartTotal } from "./cart/selectors/cart-total";
+
+import { loadCart } from "./cart/storage/load-cart";
+import { saveCart } from "./cart/storage/save-cart";
 
 // =====================================
 // CREATE CONTEXT
 // =====================================
+
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 // =====================================
 // CART PROVIDER
 // =====================================
+
 export function CartProvider({ children }: { children: ReactNode }) {
   // =====================================
   // CART STATE
   // =====================================
+
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
   // =====================================
-  // LOAD CART FROM LOCAL STORAGE
+  // LOAD CART
   // =====================================
-  useEffect(() => {
-    const savedCart = localStorage.getItem("cart");
 
-    if (savedCart) {
-      try {
-        const parsedCart = JSON.parse(savedCart);
-        setCartItems(parsedCart);
-      } catch (error) {
-        console.log("Cart load error:", error);
-      }
-    }
+  useEffect(() => {
+    setCartItems(loadCart());
   }, []);
 
   // =====================================
-  // SAVE CART TO LOCAL STORAGE
+  // SAVE CART
   // =====================================
+
   useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cartItems));
+    saveCart(cartItems);
   }, [cartItems]);
 
-// =====================================
-// ADD TO CART
-// =====================================
+  // =====================================
+  // ADD TO CART
+  // =====================================
 
-function addToCart(product: any) {
-  setCartItems((currentItems) => {
-
-    const existingItem =
-      currentItems.find(
-        (item) => item.id === product.id
-      );
-
-    const productStock =
-      Number(product.stock) || 0;
-
-    // =====================================
-    // OUT OF STOCK
-    // =====================================
-
-    // თუ პროდუქტი მარაგში აღარ არის,
-    // კალათაში ვერ დაემატება.
-
-    if (productStock <= 0) {
-      return currentItems;
-    }
-
-    // =====================================
-    // PRODUCT ALREADY EXISTS
-    // =====================================
-
-    if (existingItem) {
-
-      // Stock-ზე მეტს აღარ ვამატებთ.
-
-      if (
-        existingItem.quantity >= productStock
-      ) {
-        return currentItems;
-      }
-
-      return currentItems.map((item) =>
-        item.id === product.id
-          ? {
-              ...item,
-              quantity: item.quantity + 1,
-              stock: productStock,
-            }
-          : item
-      );
-    }
-
-    // =====================================
-    // PRODUCT IMAGE
-    // =====================================
-
-    // ProductCard / ProductDetails შემთხვევაში
-    // სურათი მოდის product_images-დან.
-    //
-    // Wishlist შემთხვევაში კი სურათი
-    // უკვე პირდაპირ product.image-ში გვაქვს.
-
-    const defaultImage =
-      product.product_images?.find(
-        (img: any) => img.is_main
-      ) ||
-      product.product_images?.[0];
-
-    const productImage =
-      product.image ||
-      defaultImage?.image_url ||
-      "/placeholder.png";
-
-    // =====================================
-    // NEW CART ITEM
-    // =====================================
-
-    const newItem: CartItem = {
-      id: product.id,
-      title: product.title,
-      price: Number(product.price),
-      image: productImage,
-      quantity: 1,
-      stock: productStock,
-    };
-
-    return [
-      ...currentItems,
-      newItem,
-    ];
-  });
-}
+  function addToCart(product: any) {
+    setCartItems((currentItems) =>
+      addToCartAction({
+        currentItems,
+        product,
+      }),
+    );
+  }
 
   // =====================================
   // INCREASE QUANTITY
   // =====================================
+
   function increaseQuantity(id: string) {
     setCartItems((currentItems) =>
-      currentItems.map((item) => {
-        if (item.id !== id) return item;
-
-        // Stock-ზე მეტს აღარ ვზრდით.
-        if (item.quantity >= item.stock) return item;
-
-        return { ...item, quantity: item.quantity + 1 };
-      })
+      increaseQuantityAction({
+        currentItems,
+        id,
+      }),
     );
   }
 
   // =====================================
   // DECREASE QUANTITY
   // =====================================
+
   function decreaseQuantity(id: string) {
     setCartItems((currentItems) =>
-      currentItems.map((item) => {
-        if (item.id !== id) return item;
-
-        // 1-ზე ქვემოთ რაოდენობას არ ვუშვებთ.
-        if (item.quantity <= 1) return item;
-
-        return { ...item, quantity: item.quantity - 1 };
-      })
+      decreaseQuantityAction({
+        currentItems,
+        id,
+      }),
     );
   }
 
   // =====================================
   // REMOVE FROM CART
   // =====================================
+
   function removeFromCart(id: string) {
-    setCartItems((currentItems) => currentItems.filter((item) => item.id !== id));
+    setCartItems((currentItems) =>
+      removeFromCartAction({
+        currentItems,
+        id,
+      }),
+    );
   }
 
   // =====================================
+  // CLEAR CART
+  // =====================================
+
+  function clearCart() {
+    setCartItems(clearCartAction());
+  } // =====================================
   // CART COUNT
   // =====================================
-  const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
+
+  const cartCount = getCartCount(cartItems);
 
   // =====================================
   // CART TOTAL
   // =====================================
-  const cartTotal = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+
+  const cartTotal = getCartTotal(cartItems);
 
   // =====================================
   // PROVIDER
   // =====================================
+
   return (
-    <CartContext.Provider value={{ cartItems, addToCart, increaseQuantity, decreaseQuantity, removeFromCart, cartCount, cartTotal }}>
+    <CartContext.Provider
+      value={{
+        cartItems,
+        addToCart,
+        increaseQuantity,
+        decreaseQuantity,
+        removeFromCart,
+        clearCart,
+        cartCount,
+        cartTotal,
+      }}
+    >
       {children}
     </CartContext.Provider>
   );
@@ -218,6 +150,7 @@ function addToCart(product: any) {
 // =====================================
 // USE CART HOOK
 // =====================================
+
 export function useCart() {
   const context = useContext(CartContext);
 
