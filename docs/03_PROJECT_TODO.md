@@ -16,19 +16,25 @@
 
 ## მიმდინარე სამუშაო
 
-⬜ Bulk Actions
+🚀 Checkout System
+
+⬜ Checkout Page
+
+⬜ Customer Information Form
+
+⬜ Cart Summary
+
+⬜ Place Order
 
 ---
 
 ## შემდეგი სპრინტი
 
-🚀 Orders System
+⬜ Order Success Page
 
-⬜ Orders List
+⬜ Order Details Page
 
-⬜ Order Details
-
-⬜ Order Status
+⬜ Order Status Management
 
 ⬜ Order Timeline
 

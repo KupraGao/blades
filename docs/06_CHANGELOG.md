@@ -14,6 +14,41 @@
 
 ---
 
+## v1.7.0
+
+### Orders Foundation & Cart Refactor ✅
+
+#### Orders
+
+- Orders Database Schema
+- Orders Backend Foundation
+- Create Order Action
+- Order Validation
+- Order Mapper
+- Order Insert Service
+- Order Items Insert Service
+- Get Orders
+- Get Single Order
+- Admin Orders Page
+- Orders Sidebar Navigation
+
+#### Cart Refactor
+
+- Extracted Cart Actions
+- Extracted Cart Selectors
+- Extracted Cart Storage
+- Extracted Cart Types
+- CartContext Refactored into Orchestrator
+
+#### Architecture Improvements
+
+- Clear separation of Cart business logic
+- Improved maintainability
+- Improved scalability
+- Prepared foundation for Checkout System
+
+---
+
 ## v1.6.0
 
 ### Component Architecture Refactor ✅
