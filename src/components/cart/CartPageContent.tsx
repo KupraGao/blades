@@ -120,9 +120,9 @@ export default function CartPageContent() {
           </div>
         </div>
 
-        <button type="button" className="mt-6 w-full rounded-2xl bg-brand-orange px-6 py-4 font-bold text-white transition hover:opacity-90">
+        <Link href="/checkout" className="mt-6 block w-full rounded-2xl bg-brand-orange px-6 py-4 text-center font-bold text-white transition hover:opacity-90">
           {t.checkout}
-        </button>
+        </Link>
 
         <Link href="/" className="mt-3 block text-center text-sm font-semibold text-zinc-500 transition hover:text-brand-gold">
           {t.continueShopping}
