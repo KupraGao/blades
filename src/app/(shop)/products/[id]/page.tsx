@@ -2,6 +2,8 @@ import ProductGallery from "@/components/product/ProductGallery";
 import { getSingleProduct } from "@/actions/products/get-single-product";
 import ProductDetailsContent from "@/components/product/ProductDetailsContent";
 import ProductPurchaseActions from "@/components/product/ProductPurchaseActions";
+import ProductNotFoundMessage from "@/components/product/ProductNotFoundMessage";
+import ProductReviewEmbed from "@/components/product/ProductReviewEmbed";
 
 export default async function ProductDetailsPage({
   params,
@@ -16,9 +18,7 @@ export default async function ProductDetailsPage({
   if (!product) {
     return (
       <main className="min-h-screen p-10">
-        <h1 className="text-3xl font-bold">
-          პროდუქტი ვერ მოიძებნა
-        </h1>
+        <ProductNotFoundMessage />
       </main>
     );
   }
@@ -46,16 +46,10 @@ export default async function ProductDetailsPage({
               </h2>
 
               <div className="overflow-hidden rounded-3xl border border-zinc-200 dark:border-zinc-800">
-                <iframe
-                  width="100%"
-                  height="450"
+                <ProductReviewEmbed
                   src={product.review_link
                     .replace("watch?v=", "embed/")
                     .replace("youtu.be/", "youtube.com/embed/")}
-                  title="Product Review"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  className="aspect-video w-full"
                 />
               </div>
             </div>

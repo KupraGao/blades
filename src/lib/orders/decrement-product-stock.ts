@@ -1,5 +1,6 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 
+import { orderError } from "@/lib/i18n/localize-storefront-message";
 import { ResolvedOrderItem } from "./validate-order";
 
 // =================================================
@@ -13,9 +14,7 @@ export async function decrementProductStock(
   const nextStock = item.stock - item.quantity;
 
   if (nextStock < 0) {
-    throw new Error(
-      `მარაგი არასაკმარისია: ${item.title || "უცნობი პროდუქტი"}.`,
-    );
+    throw orderError("orderErrorInsufficientStock", item.title);
   }
 
   const { data, error } = await supabase
@@ -27,13 +26,11 @@ export async function decrementProductStock(
     .maybeSingle();
 
   if (error) {
-    throw new Error("მარაგის განახლება ვერ მოხერხდა.");
+    throw orderError("orderErrorUpdateStock");
   }
 
   if (!data) {
-    throw new Error(
-      `მარაგი შეიცვალა ან არასაკმარისია: ${item.title || "უცნობი პროდუქტი"}.`,
-    );
+    throw orderError("orderErrorStockChanged", item.title);
   }
 }
 
@@ -51,7 +48,7 @@ export async function restoreProductStock(
     .eq("id", item.productId);
 
   if (error) {
-    throw new Error("მარაგის აღდგენა ვერ მოხერხდა.");
+    throw orderError("orderErrorRestoreStock");
   }
 }
 

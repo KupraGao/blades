@@ -1,3 +1,5 @@
+import { orderError } from "@/lib/i18n/localize-storefront-message";
+
 // =================================================
 // ORDER TYPES
 // =================================================
@@ -65,13 +67,11 @@ export function validateOrder(order: CreateOrderInput) {
   // =================================================
 
   if (!order.customerName.trim()) {
-    throw new Error("მომხმარებლის სახელი აუცილებელია.");
+    throw orderError("orderErrorCustomerNameRequired");
   }
 
   if (order.customerName.trim().length < 2) {
-    throw new Error(
-      "მომხმარებლის სახელი მინიმუმ 2 სიმბოლოს უნდა შეიცავდეს.",
-    );
+    throw orderError("orderErrorCustomerNameMin");
   }
 
   // =================================================
@@ -79,11 +79,11 @@ export function validateOrder(order: CreateOrderInput) {
   // =================================================
 
   if (!order.customerPhone.trim()) {
-    throw new Error("ტელეფონის ნომერი აუცილებელია.");
+    throw orderError("orderErrorPhoneRequired");
   }
 
   if (order.customerPhone.trim().length < 9) {
-    throw new Error("ტელეფონის ნომერი არასწორია.");
+    throw orderError("orderErrorPhoneInvalid");
   }
 
   // =================================================
@@ -94,7 +94,7 @@ export function validateOrder(order: CreateOrderInput) {
     order.customerEmail &&
     !isValidEmail(order.customerEmail.trim())
   ) {
-    throw new Error("ელფოსტის მისამართი არასწორია.");
+    throw orderError("orderErrorEmailInvalid");
   }
 
   // =================================================
@@ -102,13 +102,11 @@ export function validateOrder(order: CreateOrderInput) {
   // =================================================
 
   if (!order.customerAddress.trim()) {
-    throw new Error("მისამართი აუცილებელია.");
+    throw orderError("orderErrorAddressRequired");
   }
 
   if (order.customerAddress.trim().length < 5) {
-    throw new Error(
-      "მისამართი მინიმუმ 5 სიმბოლოს უნდა შეიცავდეს.",
-    );
+    throw orderError("orderErrorAddressMin");
   }
 
   // =================================================
@@ -116,7 +114,7 @@ export function validateOrder(order: CreateOrderInput) {
   // =================================================
 
   if (!Array.isArray(order.items) || order.items.length === 0) {
-    throw new Error("კალათა ცარიელია.");
+    throw orderError("orderErrorCartEmpty");
   }
 
   // =================================================
@@ -125,14 +123,14 @@ export function validateOrder(order: CreateOrderInput) {
 
   for (const item of order.items) {
     if (!item.productId || !item.productId.trim()) {
-      throw new Error("პროდუქტის ID აუცილებელია.");
+      throw orderError("orderErrorProductIdRequired");
     }
 
     if (
       !Number.isInteger(item.quantity) ||
       item.quantity <= 0
     ) {
-      throw new Error("პროდუქტის რაოდენობა არასწორია.");
+      throw orderError("orderErrorQuantityInvalid");
     }
   }
 }

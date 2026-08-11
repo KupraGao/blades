@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createOrder } from "@/actions/orders/create-order";
 import { useCart } from "@/context/CartContext";
+import { useLanguage } from "@/context/LanguageContext";
+import { localizeStorefrontMessage } from "@/lib/i18n/localize-storefront-message";
 import type { CreateOrderInput } from "@/lib/orders/validate-order";
 import CustomerInformationForm from "./form/CustomerInformationForm";
 import OrderSummary from "./summary/OrderSummary";
@@ -20,6 +22,7 @@ import {
 
 export default function CheckoutPageContent() {
   const router = useRouter();
+  const { t } = useLanguage();
   const { cartItems, clearCart } = useCart();
 
   const [values, setValues] = useState<CheckoutCustomerFormValues>(
@@ -97,8 +100,8 @@ export default function CheckoutPageContent() {
 
       const message =
         error instanceof Error && error.message.trim()
-          ? error.message
-          : "Unable to place order. Please try again.";
+          ? localizeStorefrontMessage(error.message, t)
+          : t.orderErrorGeneric;
 
       setSubmissionError(message);
     } finally {
@@ -124,22 +127,20 @@ export default function CheckoutPageContent() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-10">
 
-      {/* სათაური */}
       <div className="mb-10">
 
         <h1 className="text-4xl font-bold">
-          Checkout
+          {t.checkoutTitle}
         </h1>
 
         <p className="mt-2 text-zinc-500 dark:text-zinc-400">
-          Complete your order by filling in your information below.
+          {t.checkoutDescription}
         </p>
 
       </div>
 
       <div className="grid gap-8 lg:grid-cols-3">
 
-        {/* მომხმარებლის ინფორმაცია */}
         <div className="lg:col-span-2">
           <CustomerInformationForm
             values={values}
@@ -150,7 +151,6 @@ export default function CheckoutPageContent() {
           />
         </div>
 
-        {/* შეკვეთის შეჯამება */}
         <div>
           <OrderSummary
             isFormValid={isFormValid}

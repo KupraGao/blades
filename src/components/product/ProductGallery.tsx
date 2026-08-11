@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import { useLanguage } from "@/context/LanguageContext";
 
 type ProductImage = {
   id: string;
@@ -18,6 +19,7 @@ export default function ProductGallery({
   title,
   images,
 }: ProductGalleryProps) {
+  const { t } = useLanguage();
   const [activeImage, setActiveImage] = useState(
     images?.[0]?.image_url || "/placeholder.png"
   );
@@ -37,7 +39,7 @@ export default function ProductGallery({
             <button
               key={image.id}
               type="button"
-              aria-label="პროდუქტის ფოტო"
+              aria-label={t.productPhoto}
               onMouseEnter={() => setActiveImage(image.image_url)}
               className="relative h-16 w-16 overflow-hidden rounded-lg border border-white/40 bg-black/20 backdrop-blur transition hover:scale-105 hover:border-white"
             >

@@ -1,3 +1,7 @@
+"use client";
+
+import { useLanguage } from "@/context/LanguageContext";
+
 type Props = {
   disabled?: boolean;
   isSubmitting?: boolean;
@@ -9,6 +13,8 @@ export default function PlaceOrderButton({
   isSubmitting = false,
   onClick,
 }: Props) {
+  const { t } = useLanguage();
+
   return (
     <button
       type="button"
@@ -30,7 +36,7 @@ export default function PlaceOrderButton({
         dark:text-black
       "
     >
-      {isSubmitting ? "Placing Order..." : "Place Order"}
+      {isSubmitting ? t.placingOrder : t.placeOrder}
     </button>
   );
 }

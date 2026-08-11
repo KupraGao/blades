@@ -5,6 +5,7 @@ import { Heart, Minus, Plus, ShoppingBag } from "lucide-react";
 
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
+import { useLanguage } from "@/context/LanguageContext";
 
 import ProductDetailsContent from "@/components/product/ProductDetailsContent";
 
@@ -21,6 +22,7 @@ export default function ProductPurchaseActions({
   // =====================================
 
   const { addToCart } = useCart();
+  const { t } = useLanguage();
 
   const {
     toggleWishlist,
@@ -92,7 +94,7 @@ export default function ProductPurchaseActions({
           </p>
 
           <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-            მაქსიმუმ {stock} ცალი
+            {t.maxQuantity.replace("{count}", String(stock))}
           </p>
         </div>
 
@@ -102,7 +104,7 @@ export default function ProductPurchaseActions({
 
           <button
             type="button"
-            aria-label="რაოდენობის შემცირება"
+            aria-label={t.decreaseQuantity}
             onClick={decrease}
             disabled={quantity <= 1}
             className="grid h-11 w-11 place-items-center transition hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-30 dark:hover:bg-white/10"
@@ -120,7 +122,7 @@ export default function ProductPurchaseActions({
 
           <button
             type="button"
-            aria-label="რაოდენობის გაზრდა"
+            aria-label={t.increaseQuantity}
             onClick={increase}
             disabled={quantity >= stock}
             className="grid h-11 w-11 place-items-center transition hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-30 dark:hover:bg-white/10"
@@ -161,13 +163,13 @@ export default function ProductPurchaseActions({
           type="button"
           aria-label={
             liked
-              ? "Remove from wishlist"
-              : "Add to wishlist"
+              ? t.removeFromWishlist
+              : t.addToWishlist
           }
           title={
             liked
-              ? "Remove from wishlist"
-              : "Add to wishlist"
+              ? t.removeFromWishlist
+              : t.addToWishlist
           }
           onClick={() => toggleWishlist(product)}
           className={`grid h-14 w-14 shrink-0 place-items-center rounded-xl border transition ${

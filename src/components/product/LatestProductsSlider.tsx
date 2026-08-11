@@ -2,6 +2,7 @@
 
 import { useEffect, useCallback, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
+import { useLanguage } from "@/context/LanguageContext";
 import { ProductSlide } from "./ProductSlide";
 
 type LatestProductsSliderProps = {
@@ -9,6 +10,7 @@ type LatestProductsSliderProps = {
 };
 
 export function LatestProductsSlider({ products }: LatestProductsSliderProps) {
+  const { t } = useLanguage();
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const [emblaRef, emblaApi] = useEmblaCarousel({
@@ -64,8 +66,8 @@ export function LatestProductsSlider({ products }: LatestProductsSliderProps) {
             <button
               key={index}
               type="button"
-              title={`სლაიდი ${index + 1}`}
-              aria-label={`სლაიდი ${index + 1}`}
+              title={t.slideLabel.replace("{count}", String(index + 1))}
+              aria-label={t.slideLabel.replace("{count}", String(index + 1))}
               onClick={() => emblaApi?.scrollTo(index)}
               className={`h-1.5 w-10 rounded-full transition-all ${
                 selectedIndex === index ? "bg-brand-gold" : "bg-zinc-700"

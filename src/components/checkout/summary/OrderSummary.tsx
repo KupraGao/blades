@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
+import { useLanguage } from "@/context/LanguageContext";
 import PlaceOrderButton from "../form/PlaceOrderButton";
 
 type Props = {
@@ -19,49 +20,51 @@ export default function OrderSummary({
   createdOrderId,
   onPlaceOrder,
 }: Props) {
+  const { t } = useLanguage();
   const { cartItems, cartCount, cartTotal } = useCart();
   const isCartEmpty = cartItems.length === 0;
   const isPlaceOrderDisabled =
     !isFormValid || isCartEmpty || isSubmitting || Boolean(createdOrderId);
 
-  let statusMessage = "Customer information is incomplete.";
+  let statusMessage = t.checkoutFormIncomplete;
   let statusClassName = "text-zinc-500 dark:text-zinc-400";
 
   if (createdOrderId) {
-    statusMessage = `Order created successfully. Order ID: ${createdOrderId}`;
+    statusMessage = t.orderCreatedSuccess.replace(
+      "{orderId}",
+      createdOrderId,
+    );
     statusClassName = "text-green-600";
   } else if (submissionError) {
     statusMessage = submissionError;
     statusClassName = "text-red-600";
   } else if (isSubmitting) {
-    statusMessage = "Order is being submitted...";
+    statusMessage = t.orderSubmitting;
     statusClassName = "text-zinc-500 dark:text-zinc-400";
   } else if (isFormValid) {
-    statusMessage = "Checkout information is ready.";
+    statusMessage = t.checkoutFormReady;
     statusClassName = "text-green-600";
   }
 
   return (
     <aside className="sticky top-24 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
 
-      {/* სათაური */}
       <div className="mb-6">
 
         <h2 className="text-2xl font-bold">
-          Order Summary
+          {t.orderSummary}
         </h2>
 
         <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
-          Review your order before placing it.
+          {t.orderSummaryDescription}
         </p>
 
       </div>
 
-      {/* პროდუქტების სია */}
       <div className="mb-6 space-y-4">
         {cartItems.length === 0 ? (
           <p className="text-sm text-zinc-500 dark:text-zinc-400">
-            Your cart is empty.
+            {t.emptyCart}
           </p>
         ) : (
           cartItems.map((item) => (
@@ -93,7 +96,7 @@ export default function OrderSummary({
         <div className="flex items-center justify-between">
 
           <span className="text-zinc-600 dark:text-zinc-400">
-            Products
+            {t.productsCountLabel}
           </span>
 
           <span className="font-medium">
@@ -105,7 +108,7 @@ export default function OrderSummary({
         <div className="flex items-center justify-between">
 
           <span className="text-zinc-600 dark:text-zinc-400">
-            Subtotal
+            {t.subtotal}
           </span>
 
           <span className="font-medium">
@@ -117,11 +120,11 @@ export default function OrderSummary({
         <div className="flex items-center justify-between">
 
           <span className="text-zinc-600 dark:text-zinc-400">
-            Shipping
+            {t.shipping}
           </span>
 
           <span className="font-medium text-green-600">
-            Free
+            {t.shippingFree}
           </span>
 
         </div>
@@ -130,21 +133,18 @@ export default function OrderSummary({
 
       <div className="my-6 border-t border-zinc-200 dark:border-zinc-800" />
 
-      {/* ჯამი */}
       <div className="flex items-center justify-between text-lg font-bold">
 
-        <span>Total</span>
+        <span>{t.total}</span>
 
         <span>₾{cartTotal}</span>
 
       </div>
 
-      {/* სტატუსი */}
       <p className={`mt-6 text-sm ${statusClassName}`}>
         {statusMessage}
       </p>
 
-      {/* შეკვეთის ღილაკი */}
       <div className="mt-4">
         <PlaceOrderButton
           disabled={isPlaceOrderDisabled}
@@ -153,12 +153,11 @@ export default function OrderSummary({
         />
       </div>
 
-      {/* კალათში დაბრუნება */}
       <Link
         href="/cart"
         className="mt-4 block text-center text-sm text-zinc-500 transition hover:text-black dark:hover:text-white"
       >
-        ← Back to Cart
+        {t.backToCart}
       </Link>
 
     </aside>

@@ -1,5 +1,6 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 
+import { orderError } from "@/lib/i18n/localize-storefront-message";
 import { ResolvedOrderItem } from "./validate-order";
 
 // =================================================
@@ -40,6 +41,6 @@ export async function insertOrderItems(
   // =================================================
 
   if (error) {
-    throw new Error("შეკვეთის პროდუქტების შენახვა ვერ მოხერხდა.");
+    throw orderError("orderErrorSaveOrderItems");
   }
 }

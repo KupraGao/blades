@@ -1,5 +1,6 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 
+import { orderError } from "@/lib/i18n/localize-storefront-message";
 import {
   CreateOrderItemInput,
   ResolvedOrderItem,
@@ -21,13 +22,13 @@ export async function resolveOrderItems(
     .in("id", productIds);
 
   if (error) {
-    throw new Error("პროდუქტების წამოღება ვერ მოხერხდა.");
+    throw orderError("orderErrorFetchProducts");
   }
 
   const products = data ?? [];
 
   if (products.length !== productIds.length) {
-    throw new Error("ერთი ან რამდენიმე პროდუქტი ვერ მოიძებნა.");
+    throw orderError("orderErrorProductsNotFound");
   }
 
   const productsById = new Map(
@@ -38,34 +39,29 @@ export async function resolveOrderItems(
     const product = productsById.get(item.productId);
 
     if (!product) {
-      throw new Error("ერთი ან რამდენიმე პროდუქტი ვერ მოიძებნა.");
+      throw orderError("orderErrorProductsNotFound");
     }
 
     const price = Number(product.price);
     const stock = Number(product.stock);
+    const productLabel = String(product.title ?? "");
 
     if (!Number.isFinite(price) || price < 0) {
-      throw new Error(
-        `პროდუქტის ფასი არასწორია: ${product.title || "უცნობი პროდუქტი"}.`,
-      );
+      throw orderError("orderErrorInvalidPrice", productLabel);
     }
 
     if (!Number.isInteger(stock) || stock < 0) {
-      throw new Error(
-        `პროდუქტის მარაგი არასწორია: ${product.title || "უცნობი პროდუქტი"}.`,
-      );
+      throw orderError("orderErrorInvalidStock", productLabel);
     }
 
     if (item.quantity > stock) {
-      throw new Error(
-        `მარაგი არასაკმარისია: ${product.title || "უცნობი პროდუქტი"}.`,
-      );
+      throw orderError("orderErrorInsufficientStock", productLabel);
     }
 
     const title = String(product.title ?? "").trim();
 
     if (!title) {
-      throw new Error("პროდუქტის დასახელება აუცილებელია.");
+      throw orderError("orderErrorProductTitleRequired");
     }
 
     return {

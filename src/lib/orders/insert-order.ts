@@ -1,5 +1,7 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 
+import { orderError } from "@/lib/i18n/localize-storefront-message";
+
 // =================================================
 // INSERT ORDER
 // =================================================
@@ -36,7 +38,7 @@ export async function insertOrder(
     console.error("MESSAGE:", error.message);
     console.error("DETAILS:", error.details);
     console.error("HINT:", error.hint);
-    throw new Error("შეკვეთის შენახვა ვერ მოხერხდა.");
+    throw orderError("orderErrorSaveOrder");
   }
 
   // =================================================

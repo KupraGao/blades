@@ -66,8 +66,8 @@ export function ProductCard({ product }: ProductCardProps) {
           {/* ========================================= */}
           <button
             type="button"
-            aria-label={liked ? "Remove from wishlist" : "Add to wishlist"}
-            title={liked ? "Remove from wishlist" : "Add to wishlist"}
+            aria-label={liked ? t.removeFromWishlist : t.addToWishlist}
+            title={liked ? t.removeFromWishlist : t.addToWishlist}
             onClick={(e) => {
               e.preventDefault();
               toggleWishlist(product);
@@ -96,8 +96,8 @@ export function ProductCard({ product }: ProductCardProps) {
 
             <button
               type="button"
-              aria-label="Add to cart"
-              title="Add to cart"
+              aria-label={t.addToCart}
+              title={t.addToCart}
               onClick={(e) => {
                 e.preventDefault();
                 addToCart(product);

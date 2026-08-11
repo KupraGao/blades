@@ -3,6 +3,9 @@ import {
   CheckoutCustomerFormField,
   CheckoutCustomerFormValues,
 } from "./types";
+import { ka } from "@/dictionaries/ka";
+
+type DictionaryKey = keyof typeof ka;
 
 // =====================================
 // EMAIL VALIDATION
@@ -13,41 +16,41 @@ function isValidEmail(email: string) {
 }
 
 // =====================================
-// FIELD VALIDATION
+// FIELD VALIDATION (returns dictionary keys)
 // =====================================
 
 export function getCustomerFieldError(
   field: CheckoutCustomerFormField,
   values: CheckoutCustomerFormValues,
-): string | undefined {
+): DictionaryKey | undefined {
   const value = values[field].trim();
 
   switch (field) {
     case "fullName":
-      if (!value) return "Full name is required.";
+      if (!value) return "validationFullNameRequired";
       if (value.length < 2) {
-        return "Full name must be at least 2 characters.";
+        return "validationFullNameMin";
       }
       return undefined;
 
     case "email":
-      if (!value) return "Email is required.";
+      if (!value) return "validationEmailRequired";
       if (!isValidEmail(value)) {
-        return "Enter a valid email address.";
+        return "validationEmailInvalid";
       }
       return undefined;
 
     case "phone":
-      if (!value) return "Phone number is required.";
+      if (!value) return "validationPhoneRequired";
       if (value.length < 9) {
-        return "Phone number must be at least 9 characters.";
+        return "validationPhoneMin";
       }
       return undefined;
 
     case "address":
-      if (!value) return "Address is required.";
+      if (!value) return "validationAddressRequired";
       if (value.length < 5) {
-        return "Address must be at least 5 characters.";
+        return "validationAddressMin";
       }
       return undefined;
 

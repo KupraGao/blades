@@ -35,8 +35,8 @@ export function MobileMenuDrawer({ open, setOpen, tab, setTab, categories, selec
       <div className={`fixed left-0 top-0 z-50 h-full w-80 bg-white text-black transform transition-transform duration-300 ${open ? "translate-x-0" : "-translate-x-full"}`}>
         <div className="border-b p-4">
           <div className="flex gap-2">
-            <input type="text" placeholder="ძებნა..." className="flex-1 rounded-lg border px-3 py-2 outline-none" />
-            <button aria-label="ძებნა" className="rounded-lg bg-black px-3 text-white">
+            <input type="text" placeholder={t.search} className="flex-1 rounded-lg border px-3 py-2 outline-none" />
+            <button aria-label={t.search} className="rounded-lg bg-black px-3 text-white">
               <Search size={18} />
             </button>
           </div>

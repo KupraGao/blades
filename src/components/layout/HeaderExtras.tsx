@@ -20,8 +20,8 @@ export function HeaderExtras() {
             />
 
             <button
-              aria-label="ძებნა"
-              className="px-4 bg-black text-white h-full flex items-center hover:text-orange-400 transition"
+              aria-label={t.search}
+              className="flex h-full items-center bg-black px-4 text-white transition hover:text-orange-400"
             >
               <Search size={18} />
             </button>

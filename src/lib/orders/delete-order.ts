@@ -1,5 +1,7 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 
+import { orderError } from "@/lib/i18n/localize-storefront-message";
+
 // =================================================
 // DELETE ORDER
 // =================================================
@@ -14,7 +16,7 @@ export async function deleteOrder(
     .eq("id", orderId);
 
   if (error) {
-    throw new Error("შეკვეთის გასუფთავება ვერ მოხერხდა.");
+    throw orderError("orderErrorCleanupOrder");
   }
 }
 
@@ -32,7 +34,7 @@ export async function deleteOrderItems(
     .eq("order_id", orderId);
 
   if (error) {
-    throw new Error("შეკვეთის პროდუქტების გასუფთავება ვერ მოხერხდა.");
+    throw orderError("orderErrorCleanupItems");
   }
 }
 

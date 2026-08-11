@@ -69,7 +69,7 @@ export function ProductSlide({ product }: ProductSlideProps) {
           >
             <img
               src={img.image_url}
-              alt={`${product.title} ფოტო`}
+              alt={`${product.title} ${t.productPhoto}`}
               className="h-14 w-14 object-cover"
             />
           </button>

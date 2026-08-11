@@ -1,3 +1,6 @@
+"use client";
+
+import { useLanguage } from "@/context/LanguageContext";
 import {
   CheckoutCustomerFormErrors,
   CheckoutCustomerFormField,
@@ -25,18 +28,29 @@ export default function CustomerInformationForm({
   onBlur,
   onSubmitAttempt,
 }: Props) {
+  const { t } = useLanguage();
+
+  function translateError(key?: string) {
+    if (!key) return undefined;
+    return (t as Record<string, string>)[key] ?? key;
+  }
+
+  const fullNameError = translateError(errors.fullName);
+  const emailError = translateError(errors.email);
+  const phoneError = translateError(errors.phone);
+  const addressError = translateError(errors.address);
+
   return (
     <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
 
-      {/* სათაური */}
       <div className="mb-6">
 
         <h2 className="text-2xl font-bold">
-          Customer Information
+          {t.customerInformation}
         </h2>
 
         <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
-          Please enter your billing and contact information.
+          {t.customerInformationDescription}
         </p>
 
       </div>
@@ -50,91 +64,88 @@ export default function CustomerInformationForm({
         noValidate
       >
 
-        {/* სრული სახელი */}
         <div>
 
           <label
             htmlFor="fullName"
             className="mb-2 block text-sm font-medium"
           >
-            Full Name
+            {t.fullName}
           </label>
 
           <input
             id="fullName"
             name="fullName"
             type="text"
-            placeholder="John Doe"
+            placeholder={t.placeholderFullName}
             value={values.fullName}
             onChange={(event) =>
               onChange("fullName", event.target.value)
             }
             onBlur={() => onBlur("fullName")}
-            aria-invalid={Boolean(errors.fullName)}
+            aria-invalid={Boolean(fullNameError)}
             aria-describedby={
-              errors.fullName ? "fullName-error" : undefined
+              fullNameError ? "fullName-error" : undefined
             }
             className={
-              errors.fullName ? errorInputClassName : inputClassName
+              fullNameError ? errorInputClassName : inputClassName
             }
           />
 
-          {errors.fullName ? (
+          {fullNameError ? (
             <p
               id="fullName-error"
               className="mt-2 text-sm text-red-600"
             >
-              {errors.fullName}
+              {fullNameError}
             </p>
           ) : null}
 
         </div>
 
-        {/* ელ-ფოსტა */}
         <div>
 
           <label
             htmlFor="email"
             className="mb-2 block text-sm font-medium"
           >
-            Email
+            {t.email}
           </label>
 
           <input
             id="email"
             name="email"
             type="email"
-            placeholder="john@example.com"
+            placeholder={t.placeholderEmail}
             value={values.email}
             onChange={(event) =>
               onChange("email", event.target.value)
             }
             onBlur={() => onBlur("email")}
-            aria-invalid={Boolean(errors.email)}
+            aria-invalid={Boolean(emailError)}
             aria-describedby={
-              errors.email ? "email-error" : undefined
+              emailError ? "email-error" : undefined
             }
             className={
-              errors.email ? errorInputClassName : inputClassName
+              emailError ? errorInputClassName : inputClassName
             }
           />
 
-          {errors.email ? (
+          {emailError ? (
             <p id="email-error" className="mt-2 text-sm text-red-600">
-              {errors.email}
+              {emailError}
             </p>
           ) : null}
 
         </div>
 
-        {/* ტელეფონი */}
         <div>
 
           <label
             htmlFor="phone"
             className="mb-2 block text-sm font-medium"
           >
-            Phone Number
+            {t.phoneNumber}
           </label>
 
           <input
@@ -147,58 +158,57 @@ export default function CustomerInformationForm({
               onChange("phone", event.target.value)
             }
             onBlur={() => onBlur("phone")}
-            aria-invalid={Boolean(errors.phone)}
+            aria-invalid={Boolean(phoneError)}
             aria-describedby={
-              errors.phone ? "phone-error" : undefined
+              phoneError ? "phone-error" : undefined
             }
             className={
-              errors.phone ? errorInputClassName : inputClassName
+              phoneError ? errorInputClassName : inputClassName
             }
           />
 
-          {errors.phone ? (
+          {phoneError ? (
             <p id="phone-error" className="mt-2 text-sm text-red-600">
-              {errors.phone}
+              {phoneError}
             </p>
           ) : null}
 
         </div>
 
-        {/* მისამართი */}
         <div>
 
           <label
             htmlFor="address"
             className="mb-2 block text-sm font-medium"
           >
-            Address
+            {t.address}
           </label>
 
           <textarea
             id="address"
             name="address"
             rows={4}
-            placeholder="Street, City..."
+            placeholder={t.placeholderAddress}
             value={values.address}
             onChange={(event) =>
               onChange("address", event.target.value)
             }
             onBlur={() => onBlur("address")}
-            aria-invalid={Boolean(errors.address)}
+            aria-invalid={Boolean(addressError)}
             aria-describedby={
-              errors.address ? "address-error" : undefined
+              addressError ? "address-error" : undefined
             }
             className={
-              errors.address ? errorInputClassName : inputClassName
+              addressError ? errorInputClassName : inputClassName
             }
           />
 
-          {errors.address ? (
+          {addressError ? (
             <p
               id="address-error"
               className="mt-2 text-sm text-red-600"
             >
-              {errors.address}
+              {addressError}
             </p>
           ) : null}
 
