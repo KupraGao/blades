@@ -1,6 +1,11 @@
+"use client";
+
 import Link from "next/link";
+import { useCart } from "@/context/CartContext";
 
 export default function OrderSummary() {
+  const { cartItems, cartCount, cartTotal } = useCart();
+
   return (
     <aside className="sticky top-24 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
 
@@ -18,6 +23,36 @@ export default function OrderSummary() {
       </div>
 
       {/* პროდუქტების სია */}
+      <div className="mb-6 space-y-4">
+        {cartItems.length === 0 ? (
+          <p className="text-sm text-zinc-500 dark:text-zinc-400">
+            Your cart is empty.
+          </p>
+        ) : (
+          cartItems.map((item) => (
+            <div
+              key={item.id}
+              className="flex items-start justify-between gap-3"
+            >
+              <div className="min-w-0">
+                <p className="truncate font-medium">
+                  {item.title}
+                </p>
+                <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+                  ₾{item.price} × {item.quantity}
+                </p>
+              </div>
+
+              <span className="shrink-0 font-medium">
+                ₾{item.price * item.quantity}
+              </span>
+            </div>
+          ))
+        )}
+      </div>
+
+      <div className="my-6 border-t border-zinc-200 dark:border-zinc-800" />
+
       <div className="space-y-4">
 
         <div className="flex items-center justify-between">
@@ -27,7 +62,7 @@ export default function OrderSummary() {
           </span>
 
           <span className="font-medium">
-            0
+            {cartCount}
           </span>
 
         </div>
@@ -39,7 +74,7 @@ export default function OrderSummary() {
           </span>
 
           <span className="font-medium">
-            $0.00
+            ₾{cartTotal}
           </span>
 
         </div>
@@ -65,7 +100,7 @@ export default function OrderSummary() {
 
         <span>Total</span>
 
-        <span>$0.00</span>
+        <span>₾{cartTotal}</span>
 
       </div>
 
