@@ -43,6 +43,11 @@ src
 │   │   ├── get-single-category.ts
 │   │   └── update-category.ts
 │   │
+│   ├── orders
+│   │   ├── create-order.ts
+│   │   ├── get-orders.ts
+│   │   └── get-single-order.ts
+│   │
 │   └── products
 │       ├── change-main-image.ts
 │       ├── create-product.ts
@@ -58,6 +63,7 @@ src
 │   │
 │   ├── (shop)
 │   │   ├── cart
+│   │   ├── checkout
 │   │   ├── products
 │   │   ├── wishlist
 │   │   ├── layout.tsx
@@ -66,6 +72,7 @@ src
 │   ├── admin
 │   │   ├── brands
 │   │   ├── categories
+│   │   ├── orders
 │   │   ├── products
 │   │   ├── layout.tsx
 │   │   └── page.tsx
@@ -109,6 +116,16 @@ src
 │   │   ├── CartDrawer.tsx
 │   │   └── CartPageContent.tsx
 │   │
+│   ├── checkout
+│   │   ├── CheckoutPageContent.tsx
+│   │   ├── form
+│   │   │   ├── CustomerInformationForm.tsx
+│   │   │   ├── PlaceOrderButton.tsx
+│   │   │   ├── types.ts
+│   │   │   └── validate-customer-form.ts
+│   │   └── summary
+│   │       └── OrderSummary.tsx
+│   │
 │   ├── common
 │   │   ├── CategoriesSidebar.tsx
 │   │   ├── LanguageSwitcher.tsx
@@ -144,7 +161,12 @@ src
 │   ├── CartContext.tsx
 │   ├── CartDrawer.tsx
 │   ├── LanguageContext.tsx
-│   └── WishlistContext.tsx
+│   ├── WishlistContext.tsx
+│   └── cart
+│       ├── actions
+│       ├── selectors
+│       ├── storage
+│       └── types.ts
 │
 ├── data
 │   ├── categories.ts
@@ -158,6 +180,15 @@ src
 │   │
 │   ├── data
 │   │   └── products.ts
+│   │
+│   ├── orders
+│   │   ├── decrement-product-stock.ts
+│   │   ├── delete-order.ts
+│   │   ├── insert-order-items.ts
+│   │   ├── insert-order.ts
+│   │   ├── order-mapper.ts
+│   │   ├── resolve-order-items.ts
+│   │   └── validate-order.ts
 │   │
 │   ├── products
 │   │   ├── attach-product-categories.ts
@@ -174,6 +205,7 @@ src
 │   │   └── validate-product.ts
 │   │
 │   └── supabase
+│       ├── admin.ts
 │       └── server.ts
 │
 └── types
@@ -281,6 +313,76 @@ MobileSidebar (Mobile)
 ↓
 
 Admin Pages
+
+---
+
+# 🛒 Checkout → Orders Flow
+
+Cart (`CartContext`)
+
+↓
+
+`/checkout` → `CheckoutPageContent`
+
+↓
+
+Controlled Customer Form + live Order Summary
+
+↓
+
+Place Order → `createOrder` Server Action
+
+↓
+
+Validate + consolidate items
+
+↓
+
+Resolve authoritative products (`products` table)
+
+↓
+
+Map order (`total_price`, `status: "pending"`)
+
+↓
+
+Insert `orders` → insert `order_items` → decrement stock
+
+↓
+
+Best-effort compensation on partial failure
+
+↓
+
+Return `{ success, orderId }` to Checkout UI
+
+Privileged access:
+
+`createAdminClient()` (`src/lib/supabase/admin.ts`)
+
+is used for sensitive order orchestration and Admin Orders reads.
+
+Normal storefront product reads continue to use
+
+`createClient()` (`src/lib/supabase/server.ts`).
+
+---
+
+# 🧾 Admin Orders Flow
+
+`/admin/orders`
+
+↓
+
+`getOrders()` Server Action
+
+↓
+
+`createAdminClient()`
+
+↓
+
+Select `orders` + nested `order_items`
 
 ---
 

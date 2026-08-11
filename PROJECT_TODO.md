@@ -309,23 +309,50 @@
 
 ## 🚧 შემდეგი ეტაპები
 
-### Products
+ეს სექცია არის მაღალი დონის პროგრესის სურათი.
+მიმდინარე სპრინტის დეტალური TODO: `docs/03_PROJECT_TODO.md`
 
-- ⬜ Product Search
-- ⬜ Product Filters
-- ⬜ Stock Management
+### ✅ დასრულებულია (აღარ არის “შემდეგი”)
 
-### Orders
+- Product Search
+- Product Filters
+- Product Sorting
+- Product Pagination / Page Size
+- Bulk Actions
+- Responsive Admin
+- Orders Backend Foundation
+- Admin Orders List
+- Checkout → Orders Integration (secure createOrder + stock)
 
-- ⬜ Orders Management
-- ⬜ Order Details
-- ⬜ Order Status
+### 🚀 მიმდინარე / შემდეგი
+
+- Order Confirmation (Phase C)
+  - clear cart after success
+  - success / confirmation page
+  - redirect with orderId
+  - prevent duplicate success submission
+
+### Orders (შემდგომი)
+
+- ⬜ Admin Order Details
+- ⬜ Order Status Management
+- ⬜ Invoice
+- ⬜ Email Notifications
 
 ### Dashboard
 
 - ⬜ Dashboard Analytics
 - ⬜ Statistics
 - ⬜ Latest Orders
+
+### Security / Commerce (შემდგომი)
+
+- ⬜ Authentication
+- ⬜ Admin Route Protection
+- ⬜ Payments
+- ⬜ Shipping
+- ⬜ Taxes
+- ⬜ Coupons
 
 ---
 
@@ -455,14 +482,16 @@
 
 ## 🚀 შემდეგი ეტაპები (Advanced Ecommerce)
 
-- 🔍 Product Search
-- 🎯 Product Filters
-- 📦 Stock Management
-- 🧾 Orders Management
+აქტიური სპრინტი: `docs/03_PROJECT_TODO.md` (Phase C — Order Confirmation)
+
+- ✅ Product Search / Filters / Sorting / Pagination (completed)
+- ✅ Orders foundation + Admin Orders list (completed)
+- ✅ Checkout → Orders integration (completed; no payments)
+- 🧾 Order Confirmation (Phase C — next)
+- 👤 Authentication + Protected Admin Routes
+- 💳 Payments
+- 🚚 Shipping / Taxes / Coupons
 - 📊 Dashboard Analytics
-- 👤 Authentication
-- 💳 Checkout
-- 💰 Payments
-- 🚚 Shipping
 - ⚫ SEO & Production Optimization
 - 🚀 Deployment & Production
+- 🔐 Production DB transaction / RPC + stronger idempotency

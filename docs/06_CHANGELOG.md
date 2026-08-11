@@ -14,6 +14,60 @@
 
 ---
 
+## v1.8.0
+
+### Checkout → Orders Integration ✅
+
+#### Checkout
+
+- Checkout Page (`/checkout`)
+- Modular Checkout UI (`CheckoutPageContent`, form, summary)
+- Controlled Customer Information Form
+- Client-side Customer Validation
+- Phone validation aligned with Orders backend (min 9)
+- Live Cart Order Summary
+- Place Order submission wired to `createOrder`
+- Duplicate-submit protection while request is in flight
+- In-checkout success / error status (no confirmation page yet)
+
+#### Secure Order Creation
+
+- Browser submits only customer fields + `productId` / `quantity`
+- Server Action `createOrder` remains the orchestration entrypoint
+- Authoritative product title / price resolved from Supabase `products`
+- Duplicate product lines consolidated before stock checks
+- Stock validation before order creation
+- `orders` insert
+- `order_items` insert (title / price snapshots)
+- `total_price` calculated from resolved items only
+- Stock decrement after successful order + items
+- Best-effort compensation cleanup for partial failures
+- End-to-end order creation verified (Admin Orders + stock)
+
+#### Security / Supabase Access
+
+- Server-only privileged Supabase client (`src/lib/supabase/admin.ts`)
+- Privileged key via `SUPABASE_SECRET_KEY` (fallback `SUPABASE_SERVICE_ROLE_KEY`)
+- Sensitive order writes / Admin Orders reads use privileged client
+- RLS remains enabled
+- Anonymous broad Orders access was **not** opened
+
+#### Admin
+
+- Admin Orders list reads via privileged server client
+- Created test order visible with customer, total, pending status, date
+
+#### Explicitly Not Included
+
+- Checkout Success / Confirmation page
+- Cart clear after success
+- Redirect after success
+- Payments / Shipping / Taxes / Coupons
+- Authentication / Admin route protection
+- Production DB transaction / RPC
+
+---
+
 ## v1.7.0
 
 ### Orders Foundation & Cart Refactor ✅

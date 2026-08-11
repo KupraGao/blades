@@ -14,23 +14,44 @@
 
 ---
 
-## Products
+## ✅ Completed (moved out of active roadmap)
 
-⬜ Product Filters
+- Product Search
+- Product Filters (Brand / Category / Stock)
+- Product Sorting
+- Product Pagination
+- Product Page Size
+- Bulk Actions (products)
+- Responsive Admin CMS
+- Orders Backend Foundation
+- Admin Orders List
+- Checkout → Orders Integration (secure createOrder + stock)
 
-⬜ Stock Management
+See `docs/06_CHANGELOG.md` for version history.
 
-⬜ Bulk Actions
+---
+
+## 🚀 Immediate Next
+
+### Checkout Phase C — Order Confirmation
+
+⬜ Clear cart after confirmed success
+
+⬜ Success / Confirmation page
+
+⬜ Redirect with `orderId`
+
+⬜ Confirmation details
+
+⬜ Prevent accidental duplicate submission after success
 
 ---
 
 ## Orders
 
-⬜ Orders List
+⬜ Order Details (Admin)
 
-⬜ Order Details
-
-⬜ Order Status
+⬜ Order Status Management
 
 ⬜ Invoice
 
@@ -66,7 +87,7 @@
 
 ---
 
-## Checkout
+## Checkout (future commerce)
 
 ⬜ Shipping
 
@@ -75,8 +96,6 @@
 ⬜ Coupons
 
 ⬜ Taxes
-
-⬜ Order Confirmation
 
 ---
 
@@ -99,3 +118,7 @@
 ⬜ Performance
 
 ⬜ Deployment
+
+⬜ Production DB transaction / RPC for order creation
+
+⬜ Full idempotency protection
