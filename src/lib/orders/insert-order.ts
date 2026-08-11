@@ -31,6 +31,11 @@ export async function insertOrder(
   // =================================================
 
   if (error) {
+    console.error("=== SUPABASE ORDER INSERT ERROR ===");
+    console.error("CODE:", error.code);
+    console.error("MESSAGE:", error.message);
+    console.error("DETAILS:", error.details);
+    console.error("HINT:", error.hint);
     throw new Error("შეკვეთის შენახვა ვერ მოხერხდა.");
   }
 

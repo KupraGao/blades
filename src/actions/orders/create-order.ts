@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 import {
   CreateOrderInput,
@@ -31,7 +31,7 @@ export async function createOrder(
   // SUPABASE
   // =================================================
 
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   // =================================================
   // VALIDATION

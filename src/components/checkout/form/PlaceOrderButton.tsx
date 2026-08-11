@@ -1,14 +1,19 @@
 type Props = {
   disabled?: boolean;
+  isSubmitting?: boolean;
+  onClick?: () => void;
 };
 
 export default function PlaceOrderButton({
   disabled = false,
+  isSubmitting = false,
+  onClick,
 }: Props) {
   return (
     <button
       type="button"
       disabled={disabled}
+      onClick={onClick}
       className="
         w-full
         rounded-xl
@@ -25,7 +30,7 @@ export default function PlaceOrderButton({
         dark:text-black
       "
     >
-      Place Order
+      {isSubmitting ? "Placing Order..." : "Place Order"}
     </button>
   );
 }

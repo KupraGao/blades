@@ -1,6 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { createOrder } from "@/actions/orders/create-order";
+import { useCart } from "@/context/CartContext";
+import type { CreateOrderInput } from "@/lib/orders/validate-order";
 import CustomerInformationForm from "./form/CustomerInformationForm";
 import OrderSummary from "./summary/OrderSummary";
 import {
@@ -15,14 +18,24 @@ import {
 } from "./form/validate-customer-form";
 
 export default function CheckoutPageContent() {
+  const { cartItems } = useCart();
+
   const [values, setValues] = useState<CheckoutCustomerFormValues>(
     initialCheckoutCustomerFormValues,
   );
   const [touched, setTouched] = useState<CheckoutCustomerFormTouched>({});
   const [submitAttempted, setSubmitAttempted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submissionError, setSubmissionError] = useState<string | null>(
+    null,
+  );
+  const [createdOrderId, setCreatedOrderId] = useState<string | null>(
+    null,
+  );
 
   const errors = getCustomerFormErrors(values);
   const isFormValid = isCustomerFormValid(values);
+  const isCartEmpty = cartItems.length === 0;
 
   function handleChange(
     field: CheckoutCustomerFormField,
@@ -43,6 +56,44 @@ export default function CheckoutPageContent() {
 
   function handleSubmitAttempt() {
     setSubmitAttempted(true);
+  }
+
+  async function handlePlaceOrder() {
+    setSubmitAttempted(true);
+
+    if (!isFormValid || isCartEmpty || isSubmitting) {
+      return;
+    }
+
+    const payload: CreateOrderInput = {
+      customerName: values.fullName,
+      customerEmail: values.email,
+      customerPhone: values.phone,
+      customerAddress: values.address,
+      items: cartItems.map((item) => ({
+        productId: item.id,
+        quantity: item.quantity,
+      })),
+    };
+
+    setSubmissionError(null);
+    setIsSubmitting(true);
+
+    try {
+      const result = await createOrder(payload);
+      setCreatedOrderId(result.orderId);
+    } catch (error) {
+      console.error("Failed to create order:", error);
+
+      const message =
+        error instanceof Error && error.message.trim()
+          ? error.message
+          : "Unable to place order. Please try again.";
+
+      setSubmissionError(message);
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   const visibleErrors = {
@@ -91,7 +142,13 @@ export default function CheckoutPageContent() {
 
         {/* შეკვეთის შეჯამება */}
         <div>
-          <OrderSummary isFormValid={isFormValid} />
+          <OrderSummary
+            isFormValid={isFormValid}
+            isSubmitting={isSubmitting}
+            submissionError={submissionError}
+            createdOrderId={createdOrderId}
+            onPlaceOrder={handlePlaceOrder}
+          />
         </div>
 
       </div>

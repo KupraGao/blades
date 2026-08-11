@@ -6,10 +6,40 @@ import PlaceOrderButton from "../form/PlaceOrderButton";
 
 type Props = {
   isFormValid: boolean;
+  isSubmitting: boolean;
+  submissionError: string | null;
+  createdOrderId: string | null;
+  onPlaceOrder: () => void;
 };
 
-export default function OrderSummary({ isFormValid }: Props) {
+export default function OrderSummary({
+  isFormValid,
+  isSubmitting,
+  submissionError,
+  createdOrderId,
+  onPlaceOrder,
+}: Props) {
   const { cartItems, cartCount, cartTotal } = useCart();
+  const isCartEmpty = cartItems.length === 0;
+  const isPlaceOrderDisabled =
+    !isFormValid || isCartEmpty || isSubmitting;
+
+  let statusMessage = "Customer information is incomplete.";
+  let statusClassName = "text-zinc-500 dark:text-zinc-400";
+
+  if (createdOrderId) {
+    statusMessage = `Order created successfully. Order ID: ${createdOrderId}`;
+    statusClassName = "text-green-600";
+  } else if (submissionError) {
+    statusMessage = submissionError;
+    statusClassName = "text-red-600";
+  } else if (isSubmitting) {
+    statusMessage = "Order is being submitted...";
+    statusClassName = "text-zinc-500 dark:text-zinc-400";
+  } else if (isFormValid) {
+    statusMessage = "Checkout information is ready.";
+    statusClassName = "text-green-600";
+  }
 
   return (
     <aside className="sticky top-24 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
@@ -110,21 +140,17 @@ export default function OrderSummary({ isFormValid }: Props) {
       </div>
 
       {/* სტატუსი */}
-      <p
-        className={`mt-6 text-sm ${
-          isFormValid
-            ? "text-green-600"
-            : "text-zinc-500 dark:text-zinc-400"
-        }`}
-      >
-        {isFormValid
-          ? "Checkout information is ready."
-          : "Customer information is incomplete."}
+      <p className={`mt-6 text-sm ${statusClassName}`}>
+        {statusMessage}
       </p>
 
       {/* შეკვეთის ღილაკი */}
       <div className="mt-4">
-        <PlaceOrderButton disabled={!isFormValid} />
+        <PlaceOrderButton
+          disabled={isPlaceOrderDisabled}
+          isSubmitting={isSubmitting}
+          onClick={onPlaceOrder}
+        />
       </div>
 
       {/* კალათში დაბრუნება */}

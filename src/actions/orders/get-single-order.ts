@@ -1,6 +1,6 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 // =================================================
 // GET SINGLE ORDER
@@ -11,7 +11,7 @@ export async function getSingleOrder(id: string) {
   // SUPABASE
   // =================================================
 
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   // =================================================
   // QUERY
