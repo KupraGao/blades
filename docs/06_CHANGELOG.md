@@ -14,6 +14,62 @@
 
 ---
 
+## v1.9.0
+
+### Admin Orders Management ✅
+
+#### Phase A — Admin Order Details
+
+- `/admin/orders` list with responsive desktop/tablet table
+- Responsive mobile order cards
+- View action → `/admin/orders/[id]`
+- Full order details: header, customer information, items, totals, metadata
+
+#### Phase B — Controlled Status Management
+
+- Forward workflow only:
+  `pending → confirmed → processing → shipped → completed`
+- Centralized status architecture (`src/lib/orders/order-status.ts`)
+- Server Action `updateOrderStatus` with one-step transition validation
+- Conditional/optimistic status update (stale/duplicate protection)
+- `completed` is terminal
+
+#### Phase C — Transactional Cancellation
+
+- Cancel allowed from: `pending` / `confirmed` / `processing`
+- Cancel not allowed from: `shipped` / `completed`
+- `cancelled` is terminal
+- Server Action `cancelOrder` invokes privileged
+  `public.cancel_order(p_order_id uuid)` RPC only
+- PostgreSQL transaction: order lock → cancel → additive stock restore
+- Exactly-once / idempotent cancellation behavior
+- No TypeScript-side stock restoration
+- Live-tested with multi-product stock restore
+
+#### Phase D — Admin Orders UX Polish
+
+- Reusable `OrderStatusBadge`
+- Polished list + Order Details presentation
+- Full-width info rows for Order Header / Customer Information
+  (aligned with Order Items density)
+- Order Management focused on actions (not duplicate status metadata)
+- Terminal Completed / Cancelled informational messages
+- Completed / cancelled orders retained as historical records
+- Hard delete for orders is **not** part of the architecture
+
+#### Explicitly Not Included
+
+- Delivery / Pickup fulfillment methods
+- `ready_for_pickup` status
+- Authentication / Protected Admin Routes
+- Customer Account / My Orders
+- Payments / Shipping pricing / Taxes / Coupons
+- Invoice / Email notifications
+- Advanced order editing / archive / hard delete
+- Dashboard analytics
+
+---
+
 ## v1.8.0
 
 ### Checkout → Orders Integration ✅

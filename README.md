@@ -20,8 +20,19 @@ Open: http://localhost:3000
 - `src/lib` — business/helpers (products, orders, supabase clients)
 - `src/context` — Cart / Wishlist / Language contexts
 
+## Current status (high level)
+
+- Product catalog CRUD and storefront shopping (cart / wishlist) are in place.
+- Checkout creates real orders via a server-only privileged Supabase client.
+- Order confirmation page clears the cart and shows order details by `orderId`.
+- Admin Orders Management is complete: list, detail page, controlled status
+  workflow, and transactional cancel via `cancel_order` RPC (stock restore in DB).
+- **Next milestone:** Delivery / Pickup fulfillment (not implemented yet).
+
 ## Notes
 
 - Product catalog and orders are backed by Supabase (not demo/mock data).
-- Checkout creates real orders via a server-only privileged Supabase client.
 - Do not put secret/service-role keys in `NEXT_PUBLIC_*` variables.
+- Admin routes are not authentication-protected yet (known future milestone).
+- The app is not claimed as fully production-ready (payments, auth, SEO, etc.
+  remain future work). See `docs/02_ROADMAP.md` and `docs/03_PROJECT_TODO.md`.

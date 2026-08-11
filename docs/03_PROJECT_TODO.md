@@ -38,60 +38,120 @@
 
 ---
 
-## 🚀 CURRENT / NEXT — Phase C: Order Confirmation
+## ✅ COMPLETED — Order Confirmation
 
-Successful Order
+- `clearCart()` after confirmed success
+- Redirect with `orderId`
+- Success / Confirmation page (`/checkout/success/[orderId]`)
+- Confirmation details via privileged order read
+- Prevent accidental duplicate submission after success
 
-→ `clearCart()`
+---
 
-→ redirect with `orderId`
+## ✅ COMPLETED — Admin Orders Management (Phases A–D)
 
-→ Success / Confirmation page
+### Phase A — Admin Order Details
 
-→ show Order ID / confirmation details
+- `/admin/orders` list (responsive table + mobile cards)
+- View action
+- `/admin/orders/[id]` full order details
+- Customer information, order items, totals, metadata
 
-→ prevent accidental duplicate submission after success
+### Phase B — Controlled Status Management
 
-⬜ Clear cart after confirmed success
+- Workflow: `pending → confirmed → processing → shipped → completed`
+- Centralized order status architecture (`order-status.ts`)
+- Server-side transition validation
+- One-step forward transitions only
+- Optimistic/conditional status update (stale/duplicate protection)
+- `completed` is terminal
 
-⬜ Success / Confirmation route
+### Phase C — Transactional Cancellation
 
-⬜ Redirect with `orderId`
+- Cancel allowed from: `pending` / `confirmed` / `processing`
+- Cancel **not** allowed from: `shipped` / `completed`
+- `cancelled` is terminal
+- PostgreSQL RPC: `public.cancel_order(p_order_id uuid)`
+- Privileged server-side invocation only
+- Atomic cancel + additive stock restore
+- Exactly-once / idempotent cancellation
+- No TypeScript-side stock restoration
 
-⬜ Confirmation details UI
+### Phase D — Admin Orders UX Polish
 
-⬜ Prevent resubmitting the same successful cart
+- Reusable status badge presentation
+- Polished list + Order Details UI
+- Order Header / Customer Information / Order Items / Order Management
+- Terminal Completed / Cancelled informational messages
+- No order hard delete (historical records retained)
+
+---
+
+## 🚀 CURRENT / NEXT — Delivery / Pickup System
+
+Checkout customer chooses fulfillment method:
+
+1. Courier Delivery
+2. Pickup
+
+Planned workflows (not implemented):
+
+**Delivery:**
+`pending → confirmed → processing → shipped → completed`
+
+**Pickup:**
+`pending → confirmed → processing → ready_for_pickup → completed`
+
+Cancellation remains available only according to controlled business rules.
+
+⬜ Fulfillment method selection at Checkout
+
+⬜ Delivery path + `shipped` workflow
+
+⬜ Pickup path + `ready_for_pickup` status
+
+⬜ Admin / status UI updates for fulfillment type
+
+**Status:** PLANNED / NEXT — not completed.
 
 ---
 
 ## 🔮 FUTURE (not current sprint)
 
-⬜ Admin Order Detail Page
+⬜ Authentication
 
-⬜ Admin Order Status Management
+⬜ Protected Admin Routes
 
-⬜ Order Timeline
+⬜ Customer Account
+
+⬜ My Orders
+
+⬜ Linking orders to authenticated users
+
+⬜ Customer-side order management
+
+⬜ Advanced order editing (add/remove products on existing order)
 
 ⬜ Invoice
 
-⬜ Order Actions
-
-⬜ Authentication
-
-⬜ Admin Route Protection
+⬜ Email Notifications
 
 ⬜ Payments
 
-⬜ Shipping
+⬜ Shipping pricing
 
 ⬜ Taxes
 
 ⬜ Coupons
 
-⬜ Email Notifications
+⬜ Dashboard Analytics
 
-⬜ Production DB transaction / RPC
+⬜ Archive functionality
+
+⬜ Order hard delete (explicitly **not** current architecture)
+
+⬜ Production transaction / RPC improvements for order creation
 
 ⬜ Full idempotency protection
 
-⬜ Dashboard Analytics
+⬜ SEO / production hardening

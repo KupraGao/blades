@@ -43,11 +43,45 @@ Fields written/read by the application:
 - `customer_address`
 - `customer_note` — nullable in mapper (`null` when omitted)
 - `total_price` — calculated server-side from resolved items (`price * quantity`)
-- `status` — set to `"pending"` on create
-- `created_at` — read by Admin Orders list
+- `status` — see supported statuses below
+- `created_at` — read by Admin Orders list / detail
 
 Exact PostgreSQL column types, defaults, indexes, and constraints are
 **not documented in the repository** (implementation-dependent / live DB).
+
+### Supported order statuses (current)
+
+- `pending` — set on create
+- `confirmed`
+- `processing`
+- `shipped`
+- `completed` — terminal
+- `cancelled` — terminal
+
+**Not a current DB status:** `ready_for_pickup`
+(planned for the Delivery / Pickup milestone).
+
+### Forward status workflow (current Admin Orders)
+
+`pending → confirmed → processing → shipped → completed`
+
+One-step forward only; server validates transitions.
+
+### Cancellation rules (current)
+
+Allowed from: `pending` / `confirmed` / `processing`
+
+Not allowed from: `shipped` / `completed`
+
+`cancelled` is terminal.
+
+### Historical record behavior
+
+`completed` and `cancelled` orders are historical business records.
+
+They remain stored and visible in Admin.
+
+Hard delete for orders is **not** part of the current architecture.
 
 ---
 
@@ -122,7 +156,21 @@ Foreign-key constraint definitions are assumed by application usage but are
 - Order line title/price are snapshotted onto `order_items`
 - After successful `orders` + `order_items` insert, product `stock` is decremented
 - Partial-failure compensation deletes / stock restore are best-effort
-  (not a full DB transaction / RPC)
+  (not a full DB transaction / RPC for **order creation**)
+
+### Cancellation + stock restore (RPC-backed)
+
+- App cancel path: privileged Server Action → `rpc("cancel_order")` only
+- Database function: `public.cancel_order(p_order_id uuid)`
+- Runs in a PostgreSQL transaction with order row locking
+- Sets order `status` → `cancelled`
+- Restores ordered quantities **additively** to product `stock`
+- Designed for exactly-once / idempotent cancellation
+  (concurrent double-cancel protected)
+- Application TypeScript does **not** perform stock restoration on cancel
+
+Exact RPC SQL is managed in the live Supabase database and is
+**not checked into this repository** as a migration file.
 
 ---
 

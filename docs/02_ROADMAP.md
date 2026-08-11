@@ -26,6 +26,8 @@
 - Orders Backend Foundation
 - Admin Orders List
 - Checkout → Orders Integration (secure createOrder + stock)
+- Order Confirmation (clear cart, success page, redirect with orderId)
+- Admin Orders Management (details, status workflow, transactional cancel, UX polish)
 
 See `docs/06_CHANGELOG.md` for version history.
 
@@ -33,29 +35,38 @@ See `docs/06_CHANGELOG.md` for version history.
 
 ## 🚀 Immediate Next
 
-### Checkout Phase C — Order Confirmation
+### Delivery / Pickup System
 
-⬜ Clear cart after confirmed success
+⬜ Checkout: customer chooses fulfillment method
 
-⬜ Success / Confirmation page
+⬜ Courier Delivery fulfillment path
 
-⬜ Redirect with `orderId`
+⬜ Pickup fulfillment path
 
-⬜ Confirmation details
+⬜ Delivery status workflow:
+`pending → confirmed → processing → shipped → completed`
 
-⬜ Prevent accidental duplicate submission after success
+⬜ Pickup status workflow:
+`pending → confirmed → processing → ready_for_pickup → completed`
+
+⬜ Controlled cancellation rules remain enforced
+
+**Not started.** Do not treat Delivery / Pickup as completed.
 
 ---
 
-## Orders
-
-⬜ Order Details (Admin)
-
-⬜ Order Status Management
+## Orders (future)
 
 ⬜ Invoice
 
 ⬜ Email Notifications
+
+⬜ Archive functionality
+
+⬜ Advanced order editing (add/remove products on an existing order)
+
+⬜ Order hard delete — **not** part of current architecture
+  (completed / cancelled remain historical business records)
 
 ---
 
@@ -73,7 +84,7 @@ See `docs/06_CHANGELOG.md` for version history.
 
 ---
 
-## Authentication
+## Authentication / Accounts
 
 ⬜ Login
 
@@ -83,13 +94,21 @@ See `docs/06_CHANGELOG.md` for version history.
 
 ⬜ Permissions
 
-⬜ Protected Routes
+⬜ Protected Admin Routes
+
+⬜ Customer Account
+
+⬜ My Orders
+
+⬜ Linking orders to authenticated users
+
+⬜ Customer-side order management
 
 ---
 
 ## Checkout (future commerce)
 
-⬜ Shipping
+⬜ Shipping pricing
 
 ⬜ Payments
 

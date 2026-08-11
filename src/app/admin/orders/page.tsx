@@ -1,4 +1,6 @@
+import Link from "next/link";
 import { getOrders } from "@/actions/orders/get-orders";
+import OrderStatusBadge from "@/components/admin/orders/OrderStatusBadge";
 
 export default async function OrdersPage() {
 
@@ -44,76 +46,162 @@ export default async function OrdersPage() {
 
         </div>
       ) : (
+        <>
 
-        /* ===================================== */
-        /* TABLE */
-        /* ===================================== */
+          {/* ===================================== */}
+          {/* MOBILE CARDS (< sm / 640px) */}
+          {/* ===================================== */}
 
-        <div className="overflow-hidden rounded-2xl border border-zinc-800">
+          <div className="space-y-4 sm:hidden">
 
-          <table className="w-full">
+            {orders.map((order) => (
 
-            <thead className="bg-zinc-900">
+              <div
+                key={order.id}
+                className="rounded-2xl border border-zinc-800 bg-zinc-900 p-4"
+              >
 
-              <tr>
+                <div className="flex items-start justify-between gap-3">
 
-                <th className="p-4 text-left">
-                  Customer
-                </th>
-
-                <th className="p-4 text-left">
-                  Total
-                </th>
-
-                <th className="p-4 text-left">
-                  Status
-                </th>
-
-                <th className="p-4 text-left">
-                  Date
-                </th>
-
-              </tr>
-
-            </thead>
-
-            <tbody>
-
-              {orders.map((order) => (
-
-                <tr
-                  key={order.id}
-                  className="border-t border-zinc-800"
-                >
-
-                  <td className="p-4">
+                  <h2 className="min-w-0 break-words font-semibold text-white">
                     {order.customer_name}
-                  </td>
+                  </h2>
 
-                  <td className="p-4">
-                    ₾{order.total_price}
-                  </td>
+                  <OrderStatusBadge
+                    status={String(order.status ?? "")}
+                    className="shrink-0"
+                  />
 
-                  <td className="p-4">
-                    {order.status}
-                  </td>
+                </div>
 
-                  <td className="p-4">
-                    {new Date(
-                      order.created_at
-                    ).toLocaleDateString()}
-                  </td>
+                <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
+
+                  <div className="min-w-0">
+                    <p className="text-zinc-500">
+                      Total
+                    </p>
+                    <p className="font-medium text-white">
+                      ₾{order.total_price}
+                    </p>
+                  </div>
+
+                  <div className="min-w-0">
+                    <p className="text-zinc-500">
+                      Date
+                    </p>
+                    <p className="font-medium text-white">
+                      {new Date(
+                        order.created_at
+                      ).toLocaleDateString()}
+                    </p>
+                  </div>
+
+                </div>
+
+                <div className="mt-4 flex justify-end">
+
+                  <Link
+                    href={`/admin/orders/${order.id}`}
+                    className="rounded-lg bg-zinc-800 px-3 py-2 text-sm font-medium text-white transition hover:bg-zinc-700"
+                  >
+                    View →
+                  </Link>
+
+                </div>
+
+              </div>
+
+            ))}
+
+          </div>
+
+          {/* ===================================== */}
+          {/* DESKTOP / TABLET TABLE (≥ sm) */}
+          {/* ===================================== */}
+
+          <div className="hidden overflow-hidden rounded-2xl border border-zinc-800 sm:block">
+
+            <table className="w-full table-fixed">
+
+              <thead className="bg-zinc-900">
+
+                <tr>
+
+                  <th className="p-4 text-left text-sm font-semibold text-zinc-300">
+                    Customer
+                  </th>
+
+                  <th className="w-28 p-4 text-left text-sm font-semibold text-zinc-300">
+                    Total
+                  </th>
+
+                  <th className="w-36 p-4 text-left text-sm font-semibold text-zinc-300">
+                    Status
+                  </th>
+
+                  <th className="w-32 p-4 text-left text-sm font-semibold text-zinc-300">
+                    Date
+                  </th>
+
+                  <th className="w-28 p-4 text-right text-sm font-semibold text-zinc-300">
+                    Actions
+                  </th>
 
                 </tr>
 
-              ))}
+              </thead>
 
-            </tbody>
+              <tbody>
 
-          </table>
+                {orders.map((order) => (
 
-        </div>
+                  <tr
+                    key={order.id}
+                    className="border-t border-zinc-800"
+                  >
 
+                    <td className="p-4">
+                      <span className="block truncate font-medium text-white">
+                        {order.customer_name}
+                      </span>
+                    </td>
+
+                    <td className="p-4 whitespace-nowrap text-white">
+                      ₾{order.total_price}
+                    </td>
+
+                    <td className="p-4">
+                      <OrderStatusBadge
+                        status={String(order.status ?? "")}
+                      />
+                    </td>
+
+                    <td className="p-4 whitespace-nowrap text-zinc-300">
+                      {new Date(
+                        order.created_at
+                      ).toLocaleDateString()}
+                    </td>
+
+                    <td className="p-4 text-right">
+                      <Link
+                        href={`/admin/orders/${order.id}`}
+                        className="inline-flex rounded-lg bg-zinc-800 px-3 py-2 text-sm font-medium text-white transition hover:bg-zinc-700"
+                      >
+                        View
+                      </Link>
+                    </td>
+
+                  </tr>
+
+                ))}
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </>
       )}
 
     </div>

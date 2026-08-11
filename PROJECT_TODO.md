@@ -323,21 +323,25 @@
 - Orders Backend Foundation
 - Admin Orders List
 - Checkout → Orders Integration (secure createOrder + stock)
+- Order Confirmation (clear cart, success page, redirect with orderId)
+- Admin Orders Management (details, status workflow, transactional cancel, UX polish)
 
 ### 🚀 მიმდინარე / შემდეგი
 
-- Order Confirmation (Phase C)
-  - clear cart after success
-  - success / confirmation page
-  - redirect with orderId
-  - prevent duplicate success submission
+- Delivery / Pickup System (active sprint — see `docs/03_PROJECT_TODO.md`)
+  - Checkout fulfillment choice: Courier Delivery / Pickup
+  - Delivery workflow: `pending → confirmed → processing → shipped → completed`
+  - Pickup workflow: `pending → confirmed → processing → ready_for_pickup → completed`
+  - **Not started / not completed**
 
 ### Orders (შემდგომი)
 
-- ⬜ Admin Order Details
-- ⬜ Order Status Management
 - ⬜ Invoice
 - ⬜ Email Notifications
+- ⬜ Archive functionality
+- ⬜ Advanced order editing
+- ⬜ Order hard delete — **not** current architecture
+  (completed / cancelled remain historical records)
 
 ### Dashboard
 
@@ -348,9 +352,10 @@
 ### Security / Commerce (შემდგომი)
 
 - ⬜ Authentication
-- ⬜ Admin Route Protection
+- ⬜ Protected Admin Routes
+- ⬜ Customer Account / My Orders
 - ⬜ Payments
-- ⬜ Shipping
+- ⬜ Shipping pricing
 - ⬜ Taxes
 - ⬜ Coupons
 
@@ -482,16 +487,19 @@
 
 ## 🚀 შემდეგი ეტაპები (Advanced Ecommerce)
 
-აქტიური სპრინტი: `docs/03_PROJECT_TODO.md` (Phase C — Order Confirmation)
+აქტიური სპრინტი: `docs/03_PROJECT_TODO.md` (Delivery / Pickup System)
 
 - ✅ Product Search / Filters / Sorting / Pagination (completed)
 - ✅ Orders foundation + Admin Orders list (completed)
 - ✅ Checkout → Orders integration (completed; no payments)
-- 🧾 Order Confirmation (Phase C — next)
+- ✅ Order Confirmation (completed)
+- ✅ Admin Orders Management (details, status, cancel RPC, UX — completed)
+- 🚚 Delivery / Pickup System (next / planned — not completed)
 - 👤 Authentication + Protected Admin Routes
+- 👤 Customer Account / My Orders
 - 💳 Payments
-- 🚚 Shipping / Taxes / Coupons
+- 🚚 Shipping pricing / Taxes / Coupons
 - 📊 Dashboard Analytics
 - ⚫ SEO & Production Optimization
 - 🚀 Deployment & Production
-- 🔐 Production DB transaction / RPC + stronger idempotency
+- 🔐 Production DB transaction / RPC for order creation + stronger idempotency

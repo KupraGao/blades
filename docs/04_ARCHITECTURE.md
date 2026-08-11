@@ -44,9 +44,11 @@ src
 │   │   └── update-category.ts
 │   │
 │   ├── orders
+│   │   ├── cancel-order.ts
 │   │   ├── create-order.ts
 │   │   ├── get-orders.ts
-│   │   └── get-single-order.ts
+│   │   ├── get-single-order.ts
+│   │   └── update-order-status.ts
 │   │
 │   └── products
 │       ├── change-main-image.ts
@@ -64,6 +66,8 @@ src
 │   ├── (shop)
 │   │   ├── cart
 │   │   ├── checkout
+│   │   │   └── success
+│   │   │       └── [orderId]
 │   │   ├── products
 │   │   ├── wishlist
 │   │   ├── layout.tsx
@@ -73,6 +77,7 @@ src
 │   │   ├── brands
 │   │   ├── categories
 │   │   ├── orders
+│   │   │   └── [id]
 │   │   ├── products
 │   │   ├── layout.tsx
 │   │   └── page.tsx
@@ -89,6 +94,10 @@ src
 │   │   │   ├── AdminLayout.tsx
 │   │   │   ├── MobileSidebar.tsx
 │   │   │   └── Sidebar.tsx
+│   │   │
+│   │   ├── orders
+│   │   │   ├── OrderStatusActions.tsx
+│   │   │   └── OrderStatusBadge.tsx
 │   │   │
 │   │   └── products
 │   │       │
@@ -187,7 +196,9 @@ src
 │   │   ├── insert-order-items.ts
 │   │   ├── insert-order.ts
 │   │   ├── order-mapper.ts
+│   │   ├── order-status.ts
 │   │   ├── resolve-order-items.ts
+│   │   ├── update-order-status-record.ts
 │   │   └── validate-order.ts
 │   │
 │   ├── products
@@ -356,11 +367,20 @@ Best-effort compensation on partial failure
 
 Return `{ success, orderId }` to Checkout UI
 
+↓
+
+On success: `clearCart()` → redirect `/checkout/success/[orderId]`
+
+↓
+
+Confirmation page loads order via privileged `getSingleOrder`
+
 Privileged access:
 
 `createAdminClient()` (`src/lib/supabase/admin.ts`)
 
-is used for sensitive order orchestration and Admin Orders reads.
+is used for sensitive order orchestration and Admin Orders reads
+(list, detail, status update, cancel RPC).
 
 Normal storefront product reads continue to use
 
@@ -369,6 +389,8 @@ Normal storefront product reads continue to use
 ---
 
 # 🧾 Admin Orders Flow
+
+## List
 
 `/admin/orders`
 
@@ -384,7 +406,72 @@ Normal storefront product reads continue to use
 
 Select `orders` + nested `order_items`
 
----
+↓
+
+Responsive table (`sm+`) / mobile cards (`<sm`) + View → `/admin/orders/[id]`
+
+## Detail
+
+`/admin/orders/[id]`
+
+↓
+
+`getSingleOrder(id)` via privileged client
+
+↓
+
+Order Header / Customer Information / Order Items / Order Management UI
+
+## Status management
+
+Centralized rules: `src/lib/orders/order-status.ts`
+
+↓
+
+UI actions: `OrderStatusActions` → `updateOrderStatus` Server Action
+
+↓
+
+`update-order-status-record.ts` — conditional one-step forward update
+(`UPDATE … WHERE status = expected`)
+
+Forward workflow only:
+
+`pending → confirmed → processing → shipped → completed`
+
+`completed` and `cancelled` are terminal.
+
+Authoritative status badge: Order Header only (not duplicated in Order Management).
+
+## Cancellation
+
+UI cancel (when allowed) → `cancelOrder` Server Action
+
+↓
+
+Privileged `rpc("cancel_order", { p_order_id })` only
+
+↓
+
+PostgreSQL `public.cancel_order(uuid)` owns the transaction:
+lock order → set `cancelled` → restore ordered quantities additively to product stock
+
+Application TypeScript does **not** restore stock.
+
+Cancel allowed from: `pending` / `confirmed` / `processing`
+
+Cancel not allowed from: `shipped` / `completed`
+
+## Historical records
+
+Completed and cancelled orders remain stored and visible in Admin.
+
+Hard delete / archive is **not** part of the current architecture.
+
+## Security note
+
+`/admin` routes are **not** authentication-protected yet.
+Admin authentication remains a future milestone.
 
 # 🏛️ Architecture Principles
 
