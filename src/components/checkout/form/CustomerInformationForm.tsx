@@ -1,4 +1,30 @@
-export default function CustomerInformationForm() {
+import {
+  CheckoutCustomerFormErrors,
+  CheckoutCustomerFormField,
+  CheckoutCustomerFormValues,
+} from "./types";
+
+type Props = {
+  values: CheckoutCustomerFormValues;
+  errors: CheckoutCustomerFormErrors;
+  onChange: (field: CheckoutCustomerFormField, value: string) => void;
+  onBlur: (field: CheckoutCustomerFormField) => void;
+  onSubmitAttempt: () => void;
+};
+
+const inputClassName =
+  "w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-black dark:border-zinc-700 dark:bg-zinc-950 dark:focus:border-white";
+
+const errorInputClassName =
+  "w-full rounded-xl border border-red-500 bg-white px-4 py-3 outline-none transition focus:border-red-500 dark:border-red-500 dark:bg-zinc-950";
+
+export default function CustomerInformationForm({
+  values,
+  errors,
+  onChange,
+  onBlur,
+  onSubmitAttempt,
+}: Props) {
   return (
     <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
 
@@ -15,7 +41,14 @@ export default function CustomerInformationForm() {
 
       </div>
 
-      <div className="grid gap-5">
+      <form
+        className="grid gap-5"
+        onSubmit={(event) => {
+          event.preventDefault();
+          onSubmitAttempt();
+        }}
+        noValidate
+      >
 
         {/* სრული სახელი */}
         <div>
@@ -32,8 +65,28 @@ export default function CustomerInformationForm() {
             name="fullName"
             type="text"
             placeholder="John Doe"
-            className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-black dark:border-zinc-700 dark:bg-zinc-950 dark:focus:border-white"
+            value={values.fullName}
+            onChange={(event) =>
+              onChange("fullName", event.target.value)
+            }
+            onBlur={() => onBlur("fullName")}
+            aria-invalid={Boolean(errors.fullName)}
+            aria-describedby={
+              errors.fullName ? "fullName-error" : undefined
+            }
+            className={
+              errors.fullName ? errorInputClassName : inputClassName
+            }
           />
+
+          {errors.fullName ? (
+            <p
+              id="fullName-error"
+              className="mt-2 text-sm text-red-600"
+            >
+              {errors.fullName}
+            </p>
+          ) : null}
 
         </div>
 
@@ -52,8 +105,25 @@ export default function CustomerInformationForm() {
             name="email"
             type="email"
             placeholder="john@example.com"
-            className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-black dark:border-zinc-700 dark:bg-zinc-950 dark:focus:border-white"
+            value={values.email}
+            onChange={(event) =>
+              onChange("email", event.target.value)
+            }
+            onBlur={() => onBlur("email")}
+            aria-invalid={Boolean(errors.email)}
+            aria-describedby={
+              errors.email ? "email-error" : undefined
+            }
+            className={
+              errors.email ? errorInputClassName : inputClassName
+            }
           />
+
+          {errors.email ? (
+            <p id="email-error" className="mt-2 text-sm text-red-600">
+              {errors.email}
+            </p>
+          ) : null}
 
         </div>
 
@@ -72,8 +142,25 @@ export default function CustomerInformationForm() {
             name="phone"
             type="tel"
             placeholder="+995 555 12 34 56"
-            className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-black dark:border-zinc-700 dark:bg-zinc-950 dark:focus:border-white"
+            value={values.phone}
+            onChange={(event) =>
+              onChange("phone", event.target.value)
+            }
+            onBlur={() => onBlur("phone")}
+            aria-invalid={Boolean(errors.phone)}
+            aria-describedby={
+              errors.phone ? "phone-error" : undefined
+            }
+            className={
+              errors.phone ? errorInputClassName : inputClassName
+            }
           />
+
+          {errors.phone ? (
+            <p id="phone-error" className="mt-2 text-sm text-red-600">
+              {errors.phone}
+            </p>
+          ) : null}
 
         </div>
 
@@ -92,12 +179,32 @@ export default function CustomerInformationForm() {
             name="address"
             rows={4}
             placeholder="Street, City..."
-            className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-black dark:border-zinc-700 dark:bg-zinc-950 dark:focus:border-white"
+            value={values.address}
+            onChange={(event) =>
+              onChange("address", event.target.value)
+            }
+            onBlur={() => onBlur("address")}
+            aria-invalid={Boolean(errors.address)}
+            aria-describedby={
+              errors.address ? "address-error" : undefined
+            }
+            className={
+              errors.address ? errorInputClassName : inputClassName
+            }
           />
+
+          {errors.address ? (
+            <p
+              id="address-error"
+              className="mt-2 text-sm text-red-600"
+            >
+              {errors.address}
+            </p>
+          ) : null}
 
         </div>
 
-      </div>
+      </form>
 
     </div>
   );

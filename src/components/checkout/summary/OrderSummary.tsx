@@ -2,8 +2,13 @@
 
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
+import PlaceOrderButton from "../form/PlaceOrderButton";
 
-export default function OrderSummary() {
+type Props = {
+  isFormValid: boolean;
+};
+
+export default function OrderSummary({ isFormValid }: Props) {
   const { cartItems, cartCount, cartTotal } = useCart();
 
   return (
@@ -104,13 +109,23 @@ export default function OrderSummary() {
 
       </div>
 
-      {/* შეკვეთის ღილაკი */}
-      <button
-        type="button"
-        className="mt-8 w-full rounded-xl bg-black px-5 py-3 font-semibold text-white transition hover:opacity-90 dark:bg-white dark:text-black"
+      {/* სტატუსი */}
+      <p
+        className={`mt-6 text-sm ${
+          isFormValid
+            ? "text-green-600"
+            : "text-zinc-500 dark:text-zinc-400"
+        }`}
       >
-        Place Order
-      </button>
+        {isFormValid
+          ? "Checkout information is ready."
+          : "Customer information is incomplete."}
+      </p>
+
+      {/* შეკვეთის ღილაკი */}
+      <div className="mt-4">
+        <PlaceOrderButton disabled={!isFormValid} />
+      </div>
 
       {/* კალათში დაბრუნება */}
       <Link

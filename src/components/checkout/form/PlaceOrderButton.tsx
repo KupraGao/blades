@@ -7,7 +7,7 @@ export default function PlaceOrderButton({
 }: Props) {
   return (
     <button
-      type="submit"
+      type="button"
       disabled={disabled}
       className="
         w-full
