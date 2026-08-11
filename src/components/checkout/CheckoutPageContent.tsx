@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { createOrder } from "@/actions/orders/create-order";
 import { useCart } from "@/context/CartContext";
 import type { CreateOrderInput } from "@/lib/orders/validate-order";
@@ -18,7 +19,8 @@ import {
 } from "./form/validate-customer-form";
 
 export default function CheckoutPageContent() {
-  const { cartItems } = useCart();
+  const router = useRouter();
+  const { cartItems, clearCart } = useCart();
 
   const [values, setValues] = useState<CheckoutCustomerFormValues>(
     initialCheckoutCustomerFormValues,
@@ -61,7 +63,12 @@ export default function CheckoutPageContent() {
   async function handlePlaceOrder() {
     setSubmitAttempted(true);
 
-    if (!isFormValid || isCartEmpty || isSubmitting) {
+    if (
+      !isFormValid ||
+      isCartEmpty ||
+      isSubmitting ||
+      createdOrderId
+    ) {
       return;
     }
 
@@ -81,7 +88,10 @@ export default function CheckoutPageContent() {
 
     try {
       const result = await createOrder(payload);
+
       setCreatedOrderId(result.orderId);
+      clearCart();
+      router.push(`/checkout/success/${result.orderId}`);
     } catch (error) {
       console.error("Failed to create order:", error);
 

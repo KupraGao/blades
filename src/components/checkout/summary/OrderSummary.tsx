@@ -22,7 +22,7 @@ export default function OrderSummary({
   const { cartItems, cartCount, cartTotal } = useCart();
   const isCartEmpty = cartItems.length === 0;
   const isPlaceOrderDisabled =
-    !isFormValid || isCartEmpty || isSubmitting;
+    !isFormValid || isCartEmpty || isSubmitting || Boolean(createdOrderId);
 
   let statusMessage = "Customer information is incomplete.";
   let statusClassName = "text-zinc-500 dark:text-zinc-400";
