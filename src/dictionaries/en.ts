@@ -141,6 +141,7 @@ export const en = {
   orderPlacedSuccessfully: "Your order has been placed successfully.",
   orderIdLabel: "Order ID",
   orderNumberLabel: "Order Number",
+  orderNumberColumn: "#",
   internalOrderIdLabel: "Internal ID",
   statusLabel: "Status",
   dateLabel: "Date",

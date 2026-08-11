@@ -154,13 +154,19 @@ export default function AdminOrdersListContent({
 
                   <tr>
 
-                    <th className="w-24 whitespace-nowrap p-4 text-left text-sm font-semibold text-zinc-300">
-                      {t.orderNumberLabel}
+                    <th className="hidden w-28 whitespace-nowrap py-4 pl-4 pr-6 text-left text-sm font-semibold text-zinc-300 min-[750px]:table-cell">
+                      {t.orderNumberColumn}
                     </th>
 
-                    <th className="min-w-[9rem] p-4 text-left text-sm font-semibold text-zinc-300">
+                    <th className="hidden min-w-[9rem] py-4 pl-6 pr-4 text-left text-sm font-semibold text-zinc-300 min-[750px]:table-cell">
                       {t.customer}
                     </th>
+
+                    <th
+                      colSpan={2}
+                      className="p-4 min-[750px]:hidden"
+                      aria-hidden="true"
+                    />
 
                     <th className="w-24 whitespace-nowrap p-4 text-left text-sm font-semibold text-zinc-300">
                       {t.total}
@@ -191,14 +197,28 @@ export default function AdminOrdersListContent({
                       className="border-t border-zinc-800"
                     >
 
-                      <td className="whitespace-nowrap p-4 font-semibold tabular-nums text-white">
+                      <td className="hidden whitespace-nowrap py-4 pl-4 pr-6 font-semibold tabular-nums text-white min-[750px]:table-cell">
                         {formatOrderNumber(order.order_number)}
                       </td>
 
-                      <td className="max-w-0 p-4">
+                      <td className="hidden max-w-0 py-4 pl-6 pr-4 min-[750px]:table-cell">
                         <span className="block truncate font-medium text-white">
                           {order.customer_name}
                         </span>
+                      </td>
+
+                      <td
+                        colSpan={2}
+                        className="p-4 min-[750px]:hidden"
+                      >
+                        <div className="flex min-w-0 flex-col gap-1">
+                          <span className="whitespace-nowrap font-semibold tabular-nums text-white">
+                            {formatOrderNumber(order.order_number)}
+                          </span>
+                          <span className="min-w-0 truncate font-medium text-white">
+                            {order.customer_name}
+                          </span>
+                        </div>
                       </td>
 
                       <td className="whitespace-nowrap p-4 text-white">

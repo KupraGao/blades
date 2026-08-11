@@ -140,6 +140,7 @@ export const ka = {
   orderPlacedSuccessfully: "თქვენი შეკვეთა წარმატებით გაფორმდა.",
   orderIdLabel: "შეკვეთის ID",
   orderNumberLabel: "შეკვეთის ნომერი",
+  orderNumberColumn: "№",
   internalOrderIdLabel: "შიდა ID",
   statusLabel: "სტატუსი",
   dateLabel: "თარიღი",
