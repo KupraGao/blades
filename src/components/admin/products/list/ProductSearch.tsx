@@ -4,7 +4,10 @@ import { Search } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import { useLanguage } from "@/context/LanguageContext";
+
 export default function ProductSearch() {
+  const { t } = useLanguage();
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -35,7 +38,7 @@ export default function ProductSearch() {
 
       <input
         type="text"
-        placeholder="Search products..."
+        placeholder={t.searchProducts}
         value={value}
         onChange={(e) => setValue(e.target.value)}
         className="w-full rounded-xl border border-zinc-800 bg-zinc-900 py-3 pl-11 pr-4 text-white outline-none transition focus:border-zinc-600"

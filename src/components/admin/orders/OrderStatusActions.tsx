@@ -5,10 +5,11 @@ import { useRouter } from "next/navigation";
 
 import { cancelOrder } from "@/actions/orders/cancel-order";
 import { updateOrderStatus } from "@/actions/orders/update-order-status";
+import { useLanguage } from "@/context/LanguageContext";
 import {
   canCancelOrderStatus,
   getNextOrderStatus,
-  getOrderStatusActionLabel,
+  type OrderStatus,
 } from "@/lib/orders/order-status";
 
 type Props = {
@@ -18,11 +19,30 @@ type Props = {
 
 type PendingAction = "forward" | "cancel" | null;
 
+function getForwardActionLabel(
+  status: OrderStatus,
+  t: ReturnType<typeof useLanguage>["t"],
+): string | null {
+  switch (status) {
+    case "confirmed":
+      return t.confirmOrder;
+    case "processing":
+      return t.startProcessing;
+    case "shipped":
+      return t.markAsShipped;
+    case "completed":
+      return t.completeOrder;
+    default:
+      return null;
+  }
+}
+
 export default function OrderStatusActions({
   orderId,
   currentStatus,
 }: Props) {
   const router = useRouter();
+  const { t } = useLanguage();
   const [isPending, startTransition] = useTransition();
   const [pendingAction, setPendingAction] =
     useState<PendingAction>(null);
@@ -30,7 +50,7 @@ export default function OrderStatusActions({
 
   const nextStatus = getNextOrderStatus(currentStatus);
   const actionLabel = nextStatus
-    ? getOrderStatusActionLabel(nextStatus)
+    ? getForwardActionLabel(nextStatus, t)
     : null;
   const canCancel = canCancelOrderStatus(currentStatus);
   const isCompleted = currentStatus === "completed";
@@ -70,9 +90,7 @@ export default function OrderStatusActions({
       return;
     }
 
-    const confirmed = window.confirm(
-      "Cancel this order? Ordered quantities will be returned to stock.",
-    );
+    const confirmed = window.confirm(t.cancelOrderConfirm);
 
     if (!confirmed) {
       return;
@@ -99,7 +117,7 @@ export default function OrderStatusActions({
     <section className="rounded-2xl border border-zinc-800 bg-zinc-900 p-5 sm:p-6">
 
       <h2 className="text-lg font-semibold text-white">
-        Order Management
+        {t.orderManagement}
       </h2>
 
       {hasActions ? (
@@ -113,7 +131,7 @@ export default function OrderStatusActions({
               className="w-full rounded-xl bg-white px-5 py-3 font-semibold text-black transition hover:bg-zinc-200 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
             >
               {pendingAction === "forward" && isBusy
-                ? "Updating..."
+                ? t.updating
                 : actionLabel}
             </button>
           ) : null}
@@ -126,8 +144,8 @@ export default function OrderStatusActions({
               className="w-full rounded-xl border border-red-500/40 bg-red-500/15 px-5 py-3 font-semibold text-red-300 transition hover:bg-red-500/25 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
             >
               {pendingAction === "cancel" && isBusy
-                ? "Cancelling..."
-                : "Cancel Order"}
+                ? t.cancelling
+                : t.cancelOrder}
             </button>
           ) : null}
 
@@ -137,10 +155,10 @@ export default function OrderStatusActions({
       {isCompleted ? (
         <div className="mt-5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3">
           <p className="text-sm font-medium text-emerald-300">
-            Order completed successfully.
+            {t.orderCompletedSuccessfully}
           </p>
           <p className="mt-1 text-sm text-emerald-300/80">
-            No further status actions are available.
+            {t.noFurtherStatusActions}
           </p>
         </div>
       ) : null}
@@ -148,17 +166,17 @@ export default function OrderStatusActions({
       {isCancelled ? (
         <div className="mt-5 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3">
           <p className="text-sm font-medium text-red-300">
-            Order cancelled.
+            {t.orderCancelledMessage}
           </p>
           <p className="mt-1 text-sm text-red-300/80">
-            No further status actions are available.
+            {t.noFurtherStatusActions}
           </p>
         </div>
       ) : null}
 
       {isUnknownStatus ? (
         <p className="mt-5 text-sm text-zinc-400">
-          No valid status transition is available for this order.
+          {t.noValidStatusTransition}
         </p>
       ) : null}
 

@@ -1,5 +1,7 @@
 import { getSingleBrand } from "@/actions/brands/get-single-brand";
 import { updateBrand } from "@/actions/brands/update-brand";
+import BrandForm from "@/components/admin/brands/BrandForm";
+import BrandNotFound from "@/components/admin/brands/BrandNotFound";
 
 type Props = {
   params: Promise<{
@@ -13,7 +15,7 @@ export default async function EditBrandPage({ params }: Props) {
   const brand = await getSingleBrand(Number(id));
 
   if (!brand) {
-    return <h1 className="text-2xl font-bold text-white">Brand not found</h1>;
+    return <BrandNotFound />;
   }
 
   async function update(formData: FormData) {
@@ -21,86 +23,5 @@ export default async function EditBrandPage({ params }: Props) {
     await updateBrand(Number(id), formData);
   }
 
-  return (
-    <div>
-      {/* TOP */}
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold text-white">Edit Brand</h1>
-
-        <p className="mt-2 text-zinc-400">
-          Update brand information
-        </p>
-      </div>
-
-      {/* FORM */}
-      <form
-        action={update}
-        className="space-y-6 rounded-2xl border border-zinc-800 bg-zinc-900 p-8"
-      >
-        {/* NAME */}
-        <div>
-          <label
-            htmlFor="name"
-            className="mb-2 block text-sm font-medium text-zinc-300"
-          >
-            Brand Name
-          </label>
-
-          <input
-            id="name"
-            name="name"
-            type="text"
-            defaultValue={brand.name}
-            className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white outline-none transition focus:border-white"
-            required
-          />
-        </div>
-
-        {/* SLUG */}
-        <div>
-          <label
-            htmlFor="slug"
-            className="mb-2 block text-sm font-medium text-zinc-300"
-          >
-            Slug
-          </label>
-
-          <input
-            id="slug"
-            name="slug"
-            type="text"
-            defaultValue={brand.slug}
-            className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white outline-none transition focus:border-white"
-            required
-          />
-        </div>
-
-        {/* LOGO */}
-        <div>
-          <label
-            htmlFor="logo"
-            className="mb-2 block text-sm font-medium text-zinc-300"
-          >
-            Logo URL
-          </label>
-
-          <input
-            id="logo"
-            name="logo"
-            type="text"
-            defaultValue={brand.logo ?? ""}
-            className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white outline-none transition focus:border-white"
-          />
-        </div>
-
-        {/* BUTTON */}
-        <button
-          type="submit"
-          className="rounded-xl bg-white px-6 py-3 font-semibold text-black transition hover:bg-zinc-200"
-        >
-          Update Brand
-        </button>
-      </form>
-    </div>
-  );
+  return <BrandForm mode="edit" brand={brand} action={update} />;
 }

@@ -1,8 +1,11 @@
+"use client";
+
 import {
-  getOrderStatusLabel,
   isOrderStatus,
   type OrderStatus,
 } from "@/lib/orders/order-status";
+import { useLanguage } from "@/context/LanguageContext";
+import { getLocalizedOrderStatus } from "@/lib/i18n/localize-storefront-message";
 
 const STATUS_BADGE_CLASSES: Record<OrderStatus, string> = {
   pending:
@@ -31,7 +34,8 @@ export default function OrderStatusBadge({
   status,
   className = "",
 }: Props) {
-  const label = getOrderStatusLabel(status);
+  const { t } = useLanguage();
+  const label = getLocalizedOrderStatus(status, t);
   const badgeClasses = isOrderStatus(status)
     ? STATUS_BADGE_CLASSES[status]
     : FALLBACK_BADGE_CLASSES;

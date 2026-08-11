@@ -5,6 +5,7 @@ import { useState } from "react";
 import { deleteProductsBulk } from "@/actions/products/delete-products-bulk";
 import ChangeCategoriesModal from "@/components/admin/products/list/ChangeCategoriesModal";
 import ProductsTable from "@/components/admin/products/list/ProductsTable";
+import { useLanguage } from "@/context/LanguageContext";
 
 type ProductImage = {
   id: number;
@@ -45,6 +46,7 @@ export default function ProductBulkTable({
   products,
   categories,
 }: Props) {
+  const { t } = useLanguage();
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
   const [isCategoriesModalOpen, setIsCategoriesModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -96,7 +98,7 @@ export default function ProductBulkTable({
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3">
 
           <span className="text-sm text-zinc-300">
-            {selectedProducts.length} selected
+            {t.selectedCount.replace("{count}", String(selectedProducts.length))}
           </span>
 
 
@@ -107,7 +109,7 @@ export default function ProductBulkTable({
               onClick={() => setIsCategoriesModalOpen(true)}
               className="rounded-lg bg-zinc-800 px-4 py-2 text-sm font-medium text-white transition hover:bg-zinc-700"
             >
-              Change Categories
+              {t.changeCategories}
             </button>
 
 
@@ -117,7 +119,7 @@ export default function ProductBulkTable({
               disabled={loading}
               className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {loading ? "Deleting..." : "Delete Selected"}
+              {loading ? t.deleting : t.deleteSelected}
             </button>
 
           </div>

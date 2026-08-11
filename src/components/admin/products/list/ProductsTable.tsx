@@ -1,6 +1,9 @@
+"use client";
+
 import Link from "next/link";
 
 import DeleteProductButton from "@/app/admin/products/DeleteProductButton";
+import { useLanguage } from "@/context/LanguageContext";
 
 type ProductImage = {
   id: number;
@@ -30,6 +33,8 @@ export default function ProductsTable({
   onToggleProduct,
   onToggleAll,
 }: Props) {
+  const { t } = useLanguage();
+
   return (
     <div className="overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900">
       {/* TABLE HEADER */}
@@ -45,24 +50,24 @@ export default function ProductsTable({
           />
         </div>
 
-        <div className="hidden lg:block">Image</div>
+        <div className="hidden lg:block">{t.image}</div>
 
-        <div>Product</div>
+        <div>{t.productColumn}</div>
 
-        <div className="hidden md:block">Price</div>
+        <div className="hidden md:block">{t.price}</div>
 
-        <div className="hidden lg:block">Stock</div>
+        <div className="hidden lg:block">{t.stock}</div>
 
-        <div className="text-right">Actions</div>
+        <div className="text-right">{t.actions}</div>
       </div>
 
       {/* TABLE BODY */}
       {products.length === 0 ? (
         <div className="flex flex-col items-center justify-center px-6 py-20 text-center">
-          <p className="text-lg font-semibold text-white">No products found</p>
+          <p className="text-lg font-semibold text-white">{t.noProductsFound}</p>
 
           <p className="mt-2 text-sm text-zinc-500">
-            Try changing your search or filters.
+            {t.tryChangingFilters}
           </p>
         </div>
       ) : (
@@ -157,7 +162,7 @@ export default function ProductsTable({
                           : "bg-red-500/20 text-red-400"
                       }`}
                     >
-                      {product.stock > 0 ? "In Stock" : "Out Of Stock"}
+                      {product.stock > 0 ? t.inStock : t.outOfStock}
                     </span>
                   </div>
                 </div>
@@ -177,7 +182,7 @@ export default function ProductsTable({
                       : "bg-red-500/20 text-red-400"
                   }`}
                 >
-                  {product.stock > 0 ? "In Stock" : "Out Of Stock"}
+                  {product.stock > 0 ? t.inStock : t.outOfStock}
                 </span>
               </div>
 
@@ -187,7 +192,7 @@ export default function ProductsTable({
                   href={`/admin/products/edit/${product.id}`}
                   className="rounded-lg bg-zinc-800 px-4 py-2 text-sm text-white transition hover:bg-zinc-700"
                 >
-                  Edit
+                  {t.edit}
                 </Link>
 
                 <DeleteProductButton productId={product.id} />

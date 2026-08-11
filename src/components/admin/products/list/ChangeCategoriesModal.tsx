@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { updateProductCategoriesBulk } from "@/actions/products/update-product-categories-bulk";
+import { useLanguage } from "@/context/LanguageContext";
 
 type Category = {
   id: string;
@@ -26,6 +27,7 @@ export default function ChangeCategoriesModal({
   selectedProducts,
   onSuccess,
 }: Props) {
+  const { t, language } = useLanguage();
   const router = useRouter();
 
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
@@ -75,11 +77,11 @@ export default function ChangeCategoriesModal({
       <div className="mx-4 max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-2xl border border-zinc-800 bg-zinc-900 p-6">
 
         <h2 className="text-2xl font-bold text-white">
-          Change Categories
+          {t.changeCategories}
         </h2>
 
         <p className="mt-2 text-sm text-zinc-400">
-          Select one or more categories for the selected products.
+          {t.changeCategoriesDescription}
         </p>
 
         <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -99,7 +101,7 @@ export default function ChangeCategoriesModal({
               />
 
               <span className="truncate text-white">
-                {category.name_ka}
+                {language === "ka" ? category.name_ka : category.name_en}
               </span>
 
             </label>
@@ -115,7 +117,7 @@ export default function ChangeCategoriesModal({
             onClick={onClose}
             className="rounded-lg border border-zinc-700 px-4 py-2 text-white transition hover:bg-zinc-800"
           >
-            Cancel
+            {t.cancel}
           </button>
 
           <button
@@ -124,7 +126,7 @@ export default function ChangeCategoriesModal({
             disabled={loading || selectedCategories.length === 0}
             className="rounded-lg bg-white px-4 py-2 font-medium text-black transition hover:bg-zinc-200 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {loading ? "Saving..." : "Save Changes"}
+            {loading ? t.saving : t.saveChanges}
           </button>
 
         </div>

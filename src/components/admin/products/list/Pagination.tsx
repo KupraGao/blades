@@ -2,12 +2,15 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 
+import { useLanguage } from "@/context/LanguageContext";
+
 type Props = {
   currentPage: number;
   totalPages: number;
 };
 
 export default function Pagination({ currentPage, totalPages }: Props) {
+  const { t } = useLanguage();
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -29,7 +32,7 @@ export default function Pagination({ currentPage, totalPages }: Props) {
           onClick={() => goToPage(currentPage - 1)}
           className="rounded-lg border border-zinc-800 bg-zinc-900 px-4 py-2 text-sm text-zinc-400 transition hover:border-zinc-700 hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
         >
-          Previous
+          {t.previous}
         </button>
 
         {pages.map((page) => {
@@ -65,7 +68,7 @@ export default function Pagination({ currentPage, totalPages }: Props) {
           onClick={() => goToPage(currentPage + 1)}
           className="rounded-lg border border-zinc-800 bg-zinc-900 px-4 py-2 text-sm text-zinc-400 transition hover:border-zinc-700 hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
         >
-          Next
+          {t.next}
         </button>
       </div>
     </div>

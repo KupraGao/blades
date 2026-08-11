@@ -7,6 +7,7 @@ import BasicInfoSection from "@/components/admin/products/form/BasicInfoSection"
 import CategoriesSection from "@/components/admin/products/form/CategoriesSection";
 import SpecificationsSection from "@/components/admin/products/form/SpecificationsSection";
 import ImagesSection from "@/components/admin/products/form/ImagesSection";
+import { useLanguage } from "@/context/LanguageContext";
 
 type Brand = {
   id: number;
@@ -59,6 +60,8 @@ export default function ProductForm({
   mode = "create",
   product,
 }: ProductFormProps) {
+  const { t } = useLanguage();
+
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -112,9 +115,7 @@ export default function ProductForm({
       // =================================================
 
       alert(
-        mode === "edit"
-          ? "პროდუქტის განახლება ვერ მოხერხდა ❌"
-          : "პროდუქტის დამატება ვერ მოხერხდა ❌",
+        mode === "edit" ? t.productUpdateFailed : t.productCreateFailed,
       );
     }
   }
@@ -136,7 +137,7 @@ export default function ProductForm({
         type="submit"
         className="w-full rounded-2xl bg-white px-6 py-3 font-bold text-black transition hover:scale-[1.02] md:w-auto"
       >
-        {mode === "edit" ? "პროდუქტის განახლება" : "პროდუქტის შექმნა"}
+        {mode === "edit" ? t.updateProduct : t.createProduct}
       </button>
     </form>
   );

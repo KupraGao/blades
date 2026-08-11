@@ -2,6 +2,8 @@
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
+import { useLanguage } from "@/context/LanguageContext";
+
 type Category = {
   id: number;
   name_ka: string;
@@ -13,6 +15,7 @@ type Props = {
 };
 
 export default function ProductCategoryFilter({ categories }: Props) {
+  const { t, language } = useLanguage();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -38,11 +41,11 @@ export default function ProductCategoryFilter({ categories }: Props) {
       onChange={(e) => handleChange(e.target.value)}
       className="w-full rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-3 text-white outline-none transition focus:border-white lg:w-auto"
     >
-      <option value="">კატეგორიები</option>
+      <option value="">{t.allCategories}</option>
 
       {categories.map((category) => (
         <option key={category.id} value={category.id}>
-          {category.name_ka}
+          {language === "ka" ? category.name_ka : category.name_en}
         </option>
       ))}
     </select>

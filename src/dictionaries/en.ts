@@ -185,4 +185,154 @@ export const en = {
   orderErrorRestoreStock: "Unable to restore stock.",
   orderErrorCleanupOrder: "Unable to clean up the order.",
   orderErrorCleanupItems: "Unable to clean up order items.",
+
+  // =====================================
+  // ADMIN — SHARED
+  // =====================================
+  adminPanel: "Admin Panel",
+  dashboard: "Dashboard",
+  orders: "Orders",
+  users: "Users",
+  settings: "Settings",
+  actions: "Actions",
+  view: "View",
+  viewArrow: "View →",
+  edit: "Edit",
+  delete: "Delete",
+  deleting: "Deleting...",
+  saving: "Saving...",
+  saveChanges: "Save Changes",
+  cancel: "Cancel",
+  previous: "Previous",
+  next: "Next",
+  openMenu: "Open menu",
+  closeMenu: "Close menu",
+  image: "Image",
+  price: "Price",
+  stock: "Stock",
+  name: "Name",
+  logo: "Logo",
+  slug: "Slug",
+  customer: "Customer",
+  selectedCount: "{count} selected",
+  tryChangingSearch: "Try changing your search.",
+  tryChangingFilters: "Try changing your search or filters.",
+
+  // =====================================
+  // ADMIN — DASHBOARD / NAV DESCRIPTIONS
+  // =====================================
+  manageProducts: "Manage your products",
+  manageBrands: "Manage your brands",
+  manageCategories: "Manage your categories",
+  manageCustomerOrders: "Manage customer orders",
+
+  // =====================================
+  // ADMIN — ORDERS
+  // =====================================
+  noOrdersYet: "No orders yet",
+  ordersWillAppear: "Customer orders will appear here.",
+  backToOrders: "← Back to Orders",
+  orderDetails: "Order Details",
+  orderDetailsDescription:
+    "Review customer details, items, and order management actions.",
+  orderHeader: "Order Header",
+  created: "Created",
+  orderManagement: "Order Management",
+  customerNote: "Customer Note",
+  orderTotal: "Order Total",
+  confirmOrder: "Confirm Order",
+  startProcessing: "Start Processing",
+  markAsShipped: "Mark as Shipped",
+  completeOrder: "Complete Order",
+  cancelOrder: "Cancel Order",
+  updating: "Updating...",
+  cancelling: "Cancelling...",
+  orderCompletedSuccessfully: "Order completed successfully.",
+  noFurtherStatusActions: "No further status actions are available.",
+  orderCancelledMessage: "Order cancelled.",
+  noValidStatusTransition:
+    "No valid status transition is available for this order.",
+  cancelOrderConfirm:
+    "Cancel this order? Ordered quantities will be returned to stock.",
+
+  // =====================================
+  // ADMIN — PRODUCTS LIST
+  // =====================================
+  addProduct: "+ Add Product",
+  searchProducts: "Search products...",
+  allBrands: "All Brands",
+  allCategories: "All Categories",
+  allStock: "All Stock",
+  showCount: "Show {count}",
+  sortNewest: "Newest",
+  sortOldest: "Oldest",
+  sortPriceLowHigh: "Price: Low to High",
+  sortPriceHighLow: "Price: High to Low",
+  sortNameAZ: "Name: A-Z",
+  sortNameZA: "Name: Z-A",
+  showingProducts: "Showing {from}–{to} of {total} products",
+  noProductsFound: "No products found",
+  changeCategories: "Change Categories",
+  deleteSelected: "Delete Selected",
+  deleteProductConfirm: "Delete this product?",
+  changeCategoriesDescription: "Select one or more categories.",
+  productColumn: "Product",
+
+  // =====================================
+  // ADMIN — PRODUCT FORM
+  // =====================================
+  addProductTitle: "Add Product",
+  addProductDescription: "Create a new knife product",
+  editProductTitle: "Edit Product",
+  editProductDescription: "Update product information",
+  createProduct: "Create Product",
+  updateProduct: "Update Product",
+  productCreateFailed: "Failed to create product.",
+  productUpdateFailed: "Failed to update product.",
+  basicInfo: "Basic Information",
+  productTitleLabel: "Product Title",
+  selectBrand: "Select brand",
+  reviewLink: "Review Link",
+  existingPhotos: "Existing Photos",
+  mainPhoto: "Main Photo",
+  uploading: "Uploading...",
+  setAsMain: "Set as main photo",
+  deletePhoto: "Delete photo",
+  galleryPhotos: "Gallery Photos",
+  selectSteel: "Select steel type",
+  selectLocking: "Select locking type",
+
+  // =====================================
+  // ADMIN — BRANDS
+  // =====================================
+  addBrand: "+ Add Brand",
+  createBrand: "Create Brand",
+  createBrandDescription: "Add a new brand",
+  editBrand: "Edit Brand",
+  editBrandDescription: "Update brand information",
+  brandName: "Brand Name",
+  logoUrl: "Logo URL",
+  saveBrand: "Save Brand",
+  updateBrand: "Update Brand",
+  brandNotFound: "Brand not found",
+  noBrandsFound: "No brands found",
+  deleteBrandConfirm: "Delete this brand?",
+
+  // =====================================
+  // ADMIN — CATEGORIES
+  // =====================================
+  addCategory: "+ Add Category",
+  createCategory: "Create Category",
+  createCategoryDescription: "Add a new category",
+  editCategory: "Edit Category",
+  editCategoryDescription: "Update category information",
+  georgianName: "Georgian Name",
+  englishName: "English Name",
+  georgian: "Georgian",
+  english: "English",
+  saveCategory: "Save Category",
+  updateCategory: "Update Category",
+  categoryNotFound: "Category not found",
+  noCategoriesFound: "No categories found",
+  deleteCategoryConfirm: "Delete this category?",
 };

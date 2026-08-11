@@ -1,3 +1,7 @@
+"use client";
+
+import { useLanguage } from "@/context/LanguageContext";
+
 type Brand = {
   id: number;
   name: string;
@@ -20,9 +24,11 @@ export default function BasicInfoSection({
   brands,
   product,
 }: BasicInfoSectionProps) {
+  const { t } = useLanguage();
+
   return (
     <div className="rounded-3xl border border-zinc-800 bg-zinc-900/40 p-4 md:p-6">
-      <h2 className="mb-6 text-xl font-bold text-white">ძირითადი ინფორმაცია</h2>
+      <h2 className="mb-6 text-xl font-bold text-white">{t.basicInfo}</h2>
 
       <div className="grid gap-5 md:grid-cols-2">
         {/* TITLE */}
@@ -31,7 +37,7 @@ export default function BasicInfoSection({
             htmlFor="title"
             className="mb-2 block text-sm font-medium text-zinc-300"
           >
-            პროდუქტის დასახელება
+            {t.productTitleLabel}
           </label>
 
           <input
@@ -40,7 +46,7 @@ export default function BasicInfoSection({
             name="title"
             defaultValue={product?.title}
             placeholder="Spyderco Paramilitary 2"
-            title="პროდუქტის დასახელება"
+            title={t.productTitleLabel}
             className="w-full rounded-xl border border-zinc-800 bg-black/40 px-4 py-3 text-white outline-none transition focus:border-white"
           />
         </div>
@@ -51,17 +57,17 @@ export default function BasicInfoSection({
             htmlFor="brandId"
             className="mb-2 block text-sm font-medium text-zinc-300"
           >
-            ბრენდი
+            {t.brands}
           </label>
 
           <select
             id="brandId"
             name="brandId"
             defaultValue={product?.brand_id ?? ""}
-            title="ბრენდის არჩევა"
+            title={t.selectBrand}
             className="w-full rounded-xl border border-zinc-800 bg-black/40 px-4 py-3 text-white outline-none transition focus:border-white"
           >
-            <option value="">აირჩიე ბრენდი</option>
+            <option value="">{t.selectBrand}</option>
 
             {brands.map((brand) => (
               <option key={brand.id} value={brand.id}>
@@ -77,7 +83,7 @@ export default function BasicInfoSection({
             htmlFor="price"
             className="mb-2 block text-sm font-medium text-zinc-300"
           >
-            ფასი
+            {t.price}
           </label>
 
           <input
@@ -86,7 +92,7 @@ export default function BasicInfoSection({
             name="price"
             defaultValue={product?.price}
             placeholder="320"
-            title="ფასი"
+            title={t.price}
             className="w-full rounded-xl border border-zinc-800 bg-black/40 px-4 py-3 text-white outline-none transition focus:border-white"
           />
         </div>
@@ -97,7 +103,7 @@ export default function BasicInfoSection({
             htmlFor="reviewLink"
             className="mb-2 block text-sm font-medium text-zinc-300"
           >
-            განხილვის ლინკი
+            {t.reviewLink}
           </label>
 
           <input
@@ -106,7 +112,7 @@ export default function BasicInfoSection({
             name="reviewLink"
             defaultValue={product?.review_link ?? ""}
             placeholder="https://youtube.com/watch?v=..."
-            title="განხილვის ლინკი"
+            title={t.reviewLink}
             className="w-full rounded-xl border border-zinc-800 bg-black/40 px-4 py-3 text-white outline-none transition focus:border-white"
           />
         </div>
@@ -117,7 +123,7 @@ export default function BasicInfoSection({
             htmlFor="stock"
             className="mb-2 block text-sm font-medium text-zinc-300"
           >
-            მარაგი
+            {t.stock}
           </label>
 
           <input
@@ -126,7 +132,7 @@ export default function BasicInfoSection({
             name="stock"
             defaultValue={product?.stock}
             placeholder="15"
-            title="მარაგი"
+            title={t.stock}
             className="w-full rounded-xl border border-zinc-800 bg-black/40 px-4 py-3 text-white outline-none transition focus:border-white"
           />
         </div>

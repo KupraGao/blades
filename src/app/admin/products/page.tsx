@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 import { getBrands } from "@/actions/brands/get-brands";
 import { getCategories } from "@/actions/categories/get-categories";
 import { getProducts } from "@/actions/products/get-products";
@@ -7,6 +5,8 @@ import Pagination from "@/components/admin/products/list/Pagination";
 import ProductBulkTable from "@/components/admin/products/list/ProductBulkTable";
 import ProductSearch from "@/components/admin/products/list/ProductSearch";
 import ProductToolbar from "@/components/admin/products/list/ProductToolbar";
+import ProductsPageHeader from "@/components/admin/products/list/ProductsPageHeader";
+import ProductsResultsCounter from "@/components/admin/products/list/ProductsResultsCounter";
 
 type Props = {
   searchParams: Promise<{
@@ -66,64 +66,24 @@ export default async function ProductsPage({
 
     <div>
 
-      {/* PAGE HEADER */}
-      <div className="mb-8 flex flex-wrap items-end gap-4">
+      <ProductsPageHeader search={<ProductSearch />} />
 
-        {/* TITLE */}
-        <div className="min-w-fit">
-
-          <h1 className="text-4xl font-bold text-white">
-            Products
-          </h1>
-
-          <p className="mt-2 text-zinc-400">
-            Manage your products
-          </p>
-
-        </div>
-
-        {/* SEARCH */}
-        <div className="hidden flex-1 md:block">
-
-          <ProductSearch />
-
-        </div>
-
-        {/* BUTTON */}
-        <Link
-          href="/admin/products/create"
-          className="ml-auto rounded-xl bg-white px-5 py-3 font-semibold text-black transition hover:bg-zinc-200"
-        >
-          + Add Product
-        </Link>
-
-        {/* MOBILE / TABLET SEARCH */}
-        <div className="w-full md:hidden">
-
-          <ProductSearch />
-
-        </div>
-
-      </div>
-
-      {/* PRODUCT TOOLBAR */}
       <ProductToolbar
         brands={brands}
         categories={categories}
       />
 
-      {/* RESULTS COUNTER */}
-      <div className="mb-4 text-sm text-zinc-400">
-        Showing {from}–{to} of {total} products
-      </div>
+      <ProductsResultsCounter
+        from={from}
+        to={to}
+        total={total}
+      />
 
-      {/* PRODUCTS TABLE */}
       <ProductBulkTable
         products={products}
         categories={categories}
       />
 
-      {/* PAGINATION */}
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}

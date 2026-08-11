@@ -3,7 +3,10 @@
 import { ArrowUpDown } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 
+import { useLanguage } from "@/context/LanguageContext";
+
 export default function ProductSort() {
+  const { t } = useLanguage();
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -31,17 +34,17 @@ export default function ProductSort() {
         onChange={(e) => handleSort(e.target.value)}
         className="w-full appearance-none rounded-xl border border-zinc-800 bg-zinc-900 py-3 pl-11 pr-10 text-white outline-none transition focus:border-zinc-600"
       >
-        <option value="newest">Newest</option>
+        <option value="newest">{t.sortNewest}</option>
 
-        <option value="oldest">Oldest</option>
+        <option value="oldest">{t.sortOldest}</option>
 
-        <option value="price-asc">Price: Low to High</option>
+        <option value="price-asc">{t.sortPriceLowHigh}</option>
 
-        <option value="price-desc">Price: High to Low</option>
+        <option value="price-desc">{t.sortPriceHighLow}</option>
 
-        <option value="name-asc">Name: A-Z</option>
+        <option value="name-asc">{t.sortNameAZ}</option>
 
-        <option value="name-desc">Name: Z-A</option>
+        <option value="name-desc">{t.sortNameZA}</option>
       </select>
     </div>
   );
