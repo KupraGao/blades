@@ -14,7 +14,7 @@ export async function insertOrder(
     customer_note: string | null;
     total_price: number;
     status: string;
-  }
+  },
 ) {
   // =================================================
   // INSERT
@@ -31,12 +31,12 @@ export async function insertOrder(
   // =================================================
 
   if (error) {
-    throw new Error(error.message);
+    throw new Error("შეკვეთის შენახვა ვერ მოხერხდა.");
   }
 
   // =================================================
   // RESULT
   // =================================================
 
-  return data.id;
+  return data.id as string;
 }

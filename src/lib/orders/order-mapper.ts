@@ -1,10 +1,13 @@
-import { CreateOrderInput } from "./validate-order";
+import { CreateOrderInput, ResolvedOrderItem } from "./validate-order";
 
 // =================================================
 // ORDER MAPPER
 // =================================================
 
-export function orderMapper(order: CreateOrderInput) {
+export function orderMapper(
+  order: CreateOrderInput,
+  items: ResolvedOrderItem[],
+) {
   // =================================================
   // ORDER
   // =================================================
@@ -23,10 +26,10 @@ export function orderMapper(order: CreateOrderInput) {
     customer_note:
       order.customerNote?.trim() || null,
 
-    total_price: order.items.reduce(
+    total_price: items.reduce(
       (total, item) =>
         total + item.price * item.quantity,
-      0
+      0,
     ),
 
     status: "pending",

@@ -1,6 +1,6 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 
-import { CreateOrderItemInput } from "./validate-order";
+import { ResolvedOrderItem } from "./validate-order";
 
 // =================================================
 // INSERT ORDER ITEMS
@@ -9,7 +9,7 @@ import { CreateOrderItemInput } from "./validate-order";
 export async function insertOrderItems(
   supabase: SupabaseClient,
   orderId: string,
-  items: CreateOrderItemInput[]
+  items: ResolvedOrderItem[],
 ) {
   // =================================================
   // ITEMS
@@ -40,6 +40,6 @@ export async function insertOrderItems(
   // =================================================
 
   if (error) {
-    throw new Error(error.message);
+    throw new Error("შეკვეთის პროდუქტების შენახვა ვერ მოხერხდა.");
   }
 }

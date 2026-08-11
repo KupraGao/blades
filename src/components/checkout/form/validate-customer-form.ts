@@ -39,8 +39,8 @@ export function getCustomerFieldError(
 
     case "phone":
       if (!value) return "Phone number is required.";
-      if (value.length < 6) {
-        return "Phone number must be at least 6 characters.";
+      if (value.length < 9) {
+        return "Phone number must be at least 9 characters.";
       }
       return undefined;
 

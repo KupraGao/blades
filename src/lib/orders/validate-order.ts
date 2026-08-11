@@ -4,8 +4,6 @@
 
 export type CreateOrderItemInput = {
   productId: string;
-  title: string;
-  price: number;
   quantity: number;
 };
 
@@ -18,12 +16,43 @@ export type CreateOrderInput = {
   items: CreateOrderItemInput[];
 };
 
+export type ResolvedOrderItem = {
+  productId: string;
+  title: string;
+  price: number;
+  quantity: number;
+  stock: number;
+};
+
 // =================================================
 // EMAIL VALIDATION
 // =================================================
 
 function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+// =================================================
+// CONSOLIDATE DUPLICATE PRODUCT LINES
+// =================================================
+
+export function consolidateOrderItems(
+  items: CreateOrderItemInput[],
+): CreateOrderItemInput[] {
+  const quantities = new Map<string, number>();
+
+  for (const item of items) {
+    const productId = item.productId.trim();
+    const currentQuantity = quantities.get(productId) ?? 0;
+    quantities.set(productId, currentQuantity + item.quantity);
+  }
+
+  return Array.from(quantities.entries()).map(
+    ([productId, quantity]) => ({
+      productId,
+      quantity,
+    }),
+  );
 }
 
 // =================================================
@@ -41,7 +70,7 @@ export function validateOrder(order: CreateOrderInput) {
 
   if (order.customerName.trim().length < 2) {
     throw new Error(
-      "მომხმარებლის სახელი მინიმუმ 2 სიმბოლოს უნდა შეიცავდეს."
+      "მომხმარებლის სახელი მინიმუმ 2 სიმბოლოს უნდა შეიცავდეს.",
     );
   }
 
@@ -78,7 +107,7 @@ export function validateOrder(order: CreateOrderInput) {
 
   if (order.customerAddress.trim().length < 5) {
     throw new Error(
-      "მისამართი მინიმუმ 5 სიმბოლოს უნდა შეიცავდეს."
+      "მისამართი მინიმუმ 5 სიმბოლოს უნდა შეიცავდეს.",
     );
   }
 
@@ -95,29 +124,15 @@ export function validateOrder(order: CreateOrderInput) {
   // =================================================
 
   for (const item of order.items) {
-    if (!item.productId) {
+    if (!item.productId || !item.productId.trim()) {
       throw new Error("პროდუქტის ID აუცილებელია.");
-    }
-
-    if (!item.title.trim()) {
-      throw new Error("პროდუქტის დასახელება აუცილებელია.");
-    }
-
-    if (!Number.isFinite(item.price) || item.price < 0) {
-      throw new Error(
-        `პროდუქტის ფასი არასწორია: ${item.title || "უცნობი პროდუქტი"}.`
-      );
     }
 
     if (
       !Number.isInteger(item.quantity) ||
       item.quantity <= 0
     ) {
-      throw new Error(
-        `პროდუქტის რაოდენობა არასწორია: ${
-          item.title || "უცნობი პროდუქტი"
-        }.`
-      );
+      throw new Error("პროდუქტის რაოდენობა არასწორია.");
     }
   }
 }
