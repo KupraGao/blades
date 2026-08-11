@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useLanguage } from "@/context/LanguageContext";
+import { formatAdminDate } from "@/lib/i18n/format-admin-date";
 import OrderStatusBadge from "@/components/admin/orders/OrderStatusBadge";
 
 type OrderRow = {
@@ -18,7 +19,6 @@ type Props = {
 
 export default function AdminOrdersListContent({ orders }: Props) {
   const { t, language } = useLanguage();
-  const locale = language === "ka" ? "ka-GE" : "en-US";
 
   return (
     <div>
@@ -88,7 +88,7 @@ export default function AdminOrdersListContent({ orders }: Props) {
                       {t.dateLabel}
                     </p>
                     <p className="font-medium text-white">
-                      {new Date(order.created_at).toLocaleDateString(locale)}
+                      {formatAdminDate(order.created_at, language)}
                     </p>
                   </div>
 
@@ -135,8 +135,8 @@ export default function AdminOrdersListContent({ orders }: Props) {
                     {t.dateLabel}
                   </th>
 
-                  <th className="w-28 p-4 text-right text-sm font-semibold text-zinc-300">
-                    {t.actions}
+                  <th className="w-24 py-4 pl-4 pr-5 text-right text-sm font-semibold text-zinc-300">
+                    {t.ordersAction}
                   </th>
 
                 </tr>
@@ -169,10 +169,10 @@ export default function AdminOrdersListContent({ orders }: Props) {
                     </td>
 
                     <td className="whitespace-nowrap p-4 text-zinc-300">
-                      {new Date(order.created_at).toLocaleDateString(locale)}
+                      {formatAdminDate(order.created_at, language)}
                     </td>
 
-                    <td className="p-4 text-right">
+                    <td className="py-4 pl-4 pr-5 text-right">
                       <Link
                         href={`/admin/orders/${order.id}`}
                         className="inline-flex rounded-lg bg-zinc-800 px-3 py-2 text-sm font-medium text-white transition hover:bg-zinc-700"

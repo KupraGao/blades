@@ -14,6 +14,45 @@
 
 ---
 
+## v1.10.0
+
+### Admin Orders polish + Admin KA/EN ✅
+
+#### Admin Orders presentation
+
+- Final Order Details section order:
+  Page Header → Order Header → Customer Information →
+  Order Items + Order Total → Order Management (`OrderStatusActions`, last)
+- Compact Orders Action column label (`ordersAction`)
+- Shortened Order Management action labels:
+  KA `დადასტურება` / `გაუქმება`, EN `Confirm` / `Cancel`
+- Numeric stock badges on Admin Products list (presentation only)
+- Compact non-wrapping Edit/Delete actions on Admin Products
+
+#### Admin / storefront i18n
+
+- Storefront and Admin CMS share the existing
+  `LanguageContext` / `useLanguage()` / `dictionaries` architecture
+- Admin Orders list, details, status badges, and actions are localized KA/EN
+- Database status values remain untranslated:
+  `pending` / `confirmed` / `processing` / `shipped` / `completed` / `cancelled`
+- Only presentation labels are translated
+
+#### Deterministic Admin dates
+
+- `src/lib/i18n/format-admin-date.ts`
+- Fixed timezone `Asia/Tbilisi` + assembled date strings
+- Avoids SSR/client hydration mismatch from `toLocaleDateString` / `toLocaleString`
+
+#### Explicitly deferred
+
+- Product thumbnails in Admin Order Items
+  (considered/tested; intentionally **not** shipped;
+  `get-single-order` stays on simple `order_items` select)
+- Delivery / Pickup fulfillment
+
+---
+
 ## v1.9.0
 
 ### Admin Orders Management ✅

@@ -29,7 +29,8 @@
 - Order Confirmation (clear cart, success page, redirect with orderId)
 - Admin Orders Management (details, status workflow, transactional cancel, UX polish)
 
-See `docs/06_CHANGELOG.md` for version history.
+See `docs/06_CHANGELOG.md` for version history (latest: **v1.10.0** —
+Admin Orders polish + Admin KA/EN + deterministic dates).
 
 ---
 
@@ -39,9 +40,13 @@ See `docs/06_CHANGELOG.md` for version history.
 
 ⬜ Checkout: customer chooses fulfillment method
 
-⬜ Courier Delivery fulfillment path
+⬜ Courier Delivery path (delivery address required)
 
-⬜ Pickup fulfillment path
+⬜ Pickup path (no delivery address required)
+
+⬜ Persist fulfillment method on the order
+
+⬜ Admin Order Details shows fulfillment method / related info
 
 ⬜ Delivery status workflow:
 `pending → confirmed → processing → shipped → completed`
@@ -52,6 +57,7 @@ See `docs/06_CHANGELOG.md` for version history.
 ⬜ Controlled cancellation rules remain enforced
 
 **Not started.** Do not treat Delivery / Pickup as completed.
+Existing Admin Orders status workflow remains the current baseline.
 
 ---
 

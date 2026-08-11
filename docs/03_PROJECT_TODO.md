@@ -81,9 +81,15 @@
 
 - Reusable status badge presentation
 - Polished list + Order Details UI
-- Order Header / Customer Information / Order Items / Order Management
+- Final detail section order:
+  Order Header → Customer Information → Order Items → Order Management
+  (`OrderStatusActions` is the last card)
 - Terminal Completed / Cancelled informational messages
+- Compact Order Management labels (Confirm/Cancel · დადასტურება/გაუქმება)
+- Admin Orders KA/EN via existing LanguageContext dictionaries
+- Deterministic Admin date formatting (`format-admin-date.ts`, Asia/Tbilisi)
 - No order hard delete (historical records retained)
+- Product thumbnails in Order Items intentionally **not** implemented
 
 ---
 
@@ -94,7 +100,15 @@ Checkout customer chooses fulfillment method:
 1. Courier Delivery
 2. Pickup
 
-Planned workflows (not implemented):
+Planned behavior (not implemented):
+
+- Delivery requires a customer delivery address
+- Pickup does **not** require a customer delivery address
+- Fulfillment method is stored with the order
+- Admin Order Details shows fulfillment method and relevant fields
+- Existing Order Status Workflow remains intact
+
+Planned workflows:
 
 **Delivery:**
 `pending → confirmed → processing → shipped → completed`
@@ -106,13 +120,22 @@ Cancellation remains available only according to controlled business rules.
 
 ⬜ Fulfillment method selection at Checkout
 
+⬜ Delivery address rules vs Pickup (no delivery address)
+
+⬜ Persist fulfillment method on the order
+
 ⬜ Delivery path + `shipped` workflow
 
 ⬜ Pickup path + `ready_for_pickup` status
 
-⬜ Admin / status UI updates for fulfillment type
+⬜ Admin Order Details displays fulfillment method / related info
 
 **Status:** PLANNED / NEXT — not completed.
+
+Not in this sprint: Auth, Protected Admin, Customer Account / My Orders,
+Payments, Shipping pricing, Taxes, Coupons, Invoices, Email, Analytics,
+archive/hard delete, advanced order editing, createOrder transaction RPC /
+production hardening.
 
 ---
 

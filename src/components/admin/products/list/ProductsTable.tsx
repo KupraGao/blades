@@ -156,13 +156,13 @@ export default function ProductsTable({
                   {/* MOBILE STOCK */}
                   <div className="mt-2 lg:hidden">
                     <span
-                      className={`inline-flex rounded-full px-3 py-1 text-xs ${
+                      className={`inline-flex min-w-8 items-center justify-center rounded-full px-2.5 py-1 text-xs font-semibold tabular-nums ${
                         product.stock > 0
                           ? "bg-green-500/20 text-green-400"
                           : "bg-red-500/20 text-red-400"
                       }`}
                     >
-                      {product.stock > 0 ? t.inStock : t.outOfStock}
+                      {product.stock}
                     </span>
                   </div>
                 </div>
@@ -176,21 +176,21 @@ export default function ProductsTable({
               {/* STOCK */}
               <div className="hidden lg:block">
                 <span
-                  className={`inline-flex rounded-full px-3 py-1 text-sm ${
+                  className={`inline-flex min-w-8 items-center justify-center rounded-full px-2.5 py-1 text-sm font-semibold tabular-nums ${
                     product.stock > 0
                       ? "bg-green-500/20 text-green-400"
                       : "bg-red-500/20 text-red-400"
                   }`}
                 >
-                  {product.stock > 0 ? t.inStock : t.outOfStock}
+                  {product.stock}
                 </span>
               </div>
 
               {/* ACTIONS */}
-              <div className="flex shrink-0 gap-2 sm:justify-end">
+              <div className="flex shrink-0 flex-nowrap items-center gap-1.5 sm:justify-end sm:gap-2">
                 <Link
                   href={`/admin/products/edit/${product.id}`}
-                  className="rounded-lg bg-zinc-800 px-4 py-2 text-sm text-white transition hover:bg-zinc-700"
+                  className="whitespace-nowrap rounded-lg bg-zinc-800 px-2.5 py-2 text-sm text-white transition hover:bg-zinc-700 sm:px-3"
                 >
                   {t.edit}
                 </Link>

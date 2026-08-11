@@ -17,7 +17,7 @@ function SubmitButton() {
     <button
       type="submit"
       disabled={pending}
-      className="rounded-lg bg-red-500/20 px-4 py-2 text-sm text-red-400 transition hover:bg-red-500/30 disabled:opacity-50"
+      className="whitespace-nowrap rounded-lg bg-red-500/20 px-2.5 py-2 text-sm text-red-400 transition hover:bg-red-500/30 disabled:opacity-50 sm:px-3"
     >
       {pending ? t.deleting : t.delete}
     </button>
@@ -30,6 +30,7 @@ export default function DeleteProductButton({ productId }: Props) {
   return (
     <form
       action={deleteProduct}
+      className="inline-flex shrink-0"
       onSubmit={(event) => {
         if (!window.confirm(t.deleteProductConfirm)) {
           event.preventDefault();

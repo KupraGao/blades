@@ -51,12 +51,17 @@ Exact PostgreSQL column types, defaults, indexes, and constraints are
 
 ### Supported order statuses (current)
 
+Stored DB values (never rewritten for i18n):
+
 - `pending` — set on create
 - `confirmed`
 - `processing`
 - `shipped`
 - `completed` — terminal
 - `cancelled` — terminal
+
+Presentation (Admin / storefront) maps these codes to KA/EN labels.
+The database values themselves are **not** translated.
 
 **Not a current DB status:** `ready_for_pickup`
 (planned for the Delivery / Pickup milestone).
@@ -96,8 +101,8 @@ Fields written/read by the application:
 - `product_price` — snapshot from authoritative DB product price at order time
 - `quantity`
 
-Exact PostgreSQL column types, defaults, indexes, and constraints are
-**not documented in the repository** (implementation-dependent / live DB).
+No image snapshot column on `order_items`.
+Admin Order Items do not currently display product thumbnails.
 
 ---
 

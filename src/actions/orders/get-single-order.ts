@@ -33,10 +33,16 @@ export async function getSingleOrder(id: string) {
     .single();
 
   // =================================================
-  // NOT FOUND
+  // ERROR
   // =================================================
 
   if (error) {
+    console.error("getSingleOrder error", {
+      code: error.code,
+      message: error.message,
+      details: error.details,
+      hint: error.hint,
+    });
     return null;
   }
 

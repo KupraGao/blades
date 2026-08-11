@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ReactNode } from "react";
 import { useLanguage } from "@/context/LanguageContext";
+import { formatAdminDateTime } from "@/lib/i18n/format-admin-date";
 import OrderStatusActions from "@/components/admin/orders/OrderStatusActions";
 import OrderStatusBadge from "@/components/admin/orders/OrderStatusBadge";
 
@@ -45,7 +46,6 @@ function InfoRow({
 
 export default function AdminOrderDetailsContent({ order }: Props) {
   const { t, language } = useLanguage();
-  const locale = language === "ka" ? "ka-GE" : "en-US";
 
   if (!order) {
     return (
@@ -76,6 +76,7 @@ export default function AdminOrderDetailsContent({ order }: Props) {
   return (
     <div className="mx-auto max-w-5xl space-y-5">
 
+      {/* PAGE HEADER */}
       <div className="flex flex-wrap items-start justify-between gap-4">
 
         <div className="min-w-0">
@@ -99,6 +100,7 @@ export default function AdminOrderDetailsContent({ order }: Props) {
 
       </div>
 
+      {/* ORDER HEADER */}
       <section className="rounded-2xl border border-zinc-800 bg-zinc-900 p-5 sm:p-6">
 
         <h2 className="text-lg font-semibold text-white">
@@ -116,7 +118,7 @@ export default function AdminOrderDetailsContent({ order }: Props) {
           <InfoRow label={t.created}>
             <p className="text-sm font-semibold text-white">
               {order.created_at
-                ? new Date(order.created_at).toLocaleString(locale)
+                ? formatAdminDateTime(order.created_at, language)
                 : "—"}
             </p>
           </InfoRow>
@@ -137,11 +139,7 @@ export default function AdminOrderDetailsContent({ order }: Props) {
 
       </section>
 
-      <OrderStatusActions
-        orderId={order.id}
-        currentStatus={currentStatus}
-      />
-
+      {/* CUSTOMER INFORMATION */}
       <section className="rounded-2xl border border-zinc-800 bg-zinc-900 p-5 sm:p-6">
 
         <h2 className="text-lg font-semibold text-white">
@@ -189,6 +187,7 @@ export default function AdminOrderDetailsContent({ order }: Props) {
 
       </section>
 
+      {/* ORDER ITEMS */}
       <section className="rounded-2xl border border-zinc-800 bg-zinc-900 p-5 sm:p-6">
 
         <h2 className="text-lg font-semibold text-white">
@@ -238,6 +237,12 @@ export default function AdminOrderDetailsContent({ order }: Props) {
         </div>
 
       </section>
+
+      {/* ORDER MANAGEMENT — must remain last */}
+      <OrderStatusActions
+        orderId={order.id}
+        currentStatus={currentStatus}
+      />
 
     </div>
   );

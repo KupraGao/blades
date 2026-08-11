@@ -325,13 +325,18 @@
 - Checkout → Orders Integration (secure createOrder + stock)
 - Order Confirmation (clear cart, success page, redirect with orderId)
 - Admin Orders Management (details, status workflow, transactional cancel, UX polish)
+- Admin Orders KA/EN + deterministic Admin dates (no Order Item thumbnails)
 
 ### 🚀 მიმდინარე / შემდეგი
 
 - Delivery / Pickup System (active sprint — see `docs/03_PROJECT_TODO.md`)
   - Checkout fulfillment choice: Courier Delivery / Pickup
+  - Delivery requires address; Pickup does not
+  - Persist fulfillment method on the order
+  - Admin Order Details shows fulfillment method
   - Delivery workflow: `pending → confirmed → processing → shipped → completed`
   - Pickup workflow: `pending → confirmed → processing → ready_for_pickup → completed`
+  - Existing status workflow remains intact
   - **Not started / not completed**
 
 ### Orders (შემდგომი)
@@ -494,6 +499,7 @@
 - ✅ Checkout → Orders integration (completed; no payments)
 - ✅ Order Confirmation (completed)
 - ✅ Admin Orders Management (details, status, cancel RPC, UX — completed)
+- ✅ Admin KA/EN + deterministic Admin dates (completed; no Order Item thumbnails)
 - 🚚 Delivery / Pickup System (next / planned — not completed)
 - 👤 Authentication + Protected Admin Routes
 - 👤 Customer Account / My Orders

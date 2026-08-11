@@ -26,7 +26,9 @@ Open: http://localhost:3000
 - Checkout creates real orders via a server-only privileged Supabase client.
 - Order confirmation page clears the cart and shows order details by `orderId`.
 - Admin Orders Management is complete: list, detail page, controlled status
-  workflow, and transactional cancel via `cancel_order` RPC (stock restore in DB).
+  workflow, transactional `cancel_order` RPC (stock restore in PostgreSQL),
+  and Admin KA/EN localization via the shared LanguageContext.
+- Admin Order Details layout ends with Order Management (`OrderStatusActions`).
 - **Next milestone:** Delivery / Pickup fulfillment (not implemented yet).
 
 ## Notes

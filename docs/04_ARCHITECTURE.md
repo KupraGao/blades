@@ -96,6 +96,8 @@ src
 │   │   │   └── Sidebar.tsx
 │   │   │
 │   │   ├── orders
+│   │   │   ├── AdminOrderDetailsContent.tsx
+│   │   │   ├── AdminOrdersListContent.tsx
 │   │   │   ├── OrderStatusActions.tsx
 │   │   │   └── OrderStatusBadge.tsx
 │   │   │
@@ -189,6 +191,10 @@ src
 │   │
 │   ├── data
 │   │   └── products.ts
+│   │
+│   ├── i18n
+│   │   ├── format-admin-date.ts
+│   │   └── localize-storefront-message.ts
 │   │
 │   ├── orders
 │   │   ├── decrement-product-stock.ts
@@ -417,10 +423,24 @@ Responsive table (`sm+`) / mobile cards (`<sm`) + View → `/admin/orders/[id]`
 ↓
 
 `getSingleOrder(id)` via privileged client
+(simple `orders` + `order_items` select — **no** product image embed)
 
 ↓
 
-Order Header / Customer Information / Order Items / Order Management UI
+`AdminOrderDetailsContent` section order (top → bottom):
+
+1. Page Header
+2. Order Header (incl. authoritative status badge)
+3. Customer Information
+4. Order Items + Order Total
+5. Order Management — `OrderStatusActions` (**must remain last**)
+
+Order Items currently do **not** show product thumbnails
+(intentionally deferred; historical title/price snapshots stay text-only).
+
+Admin dates use `formatAdminDateTime` / `formatAdminDate`
+(`src/lib/i18n/format-admin-date.ts`, timezone `Asia/Tbilisi`)
+so SSR and client hydrate identically.
 
 ## Status management
 
@@ -442,6 +462,9 @@ Forward workflow only:
 `completed` and `cancelled` are terminal.
 
 Authoritative status badge: Order Header only (not duplicated in Order Management).
+
+DB status codes stay English machine values; UI labels are localized via
+dictionaries (`getLocalizedOrderStatus` / Admin badge presentation).
 
 ## Cancellation
 
