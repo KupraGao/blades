@@ -24,10 +24,15 @@ Open: http://localhost:3000
 
 - Product catalog CRUD and storefront shopping (cart / wishlist) are in place.
 - Checkout creates real orders via a server-only privileged Supabase client.
-- Order confirmation page clears the cart and shows order details by `orderId`.
+- Order confirmation page clears the cart and shows order details by `orderId`
+  (UUID route; customer-facing `#order_number` is displayed).
 - Admin Orders Management is complete: list, detail page, controlled status
   workflow, transactional `cancel_order` RPC (stock restore in PostgreSQL),
   and Admin KA/EN localization via the shared LanguageContext.
+- Admin Orders List Management is complete: server-side search / filters /
+  sort / pagination, URL-driven toolbar, and results counter.
+- Customer-facing Order Number (`orders.order_number`) is live in Admin and
+  confirmation UI; UUID remains the technical identifier for routes/FKs/RPC.
 - Admin Order Details layout ends with Order Management (`OrderStatusActions`).
 - **Next milestone:** Delivery / Pickup fulfillment (not implemented yet).
 

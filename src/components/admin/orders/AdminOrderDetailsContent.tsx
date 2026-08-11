@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ReactNode } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { formatAdminDateTime } from "@/lib/i18n/format-admin-date";
+import { formatOrderNumber } from "@/lib/orders/format-order-number";
 import OrderStatusActions from "@/components/admin/orders/OrderStatusActions";
 import OrderStatusBadge from "@/components/admin/orders/OrderStatusBadge";
 
@@ -109,8 +110,14 @@ export default function AdminOrderDetailsContent({ order }: Props) {
 
         <div className="mt-4">
 
-          <InfoRow label={t.orderIdLabel}>
-            <p className="break-all text-sm font-semibold text-white">
+          <InfoRow label={t.orderNumberLabel}>
+            <p className="text-base font-bold tabular-nums text-white">
+              {formatOrderNumber(order.order_number)}
+            </p>
+          </InfoRow>
+
+          <InfoRow label={t.internalOrderIdLabel}>
+            <p className="break-all text-xs font-medium text-zinc-500">
               {order.id}
             </p>
           </InfoRow>

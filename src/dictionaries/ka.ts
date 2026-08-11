@@ -139,6 +139,8 @@ export const ka = {
   thankYouForOrder: "გმადლობთ შეკვეთისთვის",
   orderPlacedSuccessfully: "თქვენი შეკვეთა წარმატებით გაფორმდა.",
   orderIdLabel: "შეკვეთის ID",
+  orderNumberLabel: "შეკვეთის ნომერი",
+  internalOrderIdLabel: "შიდა ID",
   statusLabel: "სტატუსი",
   dateLabel: "თარიღი",
   orderItems: "შეკვეთის პროდუქტები",
@@ -146,6 +148,8 @@ export const ka = {
   orderNotFound: "შეკვეთა ვერ მოიძებნა",
   orderNotFoundDescription:
     "ამ რეფერენსით შეკვეთა ვერ მოიძებნა.",
+  orderReceivedWithNumber:
+    "შეკვეთა {orderNumber} წარმატებით მიღებულია.",
 
   // =====================================
   // ORDER STATUS LABELS (presentation only)
@@ -229,8 +233,13 @@ export const ka = {
   // =====================================
   // ADMIN — ORDERS
   // =====================================
+  searchOrders: "შეკვეთის №, სახელი, ტელეფონი ან ელფოსტა...",
+  allStatuses: "ყველა სტატუსი",
+  showingOrders: "ნაჩვენებია {from}–{to} / {total} შეკვეთიდან",
   noOrdersYet: "შეკვეთები ჯერ არ არის",
   ordersWillAppear: "მომხმარებლის შეკვეთები აქ გამოჩნდება.",
+  noOrdersMatchFilters: "არჩეულ ფილტრებს არცერთი შეკვეთა არ ემთხვევა.",
+
   backToOrders: "← შეკვეთებზე დაბრუნება",
   orderDetails: "შეკვეთის დეტალები",
   orderDetailsDescription:

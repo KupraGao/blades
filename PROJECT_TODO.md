@@ -326,6 +326,10 @@
 - Order Confirmation (clear cart, success page, redirect with orderId)
 - Admin Orders Management (details, status workflow, transactional cancel, UX polish)
 - Admin Orders KA/EN + deterministic Admin dates (no Order Item thumbnails)
+- Admin Orders List Management
+  (server-side search / filters / sort / pagination / URL state)
+- Customer-facing Order Number
+  (`order_number` + sequence; Admin + confirmation display/search)
 
 ### 🚀 მიმდინარე / შემდეგი
 
@@ -500,6 +504,7 @@
 - ✅ Order Confirmation (completed)
 - ✅ Admin Orders Management (details, status, cancel RPC, UX — completed)
 - ✅ Admin KA/EN + deterministic Admin dates (completed; no Order Item thumbnails)
+- ✅ Admin Orders List Management + Order Number (completed)
 - 🚚 Delivery / Pickup System (next / planned — not completed)
 - 👤 Authentication + Protected Admin Routes
 - 👤 Customer Account / My Orders

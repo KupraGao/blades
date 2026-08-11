@@ -140,6 +140,8 @@ export const en = {
   thankYouForOrder: "Thank you for your order",
   orderPlacedSuccessfully: "Your order has been placed successfully.",
   orderIdLabel: "Order ID",
+  orderNumberLabel: "Order Number",
+  internalOrderIdLabel: "Internal ID",
   statusLabel: "Status",
   dateLabel: "Date",
   orderItems: "Order Items",
@@ -147,6 +149,8 @@ export const en = {
   orderNotFound: "Order not found",
   orderNotFoundDescription:
     "We could not find an order with this reference.",
+  orderReceivedWithNumber:
+    "Order {orderNumber} has been received successfully.",
 
   // =====================================
   // ORDER STATUS LABELS (presentation only)
@@ -230,8 +234,13 @@ export const en = {
   // =====================================
   // ADMIN — ORDERS
   // =====================================
+  searchOrders: "Order #, name, phone or email...",
+  allStatuses: "All statuses",
+  showingOrders: "Showing {from}–{to} of {total} orders",
   noOrdersYet: "No orders yet",
   ordersWillAppear: "Customer orders will appear here.",
+  noOrdersMatchFilters: "No orders match the selected filters.",
+
   backToOrders: "← Back to Orders",
   orderDetails: "Order Details",
   orderDetailsDescription:

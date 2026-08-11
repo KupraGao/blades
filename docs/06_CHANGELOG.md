@@ -14,6 +14,97 @@
 
 ---
 
+## v1.11.0
+
+### Admin Orders List Management + Order Number ✅
+
+#### Admin Orders List Management
+
+- Server-side Admin Orders search, status filter, newest/oldest sort
+- Server-side pagination with exact count
+- Page size options: `10` / `25` / `50` / `100`
+- Results counter (`Showing X–Y of Z orders`)
+- Responsive Orders toolbar (search, status, sort, limit)
+- URL-driven list state:
+  `search` / `status` / `sort` / `page` / `limit`
+- Search / filter / sort / limit changes reset page appropriately
+- KA/EN labels via existing dictionaries
+- Distinct empty states:
+  no orders yet vs no matches for active search/filters
+- Responsive Admin Orders table (`sm+`) + mobile cards
+
+#### Order search behavior
+
+Server-side via Supabase / `getOrders`:
+
+- Customer name / phone / email (substring `ilike`)
+- Full UUID exact match on `orders.id`
+- Customer-facing Order Number exact match on `orders.order_number`
+
+Order Number search accepts:
+
+- `10004`
+- `#10004`
+
+Both resolve to exact `order_number = 10004`.
+
+Partial Order Number search (for example `100` / `1000`) is **not**
+implemented.
+
+PostgREST `.or()` numeric search was corrected:
+
+- exact `order_number` equality (no `ilike` on BIGINT)
+- quoted text `ilike` patterns
+- optional leading `#` normalized for matching
+- full UUID exact search preserved
+
+#### Customer-facing Order Number
+
+Live Supabase / PostgreSQL:
+
+- `orders.id` — UUID internal primary key (unchanged)
+- `orders.order_number` — `BIGINT UNIQUE NOT NULL`
+- Sequence: `public.orders_order_number_seq`
+- Existing orders backfilled chronologically (`10001`+)
+- New orders continue automatically (`10004`, `10005`, …)
+- DB stores numeric value; UI presents `#10004`
+
+Order Number is shown in:
+
+- Admin Orders List
+- Admin Order Details (primary human-readable reference;
+  UUID remains secondary/internal)
+- Checkout / Order Confirmation
+  (success route remains UUID-based; customer sees `#…`)
+
+UUID continues to power:
+
+- `order_items.order_id` FK
+- `/admin/orders/[id]`
+- `/checkout/success/[orderId]`
+- `cancel_order` RPC
+- internal relations
+
+#### Responsive Orders table fix
+
+- Desktop/tablet table avoids Georgian header collision
+  (for example `მომხმარებელი` / `სულ`) at narrower widths
+- Horizontal overflow + minimum table width
+- Mobile card layout unchanged
+
+#### Explicitly unchanged / deferred
+
+- Order status workflow and cancellation rules
+- `cancel_order` + PostgreSQL stock restore
+  (TypeScript still does **not** restore stock)
+- Order Management remains the final Admin Order Details block
+- Delivery / Pickup fulfillment (**next** milestone — not started)
+- Auth, Payments, Shipping pricing, Taxes, Coupons, Invoice, Email,
+  Customer Account / My Orders, Analytics, archive/hard delete,
+  advanced order editing, createOrder transaction RPC
+
+---
+
 ## v1.10.0
 
 ### Admin Orders polish + Admin KA/EN ✅

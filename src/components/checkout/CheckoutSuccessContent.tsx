@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useLanguage } from "@/context/LanguageContext";
 import { getLocalizedOrderStatus } from "@/lib/i18n/localize-storefront-message";
+import { formatOrderNumber } from "@/lib/orders/format-order-number";
 
 type OrderItem = {
   id: string;
@@ -38,6 +39,7 @@ export default function CheckoutSuccessContent({ order }: Props) {
   }
 
   const items = (order.order_items ?? []) as OrderItem[];
+  const displayOrderNumber = formatOrderNumber(order.order_number);
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-10">
@@ -50,7 +52,10 @@ export default function CheckoutSuccessContent({ order }: Props) {
           {t.thankYouForOrder}
         </h1>
         <p className="mt-3 text-zinc-500 dark:text-zinc-400">
-          {t.orderPlacedSuccessfully}
+          {t.orderReceivedWithNumber.replace(
+            "{orderNumber}",
+            displayOrderNumber,
+          )}
         </p>
       </div>
 
@@ -59,10 +64,10 @@ export default function CheckoutSuccessContent({ order }: Props) {
         <div className="space-y-3 text-sm">
           <div className="flex items-start justify-between gap-4">
             <span className="text-zinc-500 dark:text-zinc-400">
-              {t.orderIdLabel}
+              {t.orderNumberLabel}
             </span>
-            <span className="break-all text-right font-medium">
-              {order.id}
+            <span className="text-right text-base font-semibold tabular-nums">
+              {displayOrderNumber}
             </span>
           </div>
 

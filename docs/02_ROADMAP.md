@@ -28,9 +28,13 @@
 - Checkout → Orders Integration (secure createOrder + stock)
 - Order Confirmation (clear cart, success page, redirect with orderId)
 - Admin Orders Management (details, status workflow, transactional cancel, UX polish)
+- Admin Orders List Management
+  (server-side search / filters / sort / pagination / URL state / KA/EN)
+- Customer-facing Order Number
+  (`orders.order_number` + sequence; Admin + confirmation display/search)
 
-See `docs/06_CHANGELOG.md` for version history (latest: **v1.10.0** —
-Admin Orders polish + Admin KA/EN + deterministic dates).
+See `docs/06_CHANGELOG.md` for version history (latest: **v1.11.0** —
+Admin Orders List Management + Order Number).
 
 ---
 

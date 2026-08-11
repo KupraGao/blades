@@ -402,7 +402,11 @@ Normal storefront product reads continue to use
 
 ↓
 
-`getOrders()` Server Action
+URL searchParams (`search` / `status` / `sort` / `page` / `limit`)
+
+↓
+
+`getOrders({ search, status, sort, page, limit })` Server Action
 
 ↓
 
@@ -410,11 +414,31 @@ Normal storefront product reads continue to use
 
 ↓
 
-Select `orders` + nested `order_items`
+Server-side Supabase query:
+
+- exact count + range pagination
+- status filter
+- newest / oldest `created_at` sort
+- page size `10` / `25` / `50` / `100`
+- search:
+  - customer name / phone / email (`ilike` substring)
+  - full UUID exact match on `id`
+  - Order Number exact match on `order_number`
+    (`10004` or `#10004` → `order_number = 10004`)
+  - Partial Order Number search is **not** supported
 
 ↓
 
-Responsive table (`sm+`) / mobile cards (`<sm`) + View → `/admin/orders/[id]`
+`AdminOrdersListContent` + Orders toolbar / counter / pagination
+
+↓
+
+Responsive table (`sm+`, min-width + horizontal overflow) /
+mobile cards (`<sm`)
+
+Primary list identity: `#order_number`
+
+View still routes with UUID → `/admin/orders/[id]`
 
 ## Detail
 
@@ -430,7 +454,10 @@ Responsive table (`sm+`) / mobile cards (`<sm`) + View → `/admin/orders/[id]`
 `AdminOrderDetailsContent` section order (top → bottom):
 
 1. Page Header
-2. Order Header (incl. authoritative status badge)
+2. Order Header
+   - primary: customer-facing `#order_number`
+   - secondary: internal UUID
+   - authoritative status badge
 3. Customer Information
 4. Order Items + Order Total
 5. Order Management — `OrderStatusActions` (**must remain last**)
@@ -441,6 +468,18 @@ Order Items currently do **not** show product thumbnails
 Admin dates use `formatAdminDateTime` / `formatAdminDate`
 (`src/lib/i18n/format-admin-date.ts`, timezone `Asia/Tbilisi`)
 so SSR and client hydrate identically.
+
+## Order Number identity
+
+Two identifiers coexist:
+
+- `orders.id` (UUID) — technical PK / routes / FKs / `cancel_order`
+- `orders.order_number` (BIGINT) — customer-facing reference (`#10004` in UI)
+
+Checkout confirmation:
+
+- Route remains `/checkout/success/[orderId]` (UUID)
+- Customer-facing display uses `#order_number`
 
 ## Status management
 

@@ -93,6 +93,43 @@
 
 ---
 
+## ✅ COMPLETED — Admin Orders List Management + Order Number
+
+### Admin Orders List Management
+
+- Server-side search / status filter / newest–oldest sort
+- Server-side pagination + exact count + results counter
+- Page size: `10` / `25` / `50` / `100`
+- Responsive Orders toolbar
+- URL-driven state: `search` / `status` / `sort` / `page` / `limit`
+- KA/EN labels
+- Filtered vs no-orders empty states
+- Responsive table/cards (tablet/desktop overflow fix for wide KA headers)
+
+### Order search
+
+- Customer name / phone / email (`ilike`)
+- Full UUID exact match
+- Order Number exact match (`10004` or `#10004` → `order_number = 10004`)
+- Partial Order Number search **not** implemented
+
+### Order Number system (live DB)
+
+- `orders.id` UUID remains internal PK / routes / FKs / `cancel_order`
+- `orders.order_number` `BIGINT UNIQUE NOT NULL`
+- Sequence `public.orders_order_number_seq`
+- Backfill `10001+`; new orders continue automatically
+- UI presents `#10004` (Admin list, Admin details, Checkout confirmation)
+- Checkout success route remains UUID-based
+
+### Unchanged business rules
+
+- Status workflow / cancellation / PostgreSQL stock restore unchanged
+- Order Management remains last on Admin Order Details
+- TypeScript does **not** restore stock
+
+---
+
 ## 🚀 CURRENT / NEXT — Delivery / Pickup System
 
 Checkout customer chooses fulfillment method:
