@@ -14,6 +14,73 @@
 
 ---
 
+## v1.12.0
+
+### Delivery / Pickup + Delivery Failed + Returned to Store ✅
+
+#### Fulfillment foundation
+
+- Checkout fulfillment method: `delivery` | `pickup`
+- Delivery requires trimmed address; Pickup stores `customer_address = NULL`
+- Server validation + mapper stale-address protection
+- Checkout Success / Admin Details: fulfillment presentation
+- Pickup hides Address row; Delivery shows Address
+- Admin early-status Delivery ↔ Pickup change (status/stock unchanged)
+
+#### Pickup workflow
+
+`pending → confirmed → processing → ready_for_pickup → completed`
+
+- Backward corrections supported for early/ready states
+- Cancel allowed through `ready_for_pickup` (Pickup)
+- Pickup never enters `delivery_failed` / `returned_to_store`
+
+#### Delivery workflow
+
+Normal:
+
+`pending → confirmed → processing → shipped → completed`
+
+Exceptional (W2):
+
+`shipped → delivery_failed → shipped` (Retry Delivery)
+
+- Admin at `shipped`: Complete Order + Delivery Failed
+- KA: `მიწოდება ვერ მოხერხდა` / EN: Delivery Failed
+- No stock change on fail/retry
+- `delivery_failed → completed` / `cancelled` forbidden
+
+#### Returned to Store (W3)
+
+`delivery_failed → returned_to_store`
+
+- Terminal status distinct from `cancelled`
+- Dedicated PostgreSQL RPC: `public.return_delivery_to_store(uuid)`
+- Transactional status change + additive stock restore
+- Exactly-once / idempotent (`already_returned`) manually verified
+- Application TypeScript does **not** restore stock
+- Existing `cancel_order` remained unchanged
+  (MD5 `69efa557c03975d0acce40378ff7ce02`)
+- Return RPC MD5 `522f9bffa5a2cfa34ddb5f54901fa6e2`
+
+#### Admin / i18n
+
+- Fulfillment-aware `order-status.ts` transition maps
+- Order Management actions for fail / retry / return
+- Status badges + KA/EN labels for new statuses/actions
+- Live status CHECK includes:
+  `ready_for_pickup` / `delivery_failed` / `returned_to_store`
+
+#### Explicitly not included
+
+- Refunds / payment reversal
+- Customer returns after successful completion
+- Exchanges / partial returns / RMA
+- Courier tracking
+- Legacy `#10010` pickup+shipped data cleanup (separate)
+
+---
+
 ## v1.11.0
 
 ### Admin Orders List Management + Order Number ✅

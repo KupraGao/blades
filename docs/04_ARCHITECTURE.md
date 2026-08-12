@@ -48,6 +48,8 @@ src
 │   │   ├── create-order.ts
 │   │   ├── get-orders.ts
 │   │   ├── get-single-order.ts
+│   │   ├── return-delivery-to-store.ts
+│   │   ├── update-order-fulfillment.ts
 │   │   └── update-order-status.ts
 │   │
 │   └── products
@@ -98,6 +100,7 @@ src
 │   │   ├── orders
 │   │   │   ├── AdminOrderDetailsContent.tsx
 │   │   │   ├── AdminOrdersListContent.tsx
+│   │   │   ├── OrderFulfillmentActions.tsx
 │   │   │   ├── OrderStatusActions.tsx
 │   │   │   └── OrderStatusBadge.tsx
 │   │   │
@@ -199,11 +202,13 @@ src
 │   ├── orders
 │   │   ├── decrement-product-stock.ts
 │   │   ├── delete-order.ts
+│   │   ├── format-order-number.ts
 │   │   ├── insert-order-items.ts
 │   │   ├── insert-order.ts
 │   │   ├── order-mapper.ts
 │   │   ├── order-status.ts
 │   │   ├── resolve-order-items.ts
+│   │   ├── update-order-fulfillment-record.ts
 │   │   ├── update-order-status-record.ts
 │   │   └── validate-order.ts
 │   │
@@ -386,7 +391,7 @@ Privileged access:
 `createAdminClient()` (`src/lib/supabase/admin.ts`)
 
 is used for sensitive order orchestration and Admin Orders reads
-(list, detail, status update, cancel RPC).
+(list, detail, status update, cancel RPC, return-to-store RPC).
 
 Normal storefront product reads continue to use
 
@@ -458,9 +463,14 @@ View still routes with UUID → `/admin/orders/[id]`
    - primary: customer-facing `#order_number`
    - secondary: internal UUID
    - authoritative status badge
+   - prominent Delivery / Pickup fulfillment badge
 3. Customer Information
+   - Delivery shows Address
+   - Pickup omits Address row
 4. Order Items + Order Total
 5. Order Management — `OrderStatusActions` (**must remain last**)
+   - early-status fulfillment change (Delivery ↔ Pickup) when allowed
+   - fulfillment-aware status actions
 
 Order Items currently do **not** show product thumbnails
 (intentionally deferred; historical title/price snapshots stay text-only).
@@ -484,6 +494,7 @@ Checkout confirmation:
 ## Status management
 
 Centralized rules: `src/lib/orders/order-status.ts`
+(fulfillment-aware forward / backward / exceptional maps)
 
 ↓
 
@@ -491,21 +502,60 @@ UI actions: `OrderStatusActions` → `updateOrderStatus` Server Action
 
 ↓
 
-`update-order-status-record.ts` — conditional one-step forward update
+`update-order-status-record.ts` — conditional status update
 (`UPDATE … WHERE status = expected`)
 
-Forward workflow only:
+**Normal status transitions do not change stock.**
+
+### Delivery
+
+Normal:
 
 `pending → confirmed → processing → shipped → completed`
 
-`completed` and `cancelled` are terminal.
+Backward corrections (status-only):
+
+`confirmed → pending`, `processing → confirmed`
+
+Exceptional (status-only, no stock):
+
+`shipped → delivery_failed → shipped` (Retry Delivery)
+
+At Delivery `shipped`: Complete Order + Delivery Failed.
+
+`delivery_failed → completed` and `delivery_failed → cancelled` are forbidden.
+
+### Pickup
+
+`pending → confirmed → processing → ready_for_pickup → completed`
+
+Backward corrections:
+
+`confirmed → pending`, `processing → confirmed`,
+`ready_for_pickup → processing`
+
+Pickup never enters `delivery_failed` or `returned_to_store`.
+
+### Terminal statuses
+
+`completed`, `cancelled`, and `returned_to_store` are terminal for Admin workflow actions.
 
 Authoritative status badge: Order Header only (not duplicated in Order Management).
 
 DB status codes stay English machine values; UI labels are localized via
 dictionaries (`getLocalizedOrderStatus` / Admin badge presentation).
 
-## Cancellation
+## Three mutation boundaries (do not conflate)
+
+### 1. Normal / exceptional status transition
+
+`updateOrderStatus` → status-only write
+
+Used for forward/backward corrections and Delivery Failed / Retry Delivery.
+
+**No stock change.**
+
+### 2. Cancellation + stock restore
 
 UI cancel (when allowed) → `cancelOrder` Server Action
 
@@ -522,11 +572,38 @@ Application TypeScript does **not** restore stock.
 
 Cancel allowed from: `pending` / `confirmed` / `processing`
 
-Cancel not allowed from: `shipped` / `completed`
+Also allowed for Pickup: `ready_for_pickup`
+
+Cancel not allowed from: `shipped` / `delivery_failed` / `returned_to_store` /
+`completed` / `cancelled`
+
+`cancelled` is **not** the same outcome as `returned_to_store`.
+
+### 3. Failed Delivery physical return + stock restore
+
+At Delivery `delivery_failed`: Return to Store → `returnDeliveryToStore` Server Action
+
+↓
+
+Privileged `rpc("return_delivery_to_store", { p_order_id })` only
+
+↓
+
+PostgreSQL `public.return_delivery_to_store(uuid)` owns the transaction:
+requires Delivery + `delivery_failed` → lock order → set `returned_to_store` →
+additive stock restore from `order_items`
+
+Application TypeScript does **not** restore stock.
+
+`delivery_failed → returned_to_store` is **not** authorized through
+`canTransitionOrderStatus` / `updateOrderStatus`.
+
+Exactly-once / idempotent return manually verified
+(`already_returned = true` on repeat; stock unchanged on second call).
 
 ## Historical records
 
-Completed and cancelled orders remain stored and visible in Admin.
+`completed`, `cancelled`, and `returned_to_store` orders remain stored and visible in Admin.
 
 Hard delete / archive is **not** part of the current architecture.
 

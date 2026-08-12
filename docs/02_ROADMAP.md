@@ -32,36 +32,29 @@
   (server-side search / filters / sort / pagination / URL state / KA/EN)
 - Customer-facing Order Number
   (`orders.order_number` + sequence; Admin + confirmation display/search)
+- Delivery / Pickup System
+  (Checkout fulfillment, Pickup + Delivery workflows, Delivery Failed,
+  Retry Delivery, Returned to Store + transactional stock restore)
 
-See `docs/06_CHANGELOG.md` for version history (latest: **v1.11.0** —
-Admin Orders List Management + Order Number).
+See `docs/06_CHANGELOG.md` for version history (latest: **v1.12.0** —
+Delivery / Pickup + Delivery Failed + Returned to Store).
 
 ---
 
 ## 🚀 Immediate Next
 
-### Delivery / Pickup System
+### Production / Auth hardening (suggested)
 
-⬜ Checkout: customer chooses fulfillment method
+⬜ Protected Admin Routes
 
-⬜ Courier Delivery path (delivery address required)
+⬜ Authentication / roles
 
-⬜ Pickup path (no delivery address required)
+⬜ Production DB transaction / RPC for order creation
 
-⬜ Persist fulfillment method on the order
+⬜ Full idempotency protection
 
-⬜ Admin Order Details shows fulfillment method / related info
-
-⬜ Delivery status workflow:
-`pending → confirmed → processing → shipped → completed`
-
-⬜ Pickup status workflow:
-`pending → confirmed → processing → ready_for_pickup → completed`
-
-⬜ Controlled cancellation rules remain enforced
-
-**Not started.** Do not treat Delivery / Pickup as completed.
-Existing Admin Orders status workflow remains the current baseline.
+**Not started as a focused sprint.** Delivery / Pickup operational workflow
+is complete; remaining Immediate Next items are separate concerns.
 
 ---
 
@@ -75,8 +68,13 @@ Existing Admin Orders status workflow remains the current baseline.
 
 ⬜ Advanced order editing (add/remove products on an existing order)
 
-⬜ Order hard delete — **not** part of current architecture
-  (completed / cancelled remain historical business records)
+⬜ Customer returns after successful completion / refunds / exchanges /
+  partial returns / RMA — **not** part of Delivery Failed / Return-to-Store
+
+⬜ Courier tracking / shipping carrier integration
+
+⬜ Order hard delete — **not** part of the current architecture
+  (completed / cancelled / returned_to_store remain historical records)
 
 ---
 

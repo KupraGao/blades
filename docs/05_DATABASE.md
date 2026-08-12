@@ -43,11 +43,23 @@ Fields written/read by the application:
 - `customer_name`
 - `customer_phone`
 - `customer_email` — nullable in mapper (`null` when omitted)
-- `customer_address`
+- `customer_address` — nullable; required for Delivery, forced `NULL` for Pickup
+- `fulfillment_method` — `delivery` | `pickup` (`NOT NULL`, no permanent DB default)
 - `customer_note` — nullable in mapper (`null` when omitted)
 - `total_price` — calculated server-side from resolved items (`price * quantity`)
 - `status` — see supported statuses below
 - `created_at` — read by Admin Orders list / detail
+
+### Fulfillment method (live DB verified)
+
+- Column: `orders.fulfillment_method` — `TEXT NOT NULL`
+- Allowed values: `delivery` | `pickup`
+- No permanent database default (application UI defaults Checkout to `delivery`)
+- Delivery persists a trimmed `customer_address`
+- Pickup persists `customer_address = NULL` (server mapper always nulls Pickup address,
+  including stale client address after Delivery → Pickup switch)
+- Admin may change Delivery ↔ Pickup only while status is
+  `pending` / `confirmed` / `processing` (status and stock unchanged)
 
 ### Order Number (live DB verified)
 
@@ -68,38 +80,73 @@ above.
 
 ### Supported order statuses (current)
 
-Stored DB values (never rewritten for i18n):
+Live `orders_status_check` allows exactly:
 
 - `pending` — set on create
 - `confirmed`
 - `processing`
-- `shipped`
-- `completed` — terminal
-- `cancelled` — terminal
+- `shipped` — Delivery fulfillment path
+- `ready_for_pickup` — Pickup fulfillment path
+- `delivery_failed` — Delivery exceptional path (attempt failed; goods not assumed returned)
+- `returned_to_store` — Delivery terminal path after physical return + inventory restore
+- `completed` — terminal (successful fulfillment)
+- `cancelled` — terminal (cancellation workflow)
 
 Presentation (Admin / storefront) maps these codes to KA/EN labels.
 The database values themselves are **not** translated.
 
-**Not a current DB status:** `ready_for_pickup`
-(planned for the Delivery / Pickup milestone).
+`cancelled` and `returned_to_store` are **different** terminal outcomes and must not
+be treated as synonyms.
 
-### Forward status workflow (current Admin Orders)
+### Fulfillment-aware workflows (current)
+
+**Delivery (normal):**
 
 `pending → confirmed → processing → shipped → completed`
 
-One-step forward only; server validates transitions.
+Backward corrections (status-only, no stock change):
+
+`confirmed → pending`, `processing → confirmed`
+
+No normal `shipped → processing`.
+
+**Delivery (exceptional):**
+
+`shipped → delivery_failed → shipped` (Retry Delivery)
+
+Stock does **not** change on either exceptional hop.
+
+**Delivery (physical return):**
+
+`delivery_failed → returned_to_store`
+
+This is **not** an ordinary `updateOrderStatus` transition.
+It uses PostgreSQL `return_delivery_to_store` (status + stock restore).
+
+**Pickup:**
+
+`pending → confirmed → processing → ready_for_pickup → completed`
+
+Backward corrections:
+
+`confirmed → pending`, `processing → confirmed`, `ready_for_pickup → processing`
+
+Pickup must never enter `delivery_failed` or `returned_to_store`.
 
 ### Cancellation rules (current)
 
 Allowed from: `pending` / `confirmed` / `processing`
 
-Not allowed from: `shipped` / `completed`
+Also allowed for Pickup: `ready_for_pickup`
 
-`cancelled` is terminal.
+Not allowed from: `shipped` / `delivery_failed` / `returned_to_store` /
+`completed` / `cancelled`
+
+`cancelled` is terminal via `cancel_order` only.
 
 ### Historical record behavior
 
-`completed` and `cancelled` orders are historical business records.
+`completed`, `cancelled`, and `returned_to_store` orders are historical business records.
 
 They remain stored and visible in Admin.
 
@@ -180,16 +227,47 @@ Foreign-key constraint definitions are assumed by application usage but are
 - Partial-failure compensation deletes / stock restore are best-effort
   (not a full DB transaction / RPC for **order creation**)
 
+### Stock semantics (current)
+
+| Event | Stock effect |
+|-------|----------------|
+| Order creation | Decrement after successful `orders` + `order_items` insert |
+| Normal forward / backward status changes | No change |
+| `shipped → delivery_failed` | No change |
+| `delivery_failed → shipped` (retry) | No change |
+| `cancel_order` (valid cancel statuses) | Additive restore (RPC) |
+| `return_delivery_to_store` (`delivery_failed` → `returned_to_store`) | Additive restore (RPC) |
+
 ### Cancellation + stock restore (RPC-backed)
 
 - App cancel path: privileged Server Action → `rpc("cancel_order")` only
 - Database function: `public.cancel_order(p_order_id uuid)`
-- Runs in a PostgreSQL transaction with order row locking
+- Runs in a PostgreSQL transaction with order row locking (`FOR UPDATE`)
 - Sets order `status` → `cancelled`
 - Restores ordered quantities **additively** to product `stock`
 - Designed for exactly-once / idempotent cancellation
-  (concurrent double-cancel protected)
+  (concurrent double-cancel protected; already-cancelled is idempotent)
 - Application TypeScript does **not** perform stock restoration on cancel
+- Verified function fingerprint (MD5 of `pg_get_functiondef`):
+  `69efa557c03975d0acce40378ff7ce02`
+
+### Return to Store + stock restore (RPC-backed)
+
+- App path: privileged Server Action → `rpc("return_delivery_to_store")` only
+- Database function: `public.return_delivery_to_store(p_order_id uuid)`
+- Requires Delivery fulfillment and current status `delivery_failed`
+- Locks order (`FOR UPDATE`), sets `status` → `returned_to_store`,
+  restores ordered quantities **additively** from `order_items`
+- Status change + inventory restore occur in **one** PostgreSQL transaction
+- Exactly-once / idempotent:
+  already `returned_to_store` returns success with `already_returned = true`
+  and does **not** restore stock again
+  (manually verified: first call restored stock; second call returned
+  `already_returned = true` with unchanged stock)
+- Application TypeScript does **not** perform stock restoration for Return to Store
+- This path is **not** ordinary cancellation and must not be merged with `cancelled`
+- Verified function fingerprint (MD5 of `pg_get_functiondef`):
+  `522f9bffa5a2cfa34ddb5f54901fa6e2`
 
 Exact RPC SQL is managed in the live Supabase database and is
 **not checked into this repository** as a migration file.

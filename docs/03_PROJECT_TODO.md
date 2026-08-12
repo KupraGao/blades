@@ -130,49 +130,62 @@
 
 ---
 
-## 🚀 CURRENT / NEXT — Delivery / Pickup System
+## ✅ COMPLETED — Delivery / Pickup System (W2 + W3)
 
-Checkout customer chooses fulfillment method:
+### Fulfillment foundation
 
-1. Courier Delivery
-2. Pickup
+- Checkout Delivery / Pickup selection (UI default `delivery`)
+- Delivery requires address; Pickup forces `customer_address = NULL`
+- Server validation + mapper stale-address protection
+- Admin Order Header fulfillment badge
+- Conditional Address presentation (Delivery shown / Pickup omitted)
+- Admin early-status fulfillment change (Delivery ↔ Pickup) when allowed
 
-Planned behavior (not implemented):
+### Pickup workflow
 
-- Delivery requires a customer delivery address
-- Pickup does **not** require a customer delivery address
-- Fulfillment method is stored with the order
-- Admin Order Details shows fulfillment method and relevant fields
-- Existing Order Status Workflow remains intact
-
-Planned workflows:
-
-**Delivery:**
-`pending → confirmed → processing → shipped → completed`
-
-**Pickup:**
 `pending → confirmed → processing → ready_for_pickup → completed`
 
-Cancellation remains available only according to controlled business rules.
+Backward corrections:
 
-⬜ Fulfillment method selection at Checkout
+`confirmed → pending`, `processing → confirmed`,
+`ready_for_pickup → processing`
 
-⬜ Delivery address rules vs Pickup (no delivery address)
+Cancel allowed from Pickup: `pending` / `confirmed` / `processing` /
+`ready_for_pickup`
 
-⬜ Persist fulfillment method on the order
+### Delivery workflow
 
-⬜ Delivery path + `shipped` workflow
+Normal:
 
-⬜ Pickup path + `ready_for_pickup` status
+`pending → confirmed → processing → shipped → completed`
 
-⬜ Admin Order Details displays fulfillment method / related info
+Exceptional:
 
-**Status:** PLANNED / NEXT — not completed.
+`shipped → delivery_failed → shipped` (Retry Delivery)
 
-Not in this sprint: Auth, Protected Admin, Customer Account / My Orders,
-Payments, Shipping pricing, Taxes, Coupons, Invoices, Email, Analytics,
-archive/hard delete, advanced order editing, createOrder transaction RPC /
-production hardening.
+Physical return:
+
+`delivery_failed → returned_to_store` via `return_delivery_to_store` RPC
+
+### Stock / RPC boundaries
+
+- Normal / exceptional status transitions: **no stock change**
+- Cancel: `cancel_order` (unchanged; MD5 `69efa557c03975d0acce40378ff7ce02`)
+- Return to Store: `return_delivery_to_store`
+  (MD5 `522f9bffa5a2cfa34ddb5f54901fa6e2`; exactly-once manually verified)
+- TypeScript does **not** restore stock for cancel or return
+
+### Remaining cleanup (not blocking)
+
+⬜ Legacy / test anomaly `#10010`
+   (`fulfillment_method = pickup` + `status = shipped`)
+   — separate data cleanup; do not treat as normal workflow
+
+**Status:** COMPLETED for Delivery / Pickup operational workflow.
+
+Out of this milestone: refunds, post-completed customer returns, exchanges,
+partial returns, payment reversal, courier tracking, RMA, Auth / Payments /
+createOrder production RPC hardening.
 
 ---
 
