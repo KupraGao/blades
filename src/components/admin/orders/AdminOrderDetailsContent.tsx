@@ -73,6 +73,13 @@ export default function AdminOrderDetailsContent({ order }: Props) {
 
   const items = (order.order_items ?? []) as OrderItem[];
   const currentStatus = String(order.status ?? "");
+  const isPickup = order.fulfillment_method === "pickup";
+  const fulfillmentLabel =
+    order.fulfillment_method === "pickup"
+      ? t.fulfillmentPickup
+      : order.fulfillment_method === "delivery"
+        ? t.fulfillmentDelivery
+        : "—";
 
   return (
     <div className="mx-auto max-w-5xl space-y-5">
@@ -104,9 +111,24 @@ export default function AdminOrderDetailsContent({ order }: Props) {
       {/* ORDER HEADER */}
       <section className="rounded-2xl border border-zinc-800 bg-zinc-900 p-5 sm:p-6">
 
-        <h2 className="text-lg font-semibold text-white">
-          {t.orderHeader}
-        </h2>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="text-lg font-semibold text-white">
+            {t.orderHeader}
+          </h2>
+
+          <span
+            className={`inline-flex max-w-full items-center justify-center rounded-xl border px-4 py-2 text-center text-sm font-bold leading-snug sm:text-base ${
+              isPickup
+                ? "border-fuchsia-500/45 bg-fuchsia-500/20 text-fuchsia-200"
+                : order.fulfillment_method === "delivery"
+                  ? "border-teal-500/45 bg-teal-500/20 text-teal-200"
+                  : "border-zinc-600 bg-zinc-800 text-zinc-300"
+            }`}
+            aria-label={`${t.fulfillmentMethodLabel}: ${fulfillmentLabel}`}
+          >
+            {fulfillmentLabel}
+          </span>
+        </div>
 
         <div className="mt-4">
 
@@ -167,20 +189,25 @@ export default function AdminOrderDetailsContent({ order }: Props) {
             </p>
           </InfoRow>
 
-          <InfoRow label={t.email}>
+          <InfoRow
+            label={t.email}
+            isLast={isPickup && !order.customer_note}
+          >
             <p className="break-all text-sm font-semibold text-white">
               {order.customer_email || "—"}
             </p>
           </InfoRow>
 
-          <InfoRow
-            label={t.address}
-            isLast={!order.customer_note}
-          >
-            <p className="break-words text-sm font-semibold text-white">
-              {order.customer_address}
-            </p>
-          </InfoRow>
+          {!isPickup ? (
+            <InfoRow
+              label={t.address}
+              isLast={!order.customer_note}
+            >
+              <p className="break-words text-sm font-semibold text-white">
+                {order.customer_address || "—"}
+              </p>
+            </InfoRow>
+          ) : null}
 
           {order.customer_note ? (
             <InfoRow label={t.customerNote} isLast>
@@ -249,6 +276,7 @@ export default function AdminOrderDetailsContent({ order }: Props) {
       <OrderStatusActions
         orderId={order.id}
         currentStatus={currentStatus}
+        fulfillmentMethod={order.fulfillment_method}
       />
 
     </div>

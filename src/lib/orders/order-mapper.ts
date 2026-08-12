@@ -1,4 +1,7 @@
-import { CreateOrderInput, ResolvedOrderItem } from "./validate-order";
+import {
+  CreateOrderInput,
+  ResolvedOrderItem,
+} from "./validate-order";
 
 // =================================================
 // ORDER MAPPER
@@ -12,6 +15,8 @@ export function orderMapper(
   // ORDER
   // =================================================
 
+  const isPickup = order.fulfillmentMethod === "pickup";
+
   return {
     customer_name: order.customerName.trim(),
 
@@ -20,11 +25,14 @@ export function orderMapper(
     customer_email:
       order.customerEmail?.trim() || null,
 
-    customer_address:
-      order.customerAddress.trim(),
+    customer_address: isPickup
+      ? null
+      : (order.customerAddress?.trim() ?? ""),
 
     customer_note:
       order.customerNote?.trim() || null,
+
+    fulfillment_method: order.fulfillmentMethod,
 
     total_price: items.reduce(
       (total, item) =>

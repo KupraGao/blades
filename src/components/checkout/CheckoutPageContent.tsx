@@ -6,7 +6,10 @@ import { createOrder } from "@/actions/orders/create-order";
 import { useCart } from "@/context/CartContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { localizeStorefrontMessage } from "@/lib/i18n/localize-storefront-message";
-import type { CreateOrderInput } from "@/lib/orders/validate-order";
+import type {
+  CreateOrderInput,
+  FulfillmentMethod,
+} from "@/lib/orders/validate-order";
 import CustomerInformationForm from "./form/CustomerInformationForm";
 import OrderSummary from "./summary/OrderSummary";
 import {
@@ -59,6 +62,20 @@ export default function CheckoutPageContent() {
     }));
   }
 
+  function handleFulfillmentChange(next: FulfillmentMethod) {
+    setValues((current) => ({
+      ...current,
+      fulfillmentMethod: next,
+      address: next === "pickup" ? "" : current.address,
+    }));
+
+    setTouched((current) => ({
+      ...current,
+      address: next === "pickup" ? false : current.address,
+      fulfillmentMethod: true,
+    }));
+  }
+
   function handleSubmitAttempt() {
     setSubmitAttempted(true);
   }
@@ -75,11 +92,14 @@ export default function CheckoutPageContent() {
       return;
     }
 
+    const isPickup = values.fulfillmentMethod === "pickup";
+
     const payload: CreateOrderInput = {
       customerName: values.fullName,
-      customerEmail: values.email,
+      customerEmail: values.email.trim() || undefined,
       customerPhone: values.phone,
-      customerAddress: values.address,
+      customerAddress: isPickup ? null : values.address,
+      fulfillmentMethod: values.fulfillmentMethod,
       items: cartItems.map((item) => ({
         productId: item.id,
         quantity: item.quantity,
@@ -122,6 +142,10 @@ export default function CheckoutPageContent() {
       touched.address || submitAttempted
         ? errors.address
         : undefined,
+    fulfillmentMethod:
+      touched.fulfillmentMethod || submitAttempted
+        ? errors.fulfillmentMethod
+        : undefined,
   };
 
   return (
@@ -147,6 +171,7 @@ export default function CheckoutPageContent() {
             errors={visibleErrors}
             onChange={handleChange}
             onBlur={handleBlur}
+            onFulfillmentChange={handleFulfillmentChange}
             onSubmitAttempt={handleSubmitAttempt}
           />
         </div>

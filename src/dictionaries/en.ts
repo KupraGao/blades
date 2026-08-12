@@ -109,6 +109,9 @@ export const en = {
   phoneNumber: "Phone Number",
   address: "Address",
   note: "Note",
+  fulfillmentMethodLabel: "Fulfillment Method",
+  fulfillmentDelivery: "Delivery",
+  fulfillmentPickup: "Pickup",
   placeholderFullName: "John Doe",
   placeholderEmail: "john@example.com",
   placeholderAddress: "Street, City...",
@@ -132,6 +135,7 @@ export const en = {
   validationPhoneMin: "Phone number must be at least 9 characters.",
   validationAddressRequired: "Address is required.",
   validationAddressMin: "Address must be at least 5 characters.",
+  validationFulfillmentRequired: "Select delivery or pickup.",
 
   // =====================================
   // ORDER CONFIRMATION
@@ -160,6 +164,7 @@ export const en = {
   statusConfirmed: "Confirmed",
   statusProcessing: "Processing",
   statusShipped: "Shipped",
+  statusReadyForPickup: "Ready for Pickup",
   statusCompleted: "Completed",
   statusCancelled: "Cancelled",
 
@@ -174,6 +179,7 @@ export const en = {
   orderErrorEmailInvalid: "Email address is invalid.",
   orderErrorAddressRequired: "Address is required.",
   orderErrorAddressMin: "Address must be at least 5 characters.",
+  orderErrorFulfillmentInvalid: "Select a valid fulfillment method.",
   orderErrorCartEmpty: "Your cart is empty.",
   orderErrorProductIdRequired: "Product ID is required.",
   orderErrorQuantityInvalid: "Product quantity is invalid.",
@@ -254,8 +260,12 @@ export const en = {
   confirmOrder: "Confirm",
   startProcessing: "Start Processing",
   markAsShipped: "Mark as Shipped",
+  markReadyForPickup: "Ready for Pickup",
   completeOrder: "Complete Order",
   cancelOrder: "Cancel",
+  backToPending: "Back to Pending",
+  backToConfirmed: "Back to Confirmed",
+  backToProcessing: "Back to Processing",
   updating: "Updating...",
   cancelling: "Cancelling...",
   orderCompletedSuccessfully: "Order completed successfully.",
@@ -265,6 +275,14 @@ export const en = {
     "No valid status transition is available for this order.",
   cancelOrderConfirm:
     "Cancel this order? Ordered quantities will be returned to stock.",
+  changeToDelivery: "Change to Delivery",
+  changeToPickup: "Change to Pickup",
+  deliveryAddressLabel: "Delivery Address",
+  saveFulfillment: "Save",
+  fulfillmentAddressWillBeRemoved:
+    "This will remove the delivery address from this order.",
+  fulfillmentAddressRequired: "Delivery address is required.",
+  fulfillmentAddressMin: "Delivery address must be at least 5 characters.",
 
   // =====================================
   // ADMIN — PRODUCTS LIST

@@ -108,6 +108,9 @@ export const ka = {
   phoneNumber: "ტელეფონის ნომერი",
   address: "მისამართი",
   note: "შენიშვნა",
+  fulfillmentMethodLabel: "მიწოდების მეთოდი",
+  fulfillmentDelivery: "მიტანა",
+  fulfillmentPickup: "ადგილიდან გატანა",
   placeholderFullName: "მაგ: გიორგი ბერიძე",
   placeholderEmail: "name@example.com",
   placeholderAddress: "ქუჩა, ქალაქი...",
@@ -131,6 +134,7 @@ export const ka = {
   validationPhoneMin: "ტელეფონის ნომერი მინიმუმ 9 სიმბოლოს უნდა შეიცავდეს.",
   validationAddressRequired: "მისამართი აუცილებელია.",
   validationAddressMin: "მისამართი მინიმუმ 5 სიმბოლოს უნდა შეიცავდეს.",
+  validationFulfillmentRequired: "აირჩიეთ მიწოდება ან თვითგატანა.",
 
   // =====================================
   // ORDER CONFIRMATION
@@ -159,6 +163,7 @@ export const ka = {
   statusConfirmed: "დადასტურებული",
   statusProcessing: "მუშავდება",
   statusShipped: "გაგზავნილი",
+  statusReadyForPickup: "გასატანად მზადაა",
   statusCompleted: "დასრულებული",
   statusCancelled: "გაუქმებული",
 
@@ -173,6 +178,7 @@ export const ka = {
   orderErrorEmailInvalid: "ელფოსტის მისამართი არასწორია.",
   orderErrorAddressRequired: "მისამართი აუცილებელია.",
   orderErrorAddressMin: "მისამართი მინიმუმ 5 სიმბოლოს უნდა შეიცავდეს.",
+  orderErrorFulfillmentInvalid: "აირჩიეთ სწორი მიწოდების მეთოდი.",
   orderErrorCartEmpty: "კალათა ცარიელია.",
   orderErrorProductIdRequired: "პროდუქტის ID აუცილებელია.",
   orderErrorQuantityInvalid: "პროდუქტის რაოდენობა არასწორია.",
@@ -253,8 +259,12 @@ export const ka = {
   confirmOrder: "დადასტურება",
   startProcessing: "დამუშავების დაწყება",
   markAsShipped: "გაგზავნილად მონიშვნა",
+  markReadyForPickup: "გასატანად მზადაა",
   completeOrder: "შეკვეთის დასრულება",
   cancelOrder: "გაუქმება",
+  backToPending: "მოლოდინში დაბრუნება",
+  backToConfirmed: "დადასტურებულზე დაბრუნება",
+  backToProcessing: "დამუშავებაზე დაბრუნება",
   updating: "ახლდება...",
   cancelling: "გაუქმება...",
   orderCompletedSuccessfully: "შეკვეთა წარმატებით დასრულდა.",
@@ -264,6 +274,15 @@ export const ka = {
     "ამ შეკვეთისთვის სტატუსის ვალიდური ცვლილება ხელმისაწვდომი არ არის.",
   cancelOrderConfirm:
     "გავაუქმოთ ეს შეკვეთა? შეკვეთილი რაოდენობა მარაგში დაბრუნდება.",
+  changeToDelivery: "მიტანაზე შეცვლა",
+  changeToPickup: "ადგილიდან გატანაზე შეცვლა",
+  deliveryAddressLabel: "მიტანის მისამართი",
+  saveFulfillment: "შენახვა",
+  fulfillmentAddressWillBeRemoved:
+    "ეს მოქმედება წაშლის შეკვეთიდან მიტანის მისამართს.",
+  fulfillmentAddressRequired: "მიტანის მისამართი აუცილებელია.",
+  fulfillmentAddressMin:
+    "მიტანის მისამართი მინიმუმ 5 სიმბოლოს უნდა შეიცავდეს.",
 
   // =====================================
   // ADMIN — PRODUCTS LIST

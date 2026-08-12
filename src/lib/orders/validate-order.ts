@@ -4,6 +4,8 @@ import { orderError } from "@/lib/i18n/localize-storefront-message";
 // ORDER TYPES
 // =================================================
 
+export type FulfillmentMethod = "delivery" | "pickup";
+
 export type CreateOrderItemInput = {
   productId: string;
   quantity: number;
@@ -13,8 +15,9 @@ export type CreateOrderInput = {
   customerName: string;
   customerPhone: string;
   customerEmail?: string;
-  customerAddress: string;
+  customerAddress?: string | null;
   customerNote?: string;
+  fulfillmentMethod: FulfillmentMethod;
   items: CreateOrderItemInput[];
 };
 
@@ -25,6 +28,20 @@ export type ResolvedOrderItem = {
   quantity: number;
   stock: number;
 };
+
+const FULFILLMENT_METHODS: readonly FulfillmentMethod[] = [
+  "delivery",
+  "pickup",
+];
+
+function isFulfillmentMethod(
+  value: unknown,
+): value is FulfillmentMethod {
+  return (
+    typeof value === "string" &&
+    (FULFILLMENT_METHODS as readonly string[]).includes(value)
+  );
+}
 
 // =================================================
 // EMAIL VALIDATION
@@ -63,6 +80,14 @@ export function consolidateOrderItems(
 
 export function validateOrder(order: CreateOrderInput) {
   // =================================================
+  // FULFILLMENT METHOD
+  // =================================================
+
+  if (!isFulfillmentMethod(order.fulfillmentMethod)) {
+    throw orderError("orderErrorFulfillmentInvalid");
+  }
+
+  // =================================================
   // CUSTOMER NAME
   // =================================================
 
@@ -98,15 +123,19 @@ export function validateOrder(order: CreateOrderInput) {
   }
 
   // =================================================
-  // CUSTOMER ADDRESS
+  // CUSTOMER ADDRESS (Delivery only)
   // =================================================
 
-  if (!order.customerAddress.trim()) {
-    throw orderError("orderErrorAddressRequired");
-  }
+  if (order.fulfillmentMethod === "delivery") {
+    const address = order.customerAddress?.trim() ?? "";
 
-  if (order.customerAddress.trim().length < 5) {
-    throw orderError("orderErrorAddressMin");
+    if (!address) {
+      throw orderError("orderErrorAddressRequired");
+    }
+
+    if (address.length < 5) {
+      throw orderError("orderErrorAddressMin");
+    }
   }
 
   // =================================================

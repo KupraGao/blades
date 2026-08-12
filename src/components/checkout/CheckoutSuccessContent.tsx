@@ -40,6 +40,13 @@ export default function CheckoutSuccessContent({ order }: Props) {
 
   const items = (order.order_items ?? []) as OrderItem[];
   const displayOrderNumber = formatOrderNumber(order.order_number);
+  const isPickup = order.fulfillment_method === "pickup";
+  const fulfillmentLabel =
+    order.fulfillment_method === "pickup"
+      ? t.fulfillmentPickup
+      : order.fulfillment_method === "delivery"
+        ? t.fulfillmentDelivery
+        : "—";
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-10">
@@ -126,12 +133,23 @@ export default function CheckoutSuccessContent({ order }: Props) {
 
           <div className="flex items-start justify-between gap-4">
             <span className="text-zinc-500 dark:text-zinc-400">
-              {t.address}
+              {t.fulfillmentMethodLabel}
             </span>
-            <span className="max-w-[70%] text-right font-medium">
-              {order.customer_address}
+            <span className="text-right font-medium">
+              {fulfillmentLabel}
             </span>
           </div>
+
+          {!isPickup ? (
+            <div className="flex items-start justify-between gap-4">
+              <span className="text-zinc-500 dark:text-zinc-400">
+                {t.address}
+              </span>
+              <span className="max-w-[70%] text-right font-medium">
+                {order.customer_address || "—"}
+              </span>
+            </div>
+          ) : null}
         </div>
 
         <div className="my-6 border-t border-zinc-200 dark:border-zinc-800" />

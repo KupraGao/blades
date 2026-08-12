@@ -1,3 +1,5 @@
+import type { FulfillmentMethod } from "@/lib/orders/validate-order";
+
 // =====================================
 // CHECKOUT CUSTOMER FORM
 // =====================================
@@ -7,6 +9,7 @@ export type CheckoutCustomerFormValues = {
   email: string;
   phone: string;
   address: string;
+  fulfillmentMethod: FulfillmentMethod;
 };
 
 export type CheckoutCustomerFormField =
@@ -26,4 +29,5 @@ export const initialCheckoutCustomerFormValues: CheckoutCustomerFormValues =
     email: "",
     phone: "",
     address: "",
+    fulfillmentMethod: "delivery",
   };

@@ -23,6 +23,16 @@ export function getCustomerFieldError(
   field: CheckoutCustomerFormField,
   values: CheckoutCustomerFormValues,
 ): DictionaryKey | undefined {
+  if (field === "fulfillmentMethod") {
+    if (
+      values.fulfillmentMethod !== "delivery" &&
+      values.fulfillmentMethod !== "pickup"
+    ) {
+      return "validationFulfillmentRequired";
+    }
+    return undefined;
+  }
+
   const value = values[field].trim();
 
   switch (field) {
@@ -34,7 +44,7 @@ export function getCustomerFieldError(
       return undefined;
 
     case "email":
-      if (!value) return "validationEmailRequired";
+      if (!value) return undefined;
       if (!isValidEmail(value)) {
         return "validationEmailInvalid";
       }
@@ -48,6 +58,9 @@ export function getCustomerFieldError(
       return undefined;
 
     case "address":
+      if (values.fulfillmentMethod !== "delivery") {
+        return undefined;
+      }
       if (!value) return "validationAddressRequired";
       if (value.length < 5) {
         return "validationAddressMin";
@@ -71,6 +84,7 @@ export function getCustomerFormErrors(
     "email",
     "phone",
     "address",
+    "fulfillmentMethod",
   ];
 
   const errors: CheckoutCustomerFormErrors = {};

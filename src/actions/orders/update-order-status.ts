@@ -57,7 +57,7 @@ export async function updateOrderStatus(
 
   const { data: order, error } = await supabase
     .from("orders")
-    .select("id, status")
+    .select("id, status, fulfillment_method")
     .eq("id", orderId.trim())
     .maybeSingle();
 
@@ -82,12 +82,19 @@ export async function updateOrderStatus(
   }
 
   const currentStatus = String(order.status ?? "");
+  const fulfillmentMethod = String(order.fulfillment_method ?? "");
 
   // =================================================
-  // TRANSITION VALIDATION
+  // TRANSITION VALIDATION (fulfillment-aware)
   // =================================================
 
-  if (!canTransitionOrderStatus(currentStatus, targetStatus)) {
+  if (
+    !canTransitionOrderStatus(
+      currentStatus,
+      targetStatus,
+      fulfillmentMethod,
+    )
+  ) {
     return {
       success: false,
       error: "This status transition is not allowed.",

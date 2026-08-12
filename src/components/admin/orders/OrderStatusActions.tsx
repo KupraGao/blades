@@ -5,19 +5,22 @@ import { useRouter } from "next/navigation";
 
 import { cancelOrder } from "@/actions/orders/cancel-order";
 import { updateOrderStatus } from "@/actions/orders/update-order-status";
+import OrderFulfillmentActions from "@/components/admin/orders/OrderFulfillmentActions";
 import { useLanguage } from "@/context/LanguageContext";
 import {
   canCancelOrderStatus,
   getNextOrderStatus,
+  getPreviousOrderStatus,
   type OrderStatus,
 } from "@/lib/orders/order-status";
 
 type Props = {
   orderId: string;
   currentStatus: string;
+  fulfillmentMethod: string | null | undefined;
 };
 
-type PendingAction = "forward" | "cancel" | null;
+type PendingAction = "forward" | "backward" | "cancel" | null;
 
 function getForwardActionLabel(
   status: OrderStatus,
@@ -30,8 +33,26 @@ function getForwardActionLabel(
       return t.startProcessing;
     case "shipped":
       return t.markAsShipped;
+    case "ready_for_pickup":
+      return t.markReadyForPickup;
     case "completed":
       return t.completeOrder;
+    default:
+      return null;
+  }
+}
+
+function getBackwardActionLabel(
+  previousStatus: OrderStatus,
+  t: ReturnType<typeof useLanguage>["t"],
+): string | null {
+  switch (previousStatus) {
+    case "pending":
+      return t.backToPending;
+    case "confirmed":
+      return t.backToConfirmed;
+    case "processing":
+      return t.backToProcessing;
     default:
       return null;
   }
@@ -40,6 +61,7 @@ function getForwardActionLabel(
 export default function OrderStatusActions({
   orderId,
   currentStatus,
+  fulfillmentMethod,
 }: Props) {
   const router = useRouter();
   const { t } = useLanguage();
@@ -48,22 +70,41 @@ export default function OrderStatusActions({
     useState<PendingAction>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const nextStatus = getNextOrderStatus(currentStatus);
+  const nextStatus = getNextOrderStatus(
+    currentStatus,
+    fulfillmentMethod,
+  );
+  const previousStatus = getPreviousOrderStatus(
+    currentStatus,
+    fulfillmentMethod,
+  );
   const actionLabel = nextStatus
     ? getForwardActionLabel(nextStatus, t)
     : null;
-  const canCancel = canCancelOrderStatus(currentStatus);
+  const previousLabel = previousStatus
+    ? getBackwardActionLabel(previousStatus, t)
+    : null;
+  const canCancel = canCancelOrderStatus(
+    currentStatus,
+    fulfillmentMethod,
+  );
   const isCompleted = currentStatus === "completed";
   const isCancelled = currentStatus === "cancelled";
   const isUnknownStatus =
-    nextStatus === null && !isCompleted && !isCancelled && !canCancel;
+    nextStatus === null &&
+    previousStatus === null &&
+    !isCompleted &&
+    !isCancelled &&
+    !canCancel;
 
   const isBusy = isPending;
   const hasActions = Boolean(
-    (nextStatus && actionLabel) || canCancel,
+    (nextStatus && actionLabel) ||
+      (previousStatus && previousLabel) ||
+      canCancel,
   );
 
-  function handleUpdate() {
+  function handleForward() {
     if (!nextStatus || isBusy) {
       return;
     }
@@ -73,6 +114,28 @@ export default function OrderStatusActions({
 
     startTransition(async () => {
       const result = await updateOrderStatus(orderId, nextStatus);
+
+      if (!result.success) {
+        setError(result.error);
+        setPendingAction(null);
+        return;
+      }
+
+      setPendingAction(null);
+      router.refresh();
+    });
+  }
+
+  function handleBackward() {
+    if (!previousStatus || isBusy) {
+      return;
+    }
+
+    setError(null);
+    setPendingAction("backward");
+
+    startTransition(async () => {
+      const result = await updateOrderStatus(orderId, previousStatus);
 
       if (!result.success) {
         setError(result.error);
@@ -120,19 +183,39 @@ export default function OrderStatusActions({
         {t.orderManagement}
       </h2>
 
+      <OrderFulfillmentActions
+        orderId={orderId}
+        currentStatus={currentStatus}
+        fulfillmentMethod={fulfillmentMethod}
+        disabled={isBusy}
+      />
+
       {hasActions ? (
         <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
 
           {nextStatus && actionLabel ? (
             <button
               type="button"
-              onClick={handleUpdate}
+              onClick={handleForward}
               disabled={isBusy}
               className="w-full rounded-xl bg-white px-5 py-3 font-semibold text-black transition hover:bg-zinc-200 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
             >
               {pendingAction === "forward" && isBusy
                 ? t.updating
                 : actionLabel}
+            </button>
+          ) : null}
+
+          {previousStatus && previousLabel ? (
+            <button
+              type="button"
+              onClick={handleBackward}
+              disabled={isBusy}
+              className="w-full rounded-xl border border-zinc-600 bg-zinc-800 px-5 py-3 font-semibold text-zinc-200 transition hover:bg-zinc-700 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+            >
+              {pendingAction === "backward" && isBusy
+                ? t.updating
+                : previousLabel}
             </button>
           ) : null}
 

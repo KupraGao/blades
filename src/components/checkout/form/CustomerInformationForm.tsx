@@ -1,6 +1,7 @@
 "use client";
 
 import { useLanguage } from "@/context/LanguageContext";
+import FulfillmentMethodSelector from "./FulfillmentMethodSelector";
 import {
   CheckoutCustomerFormErrors,
   CheckoutCustomerFormField,
@@ -12,6 +13,9 @@ type Props = {
   errors: CheckoutCustomerFormErrors;
   onChange: (field: CheckoutCustomerFormField, value: string) => void;
   onBlur: (field: CheckoutCustomerFormField) => void;
+  onFulfillmentChange: (
+    value: CheckoutCustomerFormValues["fulfillmentMethod"],
+  ) => void;
   onSubmitAttempt: () => void;
 };
 
@@ -26,6 +30,7 @@ export default function CustomerInformationForm({
   errors,
   onChange,
   onBlur,
+  onFulfillmentChange,
   onSubmitAttempt,
 }: Props) {
   const { t } = useLanguage();
@@ -39,6 +44,7 @@ export default function CustomerInformationForm({
   const emailError = translateError(errors.email);
   const phoneError = translateError(errors.phone);
   const addressError = translateError(errors.address);
+  const showAddress = values.fulfillmentMethod === "delivery";
 
   return (
     <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
@@ -175,44 +181,51 @@ export default function CustomerInformationForm({
 
         </div>
 
-        <div>
+        <FulfillmentMethodSelector
+          value={values.fulfillmentMethod}
+          onChange={onFulfillmentChange}
+        />
 
-          <label
-            htmlFor="address"
-            className="mb-2 block text-sm font-medium"
-          >
-            {t.address}
-          </label>
+        {showAddress ? (
+          <div>
 
-          <textarea
-            id="address"
-            name="address"
-            rows={4}
-            placeholder={t.placeholderAddress}
-            value={values.address}
-            onChange={(event) =>
-              onChange("address", event.target.value)
-            }
-            onBlur={() => onBlur("address")}
-            aria-invalid={Boolean(addressError)}
-            aria-describedby={
-              addressError ? "address-error" : undefined
-            }
-            className={
-              addressError ? errorInputClassName : inputClassName
-            }
-          />
-
-          {addressError ? (
-            <p
-              id="address-error"
-              className="mt-2 text-sm text-red-600"
+            <label
+              htmlFor="address"
+              className="mb-2 block text-sm font-medium"
             >
-              {addressError}
-            </p>
-          ) : null}
+              {t.address}
+            </label>
 
-        </div>
+            <textarea
+              id="address"
+              name="address"
+              rows={4}
+              placeholder={t.placeholderAddress}
+              value={values.address}
+              onChange={(event) =>
+                onChange("address", event.target.value)
+              }
+              onBlur={() => onBlur("address")}
+              aria-invalid={Boolean(addressError)}
+              aria-describedby={
+                addressError ? "address-error" : undefined
+              }
+              className={
+                addressError ? errorInputClassName : inputClassName
+              }
+            />
+
+            {addressError ? (
+              <p
+                id="address-error"
+                className="mt-2 text-sm text-red-600"
+              >
+                {addressError}
+              </p>
+            ) : null}
+
+          </div>
+        ) : null}
 
       </form>
 

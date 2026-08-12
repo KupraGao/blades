@@ -88,7 +88,7 @@ export async function cancelOrder(
 
   const { data: order, error: loadError } = await supabase
     .from("orders")
-    .select("id, status")
+    .select("id, status, fulfillment_method")
     .eq("id", normalizedOrderId)
     .maybeSingle();
 
@@ -113,6 +113,7 @@ export async function cancelOrder(
   }
 
   const currentStatus = String(order.status ?? "");
+  const fulfillmentMethod = String(order.fulfillment_method ?? "");
 
   if (currentStatus === "cancelled") {
     revalidatePath("/admin/orders");
@@ -125,7 +126,7 @@ export async function cancelOrder(
     };
   }
 
-  if (!canCancelOrderStatus(currentStatus)) {
+  if (!canCancelOrderStatus(currentStatus, fulfillmentMethod)) {
     return {
       success: false,
       error: "ამ სტატუსის შეკვეთის გაუქმება შეუძლებელია.",
