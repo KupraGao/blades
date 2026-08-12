@@ -10,6 +10,8 @@ export const ORDER_STATUSES = [
   "processing",
   "shipped",
   "ready_for_pickup",
+  "delivery_failed",
+  "returned_to_store",
   "completed",
   "cancelled",
 ] as const;
@@ -22,6 +24,8 @@ export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
   processing: "Processing",
   shipped: "Shipped",
   ready_for_pickup: "Ready for Pickup",
+  delivery_failed: "Delivery Failed",
+  returned_to_store: "Returned to Store",
   completed: "Completed",
   cancelled: "Cancelled",
 };
@@ -31,11 +35,17 @@ const DELIVERY_FORWARD: Partial<Record<OrderStatus, OrderStatus>> = {
   confirmed: "processing",
   processing: "shipped",
   shipped: "completed",
+  delivery_failed: "shipped",
 };
 
 const DELIVERY_BACKWARD: Partial<Record<OrderStatus, OrderStatus>> = {
   confirmed: "pending",
   processing: "confirmed",
+};
+
+/** Delivery-only side transitions (not the primary forward path). */
+const DELIVERY_EXCEPTIONAL: Partial<Record<OrderStatus, OrderStatus>> = {
+  shipped: "delivery_failed",
 };
 
 const PICKUP_FORWARD: Partial<Record<OrderStatus, OrderStatus>> = {
@@ -70,6 +80,7 @@ const ORDER_STATUS_ACTION_LABELS: Partial<
   processing: "Start Processing",
   shipped: "Mark as Shipped",
   ready_for_pickup: "Mark Ready for Pickup",
+  delivery_failed: "Delivery Failed",
   completed: "Complete Order",
 };
 
@@ -113,6 +124,12 @@ function getBackwardMap(
     : DELIVERY_BACKWARD;
 }
 
+function getExceptionalMap(
+  fulfillmentMethod: FulfillmentMethod,
+): Partial<Record<OrderStatus, OrderStatus>> {
+  return fulfillmentMethod === "delivery" ? DELIVERY_EXCEPTIONAL : {};
+}
+
 export function getNextOrderStatus(
   currentStatus: string,
   fulfillmentMethod: string | null | undefined,
@@ -141,6 +158,20 @@ export function getPreviousOrderStatus(
   return getBackwardMap(fulfillmentMethod)[currentStatus] ?? null;
 }
 
+export function getExceptionalOrderStatus(
+  currentStatus: string,
+  fulfillmentMethod: string | null | undefined,
+): OrderStatus | null {
+  if (
+    !isOrderStatus(currentStatus) ||
+    !isOrderFulfillmentMethod(fulfillmentMethod)
+  ) {
+    return null;
+  }
+
+  return getExceptionalMap(fulfillmentMethod)[currentStatus] ?? null;
+}
+
 export function canTransitionOrderStatus(
   currentStatus: string,
   targetStatus: string,
@@ -156,8 +187,14 @@ export function canTransitionOrderStatus(
 
   const next = getForwardMap(fulfillmentMethod)[currentStatus];
   const previous = getBackwardMap(fulfillmentMethod)[currentStatus];
+  const exceptional =
+    getExceptionalMap(fulfillmentMethod)[currentStatus];
 
-  return next === targetStatus || previous === targetStatus;
+  return (
+    next === targetStatus ||
+    previous === targetStatus ||
+    exceptional === targetStatus
+  );
 }
 
 export function canCancelOrderStatus(
@@ -177,6 +214,16 @@ export function canCancelOrderStatus(
   }
 
   return false;
+}
+
+/** UI/app early guard only. Authoritative return+stock restore is RPC-only. */
+export function canReturnDeliveryToStore(
+  status: string,
+  fulfillmentMethod?: string | null,
+): boolean {
+  return (
+    status === "delivery_failed" && fulfillmentMethod === "delivery"
+  );
 }
 
 export function canChangeOrderFulfillment(status: string): boolean {

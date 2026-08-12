@@ -18,6 +18,10 @@ const STATUS_BADGE_CLASSES: Record<OrderStatus, string> = {
     "border-violet-500/30 bg-violet-500/15 text-violet-300",
   ready_for_pickup:
     "border-cyan-500/30 bg-cyan-500/15 text-cyan-300",
+  delivery_failed:
+    "border-orange-500/30 bg-orange-500/15 text-orange-300",
+  returned_to_store:
+    "border-zinc-500/40 bg-zinc-500/15 text-zinc-200",
   completed:
     "border-emerald-500/30 bg-emerald-500/15 text-emerald-300",
   cancelled:

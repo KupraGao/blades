@@ -164,6 +164,8 @@ export const ka = {
   statusProcessing: "მუშავდება",
   statusShipped: "გაგზავნილი",
   statusReadyForPickup: "გასატანად მზადაა",
+  statusDeliveryFailed: "მიწოდება ვერ მოხერხდა",
+  statusReturnedToStore: "საწყობში დაბრუნებული",
   statusCompleted: "დასრულებული",
   statusCancelled: "გაუქმებული",
 
@@ -260,6 +262,9 @@ export const ka = {
   startProcessing: "დამუშავების დაწყება",
   markAsShipped: "გაგზავნილად მონიშვნა",
   markReadyForPickup: "გასატანად მზადაა",
+  markDeliveryFailed: "მიწოდება ვერ მოხერხდა",
+  retryDelivery: "მიწოდების ხელახლა ცდა",
+  returnToStore: "საწყობში დაბრუნება",
   completeOrder: "შეკვეთის დასრულება",
   cancelOrder: "გაუქმება",
   backToPending: "მოლოდინში დაბრუნება",
@@ -270,10 +275,14 @@ export const ka = {
   orderCompletedSuccessfully: "შეკვეთა წარმატებით დასრულდა.",
   noFurtherStatusActions: "სტატუსის შემდგომი მოქმედებები ხელმისაწვდომი აღარ არის.",
   orderCancelledMessage: "შეკვეთა გაუქმებულია.",
+  orderReturnedToStoreMessage:
+    "შეკვეთა საწყობში დაბრუნებულია. ნაშთი აღდგენილია.",
   noValidStatusTransition:
     "ამ შეკვეთისთვის სტატუსის ვალიდური ცვლილება ხელმისაწვდომი არ არის.",
   cancelOrderConfirm:
     "გავაუქმოთ ეს შეკვეთა? შეკვეთილი რაოდენობა მარაგში დაბრუნდება.",
+  returnToStoreConfirm:
+    "დავაბრუნოთ ეს შეკვეთა საწყობში? პროდუქტის ნაშთი აღდგება.",
   changeToDelivery: "მიტანაზე შეცვლა",
   changeToPickup: "ადგილიდან გატანაზე შეცვლა",
   deliveryAddressLabel: "მიტანის მისამართი",

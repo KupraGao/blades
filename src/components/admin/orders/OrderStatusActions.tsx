@@ -4,11 +4,14 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
 import { cancelOrder } from "@/actions/orders/cancel-order";
+import { returnDeliveryToStore } from "@/actions/orders/return-delivery-to-store";
 import { updateOrderStatus } from "@/actions/orders/update-order-status";
 import OrderFulfillmentActions from "@/components/admin/orders/OrderFulfillmentActions";
 import { useLanguage } from "@/context/LanguageContext";
 import {
   canCancelOrderStatus,
+  canReturnDeliveryToStore,
+  getExceptionalOrderStatus,
   getNextOrderStatus,
   getPreviousOrderStatus,
   type OrderStatus,
@@ -20,13 +23,27 @@ type Props = {
   fulfillmentMethod: string | null | undefined;
 };
 
-type PendingAction = "forward" | "backward" | "cancel" | null;
+type PendingAction =
+  | "forward"
+  | "backward"
+  | "exceptional"
+  | "returnToStore"
+  | "cancel"
+  | null;
 
 function getForwardActionLabel(
-  status: OrderStatus,
+  targetStatus: OrderStatus,
+  currentStatus: string,
   t: ReturnType<typeof useLanguage>["t"],
 ): string | null {
-  switch (status) {
+  if (
+    targetStatus === "shipped" &&
+    currentStatus === "delivery_failed"
+  ) {
+    return t.retryDelivery;
+  }
+
+  switch (targetStatus) {
     case "confirmed":
       return t.confirmOrder;
     case "processing":
@@ -58,6 +75,17 @@ function getBackwardActionLabel(
   }
 }
 
+function getExceptionalActionLabel(
+  targetStatus: OrderStatus,
+  t: ReturnType<typeof useLanguage>["t"],
+): string | null {
+  if (targetStatus === "delivery_failed") {
+    return t.markDeliveryFailed;
+  }
+
+  return null;
+}
+
 export default function OrderStatusActions({
   orderId,
   currentStatus,
@@ -78,29 +106,46 @@ export default function OrderStatusActions({
     currentStatus,
     fulfillmentMethod,
   );
+  const exceptionalStatus = getExceptionalOrderStatus(
+    currentStatus,
+    fulfillmentMethod,
+  );
   const actionLabel = nextStatus
-    ? getForwardActionLabel(nextStatus, t)
+    ? getForwardActionLabel(nextStatus, currentStatus, t)
     : null;
   const previousLabel = previousStatus
     ? getBackwardActionLabel(previousStatus, t)
+    : null;
+  const exceptionalLabel = exceptionalStatus
+    ? getExceptionalActionLabel(exceptionalStatus, t)
     : null;
   const canCancel = canCancelOrderStatus(
     currentStatus,
     fulfillmentMethod,
   );
+  const canReturnToStore = canReturnDeliveryToStore(
+    currentStatus,
+    fulfillmentMethod,
+  );
   const isCompleted = currentStatus === "completed";
   const isCancelled = currentStatus === "cancelled";
+  const isReturnedToStore = currentStatus === "returned_to_store";
   const isUnknownStatus =
     nextStatus === null &&
     previousStatus === null &&
+    exceptionalStatus === null &&
     !isCompleted &&
     !isCancelled &&
-    !canCancel;
+    !isReturnedToStore &&
+    !canCancel &&
+    !canReturnToStore;
 
   const isBusy = isPending;
   const hasActions = Boolean(
     (nextStatus && actionLabel) ||
       (previousStatus && previousLabel) ||
+      (exceptionalStatus && exceptionalLabel) ||
+      canReturnToStore ||
       canCancel,
   );
 
@@ -136,6 +181,59 @@ export default function OrderStatusActions({
 
     startTransition(async () => {
       const result = await updateOrderStatus(orderId, previousStatus);
+
+      if (!result.success) {
+        setError(result.error);
+        setPendingAction(null);
+        return;
+      }
+
+      setPendingAction(null);
+      router.refresh();
+    });
+  }
+
+  function handleExceptional() {
+    if (!exceptionalStatus || isBusy) {
+      return;
+    }
+
+    setError(null);
+    setPendingAction("exceptional");
+
+    startTransition(async () => {
+      const result = await updateOrderStatus(
+        orderId,
+        exceptionalStatus,
+      );
+
+      if (!result.success) {
+        setError(result.error);
+        setPendingAction(null);
+        return;
+      }
+
+      setPendingAction(null);
+      router.refresh();
+    });
+  }
+
+  function handleReturnToStore() {
+    if (!canReturnToStore || isBusy) {
+      return;
+    }
+
+    const confirmed = window.confirm(t.returnToStoreConfirm);
+
+    if (!confirmed) {
+      return;
+    }
+
+    setError(null);
+    setPendingAction("returnToStore");
+
+    startTransition(async () => {
+      const result = await returnDeliveryToStore(orderId);
 
       if (!result.success) {
         setError(result.error);
@@ -219,6 +317,32 @@ export default function OrderStatusActions({
             </button>
           ) : null}
 
+          {exceptionalStatus && exceptionalLabel ? (
+            <button
+              type="button"
+              onClick={handleExceptional}
+              disabled={isBusy}
+              className="w-full rounded-xl border border-orange-500/40 bg-orange-500/15 px-5 py-3 font-semibold text-orange-300 transition hover:bg-orange-500/25 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+            >
+              {pendingAction === "exceptional" && isBusy
+                ? t.updating
+                : exceptionalLabel}
+            </button>
+          ) : null}
+
+          {canReturnToStore ? (
+            <button
+              type="button"
+              onClick={handleReturnToStore}
+              disabled={isBusy}
+              className="w-full rounded-xl border border-lime-500/40 bg-lime-500/15 px-5 py-3 font-semibold text-lime-300 transition hover:bg-lime-500/25 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+            >
+              {pendingAction === "returnToStore" && isBusy
+                ? t.updating
+                : t.returnToStore}
+            </button>
+          ) : null}
+
           {canCancel ? (
             <button
               type="button"
@@ -252,6 +376,17 @@ export default function OrderStatusActions({
             {t.orderCancelledMessage}
           </p>
           <p className="mt-1 text-sm text-red-300/80">
+            {t.noFurtherStatusActions}
+          </p>
+        </div>
+      ) : null}
+
+      {isReturnedToStore ? (
+        <div className="mt-5 rounded-xl border border-zinc-500/30 bg-zinc-500/10 px-4 py-3">
+          <p className="text-sm font-medium text-zinc-200">
+            {t.orderReturnedToStoreMessage}
+          </p>
+          <p className="mt-1 text-sm text-zinc-400">
             {t.noFurtherStatusActions}
           </p>
         </div>

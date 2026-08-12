@@ -61,6 +61,10 @@ export function getLocalizedOrderStatus(
       return t.statusShipped;
     case "ready_for_pickup":
       return t.statusReadyForPickup;
+    case "delivery_failed":
+      return t.statusDeliveryFailed;
+    case "returned_to_store":
+      return t.statusReturnedToStore;
     case "completed":
       return t.statusCompleted;
     case "cancelled":

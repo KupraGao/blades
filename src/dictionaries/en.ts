@@ -165,6 +165,8 @@ export const en = {
   statusProcessing: "Processing",
   statusShipped: "Shipped",
   statusReadyForPickup: "Ready for Pickup",
+  statusDeliveryFailed: "Delivery Failed",
+  statusReturnedToStore: "Returned to Store",
   statusCompleted: "Completed",
   statusCancelled: "Cancelled",
 
@@ -261,6 +263,9 @@ export const en = {
   startProcessing: "Start Processing",
   markAsShipped: "Mark as Shipped",
   markReadyForPickup: "Ready for Pickup",
+  markDeliveryFailed: "Delivery Failed",
+  retryDelivery: "Retry Delivery",
+  returnToStore: "Return to Store",
   completeOrder: "Complete Order",
   cancelOrder: "Cancel",
   backToPending: "Back to Pending",
@@ -271,10 +276,13 @@ export const en = {
   orderCompletedSuccessfully: "Order completed successfully.",
   noFurtherStatusActions: "No further status actions are available.",
   orderCancelledMessage: "Order cancelled.",
+  orderReturnedToStoreMessage: "Order returned to store. Inventory restored.",
   noValidStatusTransition:
     "No valid status transition is available for this order.",
   cancelOrderConfirm:
     "Cancel this order? Ordered quantities will be returned to stock.",
+  returnToStoreConfirm:
+    "Return this order to store? Inventory will be restored.",
   changeToDelivery: "Change to Delivery",
   changeToPickup: "Change to Pickup",
   deliveryAddressLabel: "Delivery Address",
