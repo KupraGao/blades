@@ -1,9 +1,12 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 
+import { requireAdmin } from "@/lib/auth/require-admin";
+import { createClient } from "@/lib/supabase/server";
+
 export async function deleteCategory(formData: FormData) {
+  await requireAdmin();
 
   const id = String(formData.get("id"));
 

@@ -1,9 +1,13 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 
+import { requireAdmin } from "@/lib/auth/require-admin";
+import { createClient } from "@/lib/supabase/server";
+
 export async function createCategory(formData: FormData) {
+  await requireAdmin();
+
   try {
     const supabase = await createClient();
 

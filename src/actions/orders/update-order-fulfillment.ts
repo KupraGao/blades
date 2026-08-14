@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
+import { requireAdmin } from "@/lib/auth/require-admin";
 import { createAdminClient } from "@/lib/supabase/admin";
 import {
   canChangeOrderFulfillment,
@@ -32,6 +33,19 @@ export async function updateOrderFulfillment(
   targetFulfillment: string,
   customerAddress?: string | null,
 ): Promise<UpdateOrderFulfillmentResult> {
+  try {
+    await requireAdmin();
+  } catch (error) {
+    if (error instanceof Error && error.message === "Unauthorized") {
+      return {
+        success: false,
+        error: "Unauthorized.",
+      };
+    }
+
+    throw error;
+  }
+
   // =================================================
   // INPUT VALIDATION
   // =================================================

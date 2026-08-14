@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
+import { requireAdmin } from "@/lib/auth/require-admin";
 import { createClient } from "@/lib/supabase/server";
 import { parseProductForm } from "@/lib/products/parse-product-form";
 import { validateProduct } from "@/lib/products/validate-product";
@@ -14,6 +15,7 @@ import { insertMainImage } from "@/lib/products/insert-main-image";
 import { insertProduct } from "@/lib/products/insert-product";
 
 export async function createProduct(formData: FormData) {
+  await requireAdmin();
 
   // =================================================
   // SUPABASE

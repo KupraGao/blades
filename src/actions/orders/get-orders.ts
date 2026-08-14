@@ -1,5 +1,6 @@
 "use server";
 
+import { requireAdmin } from "@/lib/auth/require-admin";
 import { createAdminClient } from "@/lib/supabase/admin";
 import {
   isOrderStatus,
@@ -114,6 +115,8 @@ export async function getOrders({
   page = 1,
   limit = 10,
 }: GetOrdersOptions = {}) {
+  await requireAdmin();
+
   // =================================================
   // SUPABASE
   // =================================================

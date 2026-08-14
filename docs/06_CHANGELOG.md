@@ -14,6 +14,30 @@
 
 ---
 
+## v1.15.0
+
+### Privileged Server Action Protection (S4) ✅
+
+- `requireAdmin()` (`src/lib/auth/require-admin.ts`) — fail-closed gate over
+  `getAuthorizedAdmin()`; generic `"Unauthorized"` only (no authz leakage)
+- Independently callable ADMIN_ONLY Server Actions now authorize before work:
+  product create/update/delete/bulk/images, brand CRUD mutations, category
+  CRUD mutations, order status/cancel/return/fulfillment, and `getOrders`
+- Order mutation result contracts preserved
+  (`{ success: false, error: "Unauthorized." }` when denied)
+- Intentionally ungated: `createOrder`, `getSingleOrder`, Auth login/logout,
+  public catalog reads (`getProducts` / brands / categories getters)
+
+#### Explicitly not included / remaining
+
+- Catalog GRANT / RLS hardening
+- `product-images` Storage policy hardening
+- Guest-safe `getSingleOrder` redesign (dual-use Admin + checkout success)
+- Guest `createOrder` abuse controls
+- Customer Auth / OAuth
+
+---
+
 ## v1.14.0
 
 ### Admin Route Protection (S3) ✅
@@ -28,7 +52,7 @@
 
 #### Explicitly not included
 
-- `requireAdmin()` on privileged Server Actions (**S4**)
+- `requireAdmin()` on privileged Server Actions (**S4**) — completed in v1.15.0
 - Catalog anon write / RLS hardening
 - Customer Auth / OAuth
 

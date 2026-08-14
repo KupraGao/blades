@@ -1,9 +1,12 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 
+import { requireAdmin } from "@/lib/auth/require-admin";
+import { createClient } from "@/lib/supabase/server";
+
 export async function createBrand(formData: FormData) {
+  await requireAdmin();
 
   const supabase = await createClient();
 

@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
+import { requireAdmin } from "@/lib/auth/require-admin";
 import { createClient } from "@/lib/supabase/server";
 
 import { parseProductForm } from "@/lib/products/parse-product-form";
@@ -18,6 +19,7 @@ export async function updateProduct(
   productId: string,
   formData: FormData
 ) {
+  await requireAdmin();
 
   // =================================================
   // SUPABASE

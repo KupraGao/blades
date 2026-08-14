@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
+import { requireAdmin } from "@/lib/auth/require-admin";
 import { createAdminClient } from "@/lib/supabase/admin";
 import {
   canTransitionOrderStatus,
@@ -27,6 +28,19 @@ export async function updateOrderStatus(
   orderId: string,
   targetStatus: string,
 ): Promise<UpdateOrderStatusResult> {
+  try {
+    await requireAdmin();
+  } catch (error) {
+    if (error instanceof Error && error.message === "Unauthorized") {
+      return {
+        success: false,
+        error: "Unauthorized.",
+      };
+    }
+
+    throw error;
+  }
+
   // =================================================
   // INPUT VALIDATION
   // =================================================

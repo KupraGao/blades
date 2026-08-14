@@ -197,7 +197,7 @@ createOrder production RPC hardening.
 
 ✅ Protected Admin Routes (S3)
 
-⬜ Privileged Server Action authorization / `requireAdmin` (S4)
+✅ Privileged Server Action authorization / `requireAdmin` (S4)
 
 ⬜ Customer Account
 

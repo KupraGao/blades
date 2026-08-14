@@ -66,7 +66,10 @@ Email continues to come from the authenticated Supabase Auth user.
 - S2B: Admin authorization lookup + login-time gate + display name
 - S3: `/admin/(protected)/**` route/UI protection via `getAuthorizedAdmin()`
   (`/admin/login` public; active Admin → `/admin`)
-- S4: `requireAdmin()` on privileged Server Actions (not complete yet)
+- S4: `requireAdmin()` on privileged Server Actions / Admin reads
+  (app-layer only; does **not** replace GRANT / RLS / Storage policies)
+- Adjacent (not S4): guest-safe `getSingleOrder` access model;
+  catalog write GRANT/RLS; Storage policies; guest checkout abuse controls
 
 Storefront customers remain Guests (no customer Auth / roles).
 

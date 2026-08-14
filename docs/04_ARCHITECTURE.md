@@ -622,11 +622,19 @@ Hard delete / archive is **not** part of the current architecture.
   (`getAuthorizedAdmin()` → null redirects to `/admin/login`)
 - `/admin/login` remains public; active Admin visiting login redirects to `/admin`
 - Proxy remains **session refresh only** (not Admin authorization)
+- **S4** — Privileged Server Action / Admin-read gate via `requireAdmin()`
+  (`src/lib/auth/require-admin.ts` → `getAuthorizedAdmin()` → fail closed)
+  - ADMIN_ONLY mutations (products/images/bulk, brands, categories, order
+    status/cancel/return/fulfillment) + privileged Admin list `getOrders`
+  - Intentionally ungated: `createOrder` (guest checkout), Auth login/logout,
+    public catalog reads, dual-use `getSingleOrder` (guest success + Admin)
 
-### Still remaining
+### Still remaining (outside S4 app gate)
 
-- Privileged Server Actions are **not** yet gated by `requireAdmin()` (**S4**)
-- Child RSC/data loaders may still execute briefly without S4 fail-closed checks
+- DB GRANT / RLS hardening for catalog writes
+- Storage policy hardening for `product-images`
+- Guest-safe access model for `getSingleOrder` (UUID + service-role PII)
+- Guest `createOrder` abuse controls (rate limits / CAPTCHA / etc.)
 
 # 🏛️ Architecture Principles
 

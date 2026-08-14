@@ -49,7 +49,7 @@ Delivery / Pickup + Delivery Failed + Returned to Store).
 
 ✅ Protected Admin Routes (S3)
 
-⬜ Privileged Server Action authorization / `requireAdmin` (S4)
+✅ Privileged Server Action authorization / `requireAdmin` (S4)
 
 ⬜ Production DB transaction / RPC for order creation
 

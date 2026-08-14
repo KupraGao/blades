@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
+import { requireAdmin } from "@/lib/auth/require-admin";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { canReturnDeliveryToStore } from "@/lib/orders/order-status";
 
@@ -63,6 +64,19 @@ function mapReturnDeliveryToStoreError(error: {
 export async function returnDeliveryToStore(
   orderId: string,
 ): Promise<ReturnDeliveryToStoreResult> {
+  try {
+    await requireAdmin();
+  } catch (error) {
+    if (error instanceof Error && error.message === "Unauthorized") {
+      return {
+        success: false,
+        error: "Unauthorized.",
+      };
+    }
+
+    throw error;
+  }
+
   // =================================================
   // INPUT VALIDATION
   // =================================================

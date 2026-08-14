@@ -2,12 +2,14 @@
 
 import { revalidatePath } from "next/cache";
 
+import { requireAdmin } from "@/lib/auth/require-admin";
 import { createClient } from "@/lib/supabase/server";
 import { deleteGalleryImageRecord } from "@/lib/products/delete-gallery-image-record";
 
 export async function deleteGalleryImage(
   imageId: string
 ) {
+  await requireAdmin();
 
   // =================================================
   // SUPABASE

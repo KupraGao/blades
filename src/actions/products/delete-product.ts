@@ -2,9 +2,11 @@
 
 import { revalidatePath } from "next/cache";
 
+import { requireAdmin } from "@/lib/auth/require-admin";
 import { createClient } from "@/lib/supabase/server";
 
 export async function deleteProduct(formData:FormData){
+  await requireAdmin();
 
   // =================================================
   // SUPABASE

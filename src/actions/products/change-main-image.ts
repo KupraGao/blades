@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
+import { requireAdmin } from "@/lib/auth/require-admin";
 import { createClient } from "@/lib/supabase/server";
 import { changeMainImageRecord } from "@/lib/products/change-main-image-record";
 
@@ -9,6 +10,7 @@ export async function changeMainImage(
   productId: string,
   imageId: string
 ) {
+  await requireAdmin();
 
   // =================================================
   // VALIDATION
