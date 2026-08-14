@@ -215,6 +215,7 @@ export const en = {
   adminLogout: "Sign Out",
   adminLogoutSubmitting: "Signing Out...",
   adminRoleLabel: "Administrator",
+  adminBackToStore: "Back to Store",
   dashboard: "Dashboard",
   orders: "Orders",
   users: "Users",

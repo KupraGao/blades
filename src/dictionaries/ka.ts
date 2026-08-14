@@ -214,6 +214,7 @@ export const ka = {
   adminLogout: "გასვლა",
   adminLogoutSubmitting: "გასვლა...",
   adminRoleLabel: "ადმინისტრატორი",
+  adminBackToStore: "საიტზე გადასვლა",
   dashboard: "დაფა",
   orders: "შეკვეთები",
   users: "მომხმარებლები",

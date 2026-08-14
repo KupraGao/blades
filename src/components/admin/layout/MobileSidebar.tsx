@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { X } from "lucide-react";
+import { Store, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 import AdminLogoutButton from "@/components/admin/auth/AdminLogoutButton";
 import { useLanguage } from "@/context/LanguageContext";
@@ -119,6 +119,15 @@ export default function MobileSidebar({
               </p>
             </div>
           ) : null}
+
+          <Link
+            href="/"
+            onClick={onClose}
+            className="flex w-full items-center gap-2 rounded-lg border border-zinc-700 px-4 py-3 text-left text-sm font-medium text-zinc-300 transition hover:bg-zinc-900 hover:text-white"
+          >
+            <Store size={16} aria-hidden="true" />
+            {t.adminBackToStore}
+          </Link>
 
           <AdminLogoutButton onAfterClick={onClose} />
         </div>

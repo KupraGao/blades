@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { Store } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
 import AdminLogoutButton from "@/components/admin/auth/AdminLogoutButton";
@@ -71,6 +72,15 @@ export default function Sidebar({ adminDisplayName = null }: Props) {
         ) : null}
 
         <LanguageSwitcher />
+
+        <Link
+          href="/"
+          className="flex w-full items-center gap-2 rounded-lg border border-zinc-700 px-4 py-3 text-left text-sm font-medium text-zinc-300 transition hover:bg-zinc-900 hover:text-white"
+        >
+          <Store size={16} aria-hidden="true" />
+          {t.adminBackToStore}
+        </Link>
+
         <AdminLogoutButton />
       </div>
     </aside>
