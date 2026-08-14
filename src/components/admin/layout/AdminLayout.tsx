@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 
 import AdminHeader from "./AdminHeader";
 import MobileSidebar from "./MobileSidebar";
@@ -11,7 +12,13 @@ type Props = {
 };
 
 export default function AdminLayout({ children }: Props) {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+
+  // Login uses a standalone chrome-free shell (still under /admin layout).
+  if (pathname === "/admin/login") {
+    return <>{children}</>;
+  }
 
   return (
     <main className="min-h-screen bg-zinc-950">

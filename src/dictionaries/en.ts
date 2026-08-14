@@ -203,6 +203,16 @@ export const en = {
   // ADMIN — SHARED
   // =====================================
   adminPanel: "Admin Panel",
+  adminLoginTitle: "Admin Login",
+  adminLoginDescription: "Sign in with your Admin credentials.",
+  adminLoginEmail: "Email",
+  adminLoginPassword: "Password",
+  adminLoginSubmit: "Sign In",
+  adminLoginSubmitting: "Signing In...",
+  adminLoginInvalidCredentials: "Invalid email or password.",
+  adminLoginFailed: "Unable to sign in. Please try again.",
+  adminLogout: "Sign Out",
+  adminLogoutSubmitting: "Signing Out...",
   dashboard: "Dashboard",
   orders: "Orders",
   users: "Users",

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { X } from "lucide-react";
 import { usePathname } from "next/navigation";
+import AdminLogoutButton from "@/components/admin/auth/AdminLogoutButton";
 import { useLanguage } from "@/context/LanguageContext";
 
 type Props = {
@@ -48,7 +49,7 @@ export default function MobileSidebar({ isOpen, onClose }: Props) {
           </button>
         </div>
 
-        <nav className="flex flex-col gap-3">
+        <nav className="flex flex-1 flex-col gap-3">
           <Link href="/admin" className={linkClass("/admin")} onClick={onClose}>
             {t.dashboard}
           </Link>
@@ -101,6 +102,10 @@ export default function MobileSidebar({ isOpen, onClose }: Props) {
             {t.settings}
           </Link>
         </nav>
+
+        <div className="mt-auto border-t border-zinc-800 pt-4">
+          <AdminLogoutButton onAfterClick={onClose} />
+        </div>
       </aside>
     </>
   );

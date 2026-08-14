@@ -202,6 +202,16 @@ export const ka = {
   // ADMIN — SHARED
   // =====================================
   adminPanel: "ადმინ პანელი",
+  adminLoginTitle: "ადმინ შესვლა",
+  adminLoginDescription: "შედით ადმინისტრატორის ანგარიშით.",
+  adminLoginEmail: "ელფოსტა",
+  adminLoginPassword: "პაროლი",
+  adminLoginSubmit: "შესვლა",
+  adminLoginSubmitting: "შესვლა...",
+  adminLoginInvalidCredentials: "ელფოსტა ან პაროლი არასწორია.",
+  adminLoginFailed: "შესვლა ვერ მოხერხდა. სცადეთ თავიდან.",
+  adminLogout: "გასვლა",
+  adminLogoutSubmitting: "გასვლა...",
   dashboard: "დაფა",
   orders: "შეკვეთები",
   users: "მომხმარებლები",

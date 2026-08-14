@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
+import AdminLogoutButton from "@/components/admin/auth/AdminLogoutButton";
 import { useLanguage } from "@/context/LanguageContext";
 
 export default function Sidebar() {
@@ -53,8 +54,9 @@ export default function Sidebar() {
         </Link>
       </nav>
 
-      <div className="mt-6 border-t border-zinc-800 pt-4">
+      <div className="mt-6 space-y-3 border-t border-zinc-800 pt-4">
         <LanguageSwitcher />
+        <AdminLogoutButton />
       </div>
     </aside>
   );
