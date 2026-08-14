@@ -14,6 +14,26 @@
 
 ---
 
+## v1.14.0
+
+### Admin Route Protection (S3) ✅
+
+- Protected Admin pages live under `src/app/admin/(protected)/`
+  (URLs unchanged — route group does not appear in paths)
+- Server layout gate: `getAuthorizedAdmin()` → null → `redirect("/admin/login")`
+- Single lookup also supplies Admin `displayName` for the shell
+- `/admin/login` remains public; active Admin → `redirect("/admin")`
+- Proxy remains session-refresh only (no Admin authorization / service-role)
+- Guests, non-Admins, and disabled Admins cannot access protected Admin UI routes
+
+#### Explicitly not included
+
+- `requireAdmin()` on privileged Server Actions (**S4**)
+- Catalog anon write / RLS hardening
+- Customer Auth / OAuth
+
+---
+
 ## v1.13.0
 
 ### Admin Authentication + Authorization (S2A / S2B) ✅
@@ -38,7 +58,7 @@
 
 #### Explicitly not included (later)
 
-- `/admin/**` route protection (**S3**)
+- `/admin/**` route protection (**S3**) — completed in v1.14.0
 - `requireAdmin()` on privileged Server Actions (**S4**)
 - Catalog anon write / RLS hardening
 - Customer Auth / Google / Facebook OAuth

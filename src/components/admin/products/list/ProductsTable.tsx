@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 
-import DeleteProductButton from "@/app/admin/products/DeleteProductButton";
+import DeleteProductButton from "@/app/admin/(protected)/products/DeleteProductButton";
 import { useLanguage } from "@/context/LanguageContext";
 
 type ProductImage = {

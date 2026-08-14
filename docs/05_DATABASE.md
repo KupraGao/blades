@@ -64,7 +64,8 @@ Email continues to come from the authenticated Supabase Auth user.
 ### Phase boundaries
 
 - S2B: Admin authorization lookup + login-time gate + display name
-- S3: `/admin/**` route protection (not complete yet)
+- S3: `/admin/(protected)/**` route/UI protection via `getAuthorizedAdmin()`
+  (`/admin/login` public; active Admin → `/admin`)
 - S4: `requireAdmin()` on privileged Server Actions (not complete yet)
 
 Storefront customers remain Guests (no customer Auth / roles).

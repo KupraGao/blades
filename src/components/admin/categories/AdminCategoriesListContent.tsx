@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 
-import DeleteCategoryButton from "@/app/admin/categories/DeleteCategoryButton";
+import DeleteCategoryButton from "@/app/admin/(protected)/categories/DeleteCategoryButton";
 import { useLanguage } from "@/context/LanguageContext";
 
 type Category = {

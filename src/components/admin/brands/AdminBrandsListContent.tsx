@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import DeleteBrandButton from "@/app/admin/brands/DeleteBrandButton";
+import DeleteBrandButton from "@/app/admin/(protected)/brands/DeleteBrandButton";
 import { useLanguage } from "@/context/LanguageContext";
 
 type Brand = {

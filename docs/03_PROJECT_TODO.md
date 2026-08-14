@@ -195,7 +195,7 @@ createOrder production RPC hardening.
 
 ✅ Authentication (S2A) + explicit Admin authorization (S2B)
 
-⬜ Protected Admin Routes (S3)
+✅ Protected Admin Routes (S3)
 
 ⬜ Privileged Server Action authorization / `requireAdmin` (S4)
 

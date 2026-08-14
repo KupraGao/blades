@@ -618,11 +618,15 @@ Hard delete / archive is **not** part of the current architecture.
 - Login requires **both** successful Auth **and** an active Admin row;
   non-Admins are signed out with a generic error
 - authenticated ≠ authorized Admin
+- **S3** — Admin route/UI protection via `src/app/admin/(protected)/layout.tsx`
+  (`getAuthorizedAdmin()` → null redirects to `/admin/login`)
+- `/admin/login` remains public; active Admin visiting login redirects to `/admin`
+- Proxy remains **session refresh only** (not Admin authorization)
 
 ### Still remaining
 
-- `/admin` routes are **not** fully route-protected yet (**S3**)
 - Privileged Server Actions are **not** yet gated by `requireAdmin()` (**S4**)
+- Child RSC/data loaders may still execute briefly without S4 fail-closed checks
 
 # 🏛️ Architecture Principles
 
