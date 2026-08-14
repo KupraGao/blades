@@ -9,9 +9,13 @@ import Sidebar from "./Sidebar";
 
 type Props = {
   children: React.ReactNode;
+  adminDisplayName?: string | null;
 };
 
-export default function AdminLayout({ children }: Props) {
+export default function AdminLayout({
+  children,
+  adminDisplayName = null,
+}: Props) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -24,11 +28,15 @@ export default function AdminLayout({ children }: Props) {
     <main className="min-h-screen bg-zinc-950">
       <AdminHeader onMenuClick={() => setIsOpen(true)} />
 
-      <MobileSidebar isOpen={isOpen} onClose={() => setIsOpen(false)} />
+      <MobileSidebar
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        adminDisplayName={adminDisplayName}
+      />
 
       <div className="flex">
         <div className="hidden lg:block">
-          <Sidebar />
+          <Sidebar adminDisplayName={adminDisplayName} />
         </div>
 
         <section className="flex-1 p-4 md:p-6 lg:p-10">{children}</section>

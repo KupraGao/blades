@@ -9,9 +9,14 @@ import { useLanguage } from "@/context/LanguageContext";
 type Props = {
   isOpen: boolean;
   onClose: () => void;
+  adminDisplayName?: string | null;
 };
 
-export default function MobileSidebar({ isOpen, onClose }: Props) {
+export default function MobileSidebar({
+  isOpen,
+  onClose,
+  adminDisplayName = null,
+}: Props) {
   const pathname = usePathname();
   const { t } = useLanguage();
 
@@ -103,7 +108,18 @@ export default function MobileSidebar({ isOpen, onClose }: Props) {
           </Link>
         </nav>
 
-        <div className="mt-auto border-t border-zinc-800 pt-4">
+        <div className="mt-auto space-y-3 border-t border-zinc-800 pt-4">
+          {adminDisplayName ? (
+            <div className="px-1">
+              <p className="truncate text-sm font-semibold text-white">
+                {adminDisplayName}
+              </p>
+              <p className="mt-0.5 text-xs text-zinc-400">
+                {t.adminRoleLabel}
+              </p>
+            </div>
+          ) : null}
+
           <AdminLogoutButton onAfterClick={onClose} />
         </div>
       </aside>

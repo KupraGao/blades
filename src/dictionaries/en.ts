@@ -209,10 +209,12 @@ export const en = {
   adminLoginPassword: "Password",
   adminLoginSubmit: "Sign In",
   adminLoginSubmitting: "Signing In...",
-  adminLoginInvalidCredentials: "Invalid email or password.",
+  adminLoginInvalidCredentials:
+    "Unable to sign in with the provided credentials.",
   adminLoginFailed: "Unable to sign in. Please try again.",
   adminLogout: "Sign Out",
   adminLogoutSubmitting: "Signing Out...",
+  adminRoleLabel: "Administrator",
   dashboard: "Dashboard",
   orders: "Orders",
   users: "Users",

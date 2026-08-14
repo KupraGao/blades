@@ -6,7 +6,11 @@ import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
 import AdminLogoutButton from "@/components/admin/auth/AdminLogoutButton";
 import { useLanguage } from "@/context/LanguageContext";
 
-export default function Sidebar() {
+type Props = {
+  adminDisplayName?: string | null;
+};
+
+export default function Sidebar({ adminDisplayName = null }: Props) {
   const pathname = usePathname();
   const { t } = useLanguage();
 
@@ -55,6 +59,17 @@ export default function Sidebar() {
       </nav>
 
       <div className="mt-6 space-y-3 border-t border-zinc-800 pt-4">
+        {adminDisplayName ? (
+          <div className="px-1">
+            <p className="truncate text-sm font-semibold text-white">
+              {adminDisplayName}
+            </p>
+            <p className="mt-0.5 text-xs text-zinc-400">
+              {t.adminRoleLabel}
+            </p>
+          </div>
+        ) : null}
+
         <LanguageSwitcher />
         <AdminLogoutButton />
       </div>

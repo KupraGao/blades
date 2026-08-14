@@ -9,7 +9,7 @@ import { createClient } from "@/lib/supabase/server";
 // with the Auth server (not an unverified cookie parse).
 //
 // authenticated !== authorized Admin
-// S2B will add explicit Admin authorization on top of this.
+// Authorization lookup: getAuthorizedAdmin() (S2B).
 // =================================================
 
 export async function getAuthUser(): Promise<User | null> {

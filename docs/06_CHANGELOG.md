@@ -14,6 +14,37 @@
 
 ---
 
+## v1.13.0
+
+### Admin Authentication + Authorization (S2A / S2B) ✅
+
+#### S2A — Authentication foundation
+
+- Supabase Auth email/password Admin login (`/admin/login`)
+- Cookie-aware SSR clients + session refresh proxy
+- `getAuthUser()` for verified Auth identity
+- Logout clears Auth session only (guest cart/wishlist untouched)
+- Customers remain Guests (no storefront accounts)
+
+#### S2B — Explicit Admin authorization
+
+- Live `public.admin_users` (UUID → `auth.users`, `display_name`, `is_active`)
+- RLS enabled; anon/authenticated have no table privileges
+- `getAuthorizedAdmin()` — Auth UUID + active Admin row (privileged lookup)
+- Login requires active Admin authorization; non-Admin / disabled → signOut +
+  generic error (no role leakage)
+- Admin shell shows app-controlled `display_name` + localized Administrator label
+- Multi-Admin ready (additional Auth user + `admin_users` row; no code allowlist)
+
+#### Explicitly not included (later)
+
+- `/admin/**` route protection (**S3**)
+- `requireAdmin()` on privileged Server Actions (**S4**)
+- Catalog anon write / RLS hardening
+- Customer Auth / Google / Facebook OAuth
+
+---
+
 ## v1.12.0
 
 ### Delivery / Pickup + Delivery Failed + Returned to Store ✅

@@ -2,13 +2,14 @@
 
 import { redirect } from "next/navigation";
 
+import { getAuthorizedAdmin } from "@/lib/auth/get-authorized-admin";
 import { createClient } from "@/lib/supabase/server";
 
 // =================================================
-// ADMIN LOGIN (authentication only)
+// ADMIN LOGIN (authentication + Admin authorization)
 // =================================================
-// Establishes a Supabase Auth session.
-// Does NOT grant Admin authorization (S2B).
+// signInWithPassword proves identity.
+// getAuthorizedAdmin() proves Admin authorization.
 // authenticated !== authorized Admin
 // =================================================
 
@@ -43,7 +44,6 @@ export async function loginWithPassword(
   });
 
   if (error) {
-    // Do not leak Auth provider details to the UI.
     console.error("Admin login failed", {
       code: error.code ?? null,
       status: error.status ?? null,
@@ -55,7 +55,24 @@ export async function loginWithPassword(
     };
   }
 
-  // Temporary post-login landing until S2B/S3 harden /admin.
-  // Baseline already exposes /admin publicly; Auth does not worsen that.
+  const admin = await getAuthorizedAdmin();
+
+  if (!admin) {
+    // Non-Admin or disabled Admin: clear session; generic error only.
+    const { error: signOutError } = await supabase.auth.signOut();
+
+    if (signOutError) {
+      console.error("Admin unauthorized sign-out failed", {
+        code: signOutError.code ?? null,
+        status: signOutError.status ?? null,
+      });
+    }
+
+    return {
+      success: false,
+      errorKey: "adminLoginInvalidCredentials",
+    };
+  }
+
   redirect("/admin");
 }

@@ -208,10 +208,12 @@ export const ka = {
   adminLoginPassword: "პაროლი",
   adminLoginSubmit: "შესვლა",
   adminLoginSubmitting: "შესვლა...",
-  adminLoginInvalidCredentials: "ელფოსტა ან პაროლი არასწორია.",
+  adminLoginInvalidCredentials:
+    "მოწოდებული მონაცემებით შესვლა ვერ მოხერხდა.",
   adminLoginFailed: "შესვლა ვერ მოხერხდა. სცადეთ თავიდან.",
   adminLogout: "გასვლა",
   adminLogoutSubmitting: "გასვლა...",
+  adminRoleLabel: "ადმინისტრატორი",
   dashboard: "დაფა",
   orders: "შეკვეთები",
   users: "მომხმარებლები",

@@ -29,6 +29,45 @@
 - product_categories
 - orders
 - order_items
+- admin_users
+
+---
+
+## Admin Authorization (`admin_users`)
+
+Live-verified application authorization table for Admin operators.
+
+- `user_id` — UUID PK; references `auth.users(id)` `ON DELETE CASCADE`
+- `display_name` — app-controlled Admin display name (NOT NULL; non-blank)
+- `is_active` — when `false`, Admin authorization is denied
+- `created_at` / `updated_at`
+
+**Authorized Admin** = authenticated Auth UUID has an `admin_users` row with
+`is_active = true`.
+
+Authorization is **UUID-based**. Email is never the authorization key.
+Email continues to come from the authenticated Supabase Auth user.
+
+### Privileges / RLS (live verified)
+
+- RLS **enabled**
+- No user-facing RLS policies
+- `anon` / `authenticated`: **no** table privileges
+- Server authorization lookup uses privileged `createAdminClient()`
+  after `getAuthUser()` verifies identity
+
+### Application helpers
+
+- `getAuthUser()` — authentication identity only
+- `getAuthorizedAdmin()` — Auth UUID + active `admin_users` row
+
+### Phase boundaries
+
+- S2B: Admin authorization lookup + login-time gate + display name
+- S3: `/admin/**` route protection (not complete yet)
+- S4: `requireAdmin()` on privileged Server Actions (not complete yet)
+
+Storefront customers remain Guests (no customer Auth / roles).
 
 ---
 

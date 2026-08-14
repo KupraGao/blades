@@ -193,9 +193,11 @@ createOrder production RPC hardening.
 
 ## 🔮 FUTURE (not current sprint)
 
-⬜ Authentication
+✅ Authentication (S2A) + explicit Admin authorization (S2B)
 
-⬜ Protected Admin Routes
+⬜ Protected Admin Routes (S3)
+
+⬜ Privileged Server Action authorization / `requireAdmin` (S4)
 
 ⬜ Customer Account
 

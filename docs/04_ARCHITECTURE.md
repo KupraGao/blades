@@ -609,8 +609,20 @@ Hard delete / archive is **not** part of the current architecture.
 
 ## Security note
 
-`/admin` routes are **not** authentication-protected yet.
-Admin authentication remains a future milestone.
+### Authentication / Authorization (current)
+
+- **S2A** — Supabase Auth foundation (email/password login, session cookies,
+  proxy session refresh, `getAuthUser()`)
+- **S2B** — Explicit Admin authorization via `public.admin_users`
+  (`getAuthorizedAdmin()`; UUID + `is_active`; app-controlled `display_name`)
+- Login requires **both** successful Auth **and** an active Admin row;
+  non-Admins are signed out with a generic error
+- authenticated ≠ authorized Admin
+
+### Still remaining
+
+- `/admin` routes are **not** fully route-protected yet (**S3**)
+- Privileged Server Actions are **not** yet gated by `requireAdmin()` (**S4**)
 
 # 🏛️ Architecture Principles
 

@@ -45,16 +45,18 @@ Delivery / Pickup + Delivery Failed + Returned to Store).
 
 ### Production / Auth hardening (suggested)
 
-⬜ Protected Admin Routes
+✅ Authentication foundation (S2A) + explicit Admin authorization (S2B)
 
-⬜ Authentication / roles
+⬜ Protected Admin Routes (S3)
+
+⬜ Privileged Server Action authorization / `requireAdmin` (S4)
 
 ⬜ Production DB transaction / RPC for order creation
 
 ⬜ Full idempotency protection
 
-**Not started as a focused sprint.** Delivery / Pickup operational workflow
-is complete; remaining Immediate Next items are separate concerns.
+**In progress as Auth / Security sprint.** Delivery / Pickup operational
+workflow remains complete and closed.
 
 ---
 
