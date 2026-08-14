@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { requireAdmin } from "@/lib/auth/require-admin";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { deleteGalleryImageRecord } from "@/lib/products/delete-gallery-image-record";
 
 export async function deleteGalleryImage(
@@ -15,7 +15,7 @@ export async function deleteGalleryImage(
   // SUPABASE
   // =================================================
 
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   // =================================================
   // DELETE GALLERY IMAGE

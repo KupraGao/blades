@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { requireAdmin } from "@/lib/auth/require-admin";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 import { parseProductForm } from "@/lib/products/parse-product-form";
 import { validateProduct } from "@/lib/products/validate-product";
@@ -25,7 +25,7 @@ export async function updateProduct(
   // SUPABASE
   // =================================================
 
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   // =================================================
   // FORM DATA

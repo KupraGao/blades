@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { requireAdmin } from "@/lib/auth/require-admin";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export async function deleteProduct(formData:FormData){
   await requireAdmin();
@@ -12,7 +12,7 @@ export async function deleteProduct(formData:FormData){
   // SUPABASE
   // =================================================
 
-  const supabase=await createClient();
+  const supabase=createAdminClient();
 
   // =================================================
   // PRODUCT ID

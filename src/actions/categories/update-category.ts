@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 
 import { requireAdmin } from "@/lib/auth/require-admin";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export async function updateCategory(
   id: string,
@@ -11,7 +11,7 @@ export async function updateCategory(
 ) {
   await requireAdmin();
 
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const name_ka = formData.get("name_ka")?.toString().trim();
   const name_en = formData.get("name_en")?.toString().trim();

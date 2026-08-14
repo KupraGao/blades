@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { requireAdmin } from "@/lib/auth/require-admin";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { changeMainImageRecord } from "@/lib/products/change-main-image-record";
 
 export async function changeMainImage(
@@ -24,7 +24,7 @@ export async function changeMainImage(
   // SUPABASE
   // =================================================
 
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   // =================================================
   // CHANGE MAIN IMAGE

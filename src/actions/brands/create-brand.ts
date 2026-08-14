@@ -3,12 +3,12 @@
 import { redirect } from "next/navigation";
 
 import { requireAdmin } from "@/lib/auth/require-admin";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export async function createBrand(formData: FormData) {
   await requireAdmin();
 
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const name = formData.get("name")?.toString().trim();
   const slug = formData.get("slug")?.toString().trim();

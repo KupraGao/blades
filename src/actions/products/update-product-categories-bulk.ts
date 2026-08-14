@@ -1,7 +1,7 @@
 "use server";
 
 import { requireAdmin } from "@/lib/auth/require-admin";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 type Props = {
   productIds: string[];
@@ -14,7 +14,7 @@ export async function updateProductCategoriesBulk({
 }: Props) {
   await requireAdmin();
 
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const insertData = productIds.flatMap((productId) =>
     categoryIds.map((categoryId) => ({

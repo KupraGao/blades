@@ -1,7 +1,7 @@
 "use server";
 
 import { requireAdmin } from "@/lib/auth/require-admin";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 type Props = {
   productIds: string[];
@@ -12,7 +12,7 @@ export async function deleteProductsBulk({
 }: Props) {
   await requireAdmin();
 
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   if (productIds.length === 0) {
     return;
