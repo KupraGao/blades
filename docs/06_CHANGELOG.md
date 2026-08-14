@@ -71,13 +71,18 @@ Exceptional (W2):
 - Live status CHECK includes:
   `ready_for_pickup` / `delivery_failed` / `returned_to_store`
 
+#### Legacy data cleanup (subsequent)
+
+- `#10010`: `pickup` + `shipped` → `pickup` + `ready_for_pickup`
+- Stock unchanged (stock-neutral correction)
+- Remaining invalid Pickup + Delivery-only status rows = 0
+
 #### Explicitly not included
 
 - Refunds / payment reversal
 - Customer returns after successful completion
 - Exchanges / partial returns / RMA
 - Courier tracking
-- Legacy `#10010` pickup+shipped data cleanup (separate)
 
 ---
 

@@ -175,11 +175,13 @@ Physical return:
   (MD5 `522f9bffa5a2cfa34ddb5f54901fa6e2`; exactly-once manually verified)
 - TypeScript does **not** restore stock for cancel or return
 
-### Remaining cleanup (not blocking)
+### Legacy cleanup
 
-⬜ Legacy / test anomaly `#10010`
-   (`fulfillment_method = pickup` + `status = shipped`)
-   — separate data cleanup; do not treat as normal workflow
+✅ Legacy / test anomaly `#10010` — completed (stock-neutral)
+   - Was: `pickup` + `shipped`
+   - Now: `pickup` + `ready_for_pickup`
+   - Post-cleanup: 0 Pickup rows with Delivery-only statuses
+     (`shipped` / `delivery_failed` / `returned_to_store`)
 
 **Status:** COMPLETED for Delivery / Pickup operational workflow.
 
