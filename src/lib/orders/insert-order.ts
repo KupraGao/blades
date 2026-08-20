@@ -17,6 +17,7 @@ export async function insertOrder(
     fulfillment_method: "delivery" | "pickup";
     total_price: number;
     status: string;
+    user_id: string | null;
   },
 ) {
   // =================================================

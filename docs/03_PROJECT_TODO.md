@@ -203,7 +203,12 @@ createOrder production RPC hardening.
   anon/authenticated; RLS ON; Storage upload hardened; Admin Catalog CRUD
   via `requireAdmin()` → `createAdminClient()` → `service_role`
 
-⬜ Orders / Checkout security review (separate next step)
+✅ Order Ownership Foundation (S6A) — `orders.user_id` nullable FK;
+  guest `createOrder` inserts `user_id = null` (server-controlled)
+
+⬜ Customer Auth / claim / My Orders (S6B–S6E)
+
+⬜ Guest-safe `getSingleOrder` / order claim (S6C)
 
 ⬜ Customer Account
 

@@ -41,5 +41,9 @@ export function orderMapper(
     ),
 
     status: "pending",
+
+    // S6A: server-controlled ownership. Guest checkout always null.
+    // Do not accept user_id from the client. Logged-in attach = S6E.
+    user_id: null,
   };
 }

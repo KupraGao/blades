@@ -69,8 +69,11 @@ Email continues to come from the authenticated Supabase Auth user.
 - S4: `requireAdmin()` on privileged Server Actions / Admin reads
 - S5: Catalog Security Hardening ✅ (GRANT/RLS/Storage + privileged Admin
   Catalog write path) — see Catalog privileges / RLS / Storage below
-- Adjacent (not Catalog S5): Orders / Checkout security review;
-  guest-safe `getSingleOrder`; guest `createOrder` abuse controls
+- S6A: Order ownership foundation ✅ — `orders.user_id` nullable FK;
+  guest inserts use `user_id = null` (server-controlled). Customer Auth,
+  claim tokens, My Orders, and logged-in auto-attach are **not** done yet
+- Adjacent: guest-safe `getSingleOrder`; guest `createOrder` abuse controls;
+  Customer Accounts (S6B+)
 
 Storefront customers remain Guests (no customer Auth / roles).
 
@@ -93,6 +96,12 @@ Fields written/read by the application:
 - `total_price` — calculated server-side from resolved items (`price * quantity`)
 - `status` — see supported statuses below
 - `created_at` — read by Admin Orders list / detail
+- `user_id` — UUID NULL; FK → `auth.users(id)` `ON DELETE SET NULL`
+  (live DB verified; index `orders_user_id_not_null_idx`)
+  - `NULL` = Guest Order (current `createOrder` / mapper always inserts `null`)
+  - Ownership is **server-controlled only** — not accepted from the browser
+  - Existing pre-S6A rows remain Guest Orders (`user_id` NULL)
+  - Customer Auth / order claim / My Orders / logged-in attach = later S6 phases
 
 ### Fulfillment method (live DB verified)
 

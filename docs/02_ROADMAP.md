@@ -54,7 +54,13 @@ Delivery / Pickup + Delivery Failed + Returned to Store).
 ✅ Catalog Security Hardening (S5) — DB GRANT/RLS + Storage + privileged
   Admin Catalog write path (`requireAdmin` → `createAdminClient`)
 
-⬜ Orders / Checkout security review (separate next step)
+✅ Order Ownership Foundation (S6A) — `orders.user_id` nullable FK;
+  guest inserts remain `user_id = null`
+
+⬜ Customer Auth / claim / My Orders (S6B–S6E)
+
+⬜ Orders / Checkout security hardening remaining items
+  (guest-safe `getSingleOrder`, claim tokens)
 
 ⬜ Production DB transaction / RPC for order creation
 

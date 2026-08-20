@@ -14,6 +14,27 @@
 
 ---
 
+## v1.17.0
+
+### Order Ownership Foundation (S6A) ✅
+
+- Live DB: `public.orders.user_id UUID NULL`
+  → `REFERENCES auth.users(id) ON DELETE SET NULL`
+- Index: `orders_user_id_not_null_idx` (`WHERE user_id IS NOT NULL`)
+- App: `orderMapper` / `insertOrder` explicitly support `user_id: string | null`
+- Guest Checkout continues to insert `user_id = null` (server-controlled)
+- Existing orders remain Guest Orders (`user_id` NULL)
+- `CreateOrderInput` does **not** accept client ownership
+
+#### Explicitly not included / remaining
+
+- Customer Auth / Register / Login (S6B)
+- Secure guest order claim / success PII fix (S6C)
+- My Account / My Orders (S6D)
+- Logged-in checkout auto-attach (S6E)
+
+---
+
 ## v1.16.0
 
 ### Catalog Security Hardening (S5) ✅
