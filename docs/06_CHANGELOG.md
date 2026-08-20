@@ -14,6 +14,22 @@
 
 ---
 
+## v1.19.0 (uncommitted) — S6C Step 1
+
+### Secure Guest Success Access + Admin Order Read Hardening
+
+- UUID alone no longer grants guest checkout success / order PII access
+- After successful `createOrder`, server issues short-lived httpOnly HMAC
+  proof cookie (`ORDER_ACCESS_SECRET`, 24h, bound to exact `orderId`)
+- Checkout success: `getGuestSuccessOrder` (proof required)
+- Admin order detail: `getAdminOrder` (`requireAdmin()` before privileged read)
+- Removed ungated shared `getSingleOrder` UUID-only PII reader
+- Guest → Customer claim / My Orders / logged-in attach: **not** included yet
+- Required server-only env: `ORDER_ACCESS_SECRET` (never `NEXT_PUBLIC_*`;
+  not the Supabase service-role key)
+
+---
+
 ## v1.18.0 (uncommitted)
 
 ### Customer Authentication + Account UI (S6B)

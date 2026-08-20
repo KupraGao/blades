@@ -384,7 +384,9 @@ On success: `clearCart()` → redirect `/checkout/success/[orderId]`
 
 ↓
 
-Confirmation page loads order via privileged `getSingleOrder`
+Confirmation page loads order via `getGuestSuccessOrder(orderId)`
+(requires short-lived httpOnly HMAC proof issued by `createOrder`;
+UUID alone does **not** authorize PII access)
 
 Privileged access:
 
@@ -451,7 +453,7 @@ View still routes with UUID → `/admin/orders/[id]`
 
 ↓
 
-`getSingleOrder(id)` via privileged client
+`getAdminOrder(id)` — `requireAdmin()` then privileged client
 (simple `orders` + `order_items` select — **no** product image embed)
 
 ↓
@@ -627,8 +629,12 @@ Hard delete / archive is **not** part of the current architecture.
   - ADMIN_ONLY mutations (products/images/bulk, brands, categories, order
     status/cancel/return/fulfillment) + privileged Admin list `getOrders`
   - Intentionally ungated: `createOrder` (guest checkout), Auth login/logout,
-    public catalog reads, dual-use `getSingleOrder` (guest success + Admin)
-- **S5** — Catalog Security Hardening (app + DB + Storage) ✅
+    public catalog reads
+  - Order reads (S6C Step 1):
+    - Guest success: `getGuestSuccessOrder` — HMAC httpOnly proof required
+      (`ORDER_ACCESS_SECRET`; UUID alone denied)
+    - Admin detail: `getAdminOrder` — `requireAdmin()` before privileged read
+  - **S5** — Catalog Security Hardening (app + DB + Storage) ✅
   - Admin Catalog mutations:
     `requireAdmin()` → `createAdminClient()` → `service_role` → Catalog CRUD
   - Live DB: `anon` / `authenticated` — Catalog **SELECT only**;
@@ -644,8 +650,9 @@ Hard delete / archive is **not** part of the current architecture.
 
 ### Still remaining (outside Catalog S5)
 
-- Orders / Checkout security review (separate next step)
-- Guest-safe access model for `getSingleOrder` (UUID + service-role PII)
+- Guest → Customer order claim (S6C Step 2)
+- My Orders / customer owner reads (S6D+)
+- Logged-in checkout auto-attach (S6E)
 - Guest `createOrder` abuse controls (rate limits / CAPTCHA / etc.)
 
 # 🏛️ Architecture Principles

@@ -72,7 +72,7 @@ Email continues to come from the authenticated Supabase Auth user.
 - S6A: Order ownership foundation ✅ — `orders.user_id` nullable FK;
   guest inserts use `user_id = null` (server-controlled). Customer Auth,
   claim tokens, My Orders, and logged-in auto-attach are **not** done yet
-- Adjacent: guest-safe `getSingleOrder`; guest `createOrder` abuse controls;
+- Adjacent: guest `createOrder` abuse controls; claim / My Orders (S6C+)
   Customer Accounts (S6B+)
 
 Storefront customers remain Guests (no customer Auth / roles).
@@ -338,8 +338,20 @@ Exact RPC SQL is managed in the live Supabase database and is
 - Privileged env var names (never commit real values):
   - `SUPABASE_SECRET_KEY` (preferred)
   - `SUPABASE_SERVICE_ROLE_KEY` (fallback)
+  - `ORDER_ACCESS_SECRET` (server-only HMAC for guest checkout success
+    proof cookies; **not** the Supabase service-role key; never
+    `NEXT_PUBLIC_*`)
 - Normal storefront product reads continue via the anon server client
   (`src/lib/supabase/server.ts`)
+
+### Guest success order access (S6C Step 1)
+
+- UUID alone does **not** grant guest success / order PII access
+- After successful `createOrder`, server issues a short-lived httpOnly
+  signed cookie bound to that `orderId` (`src/lib/orders/order-access-proof.ts`)
+- Checkout success uses `getGuestSuccessOrder` (proof required)
+- Admin order detail uses `getAdminOrder` (`requireAdmin()` then privileged read)
+- Guest → Customer claim / My Orders: **not** implemented yet
 
 ### Catalog privileges (S5 — live verified)
 

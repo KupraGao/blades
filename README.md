@@ -40,6 +40,9 @@ Open: http://localhost:3000
 
 - Product catalog and orders are backed by Supabase (not demo/mock data).
 - Do not put secret/service-role keys in `NEXT_PUBLIC_*` variables.
-- Admin routes are not authentication-protected yet (known future milestone).
-- The app is not claimed as fully production-ready (payments, auth, SEO, etc.
-  remain future work). See `docs/02_ROADMAP.md` and `docs/03_PROJECT_TODO.md`.
+- Guest checkout success requires server-only `ORDER_ACCESS_SECRET`
+  (HMAC proof cookies; not the Supabase service-role key).
+- Admin routes use Auth + `admin_users` authorization (not open).
+- The app is not claimed as fully production-ready (payments, claim/My Orders,
+  SEO, etc. remain future work). See `docs/02_ROADMAP.md` and
+  `docs/03_PROJECT_TODO.md`.

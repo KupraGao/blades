@@ -206,10 +206,14 @@ createOrder production RPC hardening.
 ✅ Order Ownership Foundation (S6A) — `orders.user_id` nullable FK;
   guest `createOrder` inserts `user_id = null` (server-controlled)
 
-⬜ Customer Auth / Account UI (S6B) — code ready for manual retest;
-  Dashboard Site URL / Redirect URLs / email delivery must be verified
+✅ Customer Auth / Account UI (S6B)
 
-⬜ Guest-safe `getSingleOrder` / order claim / My Orders (S6C–S6E)
+⬜ Secure guest success access (S6C Step 1) — proof-gated success + Admin
+  read hardening (pending commit / manual security test)
+
+⬜ Guest → Customer order claim (S6C Step 2)
+
+⬜ My Orders / owner reads / logged-in attach (S6D–S6E)
 
 ⬜ Customer Account
 

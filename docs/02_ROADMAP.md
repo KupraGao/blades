@@ -54,21 +54,21 @@ Delivery / Pickup + Delivery Failed + Returned to Store).
 ✅ Catalog Security Hardening (S5) — DB GRANT/RLS + Storage + privileged
   Admin Catalog write path (`requireAdmin` → `createAdminClient`)
 
-✅ Order Ownership Foundation (S6A) — `orders.user_id` nullable FK;
-  guest inserts remain `user_id = null`
+✅ Customer Auth / Account UI (S6B)
 
-⬜ Customer Auth / Account UI (S6B) — implementation ready for manual retest;
-  requires Supabase Dashboard email/redirect configuration (see CHANGELOG)
+⬜ Secure guest success access (S6C Step 1) — in progress / pending commit
+  (httpOnly HMAC proof; Admin `getAdminOrder` + `requireAdmin`)
 
-⬜ Secure guest order claim / My Orders (S6C–S6E)
+⬜ Guest → Customer order claim (S6C Step 2)
+
+⬜ My Orders / owner reads / logged-in attach (S6D–S6E)
 
 ⬜ Production DB transaction / RPC for order creation
 
 ⬜ Full idempotency protection
 
 **Catalog Auth / Security sprint closed through S5.** Delivery / Pickup
-operational workflow remains complete and closed. Orders / Checkout
-security review is a separate remaining step.
+operational workflow remains complete and closed.
 
 ---
 

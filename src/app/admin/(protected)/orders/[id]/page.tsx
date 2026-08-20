@@ -1,4 +1,4 @@
-import { getSingleOrder } from "@/actions/orders/get-single-order";
+import { getAdminOrder } from "@/actions/orders/get-admin-order";
 import AdminOrderDetailsContent from "@/components/admin/orders/AdminOrderDetailsContent";
 
 type Props = {
@@ -11,7 +11,7 @@ export default async function AdminOrderDetailsPage({
   params,
 }: Props) {
   const { id } = await params;
-  const order = await getSingleOrder(id);
+  const order = await getAdminOrder(id);
 
   return <AdminOrderDetailsContent order={order} />;
 }

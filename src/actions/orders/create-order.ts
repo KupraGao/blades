@@ -19,6 +19,10 @@ import {
   deleteOrderWithItems,
 } from "@/lib/orders/delete-order";
 import { decrementOrderStock } from "@/lib/orders/decrement-product-stock";
+import {
+  assertOrderAccessSecretConfigured,
+  issueOrderAccessProof,
+} from "@/lib/orders/order-access-proof";
 
 // =================================================
 // CREATE ORDER
@@ -27,6 +31,9 @@ import { decrementOrderStock } from "@/lib/orders/decrement-product-stock";
 export async function createOrder(
   order: CreateOrderInput,
 ) {
+  // Fail closed before writes if guest success proof cannot be issued.
+  assertOrderAccessSecretConfigured();
+
   // =================================================
   // SUPABASE
   // =================================================
@@ -112,6 +119,15 @@ export async function createOrder(
   // =================================================
 
   revalidatePath("/admin/orders");
+
+  // =================================================
+  // GUEST SUCCESS ACCESS PROOF (S6C Step 1)
+  // =================================================
+  // Issued only after successful order + items + stock.
+  // UUID alone must not authorize success PII.
+  // =================================================
+
+  await issueOrderAccessProof(orderId);
 
   // =================================================
   // RESULT
