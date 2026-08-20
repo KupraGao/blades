@@ -51,12 +51,18 @@ Delivery / Pickup + Delivery Failed + Returned to Store).
 
 ✅ Privileged Server Action authorization / `requireAdmin` (S4)
 
+✅ Catalog Security Hardening (S5) — DB GRANT/RLS + Storage + privileged
+  Admin Catalog write path (`requireAdmin` → `createAdminClient`)
+
+⬜ Orders / Checkout security review (separate next step)
+
 ⬜ Production DB transaction / RPC for order creation
 
 ⬜ Full idempotency protection
 
-**In progress as Auth / Security sprint.** Delivery / Pickup operational
-workflow remains complete and closed.
+**Catalog Auth / Security sprint closed through S5.** Delivery / Pickup
+operational workflow remains complete and closed. Orders / Checkout
+security review is a separate remaining step.
 
 ---
 

@@ -67,9 +67,10 @@ Email continues to come from the authenticated Supabase Auth user.
 - S3: `/admin/(protected)/**` route/UI protection via `getAuthorizedAdmin()`
   (`/admin/login` public; active Admin → `/admin`)
 - S4: `requireAdmin()` on privileged Server Actions / Admin reads
-  (app-layer only; does **not** replace GRANT / RLS / Storage policies)
-- Adjacent (not S4): guest-safe `getSingleOrder` access model;
-  catalog write GRANT/RLS; Storage policies; guest checkout abuse controls
+- S5: Catalog Security Hardening ✅ (GRANT/RLS/Storage + privileged Admin
+  Catalog write path) — see Catalog privileges / RLS / Storage below
+- Adjacent (not Catalog S5): Orders / Checkout security review;
+  guest-safe `getSingleOrder`; guest `createOrder` abuse controls
 
 Storefront customers remain Guests (no customer Auth / roles).
 
@@ -215,9 +216,12 @@ Admin Order Items do not currently display product thumbnails.
 
 ## Storage
 
-Bucket
+Bucket: `product-images`
 
-- product-images
+- `public = true` — intentional public **READ** for storefront image URLs
+- Anonymous / authenticated **upload/write** policies removed (S5)
+- Public **SELECT** remains
+- Admin uploads use privileged server client after `requireAdmin()`
 
 ---
 
@@ -319,7 +323,6 @@ Exact RPC SQL is managed in the live Supabase database and is
 
 ## RLS / Access Architecture
 
-- RLS remains enabled
 - Public/anon broad Orders access is **not** intentionally opened
 - Sensitive server order writes and Admin Orders reads use the
   server-only privileged Supabase client (`src/lib/supabase/admin.ts`)
@@ -329,14 +332,41 @@ Exact RPC SQL is managed in the live Supabase database and is
 - Normal storefront product reads continue via the anon server client
   (`src/lib/supabase/server.ts`)
 
-### Existing catalog RLS notes
+### Catalog privileges (S5 — live verified)
 
-- Products
-- Brands
-- Categories
-- Product Images
-- Product Categories
+Tables: `products`, `brands`, `categories`, `product_categories`,
+`product_images`
 
+| Role | SELECT | INSERT / UPDATE / DELETE |
+|------|--------|--------------------------|
+| `anon` | allow | **deny** |
+| `authenticated` | allow | **deny** |
+| `service_role` | allow | **allow** (Admin CMS path) |
+
+Admin Catalog CMS write path:
+
+```text
+requireAdmin() → createAdminClient() → service_role → Catalog CRUD
+```
+
+### Catalog RLS (S5 — live verified)
+
+RLS **ON** for:
+
+- `products`
+- `brands`
+- `categories`
+- `product_categories`
+- `product_images`
+
+Dangerous public WRITE policies removed, including:
+
+- `brands` public INSERT / UPDATE / DELETE
+- `product_images` public DELETE
+
+### Orders / Checkout (not closed by S5)
+
+Orders / Checkout security review remains a **separate next step**.
 Exact Orders RLS policy SQL is not stored in this repository.
 
 ---

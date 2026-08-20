@@ -628,11 +628,23 @@ Hard delete / archive is **not** part of the current architecture.
     status/cancel/return/fulfillment) + privileged Admin list `getOrders`
   - Intentionally ungated: `createOrder` (guest checkout), Auth login/logout,
     public catalog reads, dual-use `getSingleOrder` (guest success + Admin)
+- **S5** — Catalog Security Hardening (app + DB + Storage) ✅
+  - Admin Catalog mutations:
+    `requireAdmin()` → `createAdminClient()` → `service_role` → Catalog CRUD
+  - Live DB: `anon` / `authenticated` — Catalog **SELECT only**;
+    INSERT/UPDATE/DELETE **denied** on `products`, `brands`, `categories`,
+    `product_categories`, `product_images`
+  - `service_role` retains Catalog CRUD
+  - RLS **ON** for those five catalog tables; dangerous public WRITE policies
+    removed (e.g. brands public INSERT/UPDATE/DELETE; product_images public DELETE)
+  - Storage `product-images`: public **READ** retained; anonymous upload/write
+    removed
+  - Secret-exposure audit: no privileged key via `NEXT_PUBLIC_*`; no
+    `createAdminClient` / secret imports in `"use client"` modules
 
-### Still remaining (outside S4 app gate)
+### Still remaining (outside Catalog S5)
 
-- DB GRANT / RLS hardening for catalog writes
-- Storage policy hardening for `product-images`
+- Orders / Checkout security review (separate next step)
 - Guest-safe access model for `getSingleOrder` (UUID + service-role PII)
 - Guest `createOrder` abuse controls (rate limits / CAPTCHA / etc.)
 

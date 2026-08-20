@@ -199,6 +199,12 @@ createOrder production RPC hardening.
 
 ✅ Privileged Server Action authorization / `requireAdmin` (S4)
 
+✅ Catalog Security Hardening (S5) — Catalog write privileges removed from
+  anon/authenticated; RLS ON; Storage upload hardened; Admin Catalog CRUD
+  via `requireAdmin()` → `createAdminClient()` → `service_role`
+
+⬜ Orders / Checkout security review (separate next step)
+
 ⬜ Customer Account
 
 ⬜ My Orders

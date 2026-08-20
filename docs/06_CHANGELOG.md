@@ -14,6 +14,46 @@
 
 ---
 
+## v1.16.0
+
+### Catalog Security Hardening (S5) ✅
+
+#### App (Phase 1)
+
+- Admin Catalog mutations use
+  `requireAdmin()` → `createAdminClient()` → `service_role`
+- Public catalog reads remain on `createClient()` (anon/session)
+
+#### Database / Storage (Phase 2)
+
+- Public Catalog WRITE privileges removed from `anon` and `authenticated`
+  for `products`, `brands`, `categories`, `product_categories`,
+  `product_images` (SELECT retained)
+- `service_role` retains required Catalog CRUD
+- RLS **ON** for those five catalog tables
+- Dangerous public WRITE policies removed (brands public INSERT/UPDATE/DELETE;
+  product_images public DELETE)
+- Storage `product-images`: public READ retained; anonymous upload/write
+  removed
+
+#### Verification
+
+- Threat checks: anon/authenticated Catalog INSERT blocked; anon Storage
+  upload blocked; storefront reads + Admin CMS CRUD + image upload work
+- Secret-exposure audit: no privileged key via `NEXT_PUBLIC_*`; no
+  privileged imports in `"use client"`; Catalog mutations authorize before
+  privileged work
+- `tsc --noEmit` + production build passed
+
+#### Explicitly not included / remaining
+
+- Orders / Checkout security review (separate next step)
+- Guest-safe `getSingleOrder` redesign
+- Guest `createOrder` abuse controls
+- Customer Auth / OAuth
+
+---
+
 ## v1.15.0
 
 ### Privileged Server Action Protection (S4) ✅
@@ -30,11 +70,12 @@
 
 #### Explicitly not included / remaining
 
-- Catalog GRANT / RLS hardening
-- `product-images` Storage policy hardening
+- Catalog GRANT / RLS hardening — completed in v1.16.0 (S5)
+- `product-images` Storage policy hardening — completed in v1.16.0 (S5)
 - Guest-safe `getSingleOrder` redesign (dual-use Admin + checkout success)
 - Guest `createOrder` abuse controls
 - Customer Auth / OAuth
+- Orders / Checkout security review (separate next step)
 
 ---
 
@@ -53,8 +94,9 @@
 #### Explicitly not included
 
 - `requireAdmin()` on privileged Server Actions (**S4**) — completed in v1.15.0
-- Catalog anon write / RLS hardening
+- Catalog anon write / RLS hardening — completed in v1.16.0 (S5)
 - Customer Auth / OAuth
+- Orders / Checkout security review (separate next step)
 
 ---
 
