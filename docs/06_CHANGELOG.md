@@ -14,6 +14,49 @@
 
 ---
 
+## v1.18.0 (uncommitted)
+
+### Customer Authentication + Account UI (S6B)
+
+- Customer Register / Login / Logout via Supabase Auth (anon server client)
+- Register fields: Full Name, Phone, Email, Password, Confirm Password
+- Name/phone stored in Auth `user_metadata` (`full_name`, `phone`) — no profiles table
+- Routes: `/account/login`, `/account/register`, protected `/account`
+- Auth callback: `/auth/callback` (PKCE code exchange for email confirmation)
+- Account overview: name, email, phone, logout
+- Email-confirmation UX is truthful (required vs session-created)
+- Login surfaces unconfirmed-email distinctly
+- Admin login/authorization semantics unchanged
+- My Orders / order claim / ownership attach **not** included
+
+#### Future (documented only — not implemented)
+
+- Order Confirmation email for every successful order (Guest and Customer),
+  independent of Customer Account existence
+
+#### Manual Supabase Dashboard configuration (NOT verified in-repo)
+
+Required for email-confirmation flow to work end-to-end (app cannot set these):
+
+1. **Authentication → URL Configuration → Site URL**
+   - Local: `http://localhost:3000` (or your dev origin)
+   - Production: your live site origin
+2. **Authentication → URL Configuration → Redirect URLs** must allow:
+   - `http://localhost:3000/auth/callback`
+   - production `https://<your-domain>/auth/callback`
+   - optional with query: `.../auth/callback?next=/account` (or wildcard per Supabase rules)
+3. **Authentication → Providers → Email**
+   - Confirm whether “Confirm email” is enabled (explains no-session on signUp)
+4. **Auth email delivery**
+   - Default Supabase mail has rate limits; custom SMTP recommended for reliable delivery
+   - Delivery of confirmation emails was **not** verified during S6B
+
+Optional local workaround while testing: disable “Confirm email” in Dashboard
+(then `signUp` returns a session and redirects to `/account`). Do not assume
+production will disable confirmation.
+
+---
+
 ## v1.17.0
 
 ### Order Ownership Foundation (S6A) ✅

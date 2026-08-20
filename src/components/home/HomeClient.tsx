@@ -15,8 +15,10 @@ import { ProductSectionClient } from "@/components/product/ProductSectionClient"
 import { useLanguage } from "@/context/LanguageContext";
 export function HomeClient({
   products,
+  accountHref = "/account/login",
 }: {
   products: any[];
+  accountHref?: string;
 }) {
 
   // =====================================
@@ -65,6 +67,7 @@ export function HomeClient({
         categories={allCategories}
         selectedCategory={selectedCategory}
         onSelectCategory={setSelectedCategory}
+        accountHref={accountHref}
       />
 
       <HeaderExtras />

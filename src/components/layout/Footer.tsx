@@ -64,7 +64,7 @@ export function Footer() {
           </ul>
         </div>
 
-        <div>
+        <div id="contact">
           <h3 className="font-bold text-zinc-900 dark:text-white">
             {t.contact}
           </h3>

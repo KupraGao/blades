@@ -57,10 +57,10 @@ Delivery / Pickup + Delivery Failed + Returned to Store).
 ✅ Order Ownership Foundation (S6A) — `orders.user_id` nullable FK;
   guest inserts remain `user_id = null`
 
-⬜ Customer Auth / claim / My Orders (S6B–S6E)
+⬜ Customer Auth / Account UI (S6B) — implementation ready for manual retest;
+  requires Supabase Dashboard email/redirect configuration (see CHANGELOG)
 
-⬜ Orders / Checkout security hardening remaining items
-  (guest-safe `getSingleOrder`, claim tokens)
+⬜ Secure guest order claim / My Orders (S6C–S6E)
 
 ⬜ Production DB transaction / RPC for order creation
 
@@ -76,7 +76,11 @@ security review is a separate remaining step.
 
 ⬜ Invoice
 
-⬜ Email Notifications
+⬜ Email Notifications — **future requirement (documented):** every successful
+  order (Guest or Registered Customer) should send Order Confirmation to
+  `customer_email` with order number, items, quantities, total, fulfillment
+  method, delivery address when applicable, and initial status. Independent
+  of Customer Account. Provider not chosen yet.
 
 ⬜ Archive functionality
 

@@ -206,9 +206,10 @@ createOrder production RPC hardening.
 ✅ Order Ownership Foundation (S6A) — `orders.user_id` nullable FK;
   guest `createOrder` inserts `user_id = null` (server-controlled)
 
-⬜ Customer Auth / claim / My Orders (S6B–S6E)
+⬜ Customer Auth / Account UI (S6B) — code ready for manual retest;
+  Dashboard Site URL / Redirect URLs / email delivery must be verified
 
-⬜ Guest-safe `getSingleOrder` / order claim (S6C)
+⬜ Guest-safe `getSingleOrder` / order claim / My Orders (S6C–S6E)
 
 ⬜ Customer Account
 
@@ -222,7 +223,8 @@ createOrder production RPC hardening.
 
 ⬜ Invoice
 
-⬜ Email Notifications
+⬜ Email Notifications — every successful order → confirmation email to
+  `customer_email` (Guest + Customer); not tied to Account; not implemented
 
 ⬜ Payments
 

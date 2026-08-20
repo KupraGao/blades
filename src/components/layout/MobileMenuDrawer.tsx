@@ -16,7 +16,12 @@ type MobileMenuDrawerProps = {
 export function MobileMenuDrawer({ open, setOpen, tab, setTab, categories, selectedCategory, onSelectCategory }: MobileMenuDrawerProps) {
   const { t } = useLanguage();
 
-  const navItems = [t.home, t.products, t.brands, t.contact];
+  const navItems = [
+    { label: t.home, href: "/" },
+    { label: t.products, href: "/#products" },
+    { label: t.brands, href: "/" },
+    { label: t.contact, href: "/#contact" },
+  ];
 
   function handleCategoryClick(category: string | null) {
     onSelectCategory(category);
@@ -57,8 +62,13 @@ export function MobileMenuDrawer({ open, setOpen, tab, setTab, categories, selec
             {tab === "menu" && (
               <div className="flex flex-col gap-2">
                 {navItems.map((item) => (
-                  <a key={item} href="#" className="rounded-lg bg-gray-100 px-4 py-2" onClick={() => setOpen(false)}>
-                    {item}
+                  <a
+                    key={item.href + item.label}
+                    href={item.href}
+                    className="rounded-lg bg-gray-100 px-4 py-2"
+                    onClick={() => setOpen(false)}
+                  >
+                    {item.label}
                   </a>
                 ))}
               </div>

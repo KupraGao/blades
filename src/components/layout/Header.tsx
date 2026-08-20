@@ -18,9 +18,15 @@ type HeaderProps = {
   categories: string[];
   selectedCategory: string | null;
   onSelectCategory: (category: string | null) => void;
+  accountHref?: string;
 };
 
-export function Header({ categories, selectedCategory, onSelectCategory }: HeaderProps) {
+export function Header({
+  categories,
+  selectedCategory,
+  onSelectCategory,
+  accountHref = "/account/login",
+}: HeaderProps) {
   const { t } = useLanguage();
   const { cartCount } = useCart();
   const { wishlistCount } = useWishlist();
@@ -59,10 +65,10 @@ export function Header({ categories, selectedCategory, onSelectCategory }: Heade
           {/* DESKTOP NAV */}
           {/* ===================================== */}
           <nav className="hidden items-center gap-8 lg:flex">
-            <a href="#" className="text-sm font-semibold text-zinc-700 transition hover:text-brand-gold dark:text-zinc-300">{t.home}</a>
-            <a href="#" className="text-sm font-semibold text-zinc-700 transition hover:text-brand-gold dark:text-zinc-300">{t.products}</a>
-            <a href="#" className="text-sm font-semibold text-zinc-700 transition hover:text-brand-gold dark:text-zinc-300">{t.brands}</a>
-            <a href="#" className="text-sm font-semibold text-zinc-700 transition hover:text-brand-gold dark:text-zinc-300">{t.contact}</a>
+            <a href="/" className="text-sm font-semibold text-zinc-700 transition hover:text-brand-gold dark:text-zinc-300">{t.home}</a>
+            <a href="/#products" className="text-sm font-semibold text-zinc-700 transition hover:text-brand-gold dark:text-zinc-300">{t.products}</a>
+            <a href="/" className="text-sm font-semibold text-zinc-700 transition hover:text-brand-gold dark:text-zinc-300">{t.brands}</a>
+            <a href="/#contact" className="text-sm font-semibold text-zinc-700 transition hover:text-brand-gold dark:text-zinc-300">{t.contact}</a>
           </nav>
 
           {/* ===================================== */}
@@ -91,11 +97,16 @@ export function Header({ categories, selectedCategory, onSelectCategory }: Heade
             </button>
 
             {/* ===================================== */}
-            {/* PROFILE */}
+            {/* ACCOUNT */}
             {/* ===================================== */}
-            <button type="button" aria-label={t.profile} className="hidden h-10 w-10 place-items-center rounded-full border border-zinc-300 bg-zinc-100 text-zinc-700 hover:bg-zinc-200 dark:border-white/10 dark:bg-white/5 dark:text-zinc-300 dark:hover:bg-white/10 sm:grid">
+            <Link
+              href={accountHref}
+              aria-label={t.account}
+              title={t.account}
+              className="grid h-10 w-10 place-items-center rounded-full border border-zinc-300 bg-zinc-100 text-zinc-700 transition hover:bg-zinc-200 dark:border-white/10 dark:bg-white/5 dark:text-zinc-300 dark:hover:bg-white/10"
+            >
               <UserRound size={19} />
-            </button>
+            </Link>
 
             {/* ===================================== */}
             {/* MOBILE MENU */}
