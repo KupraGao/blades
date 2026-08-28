@@ -36,39 +36,40 @@
   (Checkout fulfillment, Pickup + Delivery workflows, Delivery Failed,
   Retry Delivery, Returned to Store + transactional stock restore)
 
-See `docs/06_CHANGELOG.md` for version history (latest: **v1.12.0** —
-Delivery / Pickup + Delivery Failed + Returned to Store).
+See `docs/06_CHANGELOG.md` for version history (S6 Customer Ownership complete —
+see **v1.22.0** / S6A–S6E).
+
+---
+
+## ✅ S6 Customer Ownership — COMPLETE (pending commit)
+
+- ✅ **S6A** Order Ownership Foundation (`orders.user_id` nullable FK)
+- ✅ **S6B** Customer Auth + Account UI (register/login/logout, `/account`)
+- ✅ **S6C** Secure guest success proof + Guest → Customer claim
+- ✅ **S6D** Customer My Orders (owner-filtered list + detail)
+- ✅ **S6E** Logged-in checkout auto-ownership (`getAuthUser()` → `user_id`)
+
+Guest checkout remains supported. Ownership is never client- or email-based.
+Customer auth is separate from Admin authorization (`admin_users`).
 
 ---
 
 ## 🚀 Immediate Next
 
-### Production / Auth hardening (suggested)
+### S7 — Payments Foundation
 
-✅ Authentication foundation (S2A) + explicit Admin authorization (S2B)
+⬜ Payments Foundation (S7) — provider selection, checkout payment capture,
+  order payment state (not started)
 
-✅ Protected Admin Routes (S3)
-
-✅ Privileged Server Action authorization / `requireAdmin` (S4)
-
-✅ Catalog Security Hardening (S5) — DB GRANT/RLS + Storage + privileged
-  Admin Catalog write path (`requireAdmin` → `createAdminClient`)
-
-✅ Customer Auth / Account UI (S6B)
-
-⬜ Secure guest success access (S6C Step 1) — in progress / pending commit
-  (httpOnly HMAC proof; Admin `getAdminOrder` + `requireAdmin`)
-
-✅ Guest → Customer order claim (S6C Step 2) — manually verified; pending commit
-  (`claimGuestOrder` + success CTA; safe auth `?next=`)
-
-⬜ My Orders / owner reads / logged-in attach (S6D–S6E)
+### Production hardening (remaining)
 
 ⬜ Production DB transaction / RPC for order creation
 
 ⬜ Full idempotency protection
 
-**Catalog Auth / Security sprint closed through S5.** Delivery / Pickup
+⬜ Guest `createOrder` abuse controls (rate limits / CAPTCHA / etc.)
+
+**Auth / Catalog / Customer Ownership closed through S6.** Delivery / Pickup
 operational workflow remains complete and closed.
 
 ---
@@ -113,23 +114,17 @@ operational workflow remains complete and closed.
 
 ## Authentication / Accounts
 
-⬜ Login
+✅ Login / Register / Logout — Customer (S6B) + Admin (S2)
 
-⬜ Register
+✅ Protected Admin Routes (S3)
 
-⬜ Roles
+✅ Customer Account + My Orders (S6B–S6D)
 
-⬜ Permissions
+✅ Linking orders to authenticated users (S6A / S6C claim / S6E auto-attach)
 
-⬜ Protected Admin Routes
+⬜ Roles / Permissions beyond Admin vs Customer (future)
 
-⬜ Customer Account
-
-⬜ My Orders
-
-⬜ Linking orders to authenticated users
-
-⬜ Customer-side order management
+⬜ Customer-side order management (cancel / edit — **not** implemented)
 
 ---
 
@@ -137,7 +132,7 @@ operational workflow remains complete and closed.
 
 ⬜ Shipping pricing
 
-⬜ Payments
+⬜ Payments (S7)
 
 ⬜ Coupons
 

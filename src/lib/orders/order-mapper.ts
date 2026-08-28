@@ -6,10 +6,14 @@ import {
 // =================================================
 // ORDER MAPPER
 // =================================================
+// userId is server-derived only (getAuthUser). Never from
+// CreateOrderInput / client. Guest → null; Customer → auth id.
+// =================================================
 
 export function orderMapper(
   order: CreateOrderInput,
   items: ResolvedOrderItem[],
+  userId: string | null = null,
 ) {
   // =================================================
   // ORDER
@@ -42,8 +46,7 @@ export function orderMapper(
 
     status: "pending",
 
-    // S6A: server-controlled ownership. Guest checkout always null.
-    // Do not accept user_id from the client. Logged-in attach = S6E.
-    user_id: null,
+    // S6E: attach only when server resolved an authenticated user.
+    user_id: userId,
   };
 }

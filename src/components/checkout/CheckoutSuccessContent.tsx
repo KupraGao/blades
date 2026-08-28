@@ -252,9 +252,19 @@ export default function CheckoutSuccessContent({
             </div>
           </>
         ) : showClaimed ? (
-          <p className="text-sm font-medium text-green-700 dark:text-green-400">
-            {t.orderClaimSuccess}
-          </p>
+          <div className="space-y-3">
+            <p className="text-sm font-medium text-green-700 dark:text-green-400">
+              {t.orderClaimSuccess}
+            </p>
+            {isOwnedByCurrentUser || claimStatus === "success" ? (
+              <Link
+                href={`/account/orders/${encodeURIComponent(orderId)}`}
+                className="inline-flex rounded-xl border border-zinc-300 bg-white px-5 py-3 text-sm font-semibold text-zinc-900 transition hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white dark:hover:bg-zinc-800"
+              >
+                {t.accountViewOrderDetails}
+              </Link>
+            ) : null}
+          </div>
         ) : canClaim ? (
           <>
             <button

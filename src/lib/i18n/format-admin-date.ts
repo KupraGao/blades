@@ -66,3 +66,20 @@ export function formatAdminDateTime(
 
   return `${datePart}, ${hour}:${minute}:${second}`;
 }
+
+/** Customer-facing date+time without seconds (SSR-safe, KA/EN). */
+export function formatStorefrontDateTime(
+  value: string | Date,
+  language: AdminLanguage,
+): string {
+  const date = parseDate(value);
+  if (!date) return "—";
+
+  const { year, month, day, hour, minute } = getZonedParts(date);
+  const datePart =
+    language === "ka"
+      ? `${day}.${month}.${year}`
+      : `${month}/${day}/${year}`;
+
+  return `${datePart}, ${hour}:${minute}`;
+}

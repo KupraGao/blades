@@ -14,6 +14,58 @@
 
 ---
 
+## v1.22.0 (uncommitted) — S6E + S6 COMPLETE
+
+### Logged-in Checkout Auto-Ownership (S6E)
+
+- `createOrder` resolves owner via `getAuthUser()` on the server only
+- Authenticated Customer → `orders.user_id = auth user.id`
+- Guest → `orders.user_id = null` (unchanged guest proof + claim path)
+- `CreateOrderInput` does **not** accept `user_id`; never from client payload
+- Success page: owned orders show saved-to-account message + link to
+  `/account/orders/{orderId}`; no claim button
+- Guest claim security and Customer My Orders filters unchanged
+
+### S6 Customer Ownership — COMPLETE (S6A–S6E)
+
+Verified end-to-end: Guest checkout + proof + claim; Customer auth/account;
+My Orders ownership filters; authenticated checkout auto-attach; second
+Customer cannot open another Customer’s order UUID; Admin orders untouched.
+
+**Not** included in S6 (remain future): Payments (S7), Refunds, Customer
+cancellation, Order Confirmation email notifications.
+
+#### Manual validation (S6D + S6E)
+
+- Own Customer order appears in My Orders; detail opens correctly
+- Product thumbnail / storefront link presentation works
+- Account list + detail share the authenticated Account layout width
+- Second Customer opening another Customer’s order UUID → Order not found
+- Authenticated checkout attaches new order; success shows saved-to-account
+- New authenticated order appears in My Orders without claim
+- Guest checkout, login/register, and claim remain available after S6E
+
+---
+
+## v1.21.0 (uncommitted) — S6D
+
+### Customer My Orders
+
+- Authenticated Customers can list and open **only** their own orders
+- `getCustomerOrders` / `getCustomerOrder`: `getAuthUser()` then privileged
+  read filtered by `user_id = auth user.id` (detail also filters by `id`)
+- Routes: My Orders on `/account`; detail `/account/orders/[orderId]`
+- Shared authenticated Account layout (`(authenticated)/layout.tsx`)
+- List/detail show order number, status, fulfillment, date, total, line
+  items with quantity; thumbnails; link to `/products/{id}` when product
+  still exists; historical title/price/qty from `order_items` snapshot;
+  deleted product remains visible; missing image → `/placeholder.png`
+- Read-only Customer UI; no Admin controls; no email ownership; no client
+  `user_id`
+- Guest proof success + Admin order access unchanged
+
+---
+
 ## v1.20.0 (uncommitted) — S6C Step 2
 
 ### Guest Order → Customer Account Claim
@@ -25,7 +77,7 @@
 - Never authorizes by email alone; never accepts client `user_id`
 - Checkout success: sign-in/register CTAs (Guest) or claim button (authenticated)
 - Safe internal `?next=` return path for login/register/email callback
-- My Orders / logged-in checkout auto-attach: **not** included
+- *(My Orders / logged-in auto-attach landed in S6D / S6E)*
 
 #### Manual security validation (passed)
 
@@ -48,7 +100,7 @@
 - Checkout success: `getGuestSuccessOrder` (proof required)
 - Admin order detail: `getAdminOrder` (`requireAdmin()` before privileged read)
 - Removed ungated shared `getSingleOrder` UUID-only PII reader
-- Guest → Customer claim / My Orders / logged-in attach: **not** included yet
+- *(Claim / My Orders / logged-in attach landed in S6C Step 2 / S6D / S6E)*
 - Required server-only env: `ORDER_ACCESS_SECRET` (never `NEXT_PUBLIC_*`;
   not the Supabase service-role key)
 
@@ -67,7 +119,7 @@
 - Email-confirmation UX is truthful (required vs session-created)
 - Login surfaces unconfirmed-email distinctly
 - Admin login/authorization semantics unchanged
-- My Orders / order claim / ownership attach **not** included
+- *(My Orders / claim / ownership attach landed in S6C–S6E)*
 
 #### Future (documented only — not implemented)
 
@@ -106,10 +158,10 @@ production will disable confirmation.
 - Index: `orders_user_id_not_null_idx` (`WHERE user_id IS NOT NULL`)
 - App: `orderMapper` / `insertOrder` explicitly support `user_id: string | null`
 - Guest Checkout continues to insert `user_id = null` (server-controlled)
-- Existing orders remain Guest Orders (`user_id` NULL)
+- Existing orders remain Guest Orders (`user_id` NULL); **not** backfilled by email
 - `CreateOrderInput` does **not** accept client ownership
 
-#### Explicitly not included / remaining
+#### Follow-on (completed in S6B–S6E)
 
 - Customer Auth / Register / Login (S6B)
 - Secure guest order claim / success PII fix (S6C)

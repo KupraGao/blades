@@ -203,26 +203,27 @@ createOrder production RPC hardening.
   anon/authenticated; RLS ON; Storage upload hardened; Admin Catalog CRUD
   via `requireAdmin()` → `createAdminClient()` → `service_role`
 
+✅ **S6 Customer Ownership — COMPLETE** (pending commit)
+
 ✅ Order Ownership Foundation (S6A) — `orders.user_id` nullable FK;
-  guest `createOrder` inserts `user_id = null` (server-controlled)
+  Guest may remain `NULL`; no email backfill of historical Guest orders
 
-✅ Customer Auth / Account UI (S6B)
+✅ Customer Auth / Account UI (S6B) — register (name/phone/email/password),
+  login/logout, `/account`, email confirmation callback; Admin auth separate
 
-⬜ Secure guest success access (S6C Step 1) — proof-gated success + Admin
-  read hardening (pending commit / manual security test)
+✅ Secure guest success access (S6C Step 1) — HMAC httpOnly proof;
+  UUID alone denies PII; Admin `getAdminOrder` + `requireAdmin`
 
-✅ Guest → Customer order claim (S6C Step 2) — manually verified
-  (claim action + success CTA; pending commit)
+✅ Guest → Customer order claim (S6C Step 2) — proof required;
+  attach only when `user_id IS NULL`; email never authorizes ownership
 
-⬜ My Orders / owner reads / logged-in attach (S6D–S6E)
+✅ Customer My Orders (S6D) — list/detail constrained by auth `user.id`;
+  shared Account layout; product snapshot + optional live product link/image
 
-⬜ Customer Account
+✅ Logged-in checkout auto-attach (S6E) — `createOrder` + `getAuthUser()`;
+  never accepts client `user_id`; Guest checkout unchanged
 
-⬜ My Orders
-
-⬜ Linking orders to authenticated users
-
-⬜ Customer-side order management
+⬜ Customer-side order management (cancel / edit by Customer)
 
 ⬜ Advanced order editing (add/remove products on existing order)
 
@@ -231,7 +232,7 @@ createOrder production RPC hardening.
 ⬜ Email Notifications — every successful order → confirmation email to
   `customer_email` (Guest + Customer); not tied to Account; not implemented
 
-⬜ Payments
+⬜ Payments (S7)
 
 ⬜ Shipping pricing
 

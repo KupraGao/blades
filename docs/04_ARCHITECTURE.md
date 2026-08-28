@@ -636,7 +636,14 @@ Hard delete / archive is **not** part of the current architecture.
     - Admin detail: `getAdminOrder` — `requireAdmin()` before privileged read
   - Order claim (S6C Step 2):
     - `claimGuestOrder` — `getAuthUser()` + proof + conditional
-      `user_id` attach (`WHERE user_id IS NULL`)
+      `user_id` attach (`WHERE user_id IS NULL`); email never authorizes
+  - Customer My Orders (S6D):
+    - `getCustomerOrders` / `getCustomerOrder` — `getAuthUser()` then
+      privileged read filtered by `user_id = auth user.id`
+      (detail also `.eq("id", orderId)`; product image join is display-only)
+  - Logged-in checkout ownership (S6E):
+    - `createOrder` → `getAuthUser()` → `orders.user_id = user.id | null`
+    - Never from `CreateOrderInput` / client / FormData / URL
   - **S5** — Catalog Security Hardening (app + DB + Storage) ✅
   - Admin Catalog mutations:
     `requireAdmin()` → `createAdminClient()` → `service_role` → Catalog CRUD
@@ -651,11 +658,32 @@ Hard delete / archive is **not** part of the current architecture.
   - Secret-exposure audit: no privileged key via `NEXT_PUBLIC_*`; no
     `createAdminClient` / secret imports in `"use client"` modules
 
-### Still remaining (outside Catalog S5)
+### Customer / Guest ownership (S6 — complete)
 
-- My Orders / customer owner reads (S6D+)
-- Logged-in checkout auto-attach (S6E)
+```text
+Guest checkout
+  → createOrder (no auth required)
+  → orders.user_id = NULL
+  → HMAC guest success proof
+  → optional login/register + claimGuestOrder (proof + user_id IS NULL)
+
+Authenticated checkout
+  → createOrder + getAuthUser()
+  → orders.user_id = auth user.id
+  → appears in /account My Orders (no claim)
+
+Customer My Orders
+  → getAuthUser() + SQL user_id = auth.id
+  → detail: id AND user_id (no load-then-check)
+```
+
+Customer ≠ Admin. Email is never ownership authorization.
+
+### Still remaining (outside S5–S6)
+
+- S7 Payments Foundation
 - Guest `createOrder` abuse controls (rate limits / CAPTCHA / etc.)
+- Order Confirmation email (Guest + Customer) — documented only
 
 # 🏛️ Architecture Principles
 

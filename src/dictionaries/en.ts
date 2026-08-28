@@ -25,6 +25,7 @@ export const en = {
   account: "Account",
   accountMyAccount: "My Account",
   accountOverviewDescription: "Manage your storefront account.",
+  accountProfileTitle: "Profile",
   accountEmailLabel: "Email",
   accountFullName: "Full Name",
   accountPhone: "Phone",
@@ -72,6 +73,16 @@ export const en = {
   accountAuthConfirmLinkFailed:
     "We could not complete email confirmation. Please try signing in, or register again if needed.",
   accountMyOrdersComingSoon: "My Orders — coming soon",
+  accountMyOrders: "My Orders",
+  accountMyOrdersCount: "{count} orders",
+  accountMyOrdersMoreItems: "+ {count} more",
+  accountMyOrdersEmpty: "You have no orders saved to your account yet.",
+  accountViewOrderDetails: "View details",
+  accountOrderDetails: "Order Details",
+  accountOrderNotFound: "Order not found",
+  accountOrderNotFoundDescription:
+    "We could not find this order in your account.",
+  accountBackToMyAccount: "← Back to My Account",
   orderClaimSignInToSave:
     "Sign in or create an account to save this order to your account.",
   orderClaimSaveToAccount: "Save order to my account",

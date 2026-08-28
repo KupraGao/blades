@@ -1,4 +1,5 @@
 import AccountOverview from "@/components/account/AccountOverview";
+import { getCustomerOrders } from "@/actions/orders/get-customer-orders";
 import { getAuthUser } from "@/lib/auth/get-auth-user";
 import { redirect } from "next/navigation";
 
@@ -17,13 +18,14 @@ export default async function AccountPage() {
   const phone =
     typeof metadata.phone === "string" ? metadata.phone.trim() : "";
 
+  const orders = await getCustomerOrders();
+
   return (
-    <main className="min-h-[70vh] px-4 py-10 sm:px-6">
-      <AccountOverview
-        fullName={fullName}
-        email={user.email ?? ""}
-        phone={phone}
-      />
-    </main>
+    <AccountOverview
+      fullName={fullName}
+      email={user.email ?? ""}
+      phone={phone}
+      orders={orders}
+    />
   );
 }

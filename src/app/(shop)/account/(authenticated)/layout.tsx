@@ -7,6 +7,8 @@ import { getAuthUser } from "@/lib/auth/get-auth-user";
 // CUSTOMER ACCOUNT GATE (Auth session only)
 // =================================================
 // Not Admin authorization. Customers do not need admin_users.
+// Shared content shell: max-w-5xl + horizontal padding for all
+// authenticated account pages (/account, /account/orders/[id]).
 // =================================================
 
 export default async function AuthenticatedAccountLayout({
@@ -23,7 +25,9 @@ export default async function AuthenticatedAccountLayout({
   return (
     <>
       <AccountStorefrontHeader />
-      {children}
+      <main className="min-h-[70vh] px-4 py-10 sm:px-6">
+        <div className="mx-auto max-w-5xl">{children}</div>
+      </main>
     </>
   );
 }

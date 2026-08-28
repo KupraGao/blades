@@ -23,6 +23,7 @@ import {
   assertOrderAccessSecretConfigured,
   issueOrderAccessProof,
 } from "@/lib/orders/order-access-proof";
+import { getAuthUser } from "@/lib/auth/get-auth-user";
 
 // =================================================
 // CREATE ORDER
@@ -64,10 +65,23 @@ export async function createOrder(
   );
 
   // =================================================
+  // OWNERSHIP (S6E — server session only)
+  // =================================================
+  // Never from CreateOrderInput / client payload.
+  // =================================================
+
+  const authUser = await getAuthUser();
+  const ownerUserId = authUser?.id ?? null;
+
+  // =================================================
   // ORDER
   // =================================================
 
-  const orderData = orderMapper(order, resolvedItems);
+  const orderData = orderMapper(
+    order,
+    resolvedItems,
+    ownerUserId,
+  );
 
   // =================================================
   // INSERT ORDER
@@ -119,6 +133,9 @@ export async function createOrder(
   // =================================================
 
   revalidatePath("/admin/orders");
+  if (ownerUserId) {
+    revalidatePath("/account");
+  }
 
   // =================================================
   // GUEST SUCCESS ACCESS PROOF (S6C Step 1)

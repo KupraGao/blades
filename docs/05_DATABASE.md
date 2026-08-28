@@ -69,13 +69,18 @@ Email continues to come from the authenticated Supabase Auth user.
 - S4: `requireAdmin()` on privileged Server Actions / Admin reads
 - S5: Catalog Security Hardening ✅ (GRANT/RLS/Storage + privileged Admin
   Catalog write path) — see Catalog privileges / RLS / Storage below
-- S6A: Order ownership foundation ✅ — `orders.user_id` nullable FK;
-  guest inserts use `user_id = null` (server-controlled). Customer Auth,
-  claim tokens, My Orders, and logged-in auto-attach are **not** done yet
-- Adjacent: guest `createOrder` abuse controls; claim / My Orders (S6C+)
-  Customer Accounts (S6B+)
+- **S6 Customer Ownership — COMPLETE**
+  - S6A: `orders.user_id` nullable FK; Guest may remain `NULL`; no email
+    backfill of historical Guest orders
+  - S6B: Customer Auth / Account (separate from Admin `admin_users`)
+  - S6C: guest success HMAC proof + claim (`user_id IS NULL` only)
+  - S6D: My Orders queries filter by auth `user.id`
+  - S6E: authenticated `createOrder` sets `user_id` from `getAuthUser()` only
+- Adjacent remaining: guest `createOrder` abuse controls; S7 Payments;
+  Order Confirmation email (not implemented)
 
-Storefront customers remain Guests (no customer Auth / roles).
+Storefront supports **Guest** and **Customer** checkout. Admin remains a
+separate authorization path (`admin_users`).
 
 ---
 
@@ -98,10 +103,11 @@ Fields written/read by the application:
 - `created_at` — read by Admin Orders list / detail
 - `user_id` — UUID NULL; FK → `auth.users(id)` `ON DELETE SET NULL`
   (live DB verified; index `orders_user_id_not_null_idx`)
-  - `NULL` = Guest Order (current `createOrder` / mapper always inserts `null`)
+  - `NULL` = Guest Order; non-null = owned by that Auth user
   - Ownership is **server-controlled only** — not accepted from the browser
-  - Existing pre-S6A rows remain Guest Orders (`user_id` NULL)
-  - Customer Auth / order claim / My Orders / logged-in attach = later S6 phases
+  - Guest `createOrder` → `user_id = null`; authenticated → `getAuthUser().id`
+  - Existing pre-S6A / unclaimed Guest rows remain `user_id` NULL
+    (never backfilled by email)
 
 ### Fulfillment method (live DB verified)
 
@@ -358,9 +364,25 @@ Exact RPC SQL is managed in the live Supabase database and is
 - Ownership attach: conditional `UPDATE` only when `user_id IS NULL`
 - Email alone does **not** authorize claim
 - Client must not supply `user_id`
-- My Orders UI / logged-in checkout auto-attach: still later phases
 - **Manually verified:** Guest `#10029` claim succeeded; second account denied;
   UUID-only/incognito exposed no PII; Admin access intact
+
+### Customer My Orders (S6D — app)
+
+- `getCustomerOrders` / `getCustomerOrder`: `getAuthUser()` then
+  `createAdminClient()` with `user_id = auth user.id` in the query
+- Detail requires both `id` and `user_id` filters (no load-then-check)
+- Optional live `products` / image join is for display only; ownership
+  filter is applied on `orders` before mapping
+- Email alone does **not** authorize; client must not supply `user_id`
+- Historical title/price/qty from `order_items`; missing product still shown
+
+### Logged-in checkout auto-ownership (S6E — app)
+
+- `createOrder` sets `orders.user_id` from `getAuthUser()` only
+- Authenticated → auth `user.id`; Guest → `NULL`
+- Never from `CreateOrderInput` / client / FormData / URL
+- Guest success proof still issued; claim path unchanged for Guest orders
 
 ### Catalog privileges (S5 — live verified)
 
