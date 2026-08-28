@@ -7,7 +7,13 @@ import { registerCustomer } from "@/actions/auth/customer-register";
 import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
 import { useLanguage } from "@/context/LanguageContext";
 
-export default function CustomerRegisterForm() {
+type Props = {
+  nextPath?: string;
+};
+
+export default function CustomerRegisterForm({
+  nextPath = "/account",
+}: Props) {
   const { t } = useLanguage();
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
@@ -17,6 +23,11 @@ export default function CustomerRegisterForm() {
   const [error, setError] = useState<string | null>(null);
   const [needsConfirmation, setNeedsConfirmation] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const nextQuery =
+    nextPath && nextPath !== "/account"
+      ? `?next=${encodeURIComponent(nextPath)}`
+      : "";
+  const loginHref = `/account/login${nextQuery}`;
 
   function resolveError(
     errorKey:
@@ -67,6 +78,7 @@ export default function CustomerRegisterForm() {
         email,
         password,
         confirmPassword,
+        nextPath,
       });
 
       if (!result.success) {
@@ -93,7 +105,7 @@ export default function CustomerRegisterForm() {
           {t.accountAuthConfirmRequiredDescription}
         </p>
         <Link
-          href="/account/login"
+          href={loginHref}
           className="mt-8 inline-flex w-full items-center justify-center rounded-xl bg-black px-5 py-3 font-semibold text-white transition hover:opacity-90 dark:bg-white dark:text-black"
         >
           {t.accountGoToLogin}
@@ -244,7 +256,7 @@ export default function CustomerRegisterForm() {
       <p className="mt-6 text-center text-sm text-zinc-500 dark:text-zinc-400">
         {t.accountHaveAccount}{" "}
         <Link
-          href="/account/login"
+          href={loginHref}
           className="font-semibold text-zinc-900 underline-offset-2 hover:underline dark:text-white"
         >
           {t.accountGoToLogin}

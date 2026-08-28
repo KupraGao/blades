@@ -9,10 +9,12 @@ import { useLanguage } from "@/context/LanguageContext";
 
 type Props = {
   initialErrorKey?: "accountAuthConfirmLinkFailed" | null;
+  nextPath?: string;
 };
 
 export default function CustomerLoginForm({
   initialErrorKey = null,
+  nextPath = "/account",
 }: Props) {
   const { t } = useLanguage();
   const [email, setEmail] = useState("");
@@ -23,6 +25,10 @@ export default function CustomerLoginForm({
       : null,
   );
   const [isPending, startTransition] = useTransition();
+  const nextQuery =
+    nextPath && nextPath !== "/account"
+      ? `?next=${encodeURIComponent(nextPath)}`
+      : "";
 
   function resolveError(
     errorKey:
@@ -51,7 +57,7 @@ export default function CustomerLoginForm({
     setError(null);
 
     startTransition(async () => {
-      const result = await loginCustomer(email, password);
+      const result = await loginCustomer(email, password, nextPath);
 
       if (!result.success) {
         setError(resolveError(result.errorKey));
@@ -137,7 +143,7 @@ export default function CustomerLoginForm({
       <p className="mt-6 text-center text-sm text-zinc-500 dark:text-zinc-400">
         {t.accountNoAccount}{" "}
         <Link
-          href="/account/register"
+          href={`/account/register${nextQuery}`}
           className="font-semibold text-zinc-900 underline-offset-2 hover:underline dark:text-white"
         >
           {t.accountGoToRegister}

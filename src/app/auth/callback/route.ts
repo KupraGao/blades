@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { safeNextPath } from "@/lib/auth/safe-next-path";
 import { createClient } from "@/lib/supabase/server";
 
 // =================================================
@@ -8,14 +9,6 @@ import { createClient } from "@/lib/supabase/server";
 // Exchanges the Auth code for a session cookie, then
 // redirects into the app. Uses the anon SSR client only.
 // =================================================
-
-function safeNextPath(next: string | null) {
-  if (!next || !next.startsWith("/") || next.startsWith("//")) {
-    return "/account";
-  }
-
-  return next;
-}
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);

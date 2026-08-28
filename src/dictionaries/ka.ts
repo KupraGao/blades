@@ -71,6 +71,12 @@ export const ka = {
   accountAuthConfirmLinkFailed:
     "ელფოსტის დადასტურება ვერ დასრულდა. სცადეთ შესვლა ან თავიდან რეგისტრაცია.",
   accountMyOrdersComingSoon: "ჩემი შეკვეთები — მალე",
+  orderClaimSignInToSave:
+    "შედით ან შექმენით ანგარიში, რომ ეს შეკვეთა თქვენს ანგარიშზე შეინახოთ.",
+  orderClaimSaveToAccount: "შეკვეთის შენახვა ანგარიშზე",
+  orderClaimSubmitting: "ინახება...",
+  orderClaimSuccess: "ეს შეკვეთა შენახულია თქვენს ანგარიშზე.",
+  orderClaimFailed: "შეკვეთის შენახვა ვერ მოხერხდა. სცადეთ თავიდან.",
   logoHomeAria: "მთავარი გვერდი - Blades",
   logoAlt: "Blades ლოგო",
   toggleTheme: "თემის შეცვლა",

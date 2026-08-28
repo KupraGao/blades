@@ -211,7 +211,8 @@ createOrder production RPC hardening.
 ⬜ Secure guest success access (S6C Step 1) — proof-gated success + Admin
   read hardening (pending commit / manual security test)
 
-⬜ Guest → Customer order claim (S6C Step 2)
+✅ Guest → Customer order claim (S6C Step 2) — manually verified
+  (claim action + success CTA; pending commit)
 
 ⬜ My Orders / owner reads / logged-in attach (S6D–S6E)
 

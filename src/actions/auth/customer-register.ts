@@ -3,6 +3,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
+import { safeNextPath } from "@/lib/auth/safe-next-path";
 import { createClient } from "@/lib/supabase/server";
 
 // =================================================
@@ -40,7 +41,7 @@ function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
-async function resolveEmailRedirectTo() {
+async function resolveEmailRedirectTo(nextPath: string) {
   const headerStore = await headers();
   const origin =
     headerStore.get("origin") ??
@@ -51,7 +52,9 @@ async function resolveEmailRedirectTo() {
     return undefined;
   }
 
-  return `${origin.replace(/\/$/, "")}/auth/callback?next=${encodeURIComponent("/account")}`;
+  const destination = safeNextPath(nextPath);
+
+  return `${origin.replace(/\/$/, "")}/auth/callback?next=${encodeURIComponent(destination)}`;
 }
 
 export async function registerCustomer(input: {
@@ -60,12 +63,14 @@ export async function registerCustomer(input: {
   email: string;
   password: string;
   confirmPassword: string;
+  nextPath?: string | null;
 }): Promise<CustomerRegisterResult> {
   const fullName = input.fullName.trim();
   const phone = input.phone.trim();
   const trimmedEmail = input.email.trim().toLowerCase();
   const trimmedPassword = input.password;
   const trimmedConfirm = input.confirmPassword;
+  const destination = safeNextPath(input.nextPath);
 
   if (!fullName) {
     return {
@@ -124,7 +129,7 @@ export async function registerCustomer(input: {
   }
 
   const supabase = await createClient();
-  const emailRedirectTo = await resolveEmailRedirectTo();
+  const emailRedirectTo = await resolveEmailRedirectTo(destination);
 
   const { data, error } = await supabase.auth.signUp({
     email: trimmedEmail,
@@ -175,5 +180,5 @@ export async function registerCustomer(input: {
     };
   }
 
-  redirect("/account");
+  redirect(destination);
 }

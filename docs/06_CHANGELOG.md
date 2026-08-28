@@ -14,6 +14,30 @@
 
 ---
 
+## v1.20.0 (uncommitted) — S6C Step 2
+
+### Guest Order → Customer Account Claim
+
+- `claimGuestOrder(orderId)` requires authenticated Customer (`getAuthUser`)
+  **and** valid order-access proof for that exact order
+- Race-safe ownership: `UPDATE … SET user_id = auth.id WHERE id = … AND user_id IS NULL`
+- Idempotent if already owned by claimant; deny if owned by another user
+- Never authorizes by email alone; never accepts client `user_id`
+- Checkout success: sign-in/register CTAs (Guest) or claim button (authenticated)
+- Safe internal `?next=` return path for login/register/email callback
+- My Orders / logged-in checkout auto-attach: **not** included
+
+#### Manual security validation (passed)
+
+- Guest order `#10029` created; success showed Login/Register claim CTA
+- Login/Register preserved success return path (`?next=`)
+- Authenticated user claimed the Guest order; `orders.user_id` populated in Supabase
+- Second authenticated account could **not** take ownership; original `user_id` unchanged
+- Incognito / UUID-only access → Order not found; no PII exposed
+- Admin order access still works
+
+---
+
 ## v1.19.0 (uncommitted) — S6C Step 1
 
 ### Secure Guest Success Access + Admin Order Read Hardening

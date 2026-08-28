@@ -59,7 +59,8 @@ Delivery / Pickup + Delivery Failed + Returned to Store).
 ⬜ Secure guest success access (S6C Step 1) — in progress / pending commit
   (httpOnly HMAC proof; Admin `getAdminOrder` + `requireAdmin`)
 
-⬜ Guest → Customer order claim (S6C Step 2)
+✅ Guest → Customer order claim (S6C Step 2) — manually verified; pending commit
+  (`claimGuestOrder` + success CTA; safe auth `?next=`)
 
 ⬜ My Orders / owner reads / logged-in attach (S6D–S6E)
 

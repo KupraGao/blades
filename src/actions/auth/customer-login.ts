@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 
+import { safeNextPath } from "@/lib/auth/safe-next-path";
 import { createClient } from "@/lib/supabase/server";
 
 // =================================================
@@ -32,9 +33,11 @@ function isValidEmail(email: string) {
 export async function loginCustomer(
   email: string,
   password: string,
+  nextPath?: string | null,
 ): Promise<CustomerLoginResult> {
   const trimmedEmail = email.trim().toLowerCase();
   const trimmedPassword = password;
+  const destination = safeNextPath(nextPath);
 
   if (!trimmedEmail || !isValidEmail(trimmedEmail)) {
     return {
@@ -81,5 +84,5 @@ export async function loginCustomer(
     };
   }
 
-  redirect("/account");
+  redirect(destination);
 }

@@ -634,6 +634,9 @@ Hard delete / archive is **not** part of the current architecture.
     - Guest success: `getGuestSuccessOrder` — HMAC httpOnly proof required
       (`ORDER_ACCESS_SECRET`; UUID alone denied)
     - Admin detail: `getAdminOrder` — `requireAdmin()` before privileged read
+  - Order claim (S6C Step 2):
+    - `claimGuestOrder` — `getAuthUser()` + proof + conditional
+      `user_id` attach (`WHERE user_id IS NULL`)
   - **S5** — Catalog Security Hardening (app + DB + Storage) ✅
   - Admin Catalog mutations:
     `requireAdmin()` → `createAdminClient()` → `service_role` → Catalog CRUD
@@ -650,7 +653,6 @@ Hard delete / archive is **not** part of the current architecture.
 
 ### Still remaining (outside Catalog S5)
 
-- Guest → Customer order claim (S6C Step 2)
 - My Orders / customer owner reads (S6D+)
 - Logged-in checkout auto-attach (S6E)
 - Guest `createOrder` abuse controls (rate limits / CAPTCHA / etc.)

@@ -1,6 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { useState, useTransition } from "react";
+
+import { claimGuestOrder } from "@/actions/orders/claim-guest-order";
 import { useLanguage } from "@/context/LanguageContext";
 import { getLocalizedOrderStatus } from "@/lib/i18n/localize-storefront-message";
 import { formatOrderNumber } from "@/lib/orders/format-order-number";
@@ -15,11 +18,43 @@ type OrderItem = {
 
 type Props = {
   order: any | null;
+  orderId: string;
+  isAuthenticated: boolean;
+  canClaim: boolean;
+  isOwnedByCurrentUser: boolean;
 };
 
-export default function CheckoutSuccessContent({ order }: Props) {
+export default function CheckoutSuccessContent({
+  order,
+  orderId,
+  isAuthenticated,
+  canClaim,
+  isOwnedByCurrentUser,
+}: Props) {
   const { t, language } = useLanguage();
   const locale = language === "ka" ? "ka-GE" : "en-US";
+  const [claimStatus, setClaimStatus] = useState<
+    "idle" | "success" | "error"
+  >(isOwnedByCurrentUser ? "success" : "idle");
+  const [isPending, startTransition] = useTransition();
+
+  const successPath = `/checkout/success/${encodeURIComponent(orderId)}`;
+  const nextQuery = `?next=${encodeURIComponent(successPath)}`;
+
+  function handleClaim() {
+    setClaimStatus("idle");
+
+    startTransition(async () => {
+      const result = await claimGuestOrder(orderId);
+
+      if (result.success) {
+        setClaimStatus("success");
+        return;
+      }
+
+      setClaimStatus("error");
+    });
+  }
 
   if (!order) {
     return (
@@ -47,6 +82,9 @@ export default function CheckoutSuccessContent({ order }: Props) {
       : order.fulfillment_method === "delivery"
         ? t.fulfillmentDelivery
         : "—";
+
+  const showClaimed =
+    claimStatus === "success" || isOwnedByCurrentUser;
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-10">
@@ -190,6 +228,52 @@ export default function CheckoutSuccessContent({ order }: Props) {
           <span>₾{order.total_price}</span>
         </div>
 
+      </div>
+
+      <div className="mt-6 rounded-2xl border border-dashed border-zinc-300 bg-zinc-50 px-5 py-4 text-center dark:border-zinc-700 dark:bg-zinc-950">
+        {!isAuthenticated ? (
+          <>
+            <p className="text-sm text-zinc-600 dark:text-zinc-400">
+              {t.orderClaimSignInToSave}
+            </p>
+            <div className="mt-4 flex flex-col items-center justify-center gap-3 sm:flex-row">
+              <Link
+                href={`/account/login${nextQuery}`}
+                className="inline-flex rounded-xl bg-black px-5 py-3 text-sm font-semibold text-white transition hover:opacity-90 dark:bg-white dark:text-black"
+              >
+                {t.accountGoToLogin}
+              </Link>
+              <Link
+                href={`/account/register${nextQuery}`}
+                className="inline-flex rounded-xl border border-zinc-300 bg-white px-5 py-3 text-sm font-semibold text-zinc-900 transition hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white dark:hover:bg-zinc-800"
+              >
+                {t.accountGoToRegister}
+              </Link>
+            </div>
+          </>
+        ) : showClaimed ? (
+          <p className="text-sm font-medium text-green-700 dark:text-green-400">
+            {t.orderClaimSuccess}
+          </p>
+        ) : canClaim ? (
+          <>
+            <button
+              type="button"
+              onClick={handleClaim}
+              disabled={isPending}
+              className="inline-flex rounded-xl bg-black px-5 py-3 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-white dark:text-black"
+            >
+              {isPending
+                ? t.orderClaimSubmitting
+                : t.orderClaimSaveToAccount}
+            </button>
+            {claimStatus === "error" ? (
+              <p className="mt-3 text-sm text-red-600 dark:text-red-400" role="alert">
+                {t.orderClaimFailed}
+              </p>
+            ) : null}
+          </>
+        ) : null}
       </div>
 
       <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">

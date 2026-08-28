@@ -351,7 +351,16 @@ Exact RPC SQL is managed in the live Supabase database and is
   signed cookie bound to that `orderId` (`src/lib/orders/order-access-proof.ts`)
 - Checkout success uses `getGuestSuccessOrder` (proof required)
 - Admin order detail uses `getAdminOrder` (`requireAdmin()` then privileged read)
-- Guest → Customer claim / My Orders: **not** implemented yet
+
+### Guest → Customer claim (S6C Step 2 — app)
+
+- `claimGuestOrder(orderId)`: `getAuthUser()` + valid order-access proof
+- Ownership attach: conditional `UPDATE` only when `user_id IS NULL`
+- Email alone does **not** authorize claim
+- Client must not supply `user_id`
+- My Orders UI / logged-in checkout auto-attach: still later phases
+- **Manually verified:** Guest `#10029` claim succeeded; second account denied;
+  UUID-only/incognito exposed no PII; Admin access intact
 
 ### Catalog privileges (S5 — live verified)
 

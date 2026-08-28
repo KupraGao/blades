@@ -72,6 +72,12 @@ export const en = {
   accountAuthConfirmLinkFailed:
     "We could not complete email confirmation. Please try signing in, or register again if needed.",
   accountMyOrdersComingSoon: "My Orders — coming soon",
+  orderClaimSignInToSave:
+    "Sign in or create an account to save this order to your account.",
+  orderClaimSaveToAccount: "Save order to my account",
+  orderClaimSubmitting: "Saving...",
+  orderClaimSuccess: "This order is saved to your account.",
+  orderClaimFailed: "Unable to save this order. Please try again.",
   logoHomeAria: "Home - Blades",
   logoAlt: "Blades logo",
   toggleTheme: "Toggle theme",
