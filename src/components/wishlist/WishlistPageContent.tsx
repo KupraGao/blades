@@ -5,16 +5,49 @@ import { Heart, ShoppingBag, Trash2 } from "lucide-react";
 import { useWishlist } from "@/context/WishlistContext";
 import { useCart } from "@/context/CartContext";
 import { useLanguage } from "@/context/LanguageContext";
+import { AddToCartFloatFeedback } from "@/components/product/AddToCartFloatFeedback";
+import { useAddToCartFloatFeedback } from "@/components/product/use-add-to-cart-float-feedback";
+
+// =====================================
+// WISHLIST ADD TO CART (local float feedback)
+// =====================================
+function WishlistAddToCartButton({ item }: { item: any }) {
+  const { addToCart } = useCart();
+  const { t } = useLanguage();
+  const floatFeedback = useAddToCartFloatFeedback();
+
+  return (
+    <div className="relative min-w-0 flex-1">
+      <AddToCartFloatFeedback
+        count={floatFeedback.count}
+        visible={floatFeedback.visible}
+        exiting={floatFeedback.exiting}
+        className="bottom-full left-1/2 mb-2 -translate-x-1/2"
+      />
+      <button
+        type="button"
+        disabled={item.stock <= 0}
+        onClick={() => {
+          addToCart(item);
+          floatFeedback.notifyAdded();
+        }}
+        className="flex w-full items-center justify-center gap-2 rounded-xl bg-zinc-900 px-4 py-3 text-sm font-bold text-white transition hover:bg-brand-gold hover:text-black disabled:cursor-not-allowed disabled:opacity-40 dark:bg-white dark:text-black dark:hover:bg-brand-gold"
+      >
+        <ShoppingBag size={17} />
+        {t.addToCart}
+      </button>
+    </div>
+  );
+}
 
 // =====================================
 // WISHLIST PAGE CONTENT
 // =====================================
 export default function WishlistPageContent() {
   // =====================================
-  // WISHLIST + CART + LANGUAGE
+  // WISHLIST + LANGUAGE
   // =====================================
   const { wishlistItems, wishlistCount, removeFromWishlist } = useWishlist();
-  const { addToCart } = useCart();
   const { t } = useLanguage();
 
   // =====================================
@@ -97,15 +130,7 @@ export default function WishlistPageContent() {
 
               {/* ACTIONS */}
               <div className="mt-5 flex gap-2">
-                <button
-                  type="button"
-                  disabled={item.stock <= 0}
-                  onClick={() => addToCart(item)}
-                  className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-zinc-900 px-4 py-3 text-sm font-bold text-white transition hover:bg-brand-gold hover:text-black disabled:cursor-not-allowed disabled:opacity-40 dark:bg-white dark:text-black dark:hover:bg-brand-gold"
-                >
-                  <ShoppingBag size={17} />
-                  {t.addToCart}
-                </button>
+                <WishlistAddToCartButton item={item} />
 
                 <button
                   type="button"

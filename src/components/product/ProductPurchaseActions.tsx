@@ -7,7 +7,9 @@ import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { useLanguage } from "@/context/LanguageContext";
 
+import { AddToCartFloatFeedback } from "@/components/product/AddToCartFloatFeedback";
 import ProductDetailsContent from "@/components/product/ProductDetailsContent";
+import { useAddToCartFloatFeedback } from "@/components/product/use-add-to-cart-float-feedback";
 
 type ProductPurchaseActionsProps = {
   product: any;
@@ -23,6 +25,7 @@ export default function ProductPurchaseActions({
 
   const { addToCart } = useCart();
   const { t } = useLanguage();
+  const floatFeedback = useAddToCartFloatFeedback();
 
   const {
     toggleWishlist,
@@ -73,6 +76,8 @@ export default function ProductPurchaseActions({
     for (let i = 0; i < quantity; i++) {
       addToCart(product);
     }
+
+    floatFeedback.notifyAdded();
   }
 
   // =====================================
@@ -144,16 +149,24 @@ export default function ProductPurchaseActions({
         {/* ADD TO CART */}
         {/* ===================================== */}
 
-        <button
-          type="button"
-          disabled={stock <= 0}
-          onClick={handleAddToCart}
-          className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-brand-orange px-5 py-4 font-bold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
-        >
-          <ShoppingBag size={19} />
+        <div className="relative min-w-0 flex-1">
+          <AddToCartFloatFeedback
+            count={floatFeedback.count}
+            visible={floatFeedback.visible}
+            exiting={floatFeedback.exiting}
+            className="bottom-full left-1/2 mb-2 -translate-x-1/2"
+          />
+          <button
+            type="button"
+            disabled={stock <= 0}
+            onClick={handleAddToCart}
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-brand-orange px-5 py-4 font-bold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            <ShoppingBag size={19} />
 
-          <ProductDetailsContent label="addToCart" />
-        </button>
+            <ProductDetailsContent label="addToCart" />
+          </button>
+        </div>
 
         {/* ===================================== */}
         {/* WISHLIST */}

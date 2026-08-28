@@ -5,6 +5,8 @@ export const en = {
   contact: "Contact",
 
   addToCart: "Add",
+  addedToCartOnce: "✓ Added to Cart",
+  addedToCartCount: "✓ {count} Added to Cart",
   addToWishlist: "Add to wishlist",
   wishlist: "Wishlist",
 

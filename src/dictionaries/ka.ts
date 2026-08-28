@@ -5,6 +5,8 @@ export const ka = {
   contact: "კონტაქტი",
 
   addToCart: "დამატება",
+  addedToCartOnce: "✓ კალათაში დაემატა",
+  addedToCartCount: "✓ {count} დაემატა კალათაში",
   addToWishlist: "ფავორიტებში დამატება",
   wishlist: "ფავორიტები",
 
