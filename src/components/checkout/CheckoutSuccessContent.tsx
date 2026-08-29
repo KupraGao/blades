@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, useTransition } from "react";
 
 import { claimGuestOrder } from "@/actions/orders/claim-guest-order";
+import CustomerOrderProductRow from "@/components/account/CustomerOrderProductRow";
 import { useLanguage } from "@/context/LanguageContext";
 import { getLocalizedOrderStatus } from "@/lib/i18n/localize-storefront-message";
 import { formatOrderNumber } from "@/lib/orders/format-order-number";
@@ -14,6 +15,8 @@ type OrderItem = {
   product_title: string;
   product_price: number;
   quantity: number;
+  image_url?: string | null;
+  product_href?: string | null;
 };
 
 type Props = {
@@ -205,15 +208,16 @@ export default function CheckoutSuccessContent({
                 key={item.id}
                 className="flex items-start justify-between gap-4"
               >
-                <div className="min-w-0">
-                  <p className="font-medium">
-                    {item.product_title}
-                  </p>
-                  <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-                    ₾{item.product_price} × {item.quantity}
-                  </p>
-                </div>
-                <span className="shrink-0 font-medium">
+                <CustomerOrderProductRow
+                  href={item.product_href ?? null}
+                  imageUrl={item.image_url ?? null}
+                  title={item.product_title}
+                  quantity={item.quantity}
+                  priceLine={`₾${item.product_price} × ${item.quantity}`}
+                  className="min-w-0 flex-1"
+                  imageClassName="h-16 w-16 sm:h-20 sm:w-20"
+                />
+                <span className="shrink-0 pt-1 font-medium">
                   ₾{item.product_price * item.quantity}
                 </span>
               </div>

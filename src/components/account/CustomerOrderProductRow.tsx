@@ -9,6 +9,7 @@ type Props = {
   quantity: number;
   priceLine?: string | null;
   className?: string;
+  imageClassName?: string;
 };
 
 export default function CustomerOrderProductRow({
@@ -18,12 +19,13 @@ export default function CustomerOrderProductRow({
   quantity,
   priceLine = null,
   className = "",
+  imageClassName = "h-12 w-12",
 }: Props) {
   const image = (
     <img
       src={imageUrl || "/placeholder.png"}
       alt=""
-      className="h-12 w-12 shrink-0 rounded-lg border border-zinc-200 bg-white object-cover dark:border-zinc-700"
+      className={`${imageClassName} shrink-0 rounded-lg border border-zinc-200 bg-white object-cover dark:border-zinc-700`}
     />
   );
 

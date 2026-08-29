@@ -14,7 +14,14 @@ const ORDER_WITH_ITEMS_SELECT = `
     product_id,
     product_title,
     product_price,
-    quantity
+    quantity,
+    products (
+      id,
+      product_images (
+        image_url,
+        is_main
+      )
+    )
   )
 `;
 
