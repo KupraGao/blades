@@ -21,10 +21,17 @@ export default function OrderSummary({
   onPlaceOrder,
 }: Props) {
   const { t } = useLanguage();
-  const { cartItems, cartCount, cartTotal } = useCart();
-  const isCartEmpty = cartItems.length === 0;
+  const {
+    selectedItems,
+    selectedCartCount,
+    selectedCartTotal,
+  } = useCart();
+  const hasSelection = selectedItems.length > 0;
   const isPlaceOrderDisabled =
-    !isFormValid || isCartEmpty || isSubmitting || Boolean(createdOrderId);
+    !isFormValid ||
+    !hasSelection ||
+    isSubmitting ||
+    Boolean(createdOrderId);
 
   let statusMessage = t.checkoutFormIncomplete;
   let statusClassName = "text-zinc-500 dark:text-zinc-400";
@@ -37,6 +44,9 @@ export default function OrderSummary({
     statusClassName = "text-green-600";
   } else if (submissionError) {
     statusMessage = submissionError;
+    statusClassName = "text-red-600";
+  } else if (!hasSelection) {
+    statusMessage = t.noCartItemsSelected;
     statusClassName = "text-red-600";
   } else if (isSubmitting) {
     statusMessage = t.orderSubmitting;
@@ -62,12 +72,12 @@ export default function OrderSummary({
       </div>
 
       <div className="mb-6 space-y-4">
-        {cartItems.length === 0 ? (
+        {!hasSelection ? (
           <p className="text-sm text-zinc-500 dark:text-zinc-400">
-            {t.emptyCart}
+            {t.noCartItemsSelected}
           </p>
         ) : (
-          cartItems.map((item) => (
+          selectedItems.map((item) => (
             <div
               key={item.id}
               className="flex items-start justify-between gap-3"
@@ -96,11 +106,11 @@ export default function OrderSummary({
         <div className="flex items-center justify-between">
 
           <span className="text-zinc-600 dark:text-zinc-400">
-            {t.productsCountLabel}
+            {t.selectedCartItemsLabel}
           </span>
 
           <span className="font-medium">
-            {cartCount}
+            {selectedCartCount}
           </span>
 
         </div>
@@ -112,7 +122,7 @@ export default function OrderSummary({
           </span>
 
           <span className="font-medium">
-            ₾{cartTotal}
+            ₾{selectedCartTotal}
           </span>
 
         </div>
@@ -137,7 +147,7 @@ export default function OrderSummary({
 
         <span>{t.total}</span>
 
-        <span>₾{cartTotal}</span>
+        <span>₾{selectedCartTotal}</span>
 
       </div>
 

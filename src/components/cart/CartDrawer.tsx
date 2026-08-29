@@ -11,14 +11,24 @@ type CartDrawerProps = {
 };
 
 export function CartDrawer({ open, setOpen }: CartDrawerProps) {
-  const { cartItems, cartCount, cartTotal, increaseQuantity, decreaseQuantity, removeFromCart } = useCart();
+  const {
+    cartItems,
+    cartCount,
+    selectedCartTotal,
+    selectedItems,
+    allItemsSelected,
+    increaseQuantity,
+    decreaseQuantity,
+    removeFromCart,
+    toggleItemSelected,
+    setAllSelected,
+  } = useCart();
   const { t } = useLanguage();
+
+  const hasSelection = selectedItems.length > 0;
 
   return (
     <>
-      {/* ===================================== */}
-      {/* OVERLAY */}
-      {/* ===================================== */}
       <div
         onClick={() => setOpen(false)}
         className={`fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${
@@ -26,18 +36,12 @@ export function CartDrawer({ open, setOpen }: CartDrawerProps) {
         }`}
       />
 
-      {/* ===================================== */}
-      {/* CART DRAWER */}
-      {/* ===================================== */}
       <aside
         className={`fixed right-0 top-0 z-[70] flex h-full w-full max-w-md flex-col bg-white shadow-2xl transition-transform duration-300 dark:bg-zinc-950 ${
           open ? "translate-x-0" : "translate-x-full"
         }`}
       >
 
-        {/* ===================================== */}
-        {/* HEADER */}
-        {/* ===================================== */}
         <div className="flex h-20 items-center justify-between border-b border-zinc-200 px-6 dark:border-white/10">
           <div className="flex items-center gap-3">
             <ShoppingBag size={20} />
@@ -61,9 +65,6 @@ export function CartDrawer({ open, setOpen }: CartDrawerProps) {
           </button>
         </div>
 
-        {/* ===================================== */}
-        {/* CONTENT */}
-        {/* ===================================== */}
         <div className="flex-1 overflow-y-auto p-6">
           {cartItems.length === 0 ? (
             <div className="flex h-full flex-col items-center justify-center text-center">
@@ -82,16 +83,25 @@ export function CartDrawer({ open, setOpen }: CartDrawerProps) {
             </div>
           ) : (
             <div className="space-y-4">
+              <label className="flex w-fit cursor-pointer items-center gap-2 text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+                <input
+                  type="checkbox"
+                  checked={allItemsSelected}
+                  onChange={(event) => setAllSelected(event.target.checked)}
+                  className="h-4 w-4 accent-brand-orange"
+                />
+                {t.selectAllCartItems}
+              </label>
 
               {cartItems.map((item) => (
                 <div
                   key={item.id}
-                  className="relative flex gap-4 rounded-2xl border border-zinc-200 p-3 dark:border-white/10"
+                  className={`relative flex gap-3 rounded-2xl border p-3 dark:border-white/10 ${
+                    item.selected
+                      ? "border-zinc-200"
+                      : "border-zinc-200 opacity-70"
+                  }`}
                 >
-
-                  {/* ===================================== */}
-                  {/* PRODUCT IMAGE */}
-                  {/* ===================================== */}
                   <Link
                     href={`/products/${item.id}`}
                     onClick={() => setOpen(false)}
@@ -104,12 +114,7 @@ export function CartDrawer({ open, setOpen }: CartDrawerProps) {
                     />
                   </Link>
 
-                  {/* ===================================== */}
-                  {/* PRODUCT INFO */}
-                  {/* ===================================== */}
-                  <div className="min-w-0 flex-1 pr-8">
-
-                    {/* PRODUCT TITLE */}
+                  <div className="min-w-0 flex-1 pr-10">
                     <Link
                       href={`/products/${item.id}`}
                       onClick={() => setOpen(false)}
@@ -118,7 +123,6 @@ export function CartDrawer({ open, setOpen }: CartDrawerProps) {
                       {item.title}
                     </Link>
 
-                    {/* UNIT PRICE */}
                     <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
                       {t.unitPrice}:{" "}
                       <span className="font-bold text-brand-gold">
@@ -126,16 +130,11 @@ export function CartDrawer({ open, setOpen }: CartDrawerProps) {
                       </span>
                     </p>
 
-                    {/* PRODUCT TOTAL */}
                     <p className="mt-1 text-sm font-bold text-zinc-900 dark:text-white">
                       {t.total}: ₾{item.price * item.quantity}
                     </p>
 
-                    {/* ===================================== */}
-                    {/* QUANTITY CONTROLS */}
-                    {/* ===================================== */}
                     <div className="mt-3 flex items-center gap-2">
-
                       <button
                         type="button"
                         aria-label={t.decreaseQuantity}
@@ -159,13 +158,9 @@ export function CartDrawer({ open, setOpen }: CartDrawerProps) {
                       >
                         <Plus size={15} />
                       </button>
-
                     </div>
                   </div>
 
-                  {/* ===================================== */}
-                  {/* REMOVE ITEM */}
-                  {/* ===================================== */}
                   <button
                     type="button"
                     aria-label={t.removeProduct}
@@ -176,30 +171,39 @@ export function CartDrawer({ open, setOpen }: CartDrawerProps) {
                     <Trash2 size={17} />
                   </button>
 
+                  <label className="absolute bottom-3 right-3 grid h-8 w-8 cursor-pointer place-items-center rounded-lg transition hover:bg-zinc-100 dark:hover:bg-white/10">
+                    <input
+                      type="checkbox"
+                      checked={item.selected}
+                      onChange={() => toggleItemSelected(item.id)}
+                      aria-label={item.title}
+                      className="h-4 w-4 accent-brand-orange"
+                    />
+                  </label>
                 </div>
               ))}
             </div>
           )}
         </div>
 
-        {/* ===================================== */}
-        {/* CART FOOTER */}
-        {/* ===================================== */}
         {cartItems.length > 0 && (
           <div className="border-t border-zinc-200 p-6 dark:border-white/10">
-
-            {/* TOTAL */}
             <div className="flex items-center justify-between">
               <span className="text-base font-semibold text-zinc-600 dark:text-zinc-300">
-                {t.total}
+                {t.selectedCartItemsLabel}
               </span>
 
               <span className="text-2xl font-black text-brand-gold">
-                ₾{cartTotal}
+                ₾{selectedCartTotal}
               </span>
             </div>
 
-            {/* VIEW CART */}
+            {!hasSelection ? (
+              <p className="mt-3 text-sm text-red-600 dark:text-red-400" role="status">
+                {t.noCartItemsSelected}
+              </p>
+            ) : null}
+
             <Link
               href="/cart"
               onClick={() => setOpen(false)}
@@ -208,6 +212,23 @@ export function CartDrawer({ open, setOpen }: CartDrawerProps) {
               {t.viewCart}
             </Link>
 
+            {hasSelection ? (
+              <Link
+                href="/checkout"
+                onClick={() => setOpen(false)}
+                className="mt-3 flex w-full items-center justify-center rounded-2xl border border-zinc-300 bg-white px-6 py-3 text-sm font-bold text-zinc-900 transition hover:bg-zinc-50 dark:border-white/10 dark:bg-zinc-900 dark:text-white dark:hover:bg-zinc-800"
+              >
+                {t.checkout}
+              </Link>
+            ) : (
+              <button
+                type="button"
+                disabled
+                className="mt-3 flex w-full cursor-not-allowed items-center justify-center rounded-2xl border border-zinc-300 bg-white px-6 py-3 text-sm font-bold text-zinc-900 opacity-40 dark:border-white/10 dark:bg-zinc-900 dark:text-white"
+              >
+                {t.checkout}
+              </button>
+            )}
           </div>
         )}
       </aside>

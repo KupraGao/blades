@@ -15,9 +15,24 @@ import { increaseQuantity as increaseQuantityAction } from "./cart/actions/incre
 import { decreaseQuantity as decreaseQuantityAction } from "./cart/actions/decrease-quantity";
 import { removeFromCart as removeFromCartAction } from "./cart/actions/remove-from-cart";
 import { clearCart as clearCartAction } from "./cart/actions/clear-cart";
+import {
+  removeItemsByIds as removeItemsByIdsAction,
+  setAllSelected as setAllSelectedAction,
+  toggleItemSelected as toggleItemSelectedAction,
+} from "./cart/actions/selection";
 
-import { getCartCount } from "./cart/selectors/cart-count";
-import { getCartTotal } from "./cart/selectors/cart-total";
+import {
+  areAllItemsSelected,
+  getSelectedItems,
+} from "./cart/normalize-cart-item";
+import {
+  getCartCount,
+  getSelectedCartCount,
+} from "./cart/selectors/cart-count";
+import {
+  getCartTotal,
+  getSelectedCartTotal,
+} from "./cart/selectors/cart-total";
 
 import { loadCart } from "./cart/storage/load-cart";
 import { saveCart } from "./cart/storage/save-cart";
@@ -33,31 +48,15 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 // =====================================
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  // =====================================
-  // CART STATE
-  // =====================================
-
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
-
-  // =====================================
-  // LOAD CART
-  // =====================================
 
   useEffect(() => {
     setCartItems(loadCart());
   }, []);
 
-  // =====================================
-  // SAVE CART
-  // =====================================
-
   useEffect(() => {
     saveCart(cartItems);
   }, [cartItems]);
-
-  // =====================================
-  // ADD TO CART
-  // =====================================
 
   function addToCart(product: any) {
     setCartItems((currentItems) =>
@@ -68,10 +67,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
     );
   }
 
-  // =====================================
-  // INCREASE QUANTITY
-  // =====================================
-
   function increaseQuantity(id: string) {
     setCartItems((currentItems) =>
       increaseQuantityAction({
@@ -80,10 +75,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
       }),
     );
   }
-
-  // =====================================
-  // DECREASE QUANTITY
-  // =====================================
 
   function decreaseQuantity(id: string) {
     setCartItems((currentItems) =>
@@ -94,10 +85,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
     );
   }
 
-  // =====================================
-  // REMOVE FROM CART
-  // =====================================
-
   function removeFromCart(id: string) {
     setCartItems((currentItems) =>
       removeFromCartAction({
@@ -107,27 +94,43 @@ export function CartProvider({ children }: { children: ReactNode }) {
     );
   }
 
-  // =====================================
-  // CLEAR CART
-  // =====================================
-
   function clearCart() {
     setCartItems(clearCartAction());
-  } // =====================================
-  // CART COUNT
-  // =====================================
+  }
+
+  function toggleItemSelected(id: string) {
+    setCartItems((currentItems) =>
+      toggleItemSelectedAction({
+        currentItems,
+        id,
+      }),
+    );
+  }
+
+  function setAllSelected(selected: boolean) {
+    setCartItems((currentItems) =>
+      setAllSelectedAction({
+        currentItems,
+        selected,
+      }),
+    );
+  }
+
+  function removeItemsByIds(ids: string[]) {
+    setCartItems((currentItems) =>
+      removeItemsByIdsAction({
+        currentItems,
+        ids,
+      }),
+    );
+  }
 
   const cartCount = getCartCount(cartItems);
-
-  // =====================================
-  // CART TOTAL
-  // =====================================
-
   const cartTotal = getCartTotal(cartItems);
-
-  // =====================================
-  // PROVIDER
-  // =====================================
+  const selectedItems = getSelectedItems(cartItems);
+  const selectedCartCount = getSelectedCartCount(cartItems);
+  const selectedCartTotal = getSelectedCartTotal(cartItems);
+  const allItemsSelected = areAllItemsSelected(cartItems);
 
   return (
     <CartContext.Provider
@@ -138,8 +141,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
         decreaseQuantity,
         removeFromCart,
         clearCart,
+        toggleItemSelected,
+        setAllSelected,
+        removeItemsByIds,
         cartCount,
         cartTotal,
+        selectedItems,
+        selectedCartCount,
+        selectedCartTotal,
+        allItemsSelected,
       }}
     >
       {children}

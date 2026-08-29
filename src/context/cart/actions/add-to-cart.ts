@@ -81,6 +81,7 @@ export function addToCart({
       image: productImage,
       quantity: 1,
       stock: productStock,
+      selected: true,
     },
   ];
 }

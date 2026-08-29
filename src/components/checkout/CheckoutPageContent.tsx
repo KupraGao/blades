@@ -26,7 +26,7 @@ import {
 export default function CheckoutPageContent() {
   const router = useRouter();
   const { t } = useLanguage();
-  const { cartItems, clearCart } = useCart();
+  const { selectedItems, removeItemsByIds } = useCart();
 
   const [values, setValues] = useState<CheckoutCustomerFormValues>(
     initialCheckoutCustomerFormValues,
@@ -43,7 +43,7 @@ export default function CheckoutPageContent() {
 
   const errors = getCustomerFormErrors(values);
   const isFormValid = isCustomerFormValid(values);
-  const isCartEmpty = cartItems.length === 0;
+  const hasSelection = selectedItems.length > 0;
 
   function handleChange(
     field: CheckoutCustomerFormField,
@@ -83,15 +83,18 @@ export default function CheckoutPageContent() {
   async function handlePlaceOrder() {
     setSubmitAttempted(true);
 
+    const purchasedItems = selectedItems;
+
     if (
       !isFormValid ||
-      isCartEmpty ||
+      purchasedItems.length === 0 ||
       isSubmitting ||
       createdOrderId
     ) {
       return;
     }
 
+    const purchasedIds = purchasedItems.map((item) => item.id);
     const isPickup = values.fulfillmentMethod === "pickup";
 
     const payload: CreateOrderInput = {
@@ -100,7 +103,7 @@ export default function CheckoutPageContent() {
       customerPhone: values.phone,
       customerAddress: isPickup ? null : values.address,
       fulfillmentMethod: values.fulfillmentMethod,
-      items: cartItems.map((item) => ({
+      items: purchasedItems.map((item) => ({
         productId: item.id,
         quantity: item.quantity,
       })),
@@ -113,7 +116,7 @@ export default function CheckoutPageContent() {
       const result = await createOrder(payload);
 
       setCreatedOrderId(result.orderId);
-      clearCart();
+      removeItemsByIds(purchasedIds);
       router.push(`/checkout/success/${result.orderId}`);
     } catch (error) {
       console.error("Failed to create order:", error);
