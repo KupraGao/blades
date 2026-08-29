@@ -40,11 +40,28 @@
 
 ## ✅ COMPLETED — Order Confirmation
 
-- `clearCart()` after confirmed success
+- After successful order: remove **only** purchased cart lines (deselected
+  items remain); no full `clearCart()` wipe when unpurchased lines exist
 - Redirect with `orderId`
 - Success / Confirmation page (`/checkout/success/[orderId]`)
-- Confirmation details via privileged order read
+- Confirmation details via proof-gated guest success read (+ product
+  thumbnails via existing order-item display mapping)
 - Prevent accidental duplicate submission after success
+
+---
+
+## ✅ COMPLETED — Cart Item Selection / Partial Purchase
+
+- Persisted `CartItem.selected` (localStorage); new items default selected;
+  legacy missing `selected` → `true`
+- Header Cart Drawer: per-item checkbox (bottom-right), Select All, selected
+  total; delete remains top-right
+- Header badge / `cartCount` = **all** cart quantities
+- `/cart` list renders **only** `selectedItems` (deselected stay in cart)
+- Checkout + `createOrder` payload = selected items only; zero selected blocked
+- Stock unchanged by add/select/deselect; decrement only on successful
+  `createOrder` for ordered lines
+- Failed `createOrder` leaves cart unchanged
 
 ---
 
@@ -232,7 +249,8 @@ createOrder production RPC hardening.
 ⬜ Email Notifications — every successful order → confirmation email to
   `customer_email` (Guest + Customer); not tied to Account; not implemented
 
-⬜ Payments (S7)
+⬜ Payments (S7) — S7A additive payment columns: SQL approved, **not** run;
+  no payment app code / migration file yet
 
 ⬜ Shipping pricing
 

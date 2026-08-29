@@ -347,8 +347,20 @@ Exact RPC SQL is managed in the live Supabase database and is
   - `ORDER_ACCESS_SECRET` (server-only HMAC for guest checkout success
     proof cookies; **not** the Supabase service-role key; never
     `NEXT_PUBLIC_*`)
+  - Also required for storefront Auth / SSR: `NEXT_PUBLIC_SUPABASE_URL`,
+    `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- **Production (Vercel):** these names must match the same Supabase project
+  as the working local environment (values not documented). Verified after
+  alignment: Production checkout, success PII, and success thumbnails.
 - Normal storefront product reads continue via the anon server client
   (`src/lib/supabase/server.ts`)
+
+### S7A Payments foundation (planned — not applied)
+
+- Additive `orders` payment columns SQL has been proposed and approved
+- **Not** executed; columns not present; no migration file; no payment app
+  code yet
+- Immediate next: run approved SQL, then verify schema/data
 
 ### Guest success order access (S6C Step 1)
 

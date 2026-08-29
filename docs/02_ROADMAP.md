@@ -27,6 +27,10 @@
 - Admin Orders List
 - Checkout → Orders Integration (secure createOrder + stock)
 - Order Confirmation (clear cart, success page, redirect with orderId)
+- Cart Item Selection / partial purchase (persisted `selected`; Drawer
+  checkboxes; `/cart` + Checkout use selected lines only; partial cart
+  cleanup after success)
+- Checkout Success product thumbnails (reuse Account order item display mapping)
 - Admin Orders Management (details, status workflow, transactional cancel, UX polish)
 - Admin Orders List Management
   (server-side search / filters / sort / pagination / URL state / KA/EN)
@@ -36,12 +40,12 @@
   (Checkout fulfillment, Pickup + Delivery workflows, Delivery Failed,
   Retry Delivery, Returned to Store + transactional stock restore)
 
-See `docs/06_CHANGELOG.md` for version history (S6 Customer Ownership complete —
-see **v1.22.0** / S6A–S6E).
+See `docs/06_CHANGELOG.md` for version history (S6 Customer Ownership complete;
+Cart Item Selection + Checkout Success thumbnails — see latest changelog).
 
 ---
 
-## ✅ S6 Customer Ownership — COMPLETE (pending commit)
+## ✅ S6 Customer Ownership — COMPLETE
 
 - ✅ **S6A** Order Ownership Foundation (`orders.user_id` nullable FK)
 - ✅ **S6B** Customer Auth + Account UI (register/login/logout, `/account`)
@@ -56,10 +60,15 @@ Customer auth is separate from Admin authorization (`admin_users`).
 
 ## 🚀 Immediate Next
 
-### S7 — Payments Foundation
+### S7A — Payments Foundation (DB)
 
-⬜ Payments Foundation (S7) — provider selection, checkout payment capture,
-  order payment state (not started)
+⬜ Execute the approved additive `orders` payment-column SQL (S7A), then
+  verify schema/data on the live DB
+
+- Inspected / SQL proposal approved — **not** executed yet
+- No payment columns in DB yet; no payment source-code changes; no migration
+  file created
+- Provider integration / checkout payment capture — later S7 steps (not started)
 
 ### Production hardening (remaining)
 
@@ -69,7 +78,8 @@ Customer auth is separate from Admin authorization (`admin_users`).
 
 ⬜ Guest `createOrder` abuse controls (rate limits / CAPTCHA / etc.)
 
-**Auth / Catalog / Customer Ownership closed through S6.** Delivery / Pickup
+**Auth / Catalog / Customer Ownership closed through S6.** Cart partial-purchase
+selection and Checkout Success thumbnails are shipped. Delivery / Pickup
 operational workflow remains complete and closed.
 
 ---
@@ -132,7 +142,7 @@ operational workflow remains complete and closed.
 
 ⬜ Shipping pricing
 
-⬜ Payments (S7)
+⬜ Payments (S7) — S7A DB foundation SQL approved but **not** executed yet
 
 ⬜ Coupons
 

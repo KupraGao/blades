@@ -340,7 +340,8 @@ Admin Pages
 
 # 🛒 Checkout → Orders Flow
 
-Cart (`CartContext`)
+Cart (`CartContext`) — lines may be `selected` / deselected (persisted).
+Checkout and `createOrder` use **selected** lines only; badge counts all.
 
 ↓
 
@@ -380,13 +381,17 @@ Return `{ success, orderId }` to Checkout UI
 
 ↓
 
-On success: `clearCart()` → redirect `/checkout/success/[orderId]`
+On success: remove **purchased** cart line ids only → redirect
+`/checkout/success/[orderId]`
+(deselected / unpurchased cart lines remain)
 
 ↓
 
 Confirmation page loads order via `getGuestSuccessOrder(orderId)`
 (requires short-lived httpOnly HMAC proof issued by `createOrder`;
-UUID alone does **not** authorize PII access)
+UUID alone does **not** authorize PII access).
+Line items may show product thumbnails via live product join +
+`mapOrderItemProductDisplay` (historical `order_items` snapshot still required).
 
 Privileged access:
 
@@ -681,7 +686,8 @@ Customer ≠ Admin. Email is never ownership authorization.
 
 ### Still remaining (outside S5–S6)
 
-- S7 Payments Foundation
+- S7A Payments Foundation — approved additive SQL **not** executed yet;
+  later S7 steps (provider / checkout capture) not started
 - Guest `createOrder` abuse controls (rate limits / CAPTCHA / etc.)
 - Order Confirmation email (Guest + Customer) — documented only
 

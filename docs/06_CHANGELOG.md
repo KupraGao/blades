@@ -14,7 +14,48 @@
 
 ---
 
-## v1.22.0 (uncommitted) — S6E + S6 COMPLETE
+## v1.24.0 — Cart Item Selection / Partial Purchase
+
+### Cart selection
+
+- `CartItem.selected` persisted in `localStorage` with the cart
+- New items default `selected: true`; legacy lines without `selected` normalize
+  to `true`
+- Header Cart Drawer: per-item checkbox (bottom-right), Select All, selected
+  total; trash remains top-right
+- Header badge still counts **all** cart quantities
+- `/cart` displays only currently selected lines (deselected remain in cart)
+- Checkout summary + `createOrder` use selected items only; zero selected
+  cannot proceed
+- Successful order removes only purchased product ids; deselected lines remain
+- Failed order leaves cart unchanged
+- Stock still decrements only server-side in successful `createOrder`
+
+### S7A
+
+- Payments foundation remains **not** implemented (SQL proposed only)
+
+---
+
+## v1.23.0 — Checkout Success thumbnails + Production env alignment
+
+### Checkout Success product thumbnail
+
+- Success page reuses Account order-item display mapping (`mapOrderItemProductDisplay`
+  / product row) for thumbnails and optional live product links
+- Historical `order_items` title/price/qty still authoritative; missing live
+  product falls back safely (placeholder / no link)
+
+### Production environment (Vercel)
+
+- Production env vars aligned to the same Supabase project as local
+- Required names (values never documented): `NEXT_PUBLIC_SUPABASE_URL`,
+  `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SECRET_KEY`, `ORDER_ACCESS_SECRET`
+- Verified on Production: checkout, success order data, success thumbnails
+
+---
+
+## v1.22.0 — S6E + S6 COMPLETE
 
 ### Logged-in Checkout Auto-Ownership (S6E)
 
