@@ -14,6 +14,40 @@
 
 ---
 
+## v1.25.0 — S7A Payments DB + S7B-1 Delivery Minimum
+
+### S7A — Payments Foundation (DB)
+
+- Production `public.orders` additive payment columns verified live
+- `payment_method` TEXT NULL — allowed non-null: `online` | `pay_at_pickup`
+  (**no** `cash_on_delivery` / COD)
+- `payment_status` TEXT NOT NULL DEFAULT `unpaid` — `unpaid` | `pending` |
+  `paid` | `failed` | `refund_pending` | `refunded`
+- Also live: `payment_provider`, `payment_transaction_id`, `paid_at` (all nullable
+  except status)
+- Both payment CHECK constraints verified in Production
+- Historical test orders: method NULL, status unpaid, metadata NULL
+- Order status and payment status remain independent lifecycles
+- **Not** included: Checkout payment-method UI, provider integration,
+  webhooks / payment verification, refunds
+
+### S7B-1 — Delivery Minimum Enforcement
+
+- Delivery requires selected checkout subtotal ≥ 150 GEL
+- Under 150: delivery disabled; pickup available; localized messaging;
+  delivery selection switches to pickup (address cleared)
+- ≥ 150: delivery available; free delivery in Tbilisi; **no** delivery fee
+- Client: `selectedCartTotal` + fulfillment UI gating
+- Server: authoritative resolved DB prices in `createOrder`; rejects delivery
+  under 150 **before** order insert, order-items insert, or stock decrement
+- Shared constant / helper: `src/lib/orders/delivery-rules.ts`
+- Cart Item Selection, ownership, stock, and fulfillment architecture preserved
+- **Not** included: payment-method Checkout UI
+
+S7 Payments milestone remains **partial** (S7A + S7B-1 only).
+
+---
+
 ## v1.24.0 — Cart Item Selection / Partial Purchase
 
 ### Cart selection
@@ -31,12 +65,12 @@
 - Failed order leaves cart unchanged
 - Stock still decrements only server-side in successful `createOrder`
 
-### S7A
+### Note (superseded by v1.25.0)
 
-- Payments foundation remains **not** implemented (SQL proposed only)
+- At v1.24.0 release time, S7A payment columns were still proposed-only;
+  see v1.25.0 for Production-verified S7A + S7B-1
 
 ---
-
 ## v1.23.0 — Checkout Success thumbnails + Production env alignment
 
 ### Checkout Success product thumbnail

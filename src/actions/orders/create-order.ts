@@ -24,6 +24,8 @@ import {
   issueOrderAccessProof,
 } from "@/lib/orders/order-access-proof";
 import { getAuthUser } from "@/lib/auth/get-auth-user";
+import { isDeliverySubtotalAllowed } from "@/lib/orders/delivery-rules";
+import { orderError } from "@/lib/i18n/localize-storefront-message";
 
 // =================================================
 // CREATE ORDER
@@ -63,6 +65,22 @@ export async function createOrder(
     supabase,
     consolidatedItems,
   );
+
+  // =================================================
+  // DELIVERY MINIMUM (authoritative resolved subtotal)
+  // =================================================
+
+  const authoritativeSubtotal = resolvedItems.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0,
+  );
+
+  if (
+    order.fulfillmentMethod === "delivery" &&
+    !isDeliverySubtotalAllowed(authoritativeSubtotal)
+  ) {
+    throw orderError("orderErrorDeliveryMinimum");
+  }
 
   // =================================================
   // OWNERSHIP (S6E — server session only)

@@ -17,6 +17,7 @@ type Props = {
     value: CheckoutCustomerFormValues["fulfillmentMethod"],
   ) => void;
   onSubmitAttempt: () => void;
+  deliveryDisabled?: boolean;
 };
 
 const inputClassName =
@@ -32,6 +33,7 @@ export default function CustomerInformationForm({
   onBlur,
   onFulfillmentChange,
   onSubmitAttempt,
+  deliveryDisabled = false,
 }: Props) {
   const { t } = useLanguage();
 
@@ -184,6 +186,7 @@ export default function CustomerInformationForm({
         <FulfillmentMethodSelector
           value={values.fulfillmentMethod}
           onChange={onFulfillmentChange}
+          deliveryDisabled={deliveryDisabled}
         />
 
         {showAddress ? (

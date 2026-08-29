@@ -65,6 +65,36 @@
 
 ---
 
+## ✅ COMPLETED — S7A Payments Foundation (DB)
+
+- Production `orders` additive columns verified:
+  - `payment_method` TEXT NULL — allowed non-null: `online` | `pay_at_pickup`
+    (**no** `cash_on_delivery`)
+  - `payment_status` TEXT NOT NULL DEFAULT `unpaid` — `unpaid` | `pending` |
+    `paid` | `failed` | `refund_pending` | `refunded`
+  - `payment_provider` / `payment_transaction_id` TEXT NULL;
+    `paid_at` TIMESTAMPTZ NULL
+- Both payment CHECK constraints verified in Production
+- Historical test orders: method NULL, status unpaid, metadata NULL
+- Order status and payment status remain independent lifecycles
+- **Not** included: Checkout payment UI, provider, webhooks, refunds
+
+---
+
+## ✅ COMPLETED — S7B-1 Delivery Minimum Enforcement
+
+- Delivery available only when selected checkout subtotal ≥ 150 GEL
+- Under 150: delivery disabled; pickup remains; localized min message;
+  form switches delivery → pickup and clears address
+- ≥ 150: delivery available; free in Tbilisi; **no** delivery fee added
+- Client gate: `selectedCartTotal` + fulfillment UI
+- Server gate: authoritative resolved DB prices in `createOrder`; rejects
+  delivery under 150 **before** order insert / items insert / stock decrement
+- Cart Item Selection / ownership / stock / fulfillment architecture preserved
+- **Not** included: payment-method Checkout UI
+
+---
+
 ## ✅ COMPLETED — Admin Orders Management (Phases A–D)
 
 ### Phase A — Admin Order Details
@@ -249,10 +279,11 @@ createOrder production RPC hardening.
 ⬜ Email Notifications — every successful order → confirmation email to
   `customer_email` (Guest + Customer); not tied to Account; not implemented
 
-⬜ Payments (S7) — S7A additive payment columns: SQL approved, **not** run;
-  no payment app code / migration file yet
+⬜ Payments (S7) — **partial:** S7A DB ✅ + S7B-1 delivery minimum ✅;
+  next: Checkout payment-method UI (`online` | `pay_at_pickup`); then
+  provider / webhooks / refunds (not started). No COD.
 
-⬜ Shipping pricing
+⬜ Shipping pricing (beyond free Tbilisi delivery + 150 GEL minimum)
 
 ⬜ Taxes
 

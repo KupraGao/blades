@@ -41,7 +41,7 @@
   Retry Delivery, Returned to Store + transactional stock restore)
 
 See `docs/06_CHANGELOG.md` for version history (S6 Customer Ownership complete;
-Cart Item Selection + Checkout Success thumbnails — see latest changelog).
+S7A payment columns + S7B-1 delivery minimum — see latest changelog).
 
 ---
 
@@ -58,17 +58,35 @@ Customer auth is separate from Admin authorization (`admin_users`).
 
 ---
 
+## ✅ S7 progress (partial — Payments milestone not complete)
+
+- ✅ **S7A** Payments Foundation (DB) — Production-verified additive columns on
+  `orders`: `payment_method` (NULL | `online` | `pay_at_pickup`; **no**
+  `cash_on_delivery`), `payment_status` (default `unpaid`),
+  `payment_provider`, `payment_transaction_id`, `paid_at`. Historical rows:
+  method NULL, status unpaid. Order status ≠ payment status.
+- ✅ **S7B-1** Delivery Minimum Enforcement — delivery only when selected
+  checkout subtotal ≥ 150 GEL; under threshold pickup only + localized
+  message; free delivery in Tbilisi (no fee). Client uses `selectedCartTotal`;
+  server enforces on authoritative resolved prices before inserts / stock
+  decrement.
+
+**Not** done yet: Checkout payment-method UI, provider integration, webhooks,
+payment verification, refunds. Online / pay-at-pickup are DB-allowed values
+only — not wired in Checkout yet.
+
+---
+
 ## 🚀 Immediate Next
 
-### S7A — Payments Foundation (DB)
+### S7B — Checkout payment method (next)
 
-⬜ Execute the approved additive `orders` payment-column SQL (S7A), then
-  verify schema/data on the live DB
+⬜ Checkout payment-method selection + server capture for allowed values
+  (`online` | `pay_at_pickup`), fulfillment-aware rules — **no** COD
 
-- Inspected / SQL proposal approved — **not** executed yet
-- No payment columns in DB yet; no payment source-code changes; no migration
-  file created
-- Provider integration / checkout payment capture — later S7 steps (not started)
+- S7A DB columns live; S7B-1 delivery minimum shipped
+- Do **not** claim online payments work until provider + verification exist
+- Provider / webhooks / refunds — later S7 steps (not started)
 
 ### Production hardening (remaining)
 
@@ -140,9 +158,10 @@ operational workflow remains complete and closed.
 
 ## Checkout (future commerce)
 
-⬜ Shipping pricing
+⬜ Shipping pricing (beyond free Tbilisi delivery + 150 GEL delivery minimum)
 
-⬜ Payments (S7) — S7A DB foundation SQL approved but **not** executed yet
+⬜ Payments (S7) — **partial:** S7A DB ✅ + S7B-1 delivery minimum ✅;
+  payment-method Checkout UI / provider / webhooks / refunds remaining
 
 ⬜ Coupons
 

@@ -365,6 +365,12 @@ Resolve authoritative products (`products` table)
 
 ↓
 
+Delivery minimum (S7B-1): if `fulfillmentMethod === "delivery"` and
+authoritative resolved subtotal < 150 GEL → reject **before** inserts /
+stock decrement (client also gates on `selectedCartTotal`)
+
+↓
+
 Map order (`total_price`, `status: "pending"`)
 
 ↓
@@ -684,10 +690,15 @@ Customer My Orders
 
 Customer ≠ Admin. Email is never ownership authorization.
 
-### Still remaining (outside S5–S6)
+### Still remaining (outside S5–S6; S7 partial)
 
-- S7A Payments Foundation — approved additive SQL **not** executed yet;
-  later S7 steps (provider / checkout capture) not started
+- ✅ S7A Payments Foundation (DB) — Production columns live (`payment_method`
+  NULL | `online` | `pay_at_pickup` only — **no** COD; `payment_status` +
+  metadata). Order status ≠ payment status. Historical: method NULL, unpaid.
+- ✅ S7B-1 Delivery Minimum — ≥ 150 GEL for delivery; free Tbilisi delivery
+  (no fee); client `selectedCartTotal` + server resolved prices before writes
+- ⬜ Checkout payment-method UI + server capture (`online` | `pay_at_pickup`)
+- ⬜ Provider integration / webhooks / payment verification / refunds
 - Guest `createOrder` abuse controls (rate limits / CAPTCHA / etc.)
 - Order Confirmation email (Guest + Customer) — documented only
 

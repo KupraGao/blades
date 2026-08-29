@@ -182,6 +182,9 @@ export const ka = {
   fulfillmentMethodLabel: "მიწოდების მეთოდი",
   fulfillmentDelivery: "მიტანა",
   fulfillmentPickup: "ადგილიდან გატანა",
+  deliveryMinimumRequired:
+    "მიტანისთვის საჭიროა მინიმუმ ₾150-ის შეძენა.",
+  deliveryTbilisiFree: "თბილისში მიტანა უფასოა.",
   placeholderFullName: "მაგ: გიორგი ბერიძე",
   placeholderPhone: "+995 555 12 34 56",
   placeholderEmail: "name@example.com",
@@ -253,6 +256,8 @@ export const ka = {
   orderErrorAddressRequired: "მისამართი აუცილებელია.",
   orderErrorAddressMin: "მისამართი მინიმუმ 5 სიმბოლოს უნდა შეიცავდეს.",
   orderErrorFulfillmentInvalid: "აირჩიეთ სწორი მიწოდების მეთოდი.",
+  orderErrorDeliveryMinimum:
+    "მიტანისთვის საჭიროა მინიმუმ ₾150-ის შეძენა. აირჩიეთ თვითგატანა ან დაამატეთ პროდუქტები.",
   orderErrorCartEmpty: "კალათა ცარიელია.",
   orderErrorProductIdRequired: "პროდუქტის ID აუცილებელია.",
   orderErrorQuantityInvalid: "პროდუქტის რაოდენობა არასწორია.",

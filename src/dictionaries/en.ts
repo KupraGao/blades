@@ -184,6 +184,9 @@ export const en = {
   fulfillmentMethodLabel: "Fulfillment Method",
   fulfillmentDelivery: "Delivery",
   fulfillmentPickup: "Pickup",
+  deliveryMinimumRequired:
+    "Delivery requires a minimum purchase of ₾150.",
+  deliveryTbilisiFree: "Delivery in Tbilisi is free.",
   placeholderFullName: "John Doe",
   placeholderPhone: "+995 555 12 34 56",
   placeholderEmail: "john@example.com",
@@ -255,6 +258,8 @@ export const en = {
   orderErrorAddressRequired: "Address is required.",
   orderErrorAddressMin: "Address must be at least 5 characters.",
   orderErrorFulfillmentInvalid: "Select a valid fulfillment method.",
+  orderErrorDeliveryMinimum:
+    "Delivery requires a minimum purchase of ₾150. Choose pickup or add more items.",
   orderErrorCartEmpty: "Your cart is empty.",
   orderErrorProductIdRequired: "Product ID is required.",
   orderErrorQuantityInvalid: "Product quantity is invalid.",

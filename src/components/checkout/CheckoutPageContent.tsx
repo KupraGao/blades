@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createOrder } from "@/actions/orders/create-order";
 import { useCart } from "@/context/CartContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { localizeStorefrontMessage } from "@/lib/i18n/localize-storefront-message";
+import { isDeliverySubtotalAllowed } from "@/lib/orders/delivery-rules";
 import type {
   CreateOrderInput,
   FulfillmentMethod,
@@ -26,7 +27,7 @@ import {
 export default function CheckoutPageContent() {
   const router = useRouter();
   const { t } = useLanguage();
-  const { selectedItems, removeItemsByIds } = useCart();
+  const { selectedItems, selectedCartTotal, removeItemsByIds } = useCart();
 
   const [values, setValues] = useState<CheckoutCustomerFormValues>(
     initialCheckoutCustomerFormValues,
@@ -40,6 +41,33 @@ export default function CheckoutPageContent() {
   const [createdOrderId, setCreatedOrderId] = useState<string | null>(
     null,
   );
+
+  const deliveryAllowed = isDeliverySubtotalAllowed(selectedCartTotal);
+  const deliveryDisabled = !deliveryAllowed;
+
+  useEffect(() => {
+    if (deliveryAllowed) {
+      return;
+    }
+
+    setValues((current) => {
+      if (current.fulfillmentMethod !== "delivery") {
+        return current;
+      }
+
+      return {
+        ...current,
+        fulfillmentMethod: "pickup",
+        address: "",
+      };
+    });
+
+    setTouched((current) => ({
+      ...current,
+      address: false,
+      fulfillmentMethod: true,
+    }));
+  }, [deliveryAllowed]);
 
   const errors = getCustomerFormErrors(values);
   const isFormValid = isCustomerFormValid(values);
@@ -63,6 +91,10 @@ export default function CheckoutPageContent() {
   }
 
   function handleFulfillmentChange(next: FulfillmentMethod) {
+    if (next === "delivery" && deliveryDisabled) {
+      return;
+    }
+
     setValues((current) => ({
       ...current,
       fulfillmentMethod: next,
@@ -91,6 +123,14 @@ export default function CheckoutPageContent() {
       isSubmitting ||
       createdOrderId
     ) {
+      return;
+    }
+
+    if (
+      values.fulfillmentMethod === "delivery" &&
+      !isDeliverySubtotalAllowed(selectedCartTotal)
+    ) {
+      setSubmissionError(t.deliveryMinimumRequired);
       return;
     }
 
@@ -176,6 +216,7 @@ export default function CheckoutPageContent() {
             onBlur={handleBlur}
             onFulfillmentChange={handleFulfillmentChange}
             onSubmitAttempt={handleSubmitAttempt}
+            deliveryDisabled={deliveryDisabled}
           />
         </div>
 

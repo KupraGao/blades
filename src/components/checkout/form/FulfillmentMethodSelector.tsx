@@ -6,11 +6,13 @@ import type { FulfillmentMethod } from "@/lib/orders/validate-order";
 type Props = {
   value: FulfillmentMethod;
   onChange: (value: FulfillmentMethod) => void;
+  deliveryDisabled?: boolean;
 };
 
 export default function FulfillmentMethodSelector({
   value,
   onChange,
+  deliveryDisabled = false,
 }: Props) {
   const { t } = useLanguage();
 
@@ -21,12 +23,19 @@ export default function FulfillmentMethodSelector({
       </legend>
 
       <div className="grid gap-3 sm:grid-cols-2">
-        <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-zinc-300 bg-white px-4 py-3 transition has-[:checked]:border-black dark:border-zinc-700 dark:bg-zinc-950 dark:has-[:checked]:border-white">
+        <label
+          className={`flex items-center gap-3 rounded-xl border border-zinc-300 bg-white px-4 py-3 transition dark:border-zinc-700 dark:bg-zinc-950 ${
+            deliveryDisabled
+              ? "cursor-not-allowed opacity-50"
+              : "cursor-pointer has-[:checked]:border-black dark:has-[:checked]:border-white"
+          }`}
+        >
           <input
             type="radio"
             name="fulfillmentMethod"
             value="delivery"
             checked={value === "delivery"}
+            disabled={deliveryDisabled}
             onChange={() => onChange("delivery")}
             className="h-4 w-4"
           />
@@ -49,6 +58,16 @@ export default function FulfillmentMethodSelector({
           </span>
         </label>
       </div>
+
+      {deliveryDisabled ? (
+        <p className="text-sm text-zinc-600 dark:text-zinc-400" role="status">
+          {t.deliveryMinimumRequired}
+        </p>
+      ) : (
+        <p className="text-sm text-zinc-600 dark:text-zinc-400">
+          {t.deliveryTbilisiFree}
+        </p>
+      )}
     </fieldset>
   );
 }
