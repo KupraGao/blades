@@ -2,49 +2,24 @@
 
 import { useLanguage } from "@/context/LanguageContext";
 
+/** Shared circular header control chrome (solid, theme-aware). */
+export const headerCircleControlClassName =
+  "grid h-10 w-10 shrink-0 place-items-center rounded-full border border-zinc-300 bg-white text-zinc-800 shadow-md shadow-black/10 transition hover:bg-zinc-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-orange dark:border-white/20 dark:bg-zinc-900 dark:text-white dark:shadow-black/50 dark:hover:bg-zinc-800";
+
 export function LanguageSwitcher() {
-  const {
-    language,
-    setLanguage,
-  } = useLanguage();
+  const { language, setLanguage } = useLanguage();
+
+  const nextLanguage = language === "ka" ? "en" : "ka";
+  const label = nextLanguage === "en" ? "EN" : "KA";
 
   return (
-    <div className="flex items-center gap-2">
-      <button
-        onClick={() => setLanguage("ka")}
-        className={`
-          rounded-lg
-          px-3 py-1.5
-          text-sm font-bold
-          transition
-
-          ${
-            language === "ka"
-              ? "bg-brand-gold text-black"
-              : "bg-zinc-200 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300"
-          }
-        `}
-      >
-        KA
-      </button>
-
-      <button
-        onClick={() => setLanguage("en")}
-        className={`
-          rounded-lg
-          px-3 py-1.5
-          text-sm font-bold
-          transition
-
-          ${
-            language === "en"
-              ? "bg-brand-gold text-black"
-              : "bg-zinc-200 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300"
-          }
-        `}
-      >
-        EN
-      </button>
-    </div>
+    <button
+      type="button"
+      onClick={() => setLanguage(nextLanguage)}
+      aria-label={label}
+      className={`${headerCircleControlClassName} text-[11px] font-bold leading-none tracking-wide`}
+    >
+      {label}
+    </button>
   );
 }
