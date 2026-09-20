@@ -20,7 +20,8 @@ export function Footer() {
               alt={t.logoAlt}
               width={100}
               height={40}
-              className="h-10 w-auto object-contain"
+              className="!h-10 !w-auto object-contain"
+              style={{ width: "auto", height: "auto" }}
             />
           </a>
 
@@ -46,7 +47,7 @@ export function Footer() {
 
             <li>
               <a
-                href="#"
+                href="/brands"
                 className="transition hover:text-zinc-900 dark:hover:text-white"
               >
                 {t.brands}

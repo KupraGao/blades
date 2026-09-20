@@ -142,6 +142,32 @@
 
 ---
 
+## ✅ COMPLETED — Storefront Brands
+
+- Public Brands directory `/brands` — responsive BrandCard grid (name,
+  optional logo / first-letter fallback, product count; zero-product Brands
+  still shown; navigate by slug)
+- Brand PLP `/brands/[slug]` — resolve exact Brand → fixed server `brandId` →
+  Category + Price Filters + exact filtered count + **20**/page pagination;
+  reuses `ProductCard` + `CatalogPagination` + `CategoriesSidebar`
+- Brand scope from pathname slug only (no `brandId` query param); URL filters:
+  `category` / `minPrice` / `maxPrice` / `page`; Clear keeps Brand path
+- Shared storefront toolbar (shop layout): `/` and Brand PLP → Filters +
+  Search + Help; `/brands` → Search + Help only (no product Filters)
+- Desktop sidebar defaults: Home OPEN; Brand PLP CLOSED; `/brands` none
+- Controlled motion: Home → only Latest Products title moves; Brand PLP →
+  only Brand identity header moves (`lg:ml-[272px]`); grids stay stationary
+- KA/EN labels; count grammar KA always `{count} პროდუქტი`; EN 1 product /
+  N products
+- Empty states: Brand-empty vs catalog no-match when filters active
+- Separate from Admin Brands CMS (`/admin/brands` …)
+- Supporting polish: Header rail update-depth guard; Header/Footer Image
+  aspect warning; root `data-scroll-behavior="smooth"`
+- No schema / migration / RPC / RLS / new dependency; Home catalog semantics
+  unchanged; S7 Payments unchanged (still partial)
+
+---
+
 ## ✅ COMPLETED — Admin Orders Management (Phases A–D)
 
 ### Phase A — Admin Order Details

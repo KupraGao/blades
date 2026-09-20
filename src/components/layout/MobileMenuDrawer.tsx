@@ -52,9 +52,21 @@ export function MobileMenuDrawer({
   const navItems = [
     { label: t.home, href: "/" },
     { label: t.products, href: "/#products" },
-    { label: t.brands, href: "/" },
+    { label: t.brands, href: "/brands" },
     { label: t.contact, href: "/#contact" },
   ];
+
+  // Home + Brand PLP: catalog Filters. Brands directory: menu only.
+  const showCatalogFilters =
+    pathname === "/" || Boolean(pathname?.startsWith("/brands/"));
+  const filtersTabActive = tab === "filters" || tab === "categories";
+  const activeTab = showCatalogFilters
+    ? filtersTabActive
+      ? "filters"
+      : tab === "menu"
+        ? "menu"
+        : "filters"
+    : "menu";
 
   const replaceCatalogParams = useCallback(
     (next: {
@@ -209,28 +221,30 @@ export function MobileMenuDrawer({
         </div>
 
         <div className="flex border-b">
-          <button
-            type="button"
-            onClick={() => setTab("filters")}
-            className={`flex flex-1 items-center justify-center gap-2 py-3 font-bold ${
-              tab === "filters" || tab === "categories"
-                ? "border-b-2 border-black"
-                : "text-gray-400"
-            }`}
-          >
-            {t.filters}
-            {activeCount > 0 ? (
-              <span className="inline-flex min-w-5 items-center justify-center rounded-full bg-brand-orange px-1.5 text-[11px] font-bold text-white">
-                {activeCount}
-              </span>
-            ) : null}
-          </button>
+          {showCatalogFilters ? (
+            <button
+              type="button"
+              onClick={() => setTab("filters")}
+              className={`flex flex-1 items-center justify-center gap-2 py-3 font-bold ${
+                activeTab === "filters"
+                  ? "border-b-2 border-black"
+                  : "text-gray-400"
+              }`}
+            >
+              {t.filters}
+              {activeCount > 0 ? (
+                <span className="inline-flex min-w-5 items-center justify-center rounded-full bg-brand-orange px-1.5 text-[11px] font-bold text-white">
+                  {activeCount}
+                </span>
+              ) : null}
+            </button>
+          ) : null}
 
           <button
             type="button"
             onClick={() => setTab("menu")}
             className={`flex-1 py-3 font-bold ${
-              tab === "menu" ? "border-b-2 border-black" : "text-gray-400"
+              activeTab === "menu" ? "border-b-2 border-black" : "text-gray-400"
             }`}
           >
             {t.menu}
@@ -239,7 +253,7 @@ export function MobileMenuDrawer({
 
         <div className="flex min-h-0 flex-1 flex-col">
           <div className="flex-1 overflow-y-auto p-4">
-            {tab === "menu" && (
+            {activeTab === "menu" && (
               <div className="flex flex-col gap-2">
                 {navItems.map((item) => (
                   <a
@@ -254,7 +268,7 @@ export function MobileMenuDrawer({
               </div>
             )}
 
-            {(tab === "filters" || tab === "categories") && (
+            {showCatalogFilters && activeTab === "filters" && (
               <div
                 className={`flex flex-col gap-5 ${isPending ? "opacity-70" : ""}`}
               >

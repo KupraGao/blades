@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { usePathname } from "next/navigation";
 import { Heart, Menu, ShoppingBag, UserRound, X } from "lucide-react";
 
 import { MobileMenuDrawer } from "./MobileMenuDrawer";
@@ -37,8 +38,11 @@ export function Header({
   accountHref = "/account/login",
 }: HeaderProps) {
   const { t } = useLanguage();
+  const pathname = usePathname();
   const { cartCount } = useCart();
   const { wishlistCount } = useWishlist();
+  const brandsActive =
+    pathname === "/brands" || Boolean(pathname?.startsWith("/brands/"));
 
   // =====================================
   // CART DRAWER STATE
@@ -59,17 +63,24 @@ export function Header({
   // <460px UTILITY RAIL SCROLL VISIBILITY
   // =====================================
   const [railVisible, setRailVisible] = useState(true);
+  const railVisibleRef = useRef(true);
   const lastScrollYRef = useRef(0);
 
   useEffect(() => {
     lastScrollYRef.current = window.scrollY;
+
+    function updateRailVisible(next: boolean) {
+      if (railVisibleRef.current === next) return;
+      railVisibleRef.current = next;
+      setRailVisible(next);
+    }
 
     function onScroll() {
       const y = window.scrollY;
       const delta = y - lastScrollYRef.current;
 
       if (y <= RAIL_TOP_FORCE_VISIBLE_PX) {
-        setRailVisible(true);
+        updateRailVisible(true);
         lastScrollYRef.current = y;
         return;
       }
@@ -78,7 +89,7 @@ export function Header({
         return;
       }
 
-      setRailVisible(delta < 0);
+      updateRailVisible(delta < 0);
       lastScrollYRef.current = y;
     }
 
@@ -128,7 +139,8 @@ export function Header({
               alt={t.logoAlt}
               width={120}
               height={40}
-              className="h-9 w-auto max-w-[7.5rem] object-contain sm:h-10"
+              className="!h-9 !w-auto max-w-[7.5rem] object-contain sm:!h-10"
+              style={{ width: "auto", height: "auto" }}
             />
           </a>
 
@@ -138,7 +150,16 @@ export function Header({
           <nav className="hidden items-center gap-8 lg:flex">
             <a href="/" className="text-sm font-semibold text-zinc-700 transition hover:text-brand-gold dark:text-zinc-300">{t.home}</a>
             <a href="/#products" className="text-sm font-semibold text-zinc-700 transition hover:text-brand-gold dark:text-zinc-300">{t.products}</a>
-            <a href="/" className="text-sm font-semibold text-zinc-700 transition hover:text-brand-gold dark:text-zinc-300">{t.brands}</a>
+            <a
+              href="/brands"
+              className={`text-sm font-semibold transition hover:text-brand-gold dark:hover:text-brand-gold ${
+                brandsActive
+                  ? "text-brand-gold"
+                  : "text-zinc-700 dark:text-zinc-300"
+              }`}
+            >
+              {t.brands}
+            </a>
             <a href="/#contact" className="text-sm font-semibold text-zinc-700 transition hover:text-brand-gold dark:text-zinc-300">{t.contact}</a>
           </nav>
 

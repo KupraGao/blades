@@ -14,6 +14,47 @@
 
 ---
 
+## v1.30.0 — Storefront Brands
+
+### Brands directory + Brand PLP
+
+- Public `/brands` directory: responsive BrandCard grid (name, optional logo
+  / first-letter fallback, product count; zero-product Brands included;
+  navigate by slug)
+- Brand PLP `/brands/[slug]`: exact-slug resolve (0 or >1 matches → not found
+  / fail closed) → fixed server `brandId` → Category + Price Filters → exact
+  filtered count → **20**/page; reuses `ProductCard`, `CatalogPagination`,
+  `CategoriesSidebar`
+- Brand scope from pathname only (no `brandId` query param); URL filters:
+  `category` / `minPrice` / `maxPrice` / `page`; Clear keeps Brand path;
+  filter change → `page = 1`
+- Directory counts via nested `products(count)` (no N+1; no new RPC)
+- Shared shop-layout toolbar: `/` + Brand PLP → Filters + Search + Help;
+  `/brands` → Search + Help only; Filters slot collapses/expands on route
+  change; Search width follows route capability (not sidebar open/closed)
+- Desktop sidebar defaults: Home OPEN; Brand PLP CLOSED
+- Controlled motion: Home Latest Products **title** only; Brand PLP Brand
+  **identity header** only (`lg:ml-[272px]`); product grids stay stationary
+- KA/EN labels; KA `{count} პროდუქტი`; EN `1 product` / `{count} products`
+- Empty states: Brand-empty vs catalog no-match when filters active
+- Nav: Header / mobile / Footer Brands → `/brands`; desktop active on
+  `/brands` and `/brands/*`
+- Separate from Admin Brands CMS; Home catalog semantics unchanged
+- Supporting fixes: Header narrow-viewport rail guarded `setRailVisible`
+  (avoids max-update-depth); Header/Footer Next/Image aspect-ratio warning
+  corrected; root `<html data-scroll-behavior="smooth">`
+- **Not** included: schema / migration / RPC / RLS / new dependency;
+  `brands.slug UNIQUE` not claimed; logo Storage upload / new bucket;
+  payment provider (S7 remains partial)
+
+### Validation
+
+- `git diff --check` → PASS
+- `npm run build` → PASS (Next.js 16.2.4)
+- Production build includes `/brands` and `/brands/[slug]`
+
+---
+
 ## v1.29.0 — Home Catalog Filters + Server-Side Pagination
 
 ### Storefront Featured Catalog

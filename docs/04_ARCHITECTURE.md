@@ -32,6 +32,7 @@ src
 │   ├── brands
 │   │   ├── create-brand.ts
 │   │   ├── delete-brand.ts
+│   │   ├── get-brand-by-slug.ts
 │   │   ├── get-brands.ts
 │   │   ├── get-single-brand.ts
 │   │   └── update-brand.ts
@@ -66,6 +67,9 @@ src
 ├── app
 │   │
 │   ├── (shop)
+│   │   ├── brands
+│   │   │   ├── [slug]
+│   │   │   └── page.tsx
 │   │   ├── cart
 │   │   ├── checkout
 │   │   │   └── success
@@ -145,6 +149,13 @@ src
 │   │   ├── LanguageSwitcher.tsx
 │   │   └── ThemeToggle.tsx
 │   │
+│   ├── brands
+│   │   ├── BrandCard.tsx
+│   │   ├── BrandLogo.tsx
+│   │   ├── BrandProductsContent.tsx
+│   │   ├── BrandsDirectoryContent.tsx
+│   │   └── BrandsPageHeading.tsx
+│   │
 │   ├── home
 │   │   ├── FeatureStrip.tsx
 │   │   ├── Hero.tsx
@@ -156,6 +167,7 @@ src
 │   │   ├── Header.tsx
 │   │   ├── HeaderExtras.tsx
 │   │   ├── MobileMenuDrawer.tsx
+│   │   ├── ShopHeaderExtrasHost.tsx
 │   │   ├── SubHeader.tsx
 │   │   └── ThemeProvider.tsx
 │   │
@@ -328,8 +340,9 @@ Home (`src/app/(shop)/page.tsx`) runs **two independent** product reads.
 
 ↓
 
-`LatestProductsSlider` (desktop: 4 complete cards; heading `lg:ml-[272px]`
-beside Filters `w-64` panel)
+`LatestProductsSlider` (desktop: 4 complete cards; Filters open → **only**
+Latest Products title block shifts `lg:ml-[272px]`; slider / cards / arrows /
+dots stay stationary)
 
 Not affected by Featured Catalog Filters, price bounds, or catalog `page`.
 
@@ -367,6 +380,107 @@ Supabase: Category (`product_categories.category_id`) **AND** Price
 - Desktop Filters panel + Mobile Menu Drawer share the same URL state
 - Empty filtered set → localized empty UI; Latest Products still shown
 - No new schema / RPC / dependency for this flow
+
+---
+
+# 🏷️ Storefront Brands Flow
+
+Separate from Admin Brands CMS (`/admin/brands`, create, edit).
+
+## Routes
+
+| Route | Role |
+|-------|------|
+| `/brands` | Brands directory |
+| `/brands/[slug]` | Brand product listing (PLP) |
+
+Header / mobile nav / Footer **Brands** links → `/brands`. Desktop Brands nav
+active for `/brands` and `/brands/*`.
+
+## A. Brands directory (`/brands`)
+
+```text
+getStorefrontBrands()
+  → brands (id, name, slug, logo)
+  → nested products(count)  (no N+1 per Brand; no new RPC)
+  → normalized productCount
+  → BrandCard grid
+```
+
+- Responsive cards: name, optional logo URL or first-letter fallback,
+  product count (zero-product Brands still listed)
+- Navigate by `slug` → `/brands/[slug]`
+- KA/EN UI labels; KA count always `{count} პროდუქტი`; EN `1 product` /
+  `{count} products`
+- Brand `name` is a **single** DB field (not localized Brand names)
+- **No** product Filters / sidebar on this route
+
+## B. Brand PLP (`/brands/[slug]`)
+
+```text
+slug → getBrandBySlug (exact match)
+  → require exactly one row (0 or >1 → not found / fail closed)
+  → fixed server brandId (pathname scope; never a URL filter)
+  → parse catalog params (category · minPrice · maxPrice · page)
+  → getProducts({ brandId, categoryId?, minPrice?, maxPrice?, page, limit: 20 })
+  → Brand + Category + Price AND → exact filtered count → .range (20/page)
+  → BrandProductsContent (header + ProductCard grid + CatalogPagination)
+```
+
+### Filters (reuse Home catalog architecture)
+
+- Same URL keys: `category`, `minPrice`, `maxPrice`, `page` — **no** `brandId`
+  query param
+- Same UI: `CategoriesSidebar` + mobile drawer Filters; Clear / active count
+- Clear removes filter query params but **keeps** `/brands/[slug]`
+- Filter / Clear → `page = 1`; pagination preserves active filter params
+- Header product count = current filtered catalog total (or full Brand total
+  when no filters)
+- Empty: Brand has zero products (no filters) → Brand empty copy; filters
+  match zero → catalog no-match copy
+
+### Desktop Filters defaults
+
+| Route | Sidebar default |
+|-------|-----------------|
+| `/` | OPEN |
+| `/brands/[slug]` | CLOSED |
+| `/brands` | none |
+
+### Shared storefront toolbar
+
+Hosted from `(shop)` layout (`ShopHeaderExtrasHost` + `HeaderExtras`) so it
+survives client navigations:
+
+| Route | Toolbar |
+|-------|---------|
+| `/` | Filters slot + Search + Help |
+| `/brands` | Search + Help (Filters slot collapsed) |
+| `/brands/[slug]` | Filters slot + Search + Help |
+
+Route transitions (architecture-level): leaving Filters-capable routes for
+`/brands` collapses the Filters slot and expands Search; entering Brand PLP
+from `/brands` restores the Filters slot and contracts Search. Help stays
+stable. Search width follows **route capability**, not sidebar open/closed.
+
+### Controlled content motion (no ProductCard reflow)
+
+- **Home:** Filters open/close → only Latest Products title (eyebrow +
+  heading) moves horizontally
+- **Brand PLP:** Filters open/close → only Brand identity header (logo /
+  fallback, name, count) moves `lg:ml-[272px]`; product grid + pagination
+  stay put
+
+### Logos
+
+`brands.logo` = nullable URL string. Storefront shows the image when present,
+else first-letter fallback. No new Storage bucket, upload path, schema, or
+host allowlisting was added for this feature.
+
+### Home regression
+
+Home Featured Catalog (full-catalog server Filters, 20/page, independent
+Latest Products) is unchanged by Brands work.
 
 ---
 

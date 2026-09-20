@@ -1,7 +1,8 @@
 "use client";
 
+import { useCallback, useState } from "react";
+
 import { Header } from "@/components/layout/Header";
-import { HeaderExtras } from "@/components/layout/HeaderExtras";
 
 import { LatestProductsSlider } from "@/components/product/LatestProductsSlider";
 import { PromoBanner } from "@/components/home/PromoBanner";
@@ -27,14 +28,24 @@ export function HomeClient({
   categories: CatalogCategory[];
   accountHref?: string;
 }) {
+  // Existing Home Filters panel: collapsed=false means OPEN (matches CategoriesSidebar default).
+  const [filtersCollapsed, setFiltersCollapsed] = useState(false);
+  const handleFiltersCollapsedChange = useCallback((collapsed: boolean) => {
+    setFiltersCollapsed(collapsed);
+  }, []);
+
+  const isFiltersOpen = !filtersCollapsed;
+
   return (
     <>
       <Header categories={categories} accountHref={accountHref} />
 
-      <HeaderExtras />
-
-      <main>
-        <LatestProductsSlider products={latestProducts} />
+      {/* lg:pt-14 clears fixed ShopHeaderExtrasHost under the sticky Header */}
+      <main className="lg:pt-14">
+        <LatestProductsSlider
+          products={latestProducts}
+          isFiltersOpen={isFiltersOpen}
+        />
 
         <FeatureStrip />
 
@@ -44,6 +55,8 @@ export function HomeClient({
           currentPage={currentPage}
           totalPages={catalogTotalPages}
           total={catalogTotal}
+          filtersCollapsed={filtersCollapsed}
+          onFiltersCollapsedChange={handleFiltersCollapsedChange}
         />
 
         <PromoBanner />

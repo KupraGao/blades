@@ -13,11 +13,20 @@ import { useLanguage } from "@/context/LanguageContext";
 
 type Props = {
   categories: CatalogCategory[];
+  collapsed: boolean;
+  onCollapsedChange: (collapsed: boolean) => void;
+  /** Home: sync open/closed with scroll. Brand PLP: false so default-closed stays until click. */
+  syncCollapsedOnScroll?: boolean;
 };
 
 const PRICE_DEBOUNCE_MS = 400;
 
-export function CategoriesSidebar({ categories }: Props) {
+export function CategoriesSidebar({
+  categories,
+  collapsed,
+  onCollapsedChange,
+  syncCollapsedOnScroll = true,
+}: Props) {
   const { t, language } = useLanguage();
   const router = useRouter();
   const pathname = usePathname();
@@ -28,7 +37,6 @@ export function CategoriesSidebar({ categories }: Props) {
   const urlMin = searchParams.get("minPrice") ?? "";
   const urlMax = searchParams.get("maxPrice") ?? "";
 
-  const [collapsed, setCollapsed] = useState(false);
   const [minDraft, setMinDraft] = useState(urlMin);
   const [maxDraft, setMaxDraft] = useState(urlMax);
   const [priceError, setPriceError] = useState<string | null>(null);
@@ -41,13 +49,15 @@ export function CategoriesSidebar({ categories }: Props) {
   }, [urlMin, urlMax]);
 
   useEffect(() => {
+    if (!syncCollapsedOnScroll) return;
+
     const handleScroll = () => {
-      setCollapsed(window.scrollY > 100);
+      onCollapsedChange(window.scrollY > 100);
     };
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [onCollapsedChange, syncCollapsedOnScroll]);
 
   const replaceCatalogParams = useCallback(
     (next: {
@@ -195,7 +205,7 @@ export function CategoriesSidebar({ categories }: Props) {
               type="button"
               aria-expanded={!collapsed}
               aria-controls={panelId}
-              onClick={() => setCollapsed(!collapsed)}
+              onClick={() => onCollapsedChange(!collapsed)}
               className="flex w-full items-center justify-between bg-black px-4 py-4 text-white"
             >
               <span className="flex items-center gap-2 text-sm font-bold">

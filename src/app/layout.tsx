@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="ka" suppressHydrationWarning>
+    <html lang="ka" suppressHydrationWarning data-scroll-behavior="smooth">
       <body
         suppressHydrationWarning
         className={`${inter.variable} ${playfair.variable} bg-white text-zinc-900 dark:bg-black dark:text-zinc-100 antialiased transition-colors duration-300`}

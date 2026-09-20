@@ -12,6 +12,8 @@ type ProductSectionClientProps = {
   currentPage: number;
   totalPages: number;
   total: number;
+  filtersCollapsed: boolean;
+  onFiltersCollapsedChange: (collapsed: boolean) => void;
 };
 
 export function ProductSectionClient({
@@ -20,6 +22,8 @@ export function ProductSectionClient({
   currentPage,
   totalPages,
   total,
+  filtersCollapsed,
+  onFiltersCollapsedChange,
 }: ProductSectionClientProps) {
   const { t } = useLanguage();
   const safeProducts = Array.isArray(products) ? products : [];
@@ -28,7 +32,11 @@ export function ProductSectionClient({
   return (
     <section id="products" className="section-pad bg-black/25">
       <div className="container-page">
-        <CategoriesSidebar categories={categories} />
+        <CategoriesSidebar
+          categories={categories}
+          collapsed={filtersCollapsed}
+          onCollapsedChange={onFiltersCollapsedChange}
+        />
 
         <div className="flex flex-col gap-6">
           <p className="small-label">{t.featuredProducts}</p>

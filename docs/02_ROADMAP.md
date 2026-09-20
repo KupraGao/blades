@@ -41,10 +41,13 @@
   Retry Delivery, Returned to Store + transactional stock restore)
 - Home storefront catalog Filters + server-side pagination
   (Category + Price AND; URL state; 20/page; Latest Products independent)
+- Storefront Brands
+  (`/brands` directory + `/brands/[slug]` Brand PLP; Brand-scoped catalog
+  Filters; shared Search/Help/Filters toolbar; KA/EN counts)
 
 See `docs/06_CHANGELOG.md` for version history (S6 Customer Ownership complete;
 S7A–S7B payment-method path + S7B-1 delivery minimum — see latest changelog;
-Home catalog Filters + pagination in latest changelog).
+Home catalog Filters + pagination; Storefront Brands — see latest changelog).
 
 ---
 
@@ -112,7 +115,10 @@ payment verification, automatic `paid`, refunds.
 selection and Checkout Success thumbnails are shipped. Delivery / Pickup
 operational workflow remains complete and closed. Home storefront Featured
 Catalog Filters (Category + Price, URL state, 20/page server pagination) and
-independent Latest Products query are shipped — see Architecture / Changelog.
+independent Latest Products query are shipped. Storefront Brands directory +
+Brand PLP (Brand-scoped Category/Price Filters, shared toolbar) are shipped —
+see Architecture / Changelog. S7 Payments remains **partial** (provider /
+webhooks / refunds not started).
 
 ---
 

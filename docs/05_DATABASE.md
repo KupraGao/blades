@@ -459,6 +459,36 @@ requireAdmin() → createAdminClient() → service_role → Catalog CRUD
   client — **no** new table, column, migration, or RPC
 - Latest Products is a separate unfiltered `getProducts` read (`limit: 10`)
 
+### Storefront Brands reads (app — no schema change)
+
+Existing `brands` fields used by the storefront (application-level; not a
+new migration):
+
+- `id`
+- `name` — single display name field (not localized Brand names)
+- `slug` — pathname identity for `/brands/[slug]`
+- `logo` — nullable URL string (optional; first-letter fallback when null)
+
+**Slug safety (application):** lookup is exact-slug; **exactly one** row
+required. Zero matches → not found. Multiple matches → fail closed / not
+found. Do **not** assume a repository-proven `brands.slug UNIQUE`
+constraint (not documented from checked-in migrations).
+
+`products.brand_id` → Brand relation for Brand-scoped catalog reads.
+
+Directory (`/brands`):
+
+- Public catalog read of `brands` with nested `products(count)` for
+  `productCount` (no N+1 per Brand; **no** new RPC)
+
+Brand PLP (`/brands/[slug]`):
+
+- Resolve Brand by slug, then `getProducts` with fixed `brand_id` plus
+  optional category / minPrice / maxPrice; exact filtered count + `.range`
+  (20/page) on the existing anon server client
+- **No** new table, column, migration, RPC, or RLS policy for Storefront
+  Brands
+
 ### Catalog RLS (S5 — live verified)
 
 RLS **ON** for:

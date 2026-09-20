@@ -1,4 +1,5 @@
 import { Footer } from "@/components/layout/Footer";
+import { ShopHeaderExtrasHost } from "@/components/layout/ShopHeaderExtrasHost";
 
 export default function ShopLayout({
   children,
@@ -8,6 +9,7 @@ export default function ShopLayout({
   return (
     <>
       {children}
+      <ShopHeaderExtrasHost />
       <Footer />
     </>
   );
