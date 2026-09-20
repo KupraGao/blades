@@ -34,6 +34,7 @@ export const en = {
   accountSignedInAs: "Signed in as",
   accountLogout: "Sign Out",
   accountLogoutSubmitting: "Signing Out...",
+  accountAdminPanel: "Admin Panel",
   accountLoginTitle: "Sign In",
   accountLoginDescription: "Sign in to access your account.",
   accountLoginSubmit: "Sign In",

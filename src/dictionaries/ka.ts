@@ -34,6 +34,7 @@ export const ka = {
   accountSignedInAs: "შესული ხართ როგორც",
   accountLogout: "გასვლა",
   accountLogoutSubmitting: "გასვლა...",
+  accountAdminPanel: "ადმინისტრატორის პანელი",
   accountLoginTitle: "შესვლა",
   accountLoginDescription: "შედით თქვენს ანგარიშში.",
   accountLoginSubmit: "შესვლა",

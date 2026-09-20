@@ -1,6 +1,7 @@
 import AccountOverview from "@/components/account/AccountOverview";
 import { getCustomerOrders } from "@/actions/orders/get-customer-orders";
 import { getAuthUser } from "@/lib/auth/get-auth-user";
+import { getAuthorizedAdmin } from "@/lib/auth/get-authorized-admin";
 import { redirect } from "next/navigation";
 
 export default async function AccountPage() {
@@ -19,6 +20,7 @@ export default async function AccountPage() {
     typeof metadata.phone === "string" ? metadata.phone.trim() : "";
 
   const orders = await getCustomerOrders();
+  const admin = await getAuthorizedAdmin();
 
   return (
     <AccountOverview
@@ -26,6 +28,7 @@ export default async function AccountPage() {
       email={user.email ?? ""}
       phone={phone}
       orders={orders}
+      isAdmin={Boolean(admin)}
     />
   );
 }
