@@ -150,7 +150,7 @@ export default function ProductsTable({
 
                   {/* MOBILE PRICE */}
                   <p className="mt-2 font-medium text-white md:hidden">
-                    ${product.price}
+                    ₾{product.price}
                   </p>
 
                   {/* MOBILE STOCK */}
@@ -170,7 +170,7 @@ export default function ProductsTable({
 
               {/* PRICE */}
               <div className="hidden font-medium text-white md:block">
-                ${product.price}
+                ₾{product.price}
               </div>
 
               {/* STOCK */}
