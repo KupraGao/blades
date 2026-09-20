@@ -449,6 +449,16 @@ Admin Catalog CMS write path:
 requireAdmin() → createAdminClient() → service_role → Catalog CRUD
 ```
 
+### Storefront Home catalog reads (app — no schema change)
+
+- Featured Catalog Filters use existing columns/relations only:
+  - Category: `product_categories.category_id` (stable ID; display via
+    `categories.name_ka` / `name_en`)
+  - Price: `products.price` (GEL); optional min/max via query `gte` / `lte`
+- Exact filtered count + `.range` pagination (20/page) on the anon server
+  client — **no** new table, column, migration, or RPC
+- Latest Products is a separate unfiltered `getProducts` read (`limit: 10`)
+
 ### Catalog RLS (S5 — live verified)
 
 RLS **ON** for:

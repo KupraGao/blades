@@ -160,6 +160,7 @@ src
 │   │   └── ThemeProvider.tsx
 │   │
 │   ├── product
+│   │   ├── CatalogPagination.tsx
 │   │   ├── LatestProductsSlider.tsx
 │   │   ├── ProductCard.tsx
 │   │   ├── ProductDetailsContent.tsx
@@ -194,6 +195,9 @@ src
 │   │
 │   ├── data
 │   │   └── products.ts
+│   │
+│   ├── catalog
+│   │   └── catalog-search-params.ts
 │   │
 │   ├── i18n
 │   │   ├── format-admin-date.ts
@@ -309,6 +313,60 @@ Pagination
 ↓
 
 Page Size
+
+*(Admin products list — above.)*
+
+---
+
+# 🏠 Home Storefront Catalog Flow
+
+Home (`src/app/(shop)/page.tsx`) runs **two independent** product reads.
+
+## A. Latest Products (independent)
+
+`getProducts({ page: 1, limit: 10 })`
+
+↓
+
+`LatestProductsSlider` (desktop: 4 complete cards; heading `lg:ml-[272px]`
+beside Filters `w-64` panel)
+
+Not affected by Featured Catalog Filters, price bounds, or catalog `page`.
+
+## B. Featured Catalog (filtered + paginated)
+
+URL search params (source of truth):
+
+`category` · `minPrice` · `maxPrice` · `page`
+
+↓
+
+parse (`src/lib/catalog/catalog-search-params.ts`)
+
+↓
+
+`getProducts({ page, limit: 20, categoryId, minPrice, maxPrice })`
+
+↓
+
+Supabase: Category (`product_categories.category_id`) **AND** Price
+(`products.price` gte/lte as provided) → **exact filtered count** →
+`.range(...)` for current page (max **20** products)
+
+↓
+
+`ProductSectionClient` Featured grid + `CatalogPagination`
+
+### Rules
+
+- **Filter first, paginate second** (full matching catalog, then 20/page)
+- Category identity = stable category ID (not localized display name)
+- Price currency = GEL / `₾` only
+- Filter change or Clear → `page = 1`
+- Active filter count: Category group + Price group (min+max = one Price)
+- Desktop Filters panel + Mobile Menu Drawer share the same URL state
+- Empty filtered set → localized empty UI; Latest Products still shown
+- No new schema / RPC / dependency for this flow
 
 ---
 

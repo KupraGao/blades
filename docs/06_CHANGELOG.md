@@ -14,6 +14,28 @@
 
 ---
 
+## v1.29.0 — Home Catalog Filters + Server-Side Pagination
+
+### Storefront Featured Catalog
+
+- Filters control (`Filters` / `ფილტრები`): Category + Price (AND) against the
+  **full** matching catalog before pagination
+- Server-side filters via extended `getProducts` (category ID, min/max price,
+  exact filtered count, `.range`); page size **20**
+- URL state: `category`, `minPrice`, `maxPrice`, `page` (refresh / Back /
+  Forward); stable category ID; KA/EN display names only
+- Clear Filters + active filter count; filter change resets `page = 1`
+- GEL / `₾` price controls (compact Min/Max); no USD / conversion
+- Latest Products separated: independent `limit: 10` query — not affected by
+  catalog Filters or page
+- Desktop + mobile Filters UI polish (shared URL state); panel `w-64` /
+  Latest heading alignment preserved
+- Helpers: `catalog-search-params.ts`, `CatalogPagination.tsx`
+- **Not** included: schema / migration / RPC / new dependency; payment
+  provider integration unchanged (S7 remains partial)
+
+---
+
 ## v1.28.0 — S7B Checkout Payment Method Integration
 
 ### S7B — payment method selection + server enforcement

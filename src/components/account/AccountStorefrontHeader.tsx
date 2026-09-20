@@ -13,8 +13,6 @@ export function AccountStorefrontHeader() {
   return (
     <Header
       categories={[]}
-      selectedCategory={null}
-      onSelectCategory={() => {}}
       accountHref="/account"
     />
   );

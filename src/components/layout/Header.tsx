@@ -15,10 +15,14 @@ import { useLanguage } from "@/context/LanguageContext";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 
+type CatalogCategory = {
+  id: number | string;
+  name_ka: string;
+  name_en: string;
+};
+
 type HeaderProps = {
-  categories: string[];
-  selectedCategory: string | null;
-  onSelectCategory: (category: string | null) => void;
+  categories: CatalogCategory[];
   accountHref?: string;
 };
 
@@ -30,8 +34,6 @@ const RAIL_ITEM_COUNT = 5;
 
 export function Header({
   categories,
-  selectedCategory,
-  onSelectCategory,
   accountHref = "/account/login",
 }: HeaderProps) {
   const { t } = useLanguage();
@@ -51,7 +53,7 @@ export function Header({
   // =====================================
   // MOBILE TABS
   // =====================================
-  const [tab, setTab] = useState("categories");
+  const [tab, setTab] = useState("filters");
 
   // =====================================
   // <460px UTILITY RAIL SCROLL VISIBILITY
@@ -232,8 +234,6 @@ export function Header({
         tab={tab}
         setTab={setTab}
         categories={categories}
-        selectedCategory={selectedCategory}
-        onSelectCategory={onSelectCategory}
       />
     </>
   );

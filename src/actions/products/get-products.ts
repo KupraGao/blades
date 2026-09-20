@@ -2,14 +2,16 @@
 
 import { createClient } from "@/lib/supabase/server";
 
-type GetProductsOptions={
-  categoryId?:string;
-  brandId?:string;
-  stock?:string;
-  search?:string;
-  sort?:string;
-  page?:number;
-  limit?:number;
+type GetProductsOptions = {
+  categoryId?: string;
+  brandId?: string;
+  stock?: string;
+  search?: string;
+  sort?: string;
+  page?: number;
+  limit?: number;
+  minPrice?: number | null;
+  maxPrice?: number | null;
 };
 
 export async function getProducts({
@@ -18,101 +20,112 @@ export async function getProducts({
   stock,
   search,
   sort,
-  page=1,
-  limit=20,
-}:GetProductsOptions={}){
+  page = 1,
+  limit = 20,
+  minPrice = null,
+  maxPrice = null,
+}: GetProductsOptions = {}) {
+  const supabase = await createClient();
 
-  const supabase=await createClient();
+  const safePage = Number.isFinite(page) && page >= 1 ? Math.floor(page) : 1;
+  const safeLimit =
+    Number.isFinite(limit) && limit >= 1 ? Math.floor(limit) : 20;
 
-  let query=supabase
+  const categoryEmbed = categoryId
+    ? "product_categories!inner(category_id,categories(id,name_ka,name_en))"
+    : "product_categories(category_id,categories(id,name_ka,name_en))";
+
+  let query = supabase
     .from("products")
-    .select(`
+    .select(
+      `
       *,
       brands(id,name,slug,logo),
       product_images(id,image_url,is_main),
-      product_categories!inner(category_id,categories(id,name_ka,name_en))
-    `,{
-      count:"exact",
-    });
+      ${categoryEmbed}
+    `,
+      {
+        count: "exact",
+      },
+    );
 
-  // კატეგორიის მიხედვით გაფილტვრა
-  if(categoryId){
-    query=query.eq("product_categories.category_id",categoryId);
+  if (categoryId) {
+    query = query.eq("product_categories.category_id", categoryId);
   }
 
-  // ბრენდის მიხედვით გაფილტვრა
-  if(brandId){
-    query=query.eq("brand_id",brandId);
+  if (brandId) {
+    query = query.eq("brand_id", brandId);
   }
 
-  // მარაგის მიხედვით გაფილტვრა
-  if(stock==="in-stock"){
-    query=query.gt("stock",0);
+  if (stock === "in-stock") {
+    query = query.gt("stock", 0);
   }
 
-  if(stock==="out-of-stock"){
-    query=query.eq("stock",0);
+  if (stock === "out-of-stock") {
+    query = query.eq("stock", 0);
   }
 
-  // პროდუქტის მახასიათებლების მიხედვით ძებნა
-  if(search){
-    query=query.or(
-      `title.ilike.%${search}%,knife_type.ilike.%${search}%,blade_steel.ilike.%${search}%,handle_material.ilike.%${search}%,country.ilike.%${search}%`
+  if (minPrice !== null && minPrice !== undefined && Number.isFinite(minPrice)) {
+    query = query.gte("price", minPrice);
+  }
+
+  if (maxPrice !== null && maxPrice !== undefined && Number.isFinite(maxPrice)) {
+    query = query.lte("price", maxPrice);
+  }
+
+  if (search) {
+    query = query.or(
+      `title.ilike.%${search}%,knife_type.ilike.%${search}%,blade_steel.ilike.%${search}%,handle_material.ilike.%${search}%,country.ilike.%${search}%`,
     );
   }
 
-  switch(sort){
-
+  switch (sort) {
     case "oldest":
-      query=query.order("created_at",{ascending:true});
+      query = query.order("created_at", { ascending: true });
       break;
 
     case "price-asc":
-      query=query.order("price",{ascending:true});
+      query = query.order("price", { ascending: true });
       break;
 
     case "price-desc":
-      query=query.order("price",{ascending:false});
+      query = query.order("price", { ascending: false });
       break;
 
     case "name-asc":
-      query=query.order("title",{ascending:true});
+      query = query.order("title", { ascending: true });
       break;
 
     case "name-desc":
-      query=query.order("title",{ascending:false});
+      query = query.order("title", { ascending: false });
       break;
 
     default:
-      query=query.order("created_at",{ascending:false});
-
+      query = query.order("created_at", { ascending: false });
   }
 
-  const from=(page-1)*limit;
-  const to=from+limit-1;
+  const from = (safePage - 1) * safeLimit;
+  const to = from + safeLimit - 1;
 
-  query=query.range(from,to);
+  query = query.range(from, to);
 
-  const{
-    data,
-    error,
-    count,
-  }=await query;
+  const { data, error, count } = await query;
 
-  if(error){
-    console.log("PRODUCTS FETCH ERROR:",error);
+  if (error) {
+    console.log("PRODUCTS FETCH ERROR:", error);
 
-    return{
-      products:[],
-      total:0,
-      totalPages:0,
+    return {
+      products: [],
+      total: 0,
+      totalPages: 0,
     };
   }
 
-  return{
-    products:data,
-    total:count??0,
-    totalPages:Math.ceil((count??0)/limit),
-  };
+  const total = count ?? 0;
 
+  return {
+    products: data,
+    total,
+    totalPages: Math.ceil(total / safeLimit),
+  };
 }

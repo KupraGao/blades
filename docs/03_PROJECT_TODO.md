@@ -120,6 +120,28 @@
 
 ---
 
+## ✅ COMPLETED — Home Catalog Filters + Server-Side Pagination
+
+- Storefront control: Categories → Filters (`Filters` / `ფილტრები`)
+- Category + Price filters combine with **AND** against the full catalog
+  **before** pagination (not client-side on the current page only)
+- Stable category ID in URL (`?category=`); `name_ka` / `name_en` display only
+- Price uses existing `products.price` (GEL / `₾`); min-only / max-only /
+  both / unbounded; invalid `min > max` not sent as a bad query
+- URL state: `category`, `minPrice`, `maxPrice`, `page` (single source of truth)
+- Page size **20**; exact filtered count drives page count; filter/Clear →
+  `page = 1`
+- Clear Filters; active filter count (Category + Price groups; min+max = 1)
+- Desktop Filters panel + Mobile Menu Drawer share the same URL state
+- Empty filtered catalog: localized empty state; Latest Products unchanged
+- Latest Products: independent `getProducts({ page: 1, limit: 10 })` — not
+  filtered by catalog Filters / page
+- Extended `getProducts` (category / minPrice / maxPrice / count / range);
+  helpers: `catalog-search-params.ts`, `CatalogPagination.tsx`
+- No schema / migration / RPC / new dependency
+
+---
+
 ## ✅ COMPLETED — Admin Orders Management (Phases A–D)
 
 ### Phase A — Admin Order Details

@@ -39,9 +39,12 @@
 - Delivery / Pickup System
   (Checkout fulfillment, Pickup + Delivery workflows, Delivery Failed,
   Retry Delivery, Returned to Store + transactional stock restore)
+- Home storefront catalog Filters + server-side pagination
+  (Category + Price AND; URL state; 20/page; Latest Products independent)
 
 See `docs/06_CHANGELOG.md` for version history (S6 Customer Ownership complete;
-S7A–S7B payment-method path + S7B-1 delivery minimum — see latest changelog).
+S7A–S7B payment-method path + S7B-1 delivery minimum — see latest changelog;
+Home catalog Filters + pagination in latest changelog).
 
 ---
 
@@ -107,7 +110,9 @@ payment verification, automatic `paid`, refunds.
 
 **Auth / Catalog / Customer Ownership closed through S6.** Cart partial-purchase
 selection and Checkout Success thumbnails are shipped. Delivery / Pickup
-operational workflow remains complete and closed.
+operational workflow remains complete and closed. Home storefront Featured
+Catalog Filters (Category + Price, URL state, 20/page server pagination) and
+independent Latest Products query are shipped — see Architecture / Changelog.
 
 ---
 
