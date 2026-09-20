@@ -33,6 +33,24 @@ export function getCustomerFieldError(
     return undefined;
   }
 
+  if (field === "paymentMethod") {
+    if (
+      values.paymentMethod !== "online" &&
+      values.paymentMethod !== "pay_at_pickup"
+    ) {
+      return "validationPaymentRequired";
+    }
+
+    if (
+      values.fulfillmentMethod === "delivery" &&
+      values.paymentMethod !== "online"
+    ) {
+      return "validationPaymentCombinationInvalid";
+    }
+
+    return undefined;
+  }
+
   const value = values[field].trim();
 
   switch (field) {
@@ -85,6 +103,7 @@ export function getCustomerFormErrors(
     "phone",
     "address",
     "fulfillmentMethod",
+    "paymentMethod",
   ];
 
   const errors: CheckoutCustomerFormErrors = {};

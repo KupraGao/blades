@@ -91,7 +91,32 @@
 - Server gate: authoritative resolved DB prices in `createOrder`; rejects
   delivery under 150 **before** order insert / items insert / stock decrement
 - Cart Item Selection / ownership / stock / fulfillment architecture preserved
-- **Not** included: payment-method Checkout UI
+
+---
+
+## ✅ COMPLETED — S7B Checkout Payment Method Integration
+
+- Checkout payment selection: `online` | `pay_at_pickup` (**no** COD)
+- Delivery → Online only; Pickup → Online or Pay at Pickup
+- Default `paymentMethod = online`; Pickup + Pay at Pickup → switch to
+  Delivery forces `online`
+- Server `validateOrder` rejects `delivery + pay_at_pickup` and unknown
+  methods (incl. `cash_on_delivery`) **before** order insert / items /
+  stock decrement
+- Persists `payment_method`; server sets `payment_status = unpaid` for all
+  current valid combinations (online ≠ charged)
+- KA/EN labels + errors via existing dictionaries
+- **Not** included: provider / bank charge, webhooks, auto-`paid`, refunds
+
+---
+
+## ✅ COMPLETED — Product Card responsive polish
+
+- Home product grid: mobile `gap-x-3 gap-y-4`; `sm+` keeps `gap-6`;
+  column breakpoints unchanged
+- Add-to-Cart float feedback: mobile wrap / max-width so KA text + checkmark
+  stay readable; `sm+` nowrap; ProductCard `overflow-hidden` kept;
+  no cart/stock logic change
 
 ---
 
@@ -283,9 +308,9 @@ createOrder production RPC hardening.
 ⬜ Email Notifications — every successful order → confirmation email to
   `customer_email` (Guest + Customer); not tied to Account; not implemented
 
-⬜ Payments (S7) — **partial:** S7A DB ✅ + S7B-1 delivery minimum ✅;
-  next: Checkout payment-method UI (`online` | `pay_at_pickup`); then
-  provider / webhooks / refunds (not started). No COD.
+⬜ Payments (S7) — **partial:** S7A DB ✅ + S7B-1 ✅ + S7B payment-method ✅;
+  next: real online payment / provider integration (provider not chosen);
+  then webhooks / refunds / auto-`paid` (not started). No COD.
 
 ⬜ Shipping pricing (beyond free Tbilisi delivery + 150 GEL minimum)
 

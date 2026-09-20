@@ -77,9 +77,8 @@ Email continues to come from the authenticated Supabase Auth user.
   - S6D: My Orders queries filter by auth `user.id`
   - S6E: authenticated `createOrder` sets `user_id` from `getAuthUser()` only
 - Adjacent remaining: guest `createOrder` abuse controls; S7 Payments
-  (**partial:** S7A DB ✅ + S7B-1 delivery minimum ✅; payment-method UI /
-  provider / webhooks / refunds remaining); Order Confirmation email
-  (not implemented)
+  (**partial:** S7A DB ✅ + S7B-1 ✅ + S7B payment-method ✅; real provider /
+  webhooks / refunds remaining); Order Confirmation email (not implemented)
 
 Storefront supports **Guest** and **Customer** checkout. Admin remains a
 separate authorization path (`admin_users`).
@@ -110,15 +109,18 @@ Fields written/read by the application:
   - Guest `createOrder` → `user_id = null`; authenticated → `getAuthUser().id`
   - Existing pre-S6A / unclaimed Guest rows remain `user_id` NULL
     (never backfilled by email)
-- Payment columns (S7A — live DB verified; **not** yet written by Checkout app):
+- Payment columns (S7A — live DB verified; **written by Checkout as of S7B**):
   - `payment_method` — TEXT NULL; allowed non-null: `online` | `pay_at_pickup`
     (**no** `cash_on_delivery`)
   - `payment_status` — TEXT NOT NULL DEFAULT `unpaid`; allowed: `unpaid` |
     `pending` | `paid` | `failed` | `refund_pending` | `refunded`
   - `payment_provider` / `payment_transaction_id` — TEXT NULL
   - `paid_at` — TIMESTAMPTZ NULL
-  - Historical rows: method NULL, status unpaid, metadata NULL
+  - New Checkout orders (S7B): set `payment_method` from validated input;
+    server sets `payment_status = unpaid` (online ≠ charged)
+  - Historical pre-S7B rows may remain: method NULL, status unpaid, metadata NULL
   - Order `status` and `payment_status` are independent lifecycles
+  - S7B required **no** new schema migration (S7A columns sufficient)
 
 ### Fulfillment method (live DB verified)
 
@@ -302,13 +304,16 @@ Foreign-key constraint definitions are assumed by application usage but are
 - Delivery (S7B-1): after resolve, authoritative subtotal must be ≥ 150 GEL
   when `fulfillment_method` is delivery; otherwise reject before inserts /
   stock decrement (do not trust client totals)
+- Payment (S7B): `validateOrder` requires `online` | `pay_at_pickup` and a
+  valid fulfillment combo **before** inserts / stock decrement; rejects
+  `delivery + pay_at_pickup` and unknown methods (incl. COD strings)
 - `total_price` is computed only from resolved item prices × quantities
 - Order line title/price are snapshotted onto `order_items`
 - After successful `orders` + `order_items` insert, product `stock` is decremented
 - Partial-failure compensation deletes / stock restore are best-effort
   (not a full DB transaction / RPC for **order creation**)
-- Payment columns exist (S7A) but Checkout does **not** yet set `payment_method`
-  / drive payment status; provider / webhooks / refunds not implemented
+- Checkout persists `payment_method`; server sets `payment_status = unpaid`
+  (S7B). Provider / webhooks / auto-`paid` / refunds not implemented
 
 ### Stock semantics (current)
 
@@ -388,8 +393,10 @@ Exact RPC SQL is managed in the live Supabase database and is
 - Historical orders verified: `payment_method` NULL, `payment_status` unpaid,
   provider / transaction / `paid_at` NULL
 - Order status and payment status remain independent
-- **Not** yet: Checkout payment-method UI, provider writes, webhooks,
-  payment verification, refunds (no app migration file in repo for this DDL)
+- **S7B app usage:** Checkout writes `payment_method`; create path forces
+  `payment_status = unpaid`. No S7B DDL / migration.
+- **Not** yet: real provider writes, webhooks, payment verification, refunds
+  (no app migration file in repo for the original S7A DDL)
 
 ### Guest success order access (S6C Step 1)
 

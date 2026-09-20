@@ -185,6 +185,13 @@ export const en = {
   fulfillmentMethodLabel: "Fulfillment Method",
   fulfillmentDelivery: "Delivery",
   fulfillmentPickup: "Pickup",
+  paymentMethodLabel: "Payment Method",
+  paymentMethodOnline: "Online Payment",
+  paymentMethodPayAtPickup: "Pay at Pickup",
+  paymentDeliveryOnlineOnly:
+    "Delivery orders are paid online.",
+  paymentPickupOptionsHint:
+    "Pay online now, or pay when you pick up your order.",
   deliveryMinimumRequired:
     "Delivery requires a minimum purchase of ₾150.",
   deliveryTbilisiFree: "Delivery in Tbilisi is free.",
@@ -213,6 +220,9 @@ export const en = {
   validationAddressRequired: "Address is required.",
   validationAddressMin: "Address must be at least 5 characters.",
   validationFulfillmentRequired: "Select delivery or pickup.",
+  validationPaymentRequired: "Select a payment method.",
+  validationPaymentCombinationInvalid:
+    "Delivery requires online payment. Choose online or switch to pickup.",
 
   // =====================================
   // ORDER CONFIRMATION
@@ -259,6 +269,9 @@ export const en = {
   orderErrorAddressRequired: "Address is required.",
   orderErrorAddressMin: "Address must be at least 5 characters.",
   orderErrorFulfillmentInvalid: "Select a valid fulfillment method.",
+  orderErrorPaymentMethodInvalid: "Select a valid payment method.",
+  orderErrorPaymentCombinationInvalid:
+    "Delivery requires online payment. Pay at pickup is only available for pickup orders.",
   orderErrorDeliveryMinimum:
     "Delivery requires a minimum purchase of ₾150. Choose pickup or add more items.",
   orderErrorCartEmpty: "Your cart is empty.",

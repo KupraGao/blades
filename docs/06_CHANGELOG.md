@@ -14,6 +14,38 @@
 
 ---
 
+## v1.28.0 — S7B Checkout Payment Method Integration
+
+### S7B — payment method selection + server enforcement
+
+- Checkout payment UI: `online` | `pay_at_pickup` (**no** COD / cash_on_delivery)
+- Delivery → Online only; Pickup → Online or Pay at Pickup; default `online`
+- Fulfillment sync: Pickup + Pay at Pickup → Delivery forces `online`
+- Server `validateOrder` + `payment-rules` reject invalid combos / unknown
+  methods **before** order insert, order_items insert, or stock decrement
+- Persists `payment_method`; server-authoritative `payment_status = unpaid`
+  for all current valid combinations (online ≠ charged)
+- Verified: manual Checkout flows; Supabase `pay_at_pickup` + `unpaid`;
+  negative `validateOrder` tests (`delivery + pay_at_pickup`,
+  `cash_on_delivery`); `git diff --check` + `npm run build` passed
+- **Not** included: provider / bank charge, webhooks, auto-`paid`, refunds
+
+S7 Payments milestone remains **partial** (S7A + S7B-1 + S7B; provider next).
+
+---
+
+## v1.27.0 — Product Card responsive polish
+
+### Product grid + add-to-cart feedback
+
+- Home product grid: mobile `gap-x-3 gap-y-4`; `sm+` retains `gap-6`;
+  column breakpoints unchanged
+- Add-to-Cart float feedback: mobile wrap / constrained width so KA text and
+  checkmark remain readable inside the card; `sm+` compact nowrap
+- ProductCard `overflow-hidden` unchanged; no cart/stock logic change
+
+---
+
 ## v1.26.0 — Account → Admin Panel shortcut
 
 ### Account Admin navigation

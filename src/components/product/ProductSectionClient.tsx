@@ -56,7 +56,7 @@ export function ProductSectionClient({
           <h2 className="section-title">{t.featuredProducts}</h2>
         </div>
 
-        <div className="mt-10 grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
+        <div className="mt-10 grid grid-cols-2 gap-x-3 gap-y-4 sm:grid-cols-3 sm:gap-6 lg:grid-cols-4 2xl:grid-cols-5">
           {filteredProducts.map((product: any) => (
             <ProductCard key={product.id} product={product} />
           ))}

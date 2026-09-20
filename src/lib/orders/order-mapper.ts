@@ -2,12 +2,14 @@ import {
   CreateOrderInput,
   ResolvedOrderItem,
 } from "./validate-order";
+import { CREATE_ORDER_PAYMENT_STATUS } from "./payment-rules";
 
 // =================================================
 // ORDER MAPPER
 // =================================================
 // userId is server-derived only (getAuthUser). Never from
 // CreateOrderInput / client. Guest → null; Customer → auth id.
+// payment_status is server-authoritative (S7B: always unpaid).
 // =================================================
 
 export function orderMapper(
@@ -37,6 +39,10 @@ export function orderMapper(
       order.customerNote?.trim() || null,
 
     fulfillment_method: order.fulfillmentMethod,
+
+    payment_method: order.paymentMethod,
+
+    payment_status: CREATE_ORDER_PAYMENT_STATUS,
 
     total_price: items.reduce(
       (total, item) =>

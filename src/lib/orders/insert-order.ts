@@ -15,6 +15,8 @@ export async function insertOrder(
     customer_address: string | null;
     customer_note: string | null;
     fulfillment_method: "delivery" | "pickup";
+    payment_method: "online" | "pay_at_pickup";
+    payment_status: "unpaid";
     total_price: number;
     status: string;
     user_id: string | null;

@@ -41,7 +41,7 @@
   Retry Delivery, Returned to Store + transactional stock restore)
 
 See `docs/06_CHANGELOG.md` for version history (S6 Customer Ownership complete;
-S7A payment columns + S7B-1 delivery minimum — see latest changelog).
+S7A–S7B payment-method path + S7B-1 delivery minimum — see latest changelog).
 
 ---
 
@@ -72,23 +72,30 @@ Customer auth is separate from Admin authorization (`admin_users`).
   message; free delivery in Tbilisi (no fee). Client uses `selectedCartTotal`;
   server enforces on authoritative resolved prices before inserts / stock
   decrement.
+- ✅ **S7B** Checkout Payment Method Integration — Checkout selects
+  `online` | `pay_at_pickup` with fulfillment rules (Delivery → online only;
+  Pickup → online or pay_at_pickup). Server `validateOrder` rejects invalid
+  combos / unknown methods **before** order insert, items insert, or stock
+  decrement. Persists `payment_method`; server sets `payment_status = unpaid`
+  for all current combinations. **No** COD. Online = method selection only
+  (not a real charge).
 
-**Not** done yet: Checkout payment-method UI, provider integration, webhooks,
-payment verification, refunds. Online / pay-at-pickup are DB-allowed values
-only — not wired in Checkout yet.
+**Not** done yet: real online payment / provider integration, webhooks,
+payment verification, automatic `paid`, refunds.
 
 ---
 
 ## 🚀 Immediate Next
 
-### S7B — Checkout payment method (next)
+### Real online payment / provider integration (next)
 
-⬜ Checkout payment-method selection + server capture for allowed values
-  (`online` | `pay_at_pickup`), fulfillment-aware rules — **no** COD
+⬜ Integrate a real payment provider for Checkout `online` orders
+  (charge / session / verification) — provider **not** selected yet
 
-- S7A DB columns live; S7B-1 delivery minimum shipped
-- Do **not** claim online payments work until provider + verification exist
-- Provider / webhooks / refunds — later S7 steps (not started)
+- S7A DB + S7B-1 delivery minimum + S7B payment-method selection shipped
+- Do **not** claim money is charged until provider + verification exist
+- Webhooks / refunds / automatic `paid` — later payment steps (not started)
+- No new S7C/S7D stage id assigned in docs yet
 
 ### Production hardening (remaining)
 
@@ -165,8 +172,9 @@ operational workflow remains complete and closed.
 
 ⬜ Shipping pricing (beyond free Tbilisi delivery + 150 GEL delivery minimum)
 
-⬜ Payments (S7) — **partial:** S7A DB ✅ + S7B-1 delivery minimum ✅;
-  payment-method Checkout UI / provider / webhooks / refunds remaining
+⬜ Payments (S7) — **partial:** S7A DB ✅ + S7B-1 delivery minimum ✅ +
+  S7B payment-method Checkout ✅; real provider / webhooks / refunds remaining
+  (**no** COD)
 
 ⬜ Coupons
 

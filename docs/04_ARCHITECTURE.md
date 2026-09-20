@@ -349,7 +349,7 @@ Checkout and `createOrder` use **selected** lines only; badge counts all.
 
 ↓
 
-Controlled Customer Form + live Order Summary
+Controlled Customer Form (fulfillment + payment method) + live Order Summary
 
 ↓
 
@@ -357,7 +357,7 @@ Place Order → `createOrder` Server Action
 
 ↓
 
-Validate + consolidate items
+Validate (incl. payment method + fulfillment/payment combo) + consolidate items
 
 ↓
 
@@ -371,7 +371,8 @@ stock decrement (client also gates on `selectedCartTotal`)
 
 ↓
 
-Map order (`total_price`, `status: "pending"`)
+Map order (`total_price`, `status: "pending"`, `payment_method`,
+`payment_status: "unpaid"` — status server-authoritative)
 
 ↓
 
@@ -697,8 +698,11 @@ Customer ≠ Admin. Email is never ownership authorization.
   metadata). Order status ≠ payment status. Historical: method NULL, unpaid.
 - ✅ S7B-1 Delivery Minimum — ≥ 150 GEL for delivery; free Tbilisi delivery
   (no fee); client `selectedCartTotal` + server resolved prices before writes
-- ⬜ Checkout payment-method UI + server capture (`online` | `pay_at_pickup`)
-- ⬜ Provider integration / webhooks / payment verification / refunds
+- ✅ S7B Checkout Payment Method — UI + server capture; valid combos only;
+  `payment_status = unpaid` at create; rejects `delivery + pay_at_pickup` and
+  unknown methods before inserts / stock (`payment-rules` / `validateOrder`)
+- ⬜ Real online payment / provider integration (provider not chosen)
+- ⬜ Webhooks / payment verification / automatic `paid` / refunds
 - Guest `createOrder` abuse controls (rate limits / CAPTCHA / etc.)
 - Order Confirmation email (Guest + Customer) — documented only
 

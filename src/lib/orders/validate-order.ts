@@ -1,10 +1,17 @@
 import { orderError } from "@/lib/i18n/localize-storefront-message";
+import {
+  isPaymentMethod,
+  isValidFulfillmentPaymentCombination,
+  type PaymentMethod,
+} from "@/lib/orders/payment-rules";
 
 // =================================================
 // ORDER TYPES
 // =================================================
 
 export type FulfillmentMethod = "delivery" | "pickup";
+
+export type { PaymentMethod };
 
 export type CreateOrderItemInput = {
   productId: string;
@@ -18,6 +25,7 @@ export type CreateOrderInput = {
   customerAddress?: string | null;
   customerNote?: string;
   fulfillmentMethod: FulfillmentMethod;
+  paymentMethod: PaymentMethod;
   items: CreateOrderItemInput[];
 };
 
@@ -85,6 +93,23 @@ export function validateOrder(order: CreateOrderInput) {
 
   if (!isFulfillmentMethod(order.fulfillmentMethod)) {
     throw orderError("orderErrorFulfillmentInvalid");
+  }
+
+  // =================================================
+  // PAYMENT METHOD (runtime — do not trust client alone)
+  // =================================================
+
+  if (!isPaymentMethod(order.paymentMethod)) {
+    throw orderError("orderErrorPaymentMethodInvalid");
+  }
+
+  if (
+    !isValidFulfillmentPaymentCombination(
+      order.fulfillmentMethod,
+      order.paymentMethod,
+    )
+  ) {
+    throw orderError("orderErrorPaymentCombinationInvalid");
   }
 
   // =================================================

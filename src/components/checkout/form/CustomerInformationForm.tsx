@@ -2,11 +2,13 @@
 
 import { useLanguage } from "@/context/LanguageContext";
 import FulfillmentMethodSelector from "./FulfillmentMethodSelector";
+import PaymentMethodSelector from "./PaymentMethodSelector";
 import {
   CheckoutCustomerFormErrors,
   CheckoutCustomerFormField,
   CheckoutCustomerFormValues,
 } from "./types";
+import type { PaymentMethod } from "@/lib/orders/payment-rules";
 
 type Props = {
   values: CheckoutCustomerFormValues;
@@ -16,6 +18,7 @@ type Props = {
   onFulfillmentChange: (
     value: CheckoutCustomerFormValues["fulfillmentMethod"],
   ) => void;
+  onPaymentMethodChange: (value: PaymentMethod) => void;
   onSubmitAttempt: () => void;
   deliveryDisabled?: boolean;
 };
@@ -32,6 +35,7 @@ export default function CustomerInformationForm({
   onChange,
   onBlur,
   onFulfillmentChange,
+  onPaymentMethodChange,
   onSubmitAttempt,
   deliveryDisabled = false,
 }: Props) {
@@ -46,6 +50,7 @@ export default function CustomerInformationForm({
   const emailError = translateError(errors.email);
   const phoneError = translateError(errors.phone);
   const addressError = translateError(errors.address);
+  const paymentMethodError = translateError(errors.paymentMethod);
   const showAddress = values.fulfillmentMethod === "delivery";
 
   return (
@@ -188,6 +193,18 @@ export default function CustomerInformationForm({
           onChange={onFulfillmentChange}
           deliveryDisabled={deliveryDisabled}
         />
+
+        <PaymentMethodSelector
+          value={values.paymentMethod}
+          fulfillmentMethod={values.fulfillmentMethod}
+          onChange={onPaymentMethodChange}
+        />
+
+        {paymentMethodError ? (
+          <p className="text-sm text-red-600" role="alert">
+            {paymentMethodError}
+          </p>
+        ) : null}
 
         {showAddress ? (
           <div>

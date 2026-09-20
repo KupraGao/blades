@@ -183,6 +183,13 @@ export const ka = {
   fulfillmentMethodLabel: "მიწოდების მეთოდი",
   fulfillmentDelivery: "მიტანა",
   fulfillmentPickup: "ადგილიდან გატანა",
+  paymentMethodLabel: "გადახდის მეთოდი",
+  paymentMethodOnline: "ონლაინ გადახდა",
+  paymentMethodPayAtPickup: "გადახდა გატანისას",
+  paymentDeliveryOnlineOnly:
+    "მიტანის შეკვეთებზე გადახდა ხდება ონლაინ.",
+  paymentPickupOptionsHint:
+    "გადაიხადეთ ონლაინ ახლა, ან გადაიხადეთ გატანისას.",
   deliveryMinimumRequired:
     "მიტანისთვის საჭიროა მინიმუმ ₾150-ის შეძენა.",
   deliveryTbilisiFree: "თბილისში მიტანა უფასოა.",
@@ -211,6 +218,9 @@ export const ka = {
   validationAddressRequired: "მისამართი აუცილებელია.",
   validationAddressMin: "მისამართი მინიმუმ 5 სიმბოლოს უნდა შეიცავდეს.",
   validationFulfillmentRequired: "აირჩიეთ მიწოდება ან თვითგატანა.",
+  validationPaymentRequired: "აირჩიეთ გადახდის მეთოდი.",
+  validationPaymentCombinationInvalid:
+    "მიტანისთვის საჭიროა ონლაინ გადახდა. აირჩიეთ ონლაინ ან თვითგატანა.",
 
   // =====================================
   // ORDER CONFIRMATION
@@ -257,6 +267,9 @@ export const ka = {
   orderErrorAddressRequired: "მისამართი აუცილებელია.",
   orderErrorAddressMin: "მისამართი მინიმუმ 5 სიმბოლოს უნდა შეიცავდეს.",
   orderErrorFulfillmentInvalid: "აირჩიეთ სწორი მიწოდების მეთოდი.",
+  orderErrorPaymentMethodInvalid: "აირჩიეთ სწორი გადახდის მეთოდი.",
+  orderErrorPaymentCombinationInvalid:
+    "მიტანისთვის საჭიროა ონლაინ გადახდა. გადახდა გატანისას ხელმისაწვდომია მხოლოდ თვითგატანისთვის.",
   orderErrorDeliveryMinimum:
     "მიტანისთვის საჭიროა მინიმუმ ₾150-ის შეძენა. აირჩიეთ თვითგატანა ან დაამატეთ პროდუქტები.",
   orderErrorCartEmpty: "კალათა ცარიელია.",

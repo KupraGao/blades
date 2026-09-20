@@ -7,6 +7,11 @@ import { useCart } from "@/context/CartContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { localizeStorefrontMessage } from "@/lib/i18n/localize-storefront-message";
 import { isDeliverySubtotalAllowed } from "@/lib/orders/delivery-rules";
+import {
+  DEFAULT_PAYMENT_METHOD,
+  isValidFulfillmentPaymentCombination,
+  type PaymentMethod,
+} from "@/lib/orders/payment-rules";
 import type {
   CreateOrderInput,
   FulfillmentMethod,
@@ -99,12 +104,35 @@ export default function CheckoutPageContent() {
       ...current,
       fulfillmentMethod: next,
       address: next === "pickup" ? "" : current.address,
+      // Delivery only allows online — never leave pay_at_pickup selected.
+      paymentMethod:
+        next === "delivery" ? DEFAULT_PAYMENT_METHOD : current.paymentMethod,
     }));
 
     setTouched((current) => ({
       ...current,
       address: next === "pickup" ? false : current.address,
       fulfillmentMethod: true,
+      paymentMethod: true,
+    }));
+  }
+
+  function handlePaymentMethodChange(next: PaymentMethod) {
+    if (
+      values.fulfillmentMethod === "delivery" &&
+      next !== "online"
+    ) {
+      return;
+    }
+
+    setValues((current) => ({
+      ...current,
+      paymentMethod: next,
+    }));
+
+    setTouched((current) => ({
+      ...current,
+      paymentMethod: true,
     }));
   }
 
@@ -134,6 +162,16 @@ export default function CheckoutPageContent() {
       return;
     }
 
+    if (
+      !isValidFulfillmentPaymentCombination(
+        values.fulfillmentMethod,
+        values.paymentMethod,
+      )
+    ) {
+      setSubmissionError(t.orderErrorPaymentCombinationInvalid);
+      return;
+    }
+
     const purchasedIds = purchasedItems.map((item) => item.id);
     const isPickup = values.fulfillmentMethod === "pickup";
 
@@ -143,6 +181,7 @@ export default function CheckoutPageContent() {
       customerPhone: values.phone,
       customerAddress: isPickup ? null : values.address,
       fulfillmentMethod: values.fulfillmentMethod,
+      paymentMethod: values.paymentMethod,
       items: purchasedItems.map((item) => ({
         productId: item.id,
         quantity: item.quantity,
@@ -189,6 +228,10 @@ export default function CheckoutPageContent() {
       touched.fulfillmentMethod || submitAttempted
         ? errors.fulfillmentMethod
         : undefined,
+    paymentMethod:
+      touched.paymentMethod || submitAttempted
+        ? errors.paymentMethod
+        : undefined,
   };
 
   return (
@@ -215,6 +258,7 @@ export default function CheckoutPageContent() {
             onChange={handleChange}
             onBlur={handleBlur}
             onFulfillmentChange={handleFulfillmentChange}
+            onPaymentMethodChange={handlePaymentMethodChange}
             onSubmitAttempt={handleSubmitAttempt}
             deliveryDisabled={deliveryDisabled}
           />
