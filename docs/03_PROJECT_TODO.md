@@ -270,6 +270,10 @@ createOrder production RPC hardening.
 ✅ Logged-in checkout auto-attach (S6E) — `createOrder` + `getAuthUser()`;
   never accepts client `user_id`; Guest checkout unchanged
 
+✅ Account → Admin Panel shortcut — authorized admins only (`isAdmin` from
+  `getAuthorizedAdmin()`); `/account` page header link to `/admin`; normal
+  customers do not see it; admin route security unchanged
+
 ⬜ Customer-side order management (cancel / edit by Customer)
 
 ⬜ Advanced order editing (add/remove products on existing order)

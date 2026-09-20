@@ -51,7 +51,7 @@ export default function AccountOverview({
         {isAdmin && (
           <Link
             href="/admin"
-            className="inline-flex w-full shrink-0 items-center justify-center rounded-xl bg-brand-orange px-4 py-2.5 text-center text-sm font-semibold text-white shadow-sm transition hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-orange sm:w-auto"
+            className="inline-flex w-fit self-start shrink-0 items-center justify-center rounded-xl bg-brand-orange px-4 py-2.5 text-center text-sm font-semibold text-white shadow-sm transition hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-orange"
           >
             {t.accountAdminPanel}
           </Link>

@@ -52,6 +52,8 @@ S7A payment columns + S7B-1 delivery minimum — see latest changelog).
 - ✅ **S6C** Secure guest success proof + Guest → Customer claim
 - ✅ **S6D** Customer My Orders (owner-filtered list + detail)
 - ✅ **S6E** Logged-in checkout auto-ownership (`getAuthUser()` → `user_id`)
+- ✅ Authorized admins can open Admin Panel from `/account` (UI shortcut only;
+  `getAuthorizedAdmin()`; `/admin` protection unchanged)
 
 Guest checkout remains supported. Ownership is never client- or email-based.
 Customer auth is separate from Admin authorization (`admin_users`).
@@ -149,6 +151,9 @@ operational workflow remains complete and closed.
 ✅ Customer Account + My Orders (S6B–S6D)
 
 ✅ Linking orders to authenticated users (S6A / S6C claim / S6E auto-attach)
+
+✅ Account → Admin Panel shortcut for authorized admins (`/account` → `/admin`;
+  UI only; existing admin route protection unchanged)
 
 ⬜ Roles / Permissions beyond Admin vs Customer (future)
 

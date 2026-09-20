@@ -14,6 +14,24 @@
 
 ---
 
+## v1.26.0 — Account → Admin Panel shortcut
+
+### Account Admin navigation
+
+- Authenticated `/account` shows an **Admin Panel** button only when the
+  signed-in user is an authorized active administrator
+- Server page derives `isAdmin` via existing `getAuthorizedAdmin()` and passes
+  a boolean to `AccountOverview` (no admin object exposed to the client)
+- Button links to `/admin`; normal customers do not see it
+- Placement: page header (beside “My Account”), not inside the Profile card
+- Responsive: content-sized control (`w-fit` / `self-start`); does not stretch
+  full width on mobile
+- UI/navigation only — does **not** grant permissions; `/admin` remains
+  protected by existing admin authorization
+- No database / schema changes
+
+---
+
 ## v1.25.0 — S7A Payments DB + S7B-1 Delivery Minimum
 
 ### S7A — Payments Foundation (DB)
