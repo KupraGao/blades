@@ -828,6 +828,16 @@ Hard delete / archive is **not** part of the current architecture.
   - Logged-in checkout ownership (S6E):
     - `createOrder` → `getAuthUser()` → `orders.user_id = user.id | null`
     - Never from `CreateOrderInput` / client / FormData / URL
+  - Customer profile (post-S6):
+    - Account reads `profiles` for name/phone (Auth for email/session)
+    - `updateCustomerProfile` — authenticated SSR + RLS; no service role
+  - Password recovery / change:
+    - `requestPasswordReset` / `updateCustomerPassword` /
+      `changeCustomerPassword` — Auth APIs only; no profiles password column
+  - Admin Users (read-only):
+    - `getAdminCustomers` / `getAdminCustomer` — `requireAdmin()` +
+      `createAdminClient()`; Auth Admin + `profiles` join; owned orders by
+      `user_id` only
   - **S5** — Catalog Security Hardening (app + DB + Storage) ✅
   - Admin Catalog mutations:
     `requireAdmin()` → `createAdminClient()` → `service_role` → Catalog CRUD
@@ -863,6 +873,51 @@ Customer My Orders
 
 Customer ≠ Admin. Email is never ownership authorization.
 
+### Customer Account / Auth UX (profiles + password flows)
+
+```text
+Auth (identity / email / password / session / confirmation)
+  + public.profiles (full_name / phone)
+  → /account overview
+
+Profile edit
+  → authenticated SSR client + RLS (own row only)
+  → no service role; no user_metadata write
+  → email remains read-only
+
+Password
+  → show/hide on Login / Register / Reset / Change
+  → Forgot: resetPasswordForEmail → /auth/callback (PKCE)
+    → /account/reset-password (recovery session + updateUser)
+  → Logged-in Change Password (current-password proof + updateUser)
+  → passwords never stored in profiles / application DB
+
+Login UX
+  → Sign In / Forgot Password / Create Account / Continue as guest
+  → logout → /account/login?signedOut=1
+  → storefront browsing Auth-optional; Guest checkout unchanged
+```
+
+### Admin Users (read-only)
+
+```text
+/admin/users
+  → requireAdmin() + createAdminClient()
+  → Auth Admin listUsers + profiles join
+  → search (name / email / phone) + pagination (20)
+  → safe DTO only (no passwords / tokens)
+
+/admin/users/[id]
+  → Auth getUserById + profiles
+  → Order History: orders.user_id = auth user id only
+  → never email match; guest customer_email match ≠ owned
+  → links to existing /admin/orders/[id]
+```
+
+Intentionally deferred (not broken): customer email change; Admin
+edit / delete / ban / invite customer; Admin password manipulation;
+Admin role management; Admin Add/Invite Customer.
+
 ### Still remaining (outside S5–S6; S7 partial)
 
 - ✅ S7A Payments Foundation (DB) — Production columns live (`payment_method`
@@ -877,6 +932,9 @@ Customer ≠ Admin. Email is never ownership authorization.
 - ⬜ Webhooks / payment verification / automatic `paid` / refunds
 - Guest `createOrder` abuse controls (rate limits / CAPTCHA / etc.)
 - Order Confirmation email (Guest + Customer) — documented only
+- Customer email change; Admin customer mutations / invite / ban;
+  Admin password or role tools — **intentionally deferred** (User/Account
+  milestone complete for current read-only Admin Users scope)
 
 # 🏛️ Architecture Principles
 

@@ -30,6 +30,61 @@
 - orders
 - order_items
 - admin_users
+- profiles
+
+---
+
+## Customer Profiles (`profiles`)
+
+Live application table for customer display contact fields. **Executed
+manually in the Supabase SQL Editor** for this milestone — the repository
+did **not** gain a checked-in migration file for this DDL.
+
+### Schema (live)
+
+- `id` — UUID PK; references `auth.users(id)` `ON DELETE CASCADE`
+- `full_name` — text
+- `phone` — text
+- `created_at` / `updated_at` — timestamptz
+
+### Source-of-truth boundaries
+
+| Concern | Source |
+|---------|--------|
+| Identity / email / password / session / email confirmation | Supabase Auth (`auth.users`) |
+| Customer `full_name` / `phone` (application) | `public.profiles` |
+| Order contact fields (`customer_name` / `customer_email` / `customer_phone`) | Historical **order snapshots** — not live profile data |
+| Admin operator authorization | `admin_users` only — **not** a customer registry |
+| Order ownership | `orders.user_id` → `auth.users(id)` (unchanged) |
+
+### Triggers (live)
+
+- **AFTER INSERT** on `auth.users` — creates a matching `profiles` row from
+  `raw_user_meta_data` (`full_name` / `phone`) for new signups
+- **BEFORE UPDATE** on `profiles` — maintains `updated_at`
+
+### Backfill
+
+Existing Auth users were backfilled into `profiles` from
+`auth.users.raw_user_meta_data` when the table was introduced.
+
+### Privileges / RLS (live)
+
+- RLS **enabled**
+- Authenticated customer: **SELECT** own row (`id = auth.uid()`)
+- Authenticated customer: **UPDATE** own row
+- Authenticated customer: **no** INSERT / **no** DELETE
+- Admin privileged reads/joins use existing service-role server architecture
+  (`createAdminClient()` after `requireAdmin()` / `getAuthorizedAdmin()`)
+
+### Application usage
+
+- Customer Account reads name/phone primarily from `profiles`; falls back to
+  Auth `user_metadata` only if the profile row is missing
+- Customer profile updates use the normal authenticated Supabase SSR client
+  and RLS (no service role; do not write Auth `user_metadata`)
+- Admin Users list/detail joins `profiles` for name/phone (email and
+  registration / confirmation remain from Auth)
 
 ---
 
@@ -76,12 +131,20 @@ Email continues to come from the authenticated Supabase Auth user.
   - S6C: guest success HMAC proof + claim (`user_id IS NULL` only)
   - S6D: My Orders queries filter by auth `user.id`
   - S6E: authenticated `createOrder` sets `user_id` from `getAuthUser()` only
+- **Customer Profiles + Admin Users (read-only) — COMPLETE for current scope**
+  - `public.profiles` live (manual SQL Editor; no in-repo migration)
+  - Customer Account edit of own name/phone; password forgot/reset/change
+  - `/admin/users` + `/admin/users/[id]` read-only (Auth + profiles join;
+    owned orders via `orders.user_id` only)
+  - Deferred (intentional): customer email change; Admin edit/delete/ban/
+    invite; Admin password / role management
 - Adjacent remaining: guest `createOrder` abuse controls; S7 Payments
   (**partial:** S7A DB ✅ + S7B-1 ✅ + S7B payment-method ✅; real provider /
   webhooks / refunds remaining); Order Confirmation email (not implemented)
 
 Storefront supports **Guest** and **Customer** checkout. Admin remains a
-separate authorization path (`admin_users`).
+separate authorization path (`admin_users`). `admin_users` is **not** a
+customer registry.
 
 ---
 
@@ -290,8 +353,28 @@ order_items
 
 products (`product_id` → `products.id`)
 
-Foreign-key constraint definitions are assumed by application usage but are
-**not confirmed by repository SQL migrations**.
+auth.users
+
+↓
+
+profiles (`id` → `auth.users.id` `ON DELETE CASCADE`)
+
+auth.users
+
+↓
+
+admin_users (`user_id` → `auth.users.id` `ON DELETE CASCADE`)
+
+auth.users
+
+↓
+
+orders.user_id (`NULL` = Guest; non-null → `auth.users.id` `ON DELETE SET NULL`)
+
+Foreign-key constraint definitions for Catalog / Orders are assumed by
+application usage but are **not** always confirmed by repository SQL
+migrations. `profiles` FK / triggers / RLS were applied live via the
+Supabase SQL Editor (no in-repo migration file for that work).
 
 ---
 
@@ -432,6 +515,16 @@ Exact RPC SQL is managed in the live Supabase database and is
 - Never from `CreateOrderInput` / client / FormData / URL
 - Guest success proof still issued; claim path unchanged for Guest orders
 
+### Customer Profiles access (app — live DB; no in-repo migration)
+
+- Customer self-service updates: authenticated SSR client + RLS on own
+  `profiles` row only (no service role)
+- Admin Users: `requireAdmin()` → `createAdminClient()` → Auth Admin APIs
+  + `profiles` join; only safe DTOs to UI (no passwords / tokens)
+- Admin customer Order History: `orders.user_id =` selected Auth user id
+  only — never email matching; guest orders with the same
+  `customer_email` are **not** owned orders
+
 ### Catalog privileges (S5 — live verified)
 
 Tables: `products`, `brands`, `categories`, `product_categories`,
@@ -516,3 +609,8 @@ Exact Orders RLS policy SQL is not stored in this repository.
 აქ შეინახება ყველა Migration და SQL Script.
 
 Repository currently does not contain checked-in Orders migrations.
+
+`public.profiles` foundation DDL was applied manually in the Supabase SQL
+Editor. There is **no** in-repo migration file for profiles as part of that
+work — document the live DB state above; do not claim a repo migration
+exists.

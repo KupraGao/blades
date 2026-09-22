@@ -49,6 +49,28 @@ export const en = {
   accountMyAccount: "My Account",
   accountOverviewDescription: "Manage your storefront account.",
   accountProfileTitle: "Profile",
+  accountEditProfile: "Edit Profile",
+  accountSaveProfile: "Save",
+  accountSavingProfile: "Saving...",
+  accountCancelEdit: "Cancel",
+  accountProfileUpdateSuccess: "Profile updated.",
+  accountProfileUpdateFailed: "Unable to update profile. Please try again.",
+  accountProfileUpdateUnauthorized: "Please sign in to update your profile.",
+  accountSecurityTitle: "Security",
+  accountChangePassword: "Change Password",
+  accountCurrentPassword: "Current Password",
+  accountChangePasswordSubmit: "Update Password",
+  accountChangePasswordSubmitting: "Updating...",
+  accountChangePasswordSuccess: "Password updated.",
+  accountChangePasswordUnauthorized:
+    "Please sign in to change your password.",
+  accountChangePasswordCurrentIncorrect:
+    "Current password is incorrect.",
+  accountChangePasswordSameAsCurrent:
+    "New password must be different from your current password.",
+  accountChangePasswordFailed:
+    "Unable to update your password. Please try again.",
+  accountPasswordMasked: "••••••••",
   accountEmailLabel: "Email",
   accountFullName: "Full Name",
   accountPhone: "Phone",
@@ -67,12 +89,17 @@ export const en = {
   accountRegisterSubmitting: "Creating Account...",
   accountEmail: "Email",
   accountPassword: "Password",
+  accountShowPassword: "Show password",
+  accountHidePassword: "Hide password",
   accountConfirmPassword: "Confirm Password",
   accountNoAccount: "Don't have an account?",
   accountHaveAccount: "Already have an account?",
-  accountGoToRegister: "Create account",
+  accountGoToRegister: "Create Account",
   accountGoToLogin: "Sign in",
   accountBackToStore: "Back to Store",
+  accountOr: "OR",
+  accountContinueAsGuest: "Continue as guest",
+  accountSignedOutSuccess: "You have signed out successfully.",
   accountAuthFullNameRequired: "Full name is required.",
   accountAuthFullNameMin: "Full name must be at least 2 characters.",
   accountAuthPhoneRequired: "Phone number is required.",
@@ -96,6 +123,32 @@ export const en = {
     "Your account was created, but email confirmation is required before you can sign in. If confirmation email is enabled for this project, check your inbox (and spam). After confirming, return here to sign in.",
   accountAuthConfirmLinkFailed:
     "We could not complete email confirmation. Please try signing in, or register again if needed.",
+  accountForgotPassword: "Forgot password?",
+  accountForgotPasswordTitle: "Reset your password",
+  accountForgotPasswordDescription:
+    "Enter your account email and we will send password reset instructions if an account exists.",
+  accountForgotPasswordSubmit: "Send reset link",
+  accountForgotPasswordSubmitting: "Sending...",
+  accountForgotPasswordSent:
+    "If an account exists for this email, password reset instructions have been sent.",
+  accountForgotPasswordFailed:
+    "Unable to send reset instructions right now. Please try again.",
+  accountAuthRecoveryLinkFailed:
+    "This password reset link is invalid or has expired. Request a new link below.",
+  accountResetPasswordTitle: "Choose a new password",
+  accountResetPasswordDescription:
+    "Enter and confirm your new password to finish resetting your account.",
+  accountNewPassword: "New Password",
+  accountConfirmNewPassword: "Confirm New Password",
+  accountResetPasswordSubmit: "Update password",
+  accountResetPasswordSubmitting: "Updating...",
+  accountResetPasswordSuccessTitle: "Password updated",
+  accountResetPasswordSuccessDescription:
+    "Your password has been changed successfully. You can continue to your account.",
+  accountResetPasswordUnauthorized:
+    "Your reset session is missing or expired. Please request a new password reset link.",
+  accountResetPasswordFailed:
+    "Unable to update your password. Please try again or request a new reset link.",
   accountMyOrdersComingSoon: "My Orders — coming soon",
   accountMyOrders: "My Orders",
   accountMyOrdersCount: "{count} orders",
@@ -383,6 +436,28 @@ export const en = {
   manageBrands: "Manage your brands",
   manageCategories: "Manage your categories",
   manageCustomerOrders: "Manage customer orders",
+  manageUsers: "View registered customers",
+  searchUsers: "Search name, email or phone...",
+  joined: "Joined",
+  emailStatus: "Email status",
+  emailConfirmed: "Confirmed",
+  emailUnconfirmed: "Unconfirmed",
+  noUsersYet: "No registered users yet",
+  noUsersMatchSearch: "No users match your search",
+  usersWillAppear: "Customers will appear here after they register.",
+  showingUsers: "Showing {from}–{to} of {total} users",
+  adminUsersLoadFailed: "Unable to load users",
+  adminUsersLoadFailedHint: "Please refresh the page and try again.",
+  adminCustomerDetails: "Customer Details",
+  adminCustomerAccount: "Account",
+  adminCustomerOrderHistory: "Order History",
+  adminCustomerNoOrders: "No orders for this customer",
+  adminCustomerNoOrdersHint:
+    "Owned storefront orders will appear here when available.",
+  adminCustomerNotFound: "Customer not found",
+  adminCustomerNotFoundDescription:
+    "This customer could not be loaded or does not exist.",
+  backToUsers: "← Back to Users",
 
   // =====================================
   // ADMIN — ORDERS

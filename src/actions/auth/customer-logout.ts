@@ -23,5 +23,5 @@ export async function logoutCustomer() {
     });
   }
 
-  redirect("/");
+  redirect("/account/login?signedOut=1");
 }

@@ -8,6 +8,7 @@ type Props = {
   searchParams: Promise<{
     error?: string;
     next?: string;
+    signedOut?: string;
   }>;
 };
 
@@ -23,11 +24,13 @@ export default async function AccountLoginPage({ searchParams }: Props) {
 
   const initialErrorKey =
     params.error === "confirm" ? "accountAuthConfirmLinkFailed" : null;
+  const showSignedOutMessage = params.signedOut === "1";
 
   return (
     <main className="flex min-h-[70vh] items-center px-4 py-10 sm:px-6">
       <CustomerLoginForm
         initialErrorKey={initialErrorKey}
+        showSignedOutMessage={showSignedOutMessage}
         nextPath={nextPath}
       />
     </main>

@@ -168,6 +168,54 @@
 
 ---
 
+## ✅ COMPLETED — Customer Profiles + Account Auth UX + Admin Users
+
+### Database (`public.profiles` — live Supabase; manual SQL Editor)
+
+- Table: `id` → `auth.users(id)` `ON DELETE CASCADE`; `full_name`; `phone`;
+  `created_at` / `updated_at`
+- Profiles = app source of truth for name/phone; Auth = identity / email /
+  password / session / confirmation
+- Backfill from `auth.users.raw_user_meta_data`; signup trigger creates
+  profile; `updated_at` trigger; RLS own SELECT/UPDATE only (no customer
+  INSERT/DELETE); Admin via service-role server path
+- **No** in-repo migration file for this DDL
+- `orders.user_id` still → `auth.users`; `orders.customer_*` remain snapshots;
+  `admin_users` remains Admin authz only (not a customer registry)
+
+### Customer Account / Auth UX
+
+- `/account` reads email from Auth + name/phone from `profiles` (metadata
+  fallback only if profile row missing)
+- Customer may edit own `full_name` / `phone` (anon SSR client + RLS; no
+  service role; no `user_metadata` write)
+- Email remains read-only; My Orders unchanged
+- Login/Register password visibility (Eye/EyeOff); Forgot Password
+  (`/account/forgot-password`); recovery via `/auth/callback` → Reset
+  Password (`/account/reset-password`); logged-in Change Password
+- Login UX: Sign In / Create Account / Continue as guest; logout →
+  `/account/login?signedOut=1` success feedback
+- Storefront browsing does **not** require Auth; Guest checkout unchanged
+
+### Admin Users (read-only)
+
+- `/admin/users` — list + search (name/email/phone) + pagination (20/page)
+- `/admin/users/[id]` — detail + owned Order History (`orders.user_id` only;
+  never email match)
+- `requireAdmin()` + `createAdminClient()`; safe DTO only to UI
+- Compact Eye + View actions; View → detail / order details
+
+### Intentionally deferred (not broken)
+
+- Customer email change
+- Admin edit / delete / ban / invite customer
+- Admin password manipulation / Admin role management
+
+S7 Payments status unchanged (still partial). Immediate next remains
+provider integration — not Admin customer mutations.
+
+---
+
 ## ✅ COMPLETED — Admin Orders Management (Phases A–D)
 
 ### Phase A — Admin Order Details
@@ -330,6 +378,14 @@ createOrder production RPC hardening.
 
 ✅ Customer Auth / Account UI (S6B) — register (name/phone/email/password),
   login/logout, `/account`, email confirmation callback; Admin auth separate
+
+✅ Customer Profiles + Account Auth UX — `public.profiles` (name/phone);
+  Account edit; password show/hide; forgot/reset; logged-in change password;
+  Login guest paths + signed-out feedback
+
+✅ Admin Users (read-only) — `/admin/users` + `/admin/users/[id]` + owned
+  Order History (`orders.user_id`); deferred: Admin edit/delete/ban/invite,
+  customer email change, Admin password/role tools
 
 ✅ Secure guest success access (S6C Step 1) — HMAC httpOnly proof;
   UUID alone denies PII; Admin `getAdminOrder` + `requireAdmin`

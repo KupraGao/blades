@@ -49,6 +49,28 @@ export const ka = {
   accountMyAccount: "ჩემი ანგარიში",
   accountOverviewDescription: "მართეთ თქვენი ანგარიში მაღაზიაში.",
   accountProfileTitle: "პროფილი",
+  accountEditProfile: "პროფილის რედაქტირება",
+  accountSaveProfile: "შენახვა",
+  accountSavingProfile: "ინახება...",
+  accountCancelEdit: "გაუქმება",
+  accountProfileUpdateSuccess: "პროფილი განახლდა.",
+  accountProfileUpdateFailed: "პროფილის განახლება ვერ მოხერხდა. სცადეთ თავიდან.",
+  accountProfileUpdateUnauthorized: "პროფილის განახლებისთვის გაიარეთ ავტორიზაცია.",
+  accountSecurityTitle: "უსაფრთხოება",
+  accountChangePassword: "პაროლის შეცვლა",
+  accountCurrentPassword: "ამჟამინდელი პაროლი",
+  accountChangePasswordSubmit: "პაროლის განახლება",
+  accountChangePasswordSubmitting: "ახლდება...",
+  accountChangePasswordSuccess: "პაროლი განახლდა.",
+  accountChangePasswordUnauthorized:
+    "პაროლის შესაცვლელად გაიარეთ ავტორიზაცია.",
+  accountChangePasswordCurrentIncorrect:
+    "ამჟამინდელი პაროლი არასწორია.",
+  accountChangePasswordSameAsCurrent:
+    "ახალი პაროლი უნდა განსხვავდებოდეს ამჟამინდელი პაროლისგან.",
+  accountChangePasswordFailed:
+    "პაროლის განახლება ვერ მოხერხდა. სცადეთ თავიდან.",
+  accountPasswordMasked: "••••••••",
   accountEmailLabel: "ელფოსტა",
   accountFullName: "სრული სახელი",
   accountPhone: "ტელეფონი",
@@ -67,12 +89,17 @@ export const ka = {
   accountRegisterSubmitting: "იქმნება...",
   accountEmail: "ელფოსტა",
   accountPassword: "პაროლი",
+  accountShowPassword: "პაროლის ჩვენება",
+  accountHidePassword: "პაროლის დამალვა",
   accountConfirmPassword: "პაროლის დადასტურება",
   accountNoAccount: "არ გაქვთ ანგარიში?",
   accountHaveAccount: "უკვე გაქვთ ანგარიში?",
   accountGoToRegister: "ანგარიშის შექმნა",
   accountGoToLogin: "შესვლა",
   accountBackToStore: "მაღაზიაში დაბრუნება",
+  accountOr: "ან",
+  accountContinueAsGuest: "ანგარიშის გარეშე გაგრძელება",
+  accountSignedOutSuccess: "თქვენ წარმატებით გამოხვედით ანგარიშიდან.",
   accountAuthFullNameRequired: "სრული სახელი აუცილებელია.",
   accountAuthFullNameMin: "სახელი უნდა იყოს მინიმუმ 2 სიმბოლო.",
   accountAuthPhoneRequired: "ტელეფონის ნომერი აუცილებელია.",
@@ -95,6 +122,32 @@ export const ka = {
     "ანგარიში შეიქმნა, მაგრამ შესვლამდე საჭიროა ელფოსტის დადასტურება. თუ პროექტში ჩართულია დადასტურების ელფოსტა, შეამოწმეთ inbox (და spam). დადასტურების შემდეგ დაბრუნდით და შეხვიდეთ.",
   accountAuthConfirmLinkFailed:
     "ელფოსტის დადასტურება ვერ დასრულდა. სცადეთ შესვლა ან თავიდან რეგისტრაცია.",
+  accountForgotPassword: "დაგავიწყდათ პაროლი?",
+  accountForgotPasswordTitle: "პაროლის აღდგენა",
+  accountForgotPasswordDescription:
+    "შეიყვანეთ ანგარიშის ელფოსტა და თუ ანგარიში არსებობს, გამოგეგზავნებათ პაროლის აღდგენის ინსტრუქცია.",
+  accountForgotPasswordSubmit: "ბმულის გაგზავნა",
+  accountForgotPasswordSubmitting: "იგზავნება...",
+  accountForgotPasswordSent:
+    "თუ ამ ელფოსტით ანგარიში არსებობს, პაროლის აღდგენის ინსტრუქცია გამოგზავნილია.",
+  accountForgotPasswordFailed:
+    "აღდგენის ინსტრუქციის გაგზავნა ვერ მოხერხდა. სცადეთ თავიდან.",
+  accountAuthRecoveryLinkFailed:
+    "პაროლის აღდგენის ბმული არასწორია ან ვადაგასულია. მოითხოვეთ ახალი ბმული ქვემოთ.",
+  accountResetPasswordTitle: "ახალი პაროლის არჩევა",
+  accountResetPasswordDescription:
+    "შეიყვანეთ და დაადასტურეთ ახალი პაროლი ანგარიშის აღსადგენად.",
+  accountNewPassword: "ახალი პაროლი",
+  accountConfirmNewPassword: "ახალი პაროლის დადასტურება",
+  accountResetPasswordSubmit: "პაროლის განახლება",
+  accountResetPasswordSubmitting: "ახლდება...",
+  accountResetPasswordSuccessTitle: "პაროლი განახლდა",
+  accountResetPasswordSuccessDescription:
+    "თქვენი პაროლი წარმატებით შეიცვალა. შეგიძლიათ განაგრძოთ ანგარიშზე.",
+  accountResetPasswordUnauthorized:
+    "აღდგენის სესია არ არსებობს ან ვადაგასულია. მოითხოვეთ ახალი პაროლის აღდგენის ბმული.",
+  accountResetPasswordFailed:
+    "პაროლის განახლება ვერ მოხერხდა. სცადეთ თავიდან ან მოითხოვეთ ახალი ბმული.",
   accountMyOrdersComingSoon: "ჩემი შეკვეთები — მალე",
   accountMyOrders: "ჩემი შეკვეთები",
   accountMyOrdersCount: "{count} შეკვეთა",
@@ -381,6 +434,28 @@ export const ka = {
   manageBrands: "მართეთ თქვენი ბრენდები",
   manageCategories: "მართეთ თქვენი კატეგორიები",
   manageCustomerOrders: "მართეთ მომხმარებლის შეკვეთები",
+  manageUsers: "ნახეთ რეგისტრირებული მომხმარებლები",
+  searchUsers: "ძებნა სახელი, ელფოსტა ან ტელეფონი...",
+  joined: "რეგისტრაცია",
+  emailStatus: "ელფოსტის სტატუსი",
+  emailConfirmed: "დადასტურებული",
+  emailUnconfirmed: "დაუდასტურებელი",
+  noUsersYet: "რეგისტრირებული მომხმარებლები ჯერ არ არის",
+  noUsersMatchSearch: "ძებნას მომხმარებლები არ ემთხვევა",
+  usersWillAppear: "მომხმარებლები აქ გამოჩნდებიან რეგისტრაციის შემდეგ.",
+  showingUsers: "ნაჩვენებია {from}–{to} / {total} მომხმარებელი",
+  adminUsersLoadFailed: "მომხმარებლების ჩატვირთვა ვერ მოხერხდა",
+  adminUsersLoadFailedHint: "განაახლეთ გვერდი და სცადეთ თავიდან.",
+  adminCustomerDetails: "მომხმარებლის დეტალები",
+  adminCustomerAccount: "ანგარიში",
+  adminCustomerOrderHistory: "შეკვეთების ისტორია",
+  adminCustomerNoOrders: "ამ მომხმარებელს შეკვეთები არ აქვს",
+  adminCustomerNoOrdersHint:
+    "მფლობელობაში არსებული შეკვეთები აქ გამოჩნდება.",
+  adminCustomerNotFound: "მომხმარებელი ვერ მოიძებნა",
+  adminCustomerNotFoundDescription:
+    "მომხმარებლის ჩატვირთვა ვერ მოხერხდა ან არ არსებობს.",
+  backToUsers: "← მომხმარებლებზე დაბრუნება",
 
   // =====================================
   // ADMIN — ORDERS

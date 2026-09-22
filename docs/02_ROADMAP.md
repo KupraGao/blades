@@ -44,10 +44,16 @@
 - Storefront Brands
   (`/brands` directory + `/brands/[slug]` Brand PLP; Brand-scoped catalog
   Filters; shared Search/Help/Filters toolbar; KA/EN counts)
+- Customer Profiles + Account Auth UX
+  (`public.profiles`; `/account` profile edit; password show/hide;
+  forgot/reset + logged-in change password; Login guest paths)
+- Admin Users (read-only)
+  (`/admin/users` list + `/admin/users/[id]` detail + owned Order History)
 
 See `docs/06_CHANGELOG.md` for version history (S6 Customer Ownership complete;
 S7A–S7B payment-method path + S7B-1 delivery minimum — see latest changelog;
-Home catalog Filters + pagination; Storefront Brands — see latest changelog).
+Home catalog Filters + pagination; Storefront Brands; Customer Profiles +
+Admin Users — see latest changelog).
 
 ---
 
@@ -55,6 +61,10 @@ Home catalog Filters + pagination; Storefront Brands — see latest changelog).
 
 - ✅ **S6A** Order Ownership Foundation (`orders.user_id` nullable FK)
 - ✅ **S6B** Customer Auth + Account UI (register/login/logout, `/account`)
+- ✅ Customer Profiles (`public.profiles` + Account edit of name/phone;
+  password visibility / forgot-reset / logged-in change password; Login UX)
+- ✅ Admin Users read-only (`/admin/users` + `/admin/users/[id]` + owned
+  Order History via `orders.user_id`)
 - ✅ **S6C** Secure guest success proof + Guest → Customer claim
 - ✅ **S6D** Customer My Orders (owner-filtered list + detail)
 - ✅ **S6E** Logged-in checkout auto-ownership (`getAuthUser()` → `user_id`)
@@ -63,6 +73,7 @@ Home catalog Filters + pagination; Storefront Brands — see latest changelog).
 
 Guest checkout remains supported. Ownership is never client- or email-based.
 Customer auth is separate from Admin authorization (`admin_users`).
+`admin_users` is **not** a customer registry.
 
 ---
 
@@ -111,14 +122,16 @@ payment verification, automatic `paid`, refunds.
 
 ⬜ Guest `createOrder` abuse controls (rate limits / CAPTCHA / etc.)
 
-**Auth / Catalog / Customer Ownership closed through S6.** Cart partial-purchase
-selection and Checkout Success thumbnails are shipped. Delivery / Pickup
-operational workflow remains complete and closed. Home storefront Featured
-Catalog Filters (Category + Price, URL state, 20/page server pagination) and
-independent Latest Products query are shipped. Storefront Brands directory +
-Brand PLP (Brand-scoped Category/Price Filters, shared toolbar) are shipped —
-see Architecture / Changelog. S7 Payments remains **partial** (provider /
-webhooks / refunds not started).
+**Auth / Catalog / Customer Ownership closed through S6.** Customer Profiles +
+Account password UX + Admin Users (read-only list/detail) are shipped for the
+current User/Account scope. Cart partial-purchase selection and Checkout
+Success thumbnails are shipped. Delivery / Pickup operational workflow remains
+complete and closed. Home storefront Featured Catalog Filters (Category +
+Price, URL state, 20/page server pagination) and independent Latest Products
+query are shipped. Storefront Brands directory + Brand PLP (Brand-scoped
+Category/Price Filters, shared toolbar) are shipped — see Architecture /
+Changelog. **Immediate next remains S7 Payments & Delivery** (provider /
+webhooks / refunds not started; S7A–S7B partial progress preserved).
 
 ---
 
@@ -168,10 +181,23 @@ webhooks / refunds not started).
 
 ✅ Customer Account + My Orders (S6B–S6D)
 
+✅ `public.profiles` — application source of truth for customer `full_name` /
+  `phone` (Auth remains identity / email / password / session)
+
+✅ Customer profile edit (own name/phone); password show/hide; forgot/reset;
+  logged-in change password
+
+✅ Admin Users read-only (`/admin/users`, `/admin/users/[id]`, owned orders)
+
 ✅ Linking orders to authenticated users (S6A / S6C claim / S6E auto-attach)
 
 ✅ Account → Admin Panel shortcut for authorized admins (`/account` → `/admin`;
   UI only; existing admin route protection unchanged)
+
+⬜ Customer email change (**deferred** — not in current scope)
+
+⬜ Admin edit / delete / ban / invite customer; Admin password or role
+  management (**deferred** — not required next)
 
 ⬜ Roles / Permissions beyond Admin vs Customer (future)
 

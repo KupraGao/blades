@@ -14,6 +14,44 @@
 
 ---
 
+## v1.31.0 — Customer Profiles + Account Auth UX + Admin Users
+
+### `public.profiles` (live DB — manual SQL Editor; no in-repo migration)
+
+- Table: `id` → `auth.users(id)` `ON DELETE CASCADE`; `full_name`; `phone`;
+  timestamps
+- Auth remains source of truth for identity / email / password / session /
+  confirmation; profiles for customer name/phone
+- Existing users backfilled from `raw_user_meta_data`; AFTER INSERT signup
+  trigger; BEFORE UPDATE `updated_at`; RLS: own SELECT/UPDATE only
+- `orders.user_id` still → `auth.users`; `orders.customer_*` stay snapshots;
+  `admin_users` = Admin authz only (not customer registry)
+
+### Customer Account / Auth UX
+
+- `/account` reads profiles for name/phone (metadata fallback if row missing);
+  customer self-edit via anon SSR + RLS (no service role / no metadata write)
+- Password visibility on Login/Register; Forgot Password + recovery callback
+  + Reset Password; logged-in Change Password (current-password proof)
+- Login: Sign In / Create Account / Continue as guest; logout →
+  `?signedOut=1` feedback; browsing remains Auth-optional; Guest checkout
+  unchanged
+
+### Admin Users (read-only)
+
+- `/admin/users` list/search/pagination (20); `/admin/users/[id]` detail +
+  owned Order History (`user_id` only)
+- `requireAdmin` + `createAdminClient`; safe DTOs; Eye + View actions
+
+### Intentionally deferred
+
+- Customer email change; Admin edit/delete/ban/invite; Admin password or
+  role management
+
+S7 Payments milestone remains **partial** (provider next).
+
+---
+
 ## v1.30.0 — Storefront Brands
 
 ### Brands directory + Brand PLP
@@ -300,10 +338,14 @@ cancellation, Order Confirmation email notifications.
 
 - Customer Register / Login / Logout via Supabase Auth (anon server client)
 - Register fields: Full Name, Phone, Email, Password, Confirm Password
-- Name/phone stored in Auth `user_metadata` (`full_name`, `phone`) — no profiles table
+- Name/phone originally stored in Auth `user_metadata` (`full_name`, `phone`)
+  — **superseded** for application reads/writes by `public.profiles`
+  (see **v1.31.0**); register still seeds metadata for the signup trigger
 - Routes: `/account/login`, `/account/register`, protected `/account`
-- Auth callback: `/auth/callback` (PKCE code exchange for email confirmation)
+- Auth callback: `/auth/callback` (PKCE code exchange for email confirmation;
+  recovery divert to `/account/reset-password` added in **v1.31.0**)
 - Account overview: name, email, phone, logout
+  (name/phone reads moved to `profiles` in **v1.31.0**)
 - Email-confirmation UX is truthful (required vs session-created)
 - Login surfaces unconfirmed-email distinctly
 - Admin login/authorization semantics unchanged
