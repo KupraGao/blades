@@ -2,9 +2,16 @@
 
 import Image from "next/image";
 import { useLanguage } from "@/context/LanguageContext";
+import {
+  STORE_CONTACT,
+  getStoreAddress,
+  getStoreMapsDirectionsUrl,
+} from "@/lib/storefront/contact";
 
 export function Footer() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const address = getStoreAddress(language);
+  const mapsUrl = getStoreMapsDirectionsUrl();
 
   return (
     <footer className="border-t border-zinc-200 bg-zinc-50 dark:border-white/10 dark:bg-black/50">
@@ -65,29 +72,40 @@ export function Footer() {
           </ul>
         </div>
 
-        <div id="contact">
+        <div>
           <h3 className="font-bold text-zinc-900 dark:text-white">
             {t.contact}
           </h3>
 
           <ul className="mt-4 space-y-3 text-sm text-zinc-600 dark:text-zinc-400">
-            <li>{t.locationTbilisi}</li>
-
             <li>
               <a
-                href="mailto:info@example.ge"
-                className="transition hover:text-zinc-900 dark:hover:text-white"
+                href={mapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="transition hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold/50 dark:hover:text-white"
               >
-                info@example.ge
+                {address}
               </a>
             </li>
 
+            {STORE_CONTACT.phones.map((phone) => (
+              <li key={phone.tel}>
+                <a
+                  href={`tel:${phone.tel}`}
+                  className="transition hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold/50 dark:hover:text-white"
+                >
+                  {phone.display}
+                </a>
+              </li>
+            ))}
+
             <li>
               <a
-                href="tel:+995555000000"
-                className="transition hover:text-zinc-900 dark:hover:text-white"
+                href={`mailto:${STORE_CONTACT.email}`}
+                className="transition hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold/50 dark:hover:text-white"
               >
-                +995 555 00 00 00
+                {STORE_CONTACT.email}
               </a>
             </li>
           </ul>

@@ -160,7 +160,16 @@ export function Header({
             >
               {t.brands}
             </a>
-            <a href="/#contact" className="text-sm font-semibold text-zinc-700 transition hover:text-brand-gold dark:text-zinc-300">{t.contact}</a>
+            <a
+              href="/contact"
+              className={`text-sm font-semibold transition hover:text-brand-gold dark:hover:text-brand-gold ${
+                pathname === "/contact"
+                  ? "text-brand-gold"
+                  : "text-zinc-700 dark:text-zinc-300"
+              }`}
+            >
+              {t.contact}
+            </a>
           </nav>
 
           {/* ===================================== */}

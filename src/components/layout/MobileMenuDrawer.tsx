@@ -53,7 +53,7 @@ export function MobileMenuDrawer({
     { label: t.home, href: "/" },
     { label: t.products, href: "/#products" },
     { label: t.brands, href: "/brands" },
-    { label: t.contact, href: "/#contact" },
+    { label: t.contact, href: "/contact" },
   ];
 
   // Home + Brand PLP: catalog Filters. Brands directory: menu only.
