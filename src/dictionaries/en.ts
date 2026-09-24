@@ -188,9 +188,7 @@ export const en = {
   toggleTheme: "Toggle theme",
   sale: "Sale",
   locationTbilisi: "Tbilisi, Georgia",
-  copyright: "© 2026 Blades Premium Starter. All rights reserved.",
-  footerDescription:
-    "Premium ecommerce starter built with Next.js and Tailwind CSS.",
+  copyright: "© 2026 BLADES.GE — All rights reserved.",
 
   // =====================================
   // PRODUCT DETAILS
@@ -560,8 +558,20 @@ export const en = {
   editProductDescription: "Update product information",
   createProduct: "Create Product",
   updateProduct: "Update Product",
+  processingImages: "Processing images...",
   productCreateFailed: "Failed to create product.",
   productUpdateFailed: "Failed to update product.",
+  productImageSourceTooLarge: "Each product photo must be 20 MB or smaller.",
+  productImageUnsupportedFormat:
+    "This image format could not be processed. Please use JPG, PNG, or WebP.",
+  productImageOptimizeFailed:
+    "Could not process the product photo. Please try another image.",
+  productImageOutputTooLarge:
+    "The photo is still too large after optimization. Please use a smaller image.",
+  productImageCombinedTooLarge:
+    "Too many photos in one save. Please upload fewer images and try again.",
+  productImageUploadFailed:
+    "The product photo could not be uploaded. Please try again.",
   basicInfo: "Basic Information",
   productTitleLabel: "Product Title",
   selectBrand: "Select brand",
@@ -608,4 +618,181 @@ export const en = {
   categoryNotFound: "Category not found",
   noCategoriesFound: "No categories found",
   deleteCategoryConfirm: "Delete this category?",
+
+  // =====================================
+  // STOREFRONT — FOOTER & INFORMATION
+  // =====================================
+  navAbout: "About Us",
+  navDelivery: "Delivery & Pickup",
+  navReturns: "Returns & Exchanges",
+  navPaymentMethods: "Payment Methods",
+  navFaq: "FAQ",
+  navPrivacy: "Privacy Policy",
+  navTerms: "Terms & Conditions",
+  footerNavTitle: "Navigation",
+  footerCustomerServiceTitle: "Customer Service",
+  footerLegalTitle: "Information",
+  checkoutLegalNav: "Order information",
+  infoNotLegalAdvice:
+    "This page is general storefront information. It is not legal advice.",
+
+  aboutTitle: "About Us",
+  aboutIntro:
+    "Blades is a store and catalog where you can browse current products and place orders online, or visit us in person.",
+  aboutCatalogTitle: "The storefront",
+  aboutCatalogBody:
+    "The website shows our current catalog. You can browse products, add them to your cart, and complete an order through checkout. Product availability depends on stock shown on each product page.",
+  aboutStoreTitle: "Our store",
+  aboutStoreBody:
+    "We also have a physical store in Tbilisi. You can use the contact details below to reach us or visit for pickup.",
+
+  deliveryTitle: "Delivery & Pickup",
+  deliveryIntro:
+    "These are the current delivery and pickup rules used on this storefront.",
+  deliveryAreaTitle: "Where we deliver",
+  deliveryAreaBody:
+    "Delivery is available in Tbilisi. We do not currently offer delivery outside Tbilisi.",
+  deliveryThresholdTitle: "When delivery is available",
+  deliveryThresholdBody:
+    "Delivery becomes available when the selected order subtotal is at least ₾150. If the selected subtotal is below ₾150, delivery is not available and pickup remains available.",
+  deliveryFeeBody:
+    "When delivery is available, it is free in Tbilisi. There is no delivery fee.",
+  deliveryPickupTitle: "Pickup",
+  deliveryPickupBody:
+    "Pickup is supported. You can collect an order from our store using the address shown in Contact and in the footer.",
+  deliveryCheckoutTitle: "Shown at checkout",
+  deliveryCheckoutBody:
+    "Delivery restrictions are also shown during checkout. This page does not replace that information.",
+
+  paymentInfoTitle: "Payment Methods",
+  paymentInfoIntro:
+    "You can choose a payment method during checkout according to the current storefront rules.",
+  paymentInfoOnlineTitle: "Online payment",
+  paymentInfoOnlineBody:
+    "You can select Online payment at checkout. A live card-charging flow is not yet connected on this website. Choosing this option records your preference for online payment; it does not currently charge a card here.",
+  paymentInfoPickupTitle: "Pay at pickup",
+  paymentInfoPickupBody:
+    "Pay at pickup is available for pickup orders. You pay when you collect the order at the store.",
+  paymentInfoDeliveryTitle: "Delivery orders",
+  paymentInfoDeliveryBody:
+    "Delivery orders require Online payment. Pay at pickup is not available for delivery.",
+  paymentInfoUnavailableTitle: "What we do not offer",
+  paymentInfoUnavailableBody:
+    "Cash on Delivery is not available.",
+
+  returnsTitle: "Returns & Exchanges",
+  returnsIntro:
+    "This page summarizes the statutory withdrawal information that applies to distance contracts under Georgian consumer law.",
+  returnsRightTitle: "14-day withdrawal",
+  returnsRightBody:
+    "Subject to statutory exceptions, a consumer may withdraw from a distance contract within 14 calendar days without giving a reason.",
+  returnsPeriodBody:
+    "For a sales contract, this period generally begins when the consumer or a designated third party other than the carrier obtains physical possession of the goods.",
+  returnsExceptionsTitle: "Exceptions",
+  returnsExceptionsBody:
+    "Statutory exceptions exist. Opening the packaging does not, by itself, mean that you automatically lose statutory consumer rights. We do not treat all sales as final, and we do not require unopened packaging as a blanket condition.",
+  returnsHowTitle: "How to contact us",
+  returnsHowBody:
+    "To start a withdrawal or return request, contact Blades using the details below. If you have an order number, please include it.",
+
+  privacyTitle: "Privacy Policy",
+  privacyIntro:
+    "This baseline notice describes how the current storefront uses information needed to run accounts, orders, and store operations.",
+  privacyBaselineNote:
+    "This page reflects currently known storefront functionality. It does not invent analytics, advertising, or payment-processor arrangements.",
+  privacyDataTitle: "Information we process",
+  privacyDataBody:
+    "Depending on how you use the store, we may process:",
+  privacyDataName: "Full name",
+  privacyDataEmail: "Email address",
+  privacyDataPhone: "Phone number",
+  privacyDataAddress: "Delivery or address information when you provide it",
+  privacyDataAccount: "Account and authentication data through Supabase Auth",
+  privacyDataProfile: "Profile information",
+  privacyDataOrders: "Order information",
+  privacyDataGuest: "Guest checkout information",
+  privacyDataRecovery: "Password recovery and related account operations",
+  privacyPasswordsBody:
+    "Blades does not store your password in plaintext. Authentication is handled through the account service.",
+  privacyPurposeTitle: "Why we use it",
+  privacyPurposeBody:
+    "We use this information to create and manage accounts, take and fulfill orders, contact you about store operations, and provide password recovery.",
+  privacyProvidersTitle: "Service providers",
+  privacyProvidersBody:
+    "Account authentication, storefront data, and product image storage are provided through Supabase, which hosts the current backend infrastructure.",
+  privacySecurityTitle: "Security",
+  privacySecurityBody:
+    "We take reasonable measures to protect storefront information. No method of transmission or storage can be guaranteed as completely secure.",
+  privacyRightsTitle: "Your rights",
+  privacyRightsBody:
+    "Depending on applicable Georgian law, you may have rights to request access to or correction of personal information we hold about you. Contact us to make a request.",
+  privacyContactTitle: "Privacy contact",
+  privacyContactBody:
+    "For privacy requests, email:",
+
+  termsTitle: "Terms & Conditions",
+  termsIntro:
+    "These terms explain how to use the Blades website and storefront.",
+  termsScopeTitle: "Using the website",
+  termsScopeBody:
+    "These terms apply when you browse the catalog, create an account, or place an order through this website.",
+  termsIdentityTitle: "Who we are",
+  termsIdentityBody:
+    "Blades operates this website and physical store. Legal-entity registration details will be added here when they are available. We do not invent company numbers or a registered legal name on this page.",
+  termsProductsTitle: "Product information",
+  termsProductsBody:
+    "We aim to present product information clearly. Details, photos, and stock can change. Stock shown on a product page is the current storefront indication of availability.",
+  termsPricesTitle: "Prices",
+  termsPricesBody:
+    "Prices are shown in Georgian Lari (GEL). Additional charges are not added as a delivery fee. Any delivery restriction is explained on Delivery & Pickup and at checkout.",
+  termsOrderingTitle: "Ordering",
+  termsOrderingBody:
+    "Orders are placed through checkout. You can order as a guest or with an account. Submitting an order is an offer to buy the selected products under these terms and the information shown at checkout.",
+  termsPaymentTitle: "Payment",
+  termsPaymentBody:
+    "Available methods are Online payment and Pay at pickup. Cash on Delivery is not offered. Live card charging is not yet connected on this website.",
+  termsDeliveryTitle: "Delivery and pickup",
+  termsDeliveryBody:
+    "Delivery is available in Tbilisi when the selected subtotal is at least ₾150, and it is free when available. Pickup is supported at our store. See Delivery & Pickup for the current rules.",
+  termsWithdrawalTitle: "Cancellation and withdrawal",
+  termsWithdrawalBody:
+    "For distance contracts, statutory withdrawal rights under Georgian consumer law apply, including the 14-calendar-day period and statutory exceptions. See Returns & Exchanges. These terms do not waive mandatory consumer rights.",
+  termsAccountTitle: "Account information",
+  termsAccountBody:
+    "If you create an account, keep your login details safe and provide accurate contact information so we can handle orders and account requests.",
+  termsLiabilityTitle: "Reasonable limits",
+  termsLiabilityBody:
+    "We are responsible for providing the storefront and fulfilling orders in line with applicable law. These terms do not limit liability that cannot legally be limited, including mandatory consumer rights.",
+  termsLawTitle: "Applicable law",
+  termsLawBody:
+    "This storefront is intended for customers in Georgia and is used together with applicable Georgian law, including consumer-protection rules for distance contracts.",
+  termsContactTitle: "Contact",
+  termsContactBody: "Questions about these terms can be sent to",
+
+  faqTitle: "FAQ",
+  faqIntro: "Short answers based on the current storefront rules.",
+  faqQOrder: "How can I place an order?",
+  faqAOrder:
+    "Browse the catalog, add products to your cart, then complete checkout with your contact details and fulfillment choice.",
+  faqQGuest: "Can I order without an account?",
+  faqAGuest:
+    "Yes. Guest checkout is available. You can also create an account if you want to keep order history.",
+  faqQDelivery: "Is delivery available?",
+  faqADelivery:
+    "Delivery is available in Tbilisi when the selected subtotal is at least ₾150.",
+  faqQThreshold: "What is the ₾150 delivery threshold?",
+  faqAThreshold:
+    "If the selected subtotal is below ₾150, delivery is not available and pickup remains available. When delivery is available, it is free.",
+  faqQPickup: "Can I pick up my order?",
+  faqAPickup:
+    "Yes. Pickup is supported at our Tbilisi store.",
+  faqQPayment: "What payment methods are available?",
+  faqAPayment:
+    "Online payment and Pay at pickup. Cash on Delivery is not available. Live card charging is not yet connected on this website.",
+  faqQContact: "How can I contact the store?",
+  faqAContact:
+    "Use the Contact page, email, or phone numbers shown in the footer.",
+  faqQReturns: "How do returns and withdrawal work?",
+  faqAReturns:
+    "For distance orders, statutory 14-day withdrawal rules may apply, subject to legal exceptions. Contact us to start a request.",
 };

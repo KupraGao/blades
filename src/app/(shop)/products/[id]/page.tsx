@@ -4,6 +4,7 @@ import ProductDetailsContent from "@/components/product/ProductDetailsContent";
 import ProductPurchaseActions from "@/components/product/ProductPurchaseActions";
 import ProductNotFoundMessage from "@/components/product/ProductNotFoundMessage";
 import ProductReviewEmbed from "@/components/product/ProductReviewEmbed";
+import { StorefrontHeader } from "@/components/layout/StorefrontHeader";
 
 export default async function ProductDetailsPage({
   params,
@@ -17,14 +18,19 @@ export default async function ProductDetailsPage({
 
   if (!product) {
     return (
-      <main className="min-h-screen p-10">
-        <ProductNotFoundMessage />
-      </main>
+      <>
+        <StorefrontHeader />
+        <main className="min-h-screen p-10">
+          <ProductNotFoundMessage />
+        </main>
+      </>
     );
   }
 
   return (
-    <main className="min-h-screen bg-zinc-50/50 px-4 py-8 dark:bg-black sm:px-6 md:py-12">
+    <>
+      <StorefrontHeader />
+      <main className="min-h-screen bg-zinc-50/50 px-4 py-8 dark:bg-black sm:px-6 md:py-12">
       <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
 
         {/* ===================================== */}
@@ -169,6 +175,7 @@ export default async function ProductDetailsPage({
           </div>
         </div>
       </div>
-    </main>
+      </main>
+    </>
   );
 }

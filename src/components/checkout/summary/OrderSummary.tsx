@@ -163,9 +163,33 @@ export default function OrderSummary({
         />
       </div>
 
+      <nav
+        aria-label={t.checkoutLegalNav}
+        className="mt-4 flex flex-wrap justify-center gap-x-4 gap-y-1 text-xs text-zinc-500 dark:text-zinc-400"
+      >
+        <Link
+          href="/delivery"
+          className="inline-flex min-h-11 items-center underline-offset-2 transition hover:text-black hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold/50 dark:hover:text-white"
+        >
+          {t.navDelivery}
+        </Link>
+        <Link
+          href="/returns"
+          className="inline-flex min-h-11 items-center underline-offset-2 transition hover:text-black hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold/50 dark:hover:text-white"
+        >
+          {t.navReturns}
+        </Link>
+        <Link
+          href="/terms"
+          className="inline-flex min-h-11 items-center underline-offset-2 transition hover:text-black hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold/50 dark:hover:text-white"
+        >
+          {t.navTerms}
+        </Link>
+      </nav>
+
       <Link
         href="/cart"
-        className="mt-4 block text-center text-sm text-zinc-500 transition hover:text-black dark:hover:text-white"
+        className="mt-1 block text-center text-sm text-zinc-500 transition hover:text-black dark:hover:text-white"
       >
         {t.backToCart}
       </Link>

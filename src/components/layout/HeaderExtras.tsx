@@ -4,6 +4,7 @@ import { Phone, Search } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 import { useLanguage } from "@/context/LanguageContext";
+import { STORE_CONTACT } from "@/lib/storefront/contact";
 
 function shouldShowStorefrontToolbar(pathname: string | null): boolean {
   if (!pathname) return false;
@@ -80,7 +81,7 @@ export function HeaderExtras() {
 
             {/* HELP / SUPPORT */}
             <a
-              href="tel:+995557910101"
+              href={`tel:${STORE_CONTACT.phones[0].tel}`}
               className="flex shrink-0 items-center gap-3 whitespace-nowrap text-sm text-white"
             >
               <Phone size={18} />
@@ -89,7 +90,7 @@ export function HeaderExtras() {
                 <p className="text-xs text-zinc-400">{t.support247}</p>
 
                 <p className="text-base font-semibold text-white transition hover:text-orange-400">
-                  +995 557 91 01 01
+                  {STORE_CONTACT.phones[0].display}
                 </p>
               </div>
             </a>
