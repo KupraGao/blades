@@ -1,5 +1,10 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 
+import {
+  PRODUCT_IMAGE_UPLOAD_FAILED,
+  productImageStorageFileName,
+} from "@/lib/products/product-image-storage-key";
+
 export async function uploadGalleryImages(
   supabase:SupabaseClient,
   productId:number,
@@ -22,7 +27,7 @@ export async function uploadGalleryImages(
     // FILE NAME
     // =================================================
 
-    const fileName=`${crypto.randomUUID()}-${image.name}`;
+    const fileName=productImageStorageFileName();
 
     // =================================================
     // IMAGE UPLOAD
@@ -38,7 +43,7 @@ export async function uploadGalleryImages(
 
     if(galleryUploadError){
       console.log("GALLERY ERROR:",galleryUploadError);
-      throw galleryUploadError;
+      throw new Error(PRODUCT_IMAGE_UPLOAD_FAILED);
     }
 
     // =================================================

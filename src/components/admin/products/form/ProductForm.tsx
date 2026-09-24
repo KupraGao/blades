@@ -1,5 +1,7 @@
 "use client";
 
+import { useRef, useState } from "react";
+
 import { createProduct } from "@/actions/products/create-product";
 import { updateProduct } from "@/actions/products/update-product";
 
@@ -8,6 +10,13 @@ import CategoriesSection from "@/components/admin/products/form/CategoriesSectio
 import SpecificationsSection from "@/components/admin/products/form/SpecificationsSection";
 import ImagesSection from "@/components/admin/products/form/ImagesSection";
 import { useLanguage } from "@/context/LanguageContext";
+import {
+  PRODUCT_IMAGE_COMBINED_OPTIMIZED_MAX_BYTES,
+  optimizeProductImage,
+  ProductImageOptimizeError,
+  type ProductImageOptimizeErrorCode,
+} from "@/lib/products/optimize-product-image";
+import { PRODUCT_IMAGE_UPLOAD_FAILED } from "@/lib/products/product-image-storage-key";
 
 type Brand = {
   id: number;
@@ -54,6 +63,30 @@ type ProductFormProps = {
   product?: Product;
 };
 
+type SubmitPhase = "idle" | "processing" | "saving";
+
+function isNewImageFile(value: FormDataEntryValue | null): value is File {
+  return value instanceof File && value.size > 0 && Boolean(value.name);
+}
+
+function optimizeErrorMessage(
+  code: ProductImageOptimizeErrorCode,
+  t: ReturnType<typeof useLanguage>["t"],
+) {
+  switch (code) {
+    case "SOURCE_TOO_LARGE":
+      return t.productImageSourceTooLarge;
+    case "UNSUPPORTED_FORMAT":
+      return t.productImageUnsupportedFormat;
+    case "OPTIMIZE_FAILED":
+      return t.productImageOptimizeFailed;
+    case "OUTPUT_TOO_LARGE":
+      return t.productImageOutputTooLarge;
+    case "COMBINED_TOO_LARGE":
+      return t.productImageCombinedTooLarge;
+  }
+}
+
 export default function ProductForm({
   brands,
   categories,
@@ -61,28 +94,91 @@ export default function ProductForm({
   product,
 }: ProductFormProps) {
   const { t } = useLanguage();
+  const [submitPhase, setSubmitPhase] = useState<SubmitPhase>("idle");
+  const submitLockRef = useRef(false);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
+    if (submitLockRef.current) {
+      return;
+    }
+
+    submitLockRef.current = true;
+
     const form = event.currentTarget;
     const formData = new FormData(form);
 
-    // =================================================
-    // FORMDATA DEBUG
-    // =================================================
-
-    console.log("========== FORMDATA ==========");
-
-    for (const [key, value] of formData.entries()) {
-      console.log(key, value);
-    }
+    setSubmitPhase("processing");
 
     try {
+      await new Promise<void>((resolve) => {
+        window.setTimeout(resolve, 0);
+      });
+
+      const optimizedFormData = new FormData();
+
+      for (const [key, value] of formData.entries()) {
+        if (key === "mainImage" || key === "galleryImages") {
+          continue;
+        }
+
+        optimizedFormData.append(key, value);
+      }
+
+      const mainImage = formData.get("mainImage");
+
+      if (isNewImageFile(mainImage)) {
+        optimizedFormData.set(
+          "mainImage",
+          await optimizeProductImage(mainImage),
+        );
+      }
+
+      const galleryImages = formData
+        .getAll("galleryImages")
+        .filter(isNewImageFile);
+
+      for (const image of galleryImages) {
+        optimizedFormData.append(
+          "galleryImages",
+          await optimizeProductImage(image),
+        );
+      }
+
+      let optimizedImagesTotal = 0;
+      const optimizedMainImage = optimizedFormData.get("mainImage");
+
+      if (optimizedMainImage instanceof File) {
+        optimizedImagesTotal += optimizedMainImage.size;
+      }
+
+      for (const image of optimizedFormData.getAll("galleryImages")) {
+        if (image instanceof File) {
+          optimizedImagesTotal += image.size;
+        }
+      }
+
+      if (optimizedImagesTotal > PRODUCT_IMAGE_COMBINED_OPTIMIZED_MAX_BYTES) {
+        throw new ProductImageOptimizeError("COMBINED_TOO_LARGE");
+      }
+
+      // =================================================
+      // FORMDATA DEBUG
+      // =================================================
+
+      console.log("========== FORMDATA ==========");
+
+      for (const [key, value] of optimizedFormData.entries()) {
+        console.log(key, value);
+      }
+
+      setSubmitPhase("saving");
+
       if (mode === "edit" && product) {
-        await updateProduct(product.id, formData);
+        await updateProduct(product.id, optimizedFormData);
       } else {
-        await createProduct(formData);
+        await createProduct(optimizedFormData);
       }
     } catch (error: unknown) {
       // =================================================
@@ -102,6 +198,27 @@ export default function ProductForm({
       console.log(error);
 
       // =================================================
+      // IMAGE OPTIMIZATION ERROR
+      // =================================================
+
+      if (error instanceof ProductImageOptimizeError) {
+        alert(optimizeErrorMessage(error.code, t));
+        return;
+      }
+
+      // =================================================
+      // IMAGE UPLOAD ERROR
+      // =================================================
+
+      if (
+        error instanceof Error &&
+        error.message === PRODUCT_IMAGE_UPLOAD_FAILED
+      ) {
+        alert(t.productImageUploadFailed);
+        return;
+      }
+
+      // =================================================
       // VALIDATION ERROR
       // =================================================
 
@@ -117,8 +234,20 @@ export default function ProductForm({
       alert(
         mode === "edit" ? t.productUpdateFailed : t.productCreateFailed,
       );
+    } finally {
+      submitLockRef.current = false;
+      setSubmitPhase("idle");
     }
   }
+
+  const submitLabel =
+    submitPhase === "processing"
+      ? t.processingImages
+      : submitPhase === "saving"
+        ? t.uploading
+        : mode === "edit"
+          ? t.updateProduct
+          : t.createProduct;
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
@@ -135,9 +264,10 @@ export default function ProductForm({
 
       <button
         type="submit"
-        className="w-full rounded-2xl bg-white px-6 py-3 font-bold text-black transition hover:scale-[1.02] md:w-auto"
+        disabled={submitPhase !== "idle"}
+        className="w-full rounded-2xl bg-white px-6 py-3 font-bold text-black transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100 md:w-auto"
       >
-        {mode === "edit" ? t.updateProduct : t.createProduct}
+        {submitLabel}
       </button>
     </form>
   );
