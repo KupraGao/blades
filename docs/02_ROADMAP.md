@@ -266,8 +266,11 @@ preserved).
   (banner data model, Admin CRUD, upload, active, order, optional link;
   schema **not** locked; no promotional banner table yet)
 
-⬜ Catalog min/max filter and price sort by **effective** selling price
-  (currently `products.price` only; COALESCE needs generated column/RPC)
+✅ Catalog min/max (storefront) and Admin `price-asc`/`price-desc` use
+  live generated `products.effective_price` (`COALESCE(sale_price, price)`)
+  plus `products_effective_price_idx`. SQL
+  `docs/sql/add-products-effective-price.sql` is **executed** (history;
+  app never auto-applies). Storefront has no customer-facing price-sort UI.
 
 ---
 

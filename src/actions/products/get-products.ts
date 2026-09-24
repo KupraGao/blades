@@ -71,12 +71,15 @@ export async function getProducts({
     query = query.eq("stock", 0);
   }
 
+  // Catalog selling price = generated products.effective_price
+  // (COALESCE(sale_price, price)). Requires
+  // docs/sql/add-products-effective-price.sql in Supabase.
   if (minPrice !== null && minPrice !== undefined && Number.isFinite(minPrice)) {
-    query = query.gte("price", minPrice);
+    query = query.gte("effective_price", minPrice);
   }
 
   if (maxPrice !== null && maxPrice !== undefined && Number.isFinite(maxPrice)) {
-    query = query.lte("price", maxPrice);
+    query = query.lte("effective_price", maxPrice);
   }
 
   if (search) {
@@ -91,11 +94,11 @@ export async function getProducts({
       break;
 
     case "price-asc":
-      query = query.order("price", { ascending: true });
+      query = query.order("effective_price", { ascending: true });
       break;
 
     case "price-desc":
-      query = query.order("price", { ascending: false });
+      query = query.order("effective_price", { ascending: false });
       break;
 
     case "name-asc":

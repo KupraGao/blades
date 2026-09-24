@@ -409,6 +409,27 @@ Effective selling price (application + checkout):
 Discount percentage is **derived** application-side, not stored:
 `round(((price - sale_price) / price) * 100)`.
 
+### Catalog query column `products.effective_price` (**live / executed**)
+
+Read-only generated column for filter/sort/pagination:
+
+```sql
+effective_price numeric GENERATED ALWAYS AS (COALESCE(sale_price, price)) STORED
+```
+
+SQL: `docs/sql/add-products-effective-price.sql` — **executed** in the
+Supabase SQL Editor (`Success. No rows returned`). The app does **not**
+auto-run SQL. Index `products_effective_price_idx` is **live**.
+
+Storefront Min/Max now filters on `effective_price` (verified: product
+price 320 / sale_price 280 is visible at Min 250–Max 300 and hidden at
+Min 300–Max 350). Admin `price-asc` / `price-desc` also use this column.
+Storefront has **no** customer-facing price-sort UI.
+
+Not Admin-editable. Not in Product create/update payloads. Does **not**
+replace `price` / `sale_price`. Does **not** affect
+`order_items.product_price` or checkout `resolveOrderItems`.
+
 There is **no** promotional banner / promo-poster table.
 
 An existing catalog category named Discount, if present, is leftover
@@ -604,12 +625,14 @@ requireAdmin() → createAdminClient() → service_role → Catalog CRUD
   - Virtual sale filter: URL `category=sale` → `products.sale_price IS NOT NULL`
     (not the obsolete Discount category membership). The Discount DB row
     still exists; storefront replaces it in the filter list.
-  - Price: `products.price` (GEL, regular catalog price); optional min/max
-    via query `gte` / `lte`. **Not** effective/`sale_price` coalescing —
-    that needs a generated column or RPC (follow-up). Display/checkout
-    already use effective selling price.
+  - Price: `products.effective_price` (GEL; generated
+    `COALESCE(sale_price, price)`). **Live.** Optional min/max via query
+    `gte` / `lte`. SQL: `docs/sql/add-products-effective-price.sql` —
+    **executed** (history). Index `products_effective_price_idx` is live.
+    Admin still edits only `price` / `sale_price`. Display/checkout still
+    use helpers on `price` + `sale_price`. Storefront has no price-sort UI.
 - Exact filtered count + `.range` pagination (20/page) on the anon server
-  client — **no** new table, column, migration, or RPC
+  client
 - Latest Products is a separate unfiltered `getProducts` read (`limit: 10`)
 
 ### Storefront Brands reads (app — no schema change)
@@ -678,3 +701,7 @@ exists.
 `docs/sql/add-products-sale-price.sql` — **executed** (history). Adds
 nullable `products.sale_price numeric` + CHECK `products_sale_price_valid`.
 The app never auto-applies it.
+
+`docs/sql/add-products-effective-price.sql` — **executed** (history). Adds
+generated `products.effective_price` (`COALESCE(sale_price, price)`) +
+index `products_effective_price_idx`. The app never auto-applies it.

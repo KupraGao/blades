@@ -14,7 +14,25 @@
 
 ---
 
-## v1.34.0 — Sale pricing + homepage hero (current)
+## v1.35.0 — Catalog Min/Max (and Admin price sort) on effective price
+
+- Storefront Min/Max and Admin `price-asc` / `price-desc` query
+  `products.effective_price` (`COALESCE(sale_price, price)`), still
+  **before** `.range` pagination, with exact count.
+- SQL: `docs/sql/add-products-effective-price.sql` — generated STORED
+  column + btree index `products_effective_price_idx`. **Executed** in
+  the Supabase SQL Editor (app never auto-applies). Runtime Min/Max
+  verified (320/280: 250–300 visible, 300–350 hidden).
+- Storefront has **no** customer-facing price-sort UI; `getProducts`
+  `price-asc`/`price-desc` exist for Admin products list.
+- Admin still edits only `price` / `sale_price`. Checkout
+  `resolveOrderItems` and `order_items.product_price` unchanged.
+- Sale filter remains `sale_price IS NOT NULL`. Sale Slider / Promo /
+  Add-to-Cart stock UX unchanged.
+
+---
+
+## v1.34.0 — Sale pricing + homepage hero
 
 Working-tree snapshot of completed sale work. Promo CMS is **not** included.
 

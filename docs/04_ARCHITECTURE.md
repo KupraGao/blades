@@ -381,8 +381,13 @@ Delivery minimum remains **150 GEL** on the authoritative **effective**
 subtotal (no fee; no COD). Example: regular 200 / sale 120 → 120 →
 delivery unavailable.
 
-Catalog min/max and sort still use `products.price` (regular), not
-COALESCE(sale_price, price).
+Catalog min/max and Admin `price-asc` / `price-desc` use live generated
+`products.effective_price` (`COALESCE(sale_price, price)`) and index
+`products_effective_price_idx`. SQL:
+`docs/sql/add-products-effective-price.sql` — **executed** (history;
+app never auto-applies). Admin still edits only `price` / `sale_price`.
+Storefront has no customer-facing price-sort UI. Checkout still resolves
+`price` + `sale_price`. Historical `order_items.product_price` unchanged.
 
 ---
 
@@ -507,7 +512,7 @@ parse (`src/lib/catalog/catalog-search-params.ts`)
 
 Supabase: normal Category (`product_categories.category_id`) **or** virtual
 sale filter (`sale_price IS NOT NULL` when `category=sale`) **AND** Price
-(`products.price` gte/lte as provided) → **exact filtered count** →
+(`products.effective_price` gte/lte as provided) → **exact filtered count** →
 `.range(...)` for current page (max **20** products)
 
 ↓
@@ -1125,7 +1130,9 @@ Admin role management; Admin Add/Invite Customer.
   `payment_status = unpaid` at create; rejects `delivery + pay_at_pickup` and
   unknown methods before inserts / stock (`payment-rules` / `validateOrder`)
 - ⬜ Promo CMS / real Promo Slider #1 (frame exists; no banner table)
-- ⬜ Catalog min/max/sort by effective selling price (still `products.price`)
+- ✅ Catalog min/max (and Admin price sort) use live generated
+  `effective_price` — SQL `docs/sql/add-products-effective-price.sql`
+  **executed**; Min/Max runtime-verified
 - ⬜ Real online payment / provider integration (provider not chosen)
 - ⬜ Webhooks / payment verification / automatic `paid` / refunds
 - Guest `createOrder` abuse controls (rate limits / CAPTCHA / etc.)

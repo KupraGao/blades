@@ -57,7 +57,12 @@
   (narrow right column). Inverse of a typical 1→2→3 sequence
 - Promo Slider #1 **frame** + `HomepageHeroSliders` composition shipped;
   Promo CMS / real banners **not** implemented
-- Catalog min/max/sort still on `products.price` (regular) — follow-up
+- Catalog min/max (and Admin price sort) use live generated
+  `effective_price` (`COALESCE(sale_price, price)`) and
+  `products_effective_price_idx`. SQL
+  `docs/sql/add-products-effective-price.sql` is **executed** (history;
+  not auto-applied). Runtime Min/Max verified (320/280: 250–300 visible,
+  300–350 hidden). Storefront has no price-sort UI.
 
 ---
 
@@ -173,8 +178,8 @@
 - Category + Price filters combine with **AND** against the full catalog
   **before** pagination (not client-side on the current page only)
 - Stable category ID in URL (`?category=`); `name_ka` / `name_en` display only
-- Price uses existing `products.price` (GEL / `₾`); min-only / max-only /
-  both / unbounded; invalid `min > max` not sent as a bad query
+- Price uses generated `products.effective_price` (GEL / `₾`); min-only /
+  max-only / both / unbounded; invalid `min > max` not sent as a bad query
 - URL state: `category`, `minPrice`, `maxPrice`, `page` (single source of truth)
 - Page size **20**; exact filtered count drives page count; filter/Clear →
   `page = 1`
