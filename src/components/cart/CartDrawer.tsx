@@ -2,8 +2,10 @@
 
 import Link from "next/link";
 import { Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
+import { ProductPrice } from "@/components/product/ProductPrice";
 import { useCart } from "@/context/CartContext";
 import { useLanguage } from "@/context/LanguageContext";
+import { getCartItemPricing } from "@/lib/products/pricing";
 
 type CartDrawerProps = {
   open: boolean;
@@ -123,12 +125,13 @@ export function CartDrawer({ open, setOpen }: CartDrawerProps) {
                       {item.title}
                     </Link>
 
-                    <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-                      {t.unitPrice}:{" "}
-                      <span className="font-bold text-brand-gold">
-                        ₾{item.price}
-                      </span>
-                    </p>
+                    <div className="mt-1.5">
+                      <ProductPrice
+                        product={getCartItemPricing(item)}
+                        size="compact"
+                        showPercent={false}
+                      />
+                    </div>
 
                     <p className="mt-1 text-sm font-bold text-zinc-900 dark:text-white">
                       {t.total}: ₾{item.price * item.quantity}

@@ -9,6 +9,7 @@ import BasicInfoSection from "@/components/admin/products/form/BasicInfoSection"
 import CategoriesSection from "@/components/admin/products/form/CategoriesSection";
 import SpecificationsSection from "@/components/admin/products/form/SpecificationsSection";
 import ImagesSection from "@/components/admin/products/form/ImagesSection";
+import ProductFormPageHeader from "@/components/admin/products/form/ProductFormPageHeader";
 import { useLanguage } from "@/context/LanguageContext";
 import {
   PRODUCT_IMAGE_COMBINED_OPTIMIZED_MAX_BYTES,
@@ -34,6 +35,7 @@ type Product = {
   title: string;
   brand_id: number | null;
   price: number;
+  sale_price?: number | null;
   review_link: string | null;
   stock: number;
   overall_length: string | null;
@@ -67,6 +69,31 @@ type SubmitPhase = "idle" | "processing" | "saving";
 
 function isNewImageFile(value: FormDataEntryValue | null): value is File {
   return value instanceof File && value.size > 0 && Boolean(value.name);
+}
+
+function productFormErrorMessage(
+  error: unknown,
+  t: ReturnType<typeof useLanguage>["t"],
+): string | null {
+  if (!(error instanceof Error)) {
+    return null;
+  }
+
+  if (error.message === "productSalePriceInvalid") {
+    return t.productSalePriceInvalid;
+  }
+
+  if (error.message === "productSalePriceMustBeLower") {
+    return t.productSalePriceMustBeLower;
+  }
+
+  const message = error.message.toLowerCase();
+
+  if (message.includes("products_sale_price_valid")) {
+    return t.productSalePriceMustBeLower;
+  }
+
+  return error.message;
 }
 
 function optimizeErrorMessage(
@@ -223,7 +250,7 @@ export default function ProductForm({
       // =================================================
 
       if (error instanceof Error) {
-        alert(error.message);
+        alert(productFormErrorMessage(error, t) ?? error.message);
         return;
       }
 
@@ -249,8 +276,30 @@ export default function ProductForm({
           ? t.updateProduct
           : t.createProduct;
 
+  const submitDisabled = submitPhase !== "idle";
+
+  const submitButtonClassName =
+    "inline-flex min-h-11 w-full items-center justify-center rounded-2xl bg-white px-6 py-3 font-bold text-black transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100 sm:w-auto";
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-8">
+    <form
+      id="product-form"
+      onSubmit={handleSubmit}
+      className="space-y-8"
+    >
+      <ProductFormPageHeader
+        mode={mode}
+        action={
+          <button
+            type="submit"
+            disabled={submitDisabled}
+            className={submitButtonClassName}
+          >
+            {submitLabel}
+          </button>
+        }
+      />
+
       <BasicInfoSection brands={brands} product={product} />
 
       <CategoriesSection
@@ -264,8 +313,8 @@ export default function ProductForm({
 
       <button
         type="submit"
-        disabled={submitPhase !== "idle"}
-        className="w-full rounded-2xl bg-white px-6 py-3 font-bold text-black transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100 md:w-auto"
+        disabled={submitDisabled}
+        className={submitButtonClassName}
       >
         {submitLabel}
       </button>

@@ -280,6 +280,7 @@ export function MobileMenuDrawer({
                     <button
                       type="button"
                       onClick={() => handleCategoryClick(null)}
+                      aria-current={!selectedCategoryId ? "true" : undefined}
                       className={`flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-left text-sm transition ${
                         !selectedCategoryId
                           ? "bg-orange-50 font-semibold text-orange-600"
@@ -309,6 +310,7 @@ export function MobileMenuDrawer({
                           key={id}
                           type="button"
                           onClick={() => handleCategoryClick(id)}
+                          aria-current={isActive ? "true" : undefined}
                           className={`flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-left text-sm transition ${
                             isActive
                               ? "bg-orange-50 font-semibold text-orange-600"

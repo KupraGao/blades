@@ -49,6 +49,14 @@
   forgot/reset + logged-in change password; Login guest paths)
 - Admin Users (read-only)
   (`/admin/users` list + `/admin/users/[id]` detail + owned Order History)
+- Sale Price foundation (`products.price` regular; nullable `sale_price`;
+  on sale iff `sale_price IS NOT NULL`; executed production CHECK)
+- Effective-price helpers + storefront / cart / checkout integration
+  (checkout `resolveOrderItems` is authoritative; cart snapshot is not)
+- Virtual storefront Sale filter (ფასდაკლება → `sale_price IS NOT NULL`)
+- Admin Sale management (On Sale + Sale Price; derived %; Create/Edit)
+- Homepage Sale Products Slider #2 (`sale_price IS NOT NULL`; not category)
+- Promo Slider #1 visual/architectural frame only (no banner CMS/data)
 
 See `docs/06_CHANGELOG.md` for version history (S6 Customer Ownership complete;
 S7A–S7B payment-method path + S7B-1 delivery minimum — see latest changelog;
@@ -104,7 +112,18 @@ payment verification, automatic `paid`, refunds.
 
 ## 🚀 Immediate Next
 
-### Real online payment / provider integration (next)
+### Promo CMS / real Promo Slider #1 (catalog next)
+
+⬜ Promotional banner **data + Admin CMS** for homepage Promo Slider #1
+
+The visual `PromoSlider` **frame** and desktop Promo + Sale composition
+are already shipped. Remaining work is real banner records, Admin
+management, image upload, active/inactive, ordering, and optional
+link/CTA. Exact table/schema is **not** locked here.
+
+Do **not** treat the current development placeholder as a live campaign.
+
+### Real online payment / provider integration (payments next)
 
 ⬜ Integrate a real payment provider for Checkout `online` orders
   (charge / session / verification) — provider **not** selected yet
@@ -130,8 +149,11 @@ complete and closed. Home storefront Featured Catalog Filters (Category +
 Price, URL state, 20/page server pagination) and independent Latest Products
 query are shipped. Storefront Brands directory + Brand PLP (Brand-scoped
 Category/Price Filters, shared toolbar) are shipped — see Architecture /
-Changelog. **Immediate next remains S7 Payments & Delivery** (provider /
-webhooks / refunds not started; S7A–S7B partial progress preserved).
+Changelog. Sale pricing, virtual Sale filter, Admin Sale UI, and
+homepage Sale Slider #2 are shipped. Promo Slider #1 is a **frame only**.
+Catalog next: Promo CMS / real banners (schema not locked). Payments next
+remains S7 provider / webhooks / refunds (S7A–S7B partial progress
+preserved).
 
 ---
 
@@ -216,6 +238,36 @@ webhooks / refunds not started; S7A–S7B partial progress preserved).
 ⬜ Coupons
 
 ⬜ Taxes
+
+---
+
+## Catalog / Homepage
+
+✅ Sale Price foundation — `price` = regular; `sale_price` nullable
+  discounted selling price; on sale iff `sale_price IS NOT NULL`
+
+✅ Effective-price integration — `src/lib/products/pricing.ts`; storefront
+  presentation; cart effective snapshot; checkout re-resolves from DB
+
+✅ Storefront Sale filter — ფასდაკლება / Sale is virtual
+  (`?category=sale` → `sale_price IS NOT NULL`); not Discount category
+  membership
+
+✅ Admin Sale management — On Sale checkbox + Sale Price; derived %;
+  desktop one-row pricing cluster; Create/Edit share the same model
+
+✅ Homepage Sale Products Slider #2 — automatic `sale_price IS NOT NULL`;
+  no featured-sale flag; Latest Products carousel remains intact
+
+✅ Promo Slider #1 **frame** — `PromoSlider` + `HomepageHeroSliders`
+  desktop `[ wide Promo ][ narrow Sale ]`; stacks below `lg`
+
+⬜ Promo CMS / real Promo Slider #1
+  (banner data model, Admin CRUD, upload, active, order, optional link;
+  schema **not** locked; no promotional banner table yet)
+
+⬜ Catalog min/max filter and price sort by **effective** selling price
+  (currently `products.price` only; COALESCE needs generated column/RPC)
 
 ---
 

@@ -6,6 +6,7 @@ export interface ProductInput {
   title: string;
   description: string;
   price: number;
+  salePrice: number | null;
   stock: number;
   brandId: number | null;
   categories: string[];

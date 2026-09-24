@@ -187,6 +187,8 @@ export const en = {
   logoAlt: "Blades logo",
   toggleTheme: "Toggle theme",
   sale: "Sale",
+  promoBanner: "Promo Banner",
+  promoBannerAdminHint: "Managed from Admin",
   locationTbilisi: "Tbilisi, Georgia",
   copyright: "© 2026 BLADES.GE — All rights reserved.",
 
@@ -576,6 +578,11 @@ export const en = {
   productTitleLabel: "Product Title",
   selectBrand: "Select brand",
   reviewLink: "Review Link",
+  onSale: "On Sale",
+  salePrice: "Sale Price",
+  productSalePriceInvalid: "Enter a valid sale price.",
+  productSalePriceMustBeLower:
+    "Sale price must be lower than the regular price.",
   existingPhotos: "Existing Photos",
   mainPhoto: "Main Photo",
   uploading: "Uploading...",

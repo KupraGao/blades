@@ -26,6 +26,7 @@ type Product = {
   title: string;
   knife_type: string | null;
   price: number;
+  sale_price?: number | null;
   stock: number;
   product_images: ProductImage[];
   product_categories: ProductCategory[];

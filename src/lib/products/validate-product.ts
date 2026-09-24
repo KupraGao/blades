@@ -11,6 +11,14 @@ export function validateProduct(product:ProductInput){
   if(!Number.isFinite(product.price)||product.price<=0)
     throw new Error("ფასი არასწორია.");
 
+  if(product.salePrice!==null){
+    if(!Number.isFinite(product.salePrice)||product.salePrice<=0)
+      throw new Error("productSalePriceInvalid");
+
+    if(product.salePrice>=product.price)
+      throw new Error("productSalePriceMustBeLower");
+  }
+
   if(!Number.isInteger(product.stock)||product.stock<0)
     throw new Error("მარაგი არასწორია.");
 

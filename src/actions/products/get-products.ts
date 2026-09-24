@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 
 type GetProductsOptions = {
   categoryId?: string;
+  onSale?: boolean;
   brandId?: string;
   stock?: string;
   search?: string;
@@ -16,6 +17,7 @@ type GetProductsOptions = {
 
 export async function getProducts({
   categoryId,
+  onSale = false,
   brandId,
   stock,
   search,
@@ -31,7 +33,9 @@ export async function getProducts({
   const safeLimit =
     Number.isFinite(limit) && limit >= 1 ? Math.floor(limit) : 20;
 
-  const categoryEmbed = categoryId
+  const applyCategoryJoin = Boolean(categoryId) && !onSale;
+
+  const categoryEmbed = applyCategoryJoin
     ? "product_categories!inner(category_id,categories(id,name_ka,name_en))"
     : "product_categories(category_id,categories(id,name_ka,name_en))";
 
@@ -49,7 +53,9 @@ export async function getProducts({
       },
     );
 
-  if (categoryId) {
+  if (onSale) {
+    query = query.not("sale_price", "is", null);
+  } else if (categoryId) {
     query = query.eq("product_categories.category_id", categoryId);
   }
 

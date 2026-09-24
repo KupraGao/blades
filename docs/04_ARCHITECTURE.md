@@ -60,6 +60,7 @@ src
 │       ├── delete-product.ts
 │       ├── delete-products-bulk.ts
 │       ├── get-products.ts
+│       ├── get-sale-slider-products.ts
 │       ├── get-single-product.ts
 │       ├── update-product-categories-bulk.ts
 │       └── update-product.ts
@@ -160,7 +161,9 @@ src
 │   │   ├── FeatureStrip.tsx
 │   │   ├── Hero.tsx
 │   │   ├── HomeClient.tsx
-│   │   └── PromoBanner.tsx
+│   │   ├── HomepageHeroSliders.tsx
+│   │   ├── PromoBanner.tsx
+│   │   └── PromoSlider.tsx
 │   │
 │   ├── layout
 │   │   ├── Footer.tsx
@@ -179,7 +182,8 @@ src
 │   │   ├── ProductGallery.tsx
 │   │   ├── ProductPurchaseActions.tsx
 │   │   ├── ProductSectionClient.tsx
-│   │   └── ProductSlide.tsx
+│   │   ├── ProductSlide.tsx
+│   │   └── SaleProductsSlider.tsx
 │   │
 │   └── wishlist
 │       └── WishlistPageContent.tsx
@@ -209,7 +213,8 @@ src
 │   │   └── products.ts
 │   │
 │   ├── catalog
-│   │   └── catalog-search-params.ts
+│   │   ├── catalog-search-params.ts
+│   │   └── sale-filter.ts
 │   │
 │   ├── i18n
 │   │   ├── format-admin-date.ts
@@ -235,6 +240,7 @@ src
 │   │   ├── insert-main-image.ts
 │   │   ├── insert-product.ts
 │   │   ├── parse-product-form.ts
+│   │   ├── pricing.ts
 │   │   ├── product-mapper.ts
 │   │   ├── update-product-record.ts
 │   │   ├── upload-gallery-images-record.ts
@@ -266,7 +272,7 @@ validateProduct
 
 ↓
 
-productMapper
+productMapper (`price` + nullable `sale_price`)
 
 ↓
 
@@ -330,11 +336,143 @@ Page Size
 
 ---
 
+# 💰 Sale pricing (implemented)
+
+Canonical columns:
+
+- `products.price` — regular / original catalog price
+- `products.sale_price` — nullable discounted selling price
+
+Canonical sale state: `sale_price IS NOT NULL` → on sale;
+`sale_price IS NULL` → normal product.
+
+No `is_on_sale` / `is_discounted` / stored `discount_percent`.
+
+Helpers: `src/lib/products/pricing.ts`
+
+```text
+effective price = valid sale_price if present, else price
+discount % = round(((price - sale_price) / price) * 100)  // derived
+```
+
+Admin Product Create/Edit:
+
+- On Sale checkbox (UX; unchecked submits `sale_price = NULL`)
+- Sale Price required when On Sale; must be `> 0` and `< price`
+- Desktop one row: Regular Price | On Sale | Sale Price + derived %
+- Top Create/Update and bottom submit share `#product-form` /
+  `handleSubmit` (same image-optimization path; shared pending state)
+
+Storefront filter **ფასდაკლება / Sale** is virtual:
+
+- URL `?category=sale` → `getProducts({ onSale: true })` →
+  `.not("sale_price", "is", null)`
+- Legacy Discount category membership does **not** decide eligibility
+- Admin category pickers hide the obsolete Discount category (identified
+  by name only: KA `ფასდაკლება` / EN discount|sale; categories have no slug)
+- That `categories` row was **not** deleted (optional future cleanup)
+
+Checkout: `resolveOrderItems` selects `id, title, price, sale_price, stock`
+and charges `getEffectiveProductPrice`. Cart/localStorage is **not**
+authoritative. `order_items.product_price` is the unit charged at create.
+
+Delivery minimum remains **150 GEL** on the authoritative **effective**
+subtotal (no fee; no COD). Example: regular 200 / sale 120 → 120 →
+delivery unavailable.
+
+Catalog min/max and sort still use `products.price` (regular), not
+COALESCE(sale_price, price).
+
+---
+
 # 🏠 Home Storefront Catalog Flow
 
-Home (`src/app/(shop)/page.tsx`) runs **two independent** product reads.
+Home (`src/app/(shop)/page.tsx`) runs **three independent** product reads
+plus the Promo frame (no banner query).
 
-## A. Latest Products (independent)
+## Homepage composition (current)
+
+```text
+Header
+↓
+Search / Filters (ShopHeaderExtrasHost + CategoriesSidebar)
+↓
+HomepageHeroSliders
+  PromoSlider #1 (frame only)
+  SaleProductsSlider #2
+↓
+LatestProductsSlider (New Products — unchanged)
+↓
+FeatureStrip (benefits)
+↓
+Featured Catalog (ProductSectionClient)
+↓
+existing PromoBanner CTA (unrelated to PromoSlider CMS)
+↓
+Footer
+```
+
+Desktop `lg+`:
+
+```text
+[ wide Promo frame ][ narrow Sale carousel ]
+```
+
+`HomepageHeroSliders` uses `container-page` plus the HeaderExtras filter
+slot (`w-[296px]` = 272px + 24px gap) on `lg`, whether Filters are
+expanded or collapsed.
+
+Grid: `lg:grid-cols-[minmax(0,2.3fr)_minmax(0,1fr)]`. Equal height via
+CSS Grid stretch on `lg` only (`items-start` below `lg`).
+
+Below `lg`:
+
+```text
+Promo
+↓
+Sale  (then 3 / 2 / 1 visible cards by width)
+↓
+New Products
+```
+
+If there are no sale products, the Sale column is omitted and Promo uses
+the remaining Search-aligned width. No fake sale products.
+
+## Promo slider frame (NOT CMS)
+
+`PromoSlider` is a visual/architectural frame for future **image-first**
+promotional posters (`relative` / `overflow-hidden` / fill + object-cover).
+
+Implemented: placement, proportion, theme-aware surface, development
+placeholder copy only.
+
+**Not** implemented: banner table, Admin `/admin/banners`, upload,
+active/sort/link fields, real slides, Prev/Next, autoplay.
+
+Existing `PromoBanner.tsx` at the bottom of Home is a separate CTA block,
+not this slider.
+
+## A. Sale Products slider (independent)
+
+`getSaleSliderProducts()` — `sale_price IS NOT NULL`, `created_at` desc,
+limit **10**. **No** `stock > 0` filter. Not category membership. Not a
+featured-sale flag. Not affected by Featured Catalog Filters.
+
+`SaleProductsSlider`: Embla, no autoplay, Product Details links,
+`ProductPrice` (regular + sale + derived %). One Prev/Next pair for the
+carousel; shown only when Embla can scroll. Hidden when the product list
+is empty.
+
+Visible cards (intentional inverse of typical 1→2→3):
+
+| Width | Visible cards | Why |
+|-------|---------------|-----|
+| < 360px | 1 | too narrow for two usable cards |
+| 360px to below `md` | 2 | stacked full-width phone row |
+| `md` to below `lg` | 3 | stacked full-width tablet row |
+| `lg+` | 1 | Sale is the narrow right column beside Promo |
+
+## B. Latest Products (independent)
 
 `getProducts({ page: 1, limit: 10 })`
 
@@ -346,7 +484,7 @@ dots stay stationary)
 
 Not affected by Featured Catalog Filters, price bounds, or catalog `page`.
 
-## B. Featured Catalog (filtered + paginated)
+## C. Featured Catalog (filtered + paginated)
 
 URL search params (source of truth):
 
@@ -358,11 +496,12 @@ parse (`src/lib/catalog/catalog-search-params.ts`)
 
 ↓
 
-`getProducts({ page, limit: 20, categoryId, minPrice, maxPrice })`
+`getProducts({ page, limit: 20, categoryId, onSale, minPrice, maxPrice })`
 
 ↓
 
-Supabase: Category (`product_categories.category_id`) **AND** Price
+Supabase: normal Category (`product_categories.category_id`) **or** virtual
+sale filter (`sale_price IS NOT NULL` when `category=sale`) **AND** Price
 (`products.price` gte/lte as provided) → **exact filtered count** →
 `.range(...)` for current page (max **20** products)
 
@@ -373,7 +512,9 @@ Supabase: Category (`product_categories.category_id`) **AND** Price
 ### Rules
 
 - **Filter first, paginate second** (full matching catalog, then 20/page)
-- Category identity = stable category ID (not localized display name)
+- Category identity = stable category ID (not localized display name),
+  except storefront **ფასდაკლება / Sale** which is a virtual filter
+  (`?category=sale` → `sale_price IS NOT NULL`; not `product_categories`)
 - Price currency = GEL / `₾` only
 - Filter change or Clear → `page = 1`
 - Active filter count: Category group + Price group (min+max = one Price)
@@ -538,8 +679,10 @@ Resolve authoritative products (`products` table)
 ↓
 
 Delivery minimum (S7B-1): if `fulfillmentMethod === "delivery"` and
-authoritative resolved subtotal < 150 GEL → reject **before** inserts /
-stock decrement (client also gates on `selectedCartTotal`)
+authoritative resolved **effective selling** subtotal < 150 GEL → reject
+**before** inserts / stock decrement (client also gates on
+`selectedCartTotal`, which uses the cart’s effective-price snapshot).
+Cart / client prices are **not** authoritative.
 
 ↓
 
@@ -924,10 +1067,13 @@ Admin role management; Admin Add/Invite Customer.
   NULL | `online` | `pay_at_pickup` only — **no** COD; `payment_status` +
   metadata). Order status ≠ payment status. Historical: method NULL, unpaid.
 - ✅ S7B-1 Delivery Minimum — ≥ 150 GEL for delivery; free Tbilisi delivery
-  (no fee); client `selectedCartTotal` + server resolved prices before writes
+  (no fee); client `selectedCartTotal` + server resolved **effective**
+  prices (`sale_price` when set, else `price`) before writes
 - ✅ S7B Checkout Payment Method — UI + server capture; valid combos only;
   `payment_status = unpaid` at create; rejects `delivery + pay_at_pickup` and
   unknown methods before inserts / stock (`payment-rules` / `validateOrder`)
+- ⬜ Promo CMS / real Promo Slider #1 (frame exists; no banner table)
+- ⬜ Catalog min/max/sort by effective selling price (still `products.price`)
 - ⬜ Real online payment / provider integration (provider not chosen)
 - ⬜ Webhooks / payment verification / automatic `paid` / refunds
 - Guest `createOrder` abuse controls (rate limits / CAPTCHA / etc.)

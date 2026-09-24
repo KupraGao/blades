@@ -1,3 +1,8 @@
+import {
+  getEffectiveProductPrice,
+  getRegularProductPrice,
+  isProductOnSale,
+} from "@/lib/products/pricing";
 import { CartItem } from "../types";
 
 // =================================================
@@ -77,7 +82,11 @@ export function addToCart({
     {
       id: product.id,
       title: product.title,
-      price: Number(product.price),
+      price: getEffectiveProductPrice(product),
+      regularPrice: getRegularProductPrice(product),
+      salePrice: isProductOnSale(product)
+        ? getEffectiveProductPrice(product)
+        : null,
       image: productImage,
       quantity: 1,
       stock: productStock,

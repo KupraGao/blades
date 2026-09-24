@@ -1,5 +1,21 @@
 import { ParsedProductForm } from "@/types/product.types";
 
+function parseSalePrice(formData: FormData): number | null {
+  const onSale = String(formData.get("onSale") ?? "") === "on";
+
+  if (!onSale) {
+    return null;
+  }
+
+  const raw = formData.get("salePrice");
+
+  if (typeof raw !== "string" || raw.trim() === "") {
+    return Number.NaN;
+  }
+
+  return Number(raw);
+}
+
 export function parseProductForm(
   formData: FormData
 ): ParsedProductForm {
@@ -29,6 +45,7 @@ export function parseProductForm(
       title: String(formData.get("title") ?? "").trim(),
       description: String(formData.get("description") ?? "").trim(),
       price: Number(formData.get("price") ?? 0),
+      salePrice: parseSalePrice(formData),
       stock: Number(formData.get("stock") ?? 0),
 
       brandId: formData.get("brandId")

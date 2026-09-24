@@ -378,20 +378,74 @@ Supabase SQL Editor (no in-repo migration file for that work).
 
 ---
 
+## Product sale price (`products.sale_price`)
+
+**Live / executed.** Column exists in the production database. Applied
+manually in the Supabase SQL Editor from
+`docs/sql/add-products-sale-price.sql` (kept as migration history). The
+app does **not** auto-run SQL. This migration is **not** pending.
+
+No backfill was performed; products without a discount remain
+`sale_price = NULL`. No `is_on_sale` / `is_discounted` /
+`discount_percent` column.
+
+| Column | Type | Nullable | Meaning |
+|--------|------|----------|---------|
+| `products.price` | numeric (existing catalog column) | existing | Regular / original catalog price |
+| `products.sale_price` | `numeric` | yes | Optional discounted selling price; `NULL` = not on sale |
+
+Constraint `products_sale_price_valid` (**active**):
+
+```sql
+sale_price IS NULL
+OR (sale_price > 0 AND sale_price < price)
+```
+
+Effective selling price (application + checkout):
+
+- valid `sale_price` present → charge `sale_price`
+- otherwise → charge `price`
+
+Discount percentage is **derived** application-side, not stored:
+`round(((price - sale_price) / price) * 100)`.
+
+There is **no** promotional banner / promo-poster table.
+
+An existing catalog category named Discount, if present, is leftover
+category data only — **not** the technical source of truth for pricing
+and was **not** physically deleted. Storefront "ფასდაკლება / Sale" is a
+virtual filter (`?category=sale` → `sale_price IS NOT NULL`). Admin
+product assignment hides that category by name (`ფასდაკლება` /
+Discount/Sale). No category slug exists. Optional future cleanup of the
+unused row is out of scope.
+
+`order_items.product_price` remains the **unit price charged at order
+creation** (historical snapshot). Later sale changes do not rewrite
+past orders.
+
+Homepage Sale Slider #2 reads `sale_price IS NOT NULL` (limit 10,
+newest first; no stock predicate in the query).
+
+---
+
 ## Order Behavior (code-backed)
 
 - Browser does **not** provide authoritative price / title / total
-- `createOrder` resolves products from `products` (`id`, `title`, `price`, `stock`)
+- `createOrder` resolves products from `products` (`id`, `title`, `price`,
+  `sale_price`, `stock`) and charges the **effective** unit price
+  (`sale_price` when valid/present, else `price`)
 - Duplicate `productId` lines are consolidated before stock validation
 - Stock is validated before order creation
-- Delivery (S7B-1): after resolve, authoritative subtotal must be ≥ 150 GEL
-  when `fulfillment_method` is delivery; otherwise reject before inserts /
-  stock decrement (do not trust client totals)
+- Delivery (S7B-1): after resolve, authoritative **effective selling**
+  subtotal must be ≥ 150 GEL when `fulfillment_method` is delivery;
+  otherwise reject before inserts / stock decrement (do not trust client
+  totals). Threshold itself is unchanged (150 GEL, no delivery fee)
 - Payment (S7B): `validateOrder` requires `online` | `pay_at_pickup` and a
   valid fulfillment combo **before** inserts / stock decrement; rejects
   `delivery + pay_at_pickup` and unknown methods (incl. COD strings)
-- `total_price` is computed only from resolved item prices × quantities
+- `total_price` is computed only from resolved **effective** item prices × quantities
 - Order line title/price are snapshotted onto `order_items`
+  (`product_price` = charged unit at that moment)
 - After successful `orders` + `order_items` insert, product `stock` is decremented
 - Partial-failure compensation deletes / stock restore are best-effort
   (not a full DB transaction / RPC for **order creation**)
@@ -547,7 +601,13 @@ requireAdmin() → createAdminClient() → service_role → Catalog CRUD
 - Featured Catalog Filters use existing columns/relations only:
   - Category: `product_categories.category_id` (stable ID; display via
     `categories.name_ka` / `name_en`)
-  - Price: `products.price` (GEL); optional min/max via query `gte` / `lte`
+  - Virtual sale filter: URL `category=sale` → `products.sale_price IS NOT NULL`
+    (not the obsolete Discount category membership). The Discount DB row
+    still exists; storefront replaces it in the filter list.
+  - Price: `products.price` (GEL, regular catalog price); optional min/max
+    via query `gte` / `lte`. **Not** effective/`sale_price` coalescing —
+    that needs a generated column or RPC (follow-up). Display/checkout
+    already use effective selling price.
 - Exact filtered count + `.range` pagination (20/page) on the anon server
   client — **no** new table, column, migration, or RPC
 - Latest Products is a separate unfiltered `getProducts` read (`limit: 10`)
@@ -614,3 +674,7 @@ Repository currently does not contain checked-in Orders migrations.
 Editor. There is **no** in-repo migration file for profiles as part of that
 work — document the live DB state above; do not claim a repo migration
 exists.
+
+`docs/sql/add-products-sale-price.sql` — **executed** (history). Adds
+nullable `products.sale_price numeric` + CHECK `products_sale_price_valid`.
+The app never auto-applies it.

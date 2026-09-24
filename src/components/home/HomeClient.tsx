@@ -4,15 +4,18 @@ import { useCallback, useState } from "react";
 
 import { Header } from "@/components/layout/Header";
 
+import { HomepageHeroSliders } from "@/components/home/HomepageHeroSliders";
 import { LatestProductsSlider } from "@/components/product/LatestProductsSlider";
 import { PromoBanner } from "@/components/home/PromoBanner";
 import { FeatureStrip } from "@/components/home/FeatureStrip";
 
 import { ProductSectionClient } from "@/components/product/ProductSectionClient";
+import type { SaleSliderProduct } from "@/actions/products/get-sale-slider-products";
 import type { CatalogCategory } from "@/lib/catalog/catalog-search-params";
 
 export function HomeClient({
   latestProducts,
+  saleProducts,
   catalogProducts,
   catalogTotal,
   catalogTotalPages,
@@ -21,6 +24,7 @@ export function HomeClient({
   accountHref = "/account/login",
 }: {
   latestProducts: any[];
+  saleProducts: SaleSliderProduct[];
   catalogProducts: any[];
   catalogTotal: number;
   catalogTotalPages: number;
@@ -42,6 +46,8 @@ export function HomeClient({
 
       {/* lg:pt-14 clears fixed ShopHeaderExtrasHost under the sticky Header */}
       <main className="lg:pt-14">
+        <HomepageHeroSliders saleProducts={saleProducts} />
+
         <LatestProductsSlider
           products={latestProducts}
           isFiltersOpen={isFiltersOpen}

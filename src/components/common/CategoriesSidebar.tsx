@@ -244,6 +244,7 @@ export function CategoriesSidebar({
                     <button
                       type="button"
                       onClick={() => handleCategoryClick(null)}
+                      aria-current={!selectedCategoryId ? "true" : undefined}
                       className={categoryRowClass(!selectedCategoryId)}
                     >
                       <span className="min-w-0 truncate">{t.allProducts}</span>
@@ -267,6 +268,7 @@ export function CategoriesSidebar({
                           key={id}
                           type="button"
                           onClick={() => handleCategoryClick(id)}
+                          aria-current={isActive ? "true" : undefined}
                           className={categoryRowClass(isActive)}
                         >
                           <span className="min-w-0 truncate">{label}</span>

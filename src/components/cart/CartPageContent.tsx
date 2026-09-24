@@ -2,8 +2,10 @@
 
 import Link from "next/link";
 import { Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
+import { ProductPrice } from "@/components/product/ProductPrice";
 import { useCart } from "@/context/CartContext";
 import { useLanguage } from "@/context/LanguageContext";
+import { getCartItemPricing } from "@/lib/products/pricing";
 
 export default function CartPageContent() {
   const {
@@ -76,9 +78,13 @@ export default function CartPageContent() {
                         {item.title}
                       </Link>
 
-                      <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
-                        {t.unitPrice}: <span className="font-bold text-brand-gold">₾{item.price}</span>
-                      </p>
+                      <div className="mt-2">
+                        <ProductPrice
+                          product={getCartItemPricing(item)}
+                          size="compact"
+                          showPercent={false}
+                        />
+                      </div>
                     </div>
 
                     <button type="button" aria-label={t.removeProduct} title={t.removeProduct} onClick={() => removeFromCart(item.id)} className="grid h-9 w-9 shrink-0 place-items-center rounded-lg text-red-500 transition hover:bg-red-500/10">

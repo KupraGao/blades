@@ -5,6 +5,7 @@ import { HomeClient } from "@/components/home/HomeClient";
 
 import { getCategories } from "@/actions/categories/get-categories";
 import { getProducts } from "@/actions/products/get-products";
+import { getSaleSliderProducts } from "@/actions/products/get-sale-slider-products";
 import { getAuthUser } from "@/lib/auth/get-auth-user";
 import {
   buildCatalogQueryString,
@@ -12,6 +13,10 @@ import {
   LATEST_PRODUCTS_LIMIT,
   parseCatalogSearchParams,
 } from "@/lib/catalog/catalog-search-params";
+import {
+  resolveStorefrontCatalogQuery,
+  toStorefrontFilterCategories,
+} from "@/lib/catalog/sale-filter";
 
 type Props = {
   searchParams: Promise<{
@@ -26,7 +31,27 @@ export default async function Home({ searchParams }: Props) {
   const params = await searchParams;
   const filters = parseCatalogSearchParams(params);
 
-  const [latestResult, catalogResult, categories, user] = await Promise.all([
+  const [categories, user] = await Promise.all([
+    getCategories(),
+    getAuthUser(),
+  ]);
+
+  const catalogQuery = resolveStorefrontCatalogQuery(
+    filters,
+    categories ?? [],
+  );
+
+  if (catalogQuery.needsSaleUrlCanonicalization) {
+    const query = buildCatalogQueryString({
+      categoryId: catalogQuery.urlCategoryId,
+      minPrice: filters.minPrice,
+      maxPrice: filters.maxPrice,
+      page: filters.page > 1 ? filters.page : undefined,
+    });
+    redirect(query ? `/?${query}` : "/");
+  }
+
+  const [latestResult, catalogResult, saleProducts] = await Promise.all([
     getProducts({
       page: 1,
       limit: LATEST_PRODUCTS_LIMIT,
@@ -34,12 +59,12 @@ export default async function Home({ searchParams }: Props) {
     getProducts({
       page: filters.page,
       limit: CATALOG_PAGE_SIZE,
-      categoryId: filters.categoryId ?? undefined,
+      categoryId: catalogQuery.categoryId,
+      onSale: catalogQuery.onSale,
       minPrice: filters.minPrice,
       maxPrice: filters.maxPrice,
     }),
-    getCategories(),
-    getAuthUser(),
+    getSaleSliderProducts(),
   ]);
 
   if (
@@ -47,7 +72,7 @@ export default async function Home({ searchParams }: Props) {
     filters.page > catalogResult.totalPages
   ) {
     const query = buildCatalogQueryString({
-      categoryId: filters.categoryId,
+      categoryId: catalogQuery.urlCategoryId,
       minPrice: filters.minPrice,
       maxPrice: filters.maxPrice,
       page: 1,
@@ -55,15 +80,18 @@ export default async function Home({ searchParams }: Props) {
     redirect(query ? `/?${query}` : "/");
   }
 
+  const storefrontCategories = toStorefrontFilterCategories(categories ?? []);
+
   return (
     <Suspense fallback={null}>
       <HomeClient
         latestProducts={latestResult.products ?? []}
+        saleProducts={saleProducts}
         catalogProducts={catalogResult.products ?? []}
         catalogTotal={catalogResult.total}
         catalogTotalPages={catalogResult.totalPages}
         currentPage={filters.page}
-        categories={categories ?? []}
+        categories={storefrontCategories}
         accountHref={user ? "/account" : "/account/login"}
       />
     </Suspense>

@@ -1,6 +1,7 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 
 import { orderError } from "@/lib/i18n/localize-storefront-message";
+import { getEffectiveProductPrice } from "@/lib/products/pricing";
 import {
   CreateOrderItemInput,
   ResolvedOrderItem,
@@ -18,7 +19,7 @@ export async function resolveOrderItems(
 
   const { data, error } = await supabase
     .from("products")
-    .select("id, title, price, stock")
+    .select("id, title, price, sale_price, stock")
     .in("id", productIds);
 
   if (error) {
@@ -42,9 +43,15 @@ export async function resolveOrderItems(
       throw orderError("orderErrorProductsNotFound");
     }
 
-    const price = Number(product.price);
     const stock = Number(product.stock);
     const productLabel = String(product.title ?? "");
+    const price = getEffectiveProductPrice({
+      price: Number(product.price),
+      sale_price:
+        product.sale_price === null || product.sale_price === undefined
+          ? null
+          : Number(product.sale_price),
+    });
 
     if (!Number.isFinite(price) || price < 0) {
       throw orderError("orderErrorInvalidPrice", productLabel);

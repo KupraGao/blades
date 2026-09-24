@@ -3,7 +3,6 @@ import { getCategories } from "@/actions/categories/get-categories";
 import { getSingleProduct } from "@/actions/products/get-single-product";
 
 import ProductForm from "@/components/admin/products/form/ProductForm";
-import ProductFormPageHeader from "@/components/admin/products/form/ProductFormPageHeader";
 import ProductNotFound from "@/components/admin/products/form/ProductNotFound";
 
 type Props = {
@@ -27,8 +26,6 @@ export default async function EditProductPage({ params }: Props) {
 
   return (
     <div className="mx-auto max-w-5xl">
-      <ProductFormPageHeader mode="edit" />
-
       <ProductForm
         brands={brands}
         categories={categories}

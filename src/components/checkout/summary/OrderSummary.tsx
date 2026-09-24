@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import { ProductPrice } from "@/components/product/ProductPrice";
 import { useCart } from "@/context/CartContext";
 import { useLanguage } from "@/context/LanguageContext";
+import { getCartItemPricing } from "@/lib/products/pricing";
 import PlaceOrderButton from "../form/PlaceOrderButton";
 
 type Props = {
@@ -86,12 +88,17 @@ export default function OrderSummary({
                 <p className="truncate font-medium">
                   {item.title}
                 </p>
-                <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-                  ₾{item.price} × {item.quantity}
+                <p className="mt-1.5 flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1 text-sm text-zinc-500 dark:text-zinc-400">
+                  <ProductPrice
+                    product={getCartItemPricing(item)}
+                    size="compact"
+                    showPercent={false}
+                  />
+                  <span>× {item.quantity}</span>
                 </p>
               </div>
 
-              <span className="shrink-0 font-medium">
+              <span className="shrink-0 text-base font-semibold tabular-nums">
                 ₾{item.price * item.quantity}
               </span>
             </div>

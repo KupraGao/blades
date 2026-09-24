@@ -14,6 +14,132 @@
 
 ---
 
+## v1.34.0 — Sale pricing + homepage hero (current)
+
+Working-tree snapshot of completed sale work. Promo CMS is **not** included.
+
+- **Sale foundation (live DB):** `products.price` remains regular/original.
+  Nullable `products.sale_price` is the discounted selling price. On sale
+  iff `sale_price IS NOT NULL`. CHECK
+  `sale_price IS NULL OR (sale_price > 0 AND sale_price < price)` is
+  **executed** in Supabase. History file:
+  `docs/sql/add-products-sale-price.sql`. No `is_on_sale` /
+  `discount_percent` columns. % is derived in
+  `src/lib/products/pricing.ts`.
+- **Admin:** On Sale checkbox + Sale Price; disable On Sale →
+  `sale_price = NULL`; validation `> 0` and `< price`. Desktop pricing
+  row: Regular Price | On Sale | Sale Price + derived %. Create/Edit share
+  the model. Top Create/Update and bottom submit use the same
+  `#product-form` / `handleSubmit` pipeline (image optimization included).
+- **Storefront Sale filter:** ფასდაკლება / Sale is virtual
+  (`?category=sale` → `sale_price IS NOT NULL`). Legacy Discount category
+  membership does not decide sale eligibility. Admin product/bulk category
+  pickers hide that category. The Discount **DB row was not deleted**.
+- **Presentation:** Product Card / Details / Wishlist show struck regular
+  + sale + % when on sale. Cart snapshots effective price for client UI.
+- **Checkout authority:** `resolveOrderItems` re-selects `price` and
+  `sale_price` from the database and charges the current effective unit
+  into `order_items.product_price`. Cart/localStorage is not authoritative.
+  Historical orders are not recalculated. `orders.total_price` uses
+  resolved lines.
+- **Delivery:** 150 GEL threshold unchanged; eligibility uses effective
+  subtotal (example: regular 200 / sale 120 → subtotal 120 → delivery
+  unavailable). No delivery fee. No COD.
+- **Sale Slider #2:** `getSaleSliderProducts()` — `sale_price IS NOT NULL`,
+  `created_at` desc, limit 10, no stock filter, no autoplay, no fake
+  fillers. Hidden when empty. Product Details links + `ProductPrice`.
+  Visible cards: <360px = 1; 360px to below `md` = 2; `md` to below
+  `lg` = 3; `lg+` = 1 (narrow column beside Promo). Latest Products
+  carousel is unchanged.
+- **Promo Slider #1 frame only:** `PromoSlider` + `HomepageHeroSliders`
+  (`lg:grid-cols-[minmax(0,2.3fr)_minmax(0,1fr)]`; always the HeaderExtras
+  296px filter slot on `lg`). No banner table, upload, Admin CMS, real
+  slides, or autoplay.
+
+---
+
+## v1.33.2 — Homepage Promo + Sale row alignment
+
+- Promo + Sale row always shares HeaderExtras Search/Filter geometry
+  (`container-page` + 296px filter slot on `lg`), including when Filters
+  are collapsed. Grid mins are `minmax(0, …)` so the row cannot outgrow
+  its parent.
+- Mobile Sale slider content is two bands (image + title / price +
+  details + nav). Still one product per slide.
+
+---
+
+## v1.33.1 — Homepage Promo + Sale hero row
+
+- `PromoSlider` visual frame only (no banner data, no arrows, no CMS).
+- `HomepageHeroSliders` desktop row: Promo (wide) + Sale (narrow),
+  `lg:grid-cols-[minmax(0,2.3fr)_minmax(280px,1fr)]`, equal height via
+  grid stretch. Mobile stacks Promo → Sale.
+- Zero sale products: Sale column omitted; Promo uses full width.
+- Sale query/pricing and Latest Products carousel unchanged.
+
+---
+
+## v1.33.0 — Homepage Sale Products slider
+
+- Compact homepage Sale slider (`SaleProductsSlider`) above Latest Products.
+- Server fetch: `sale_price IS NOT NULL`, `created_at` desc, limit 10.
+  Not Discount category membership. Hidden when there are no sale products.
+- Reuses existing Embla + `ProductPrice` helpers. No autoplay. No Promo
+  Slider #1 / banner CMS. Latest Products carousel unchanged.
+- Temporary compact width; `HomepageHeroSliders` is ready for a future
+  70/30 Promo + Sale layout.
+
+---
+
+## v1.32.1 — Virtual sale filter + Admin product save UX
+
+- Storefront "ფასდაკლება / Sale" is a virtual catalog filter:
+  `?category=sale` → `sale_price IS NOT NULL`. No longer uses
+  `product_categories` membership of the obsolete Discount category.
+  Categories have **no slug**; the old row is identified by name only
+  (`ფასდაკლება` / Discount or Sale). That DB category was **not** deleted.
+- Admin Product Create/Edit (and bulk Change Categories) hide the obsolete
+  Discount checkbox. A later product save drops leftover Discount
+  relationships because category rows are replaced from submitted
+  checkboxes; other selected categories are preserved.
+- Product form: top Create/Update control shares the same form +
+  `handleSubmit` pipeline as the bottom button (image optimization
+  included). Sticky on `lg+` only.
+- Restrained sale price UI spacing (admin cluster, card, cart, checkout).
+  Checkout authority, ₾150 rule, and homepage sliders unchanged.
+
+---
+
+## v1.32.0 — Product sale price foundation
+
+- `products.sale_price` nullable optional discounted selling price; `price`
+  remains the regular/original catalog price. No `is_on_sale` boolean.
+  Existing catalog category named Discount is **not** the pricing source of
+  truth and was left unchanged.
+- CHECK: `sale_price IS NULL OR (sale_price > 0 AND sale_price < price)`.
+  SQL: `docs/sql/add-products-sale-price.sql` — **manual Supabase SQL Editor**;
+  not auto-applied by the app. Existing rows stay `sale_price = NULL`.
+- Effective selling price: `sale_price` when valid/present, otherwise
+  `price`. Helpers: `src/lib/products/pricing.ts`. Discount % is derived,
+  not stored.
+- Admin Product Form: On Sale checkbox (UX only) + Sale Price; unchecked
+  submits `sale_price = null`. App validation rejects equal/higher/`<= 0`
+  sale prices.
+- Storefront ProductCard / Product Details / Wishlist / Cart display sale
+  vs regular. New cart additions snapshot **effective** price. Checkout
+  `resolveOrderItems` selects `sale_price` and charges the current DB
+  effective unit price into `order_items.product_price`. Historical orders
+  are unchanged snapshots.
+- ₾150 delivery threshold unchanged; eligibility uses effective subtotal
+  (server authoritative).
+- Catalog min/max filter and price sort still use `products.price`
+  (regular). Effective-price filter/sort needs a generated column or RPC —
+  follow-up. Homepage Sale Slider and Promo Banner CMS **not** in this
+  version.
+
+---
+
 ## v1.31.0 — Customer Profiles + Account Auth UX + Admin Users
 
 ### `public.profiles` (live DB — manual SQL Editor; no in-repo migration)

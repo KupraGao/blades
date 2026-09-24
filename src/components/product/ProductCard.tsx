@@ -7,7 +7,9 @@ import { useLanguage } from "@/context/LanguageContext";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { AddToCartFloatFeedback } from "@/components/product/AddToCartFloatFeedback";
+import { ProductPrice } from "@/components/product/ProductPrice";
 import { useAddToCartFloatFeedback } from "@/components/product/use-add-to-cart-float-feedback";
+import { getProductDiscountPercent, isProductOnSale } from "@/lib/products/pricing";
 
 type ProductCardProps = {
   product: any;
@@ -36,6 +38,8 @@ export function ProductCard({ product }: ProductCardProps) {
   // ACTIVE IMAGE
   // =========================================
   const [activeImage, setActiveImage] = useState(defaultImage?.image_url || "/placeholder.png");
+  const onSale = isProductOnSale(product);
+  const discountPercent = getProductDiscountPercent(product);
 
   // =========================================
   // PRODUCT CATEGORIES
@@ -54,6 +58,12 @@ export function ProductCard({ product }: ProductCardProps) {
 
           {/* OVERLAY */}
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/10 to-transparent" />
+
+          {onSale && discountPercent !== null && discountPercent > 0 ? (
+            <span className="absolute left-4 top-4 rounded-full bg-brand-orange px-2.5 py-1 text-xs font-bold text-white">
+              -{discountPercent}%
+            </span>
+          ) : null}
 
           {/* ========================================= */}
           {/* GALLERY PREVIEW */}
@@ -94,8 +104,10 @@ export function ProductCard({ product }: ProductCardProps) {
           {/* ========================================= */}
           {/* PRICE + ADD TO CART */}
           {/* ========================================= */}
-          <div className="mt-4 flex items-center justify-between gap-3">
-            <span className="text-lg font-black text-brand-gold">₾{product.price}</span>
+          <div className="mt-4 flex items-end justify-between gap-3">
+            <div className="min-w-0 flex-1">
+              <ProductPrice product={product} size="card" showPercent={false} />
+            </div>
 
             <div className="relative shrink-0">
               <AddToCartFloatFeedback

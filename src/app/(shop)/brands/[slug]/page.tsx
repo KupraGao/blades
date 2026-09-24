@@ -11,6 +11,10 @@ import {
   CATALOG_PAGE_SIZE,
   parseCatalogSearchParams,
 } from "@/lib/catalog/catalog-search-params";
+import {
+  resolveStorefrontCatalogQuery,
+  toStorefrontFilterCategories,
+} from "@/lib/catalog/sale-filter";
 import { BrandProductsContent } from "@/components/brands/BrandProductsContent";
 import { Header } from "@/components/layout/Header";
 
@@ -54,22 +58,43 @@ export default async function BrandProductsPage({
     notFound();
   }
 
-  const [catalog, categories, user] = await Promise.all([
-    getProducts({
-      brandId: String(brand.id),
-      categoryId: filters.categoryId ?? undefined,
-      minPrice: filters.minPrice,
-      maxPrice: filters.maxPrice,
-      page: filters.page,
-      limit: CATALOG_PAGE_SIZE,
-    }),
+  const [categories, user] = await Promise.all([
     getCategories(),
     getAuthUser(),
   ]);
 
+  const catalogQuery = resolveStorefrontCatalogQuery(
+    filters,
+    categories ?? [],
+  );
+
+  if (catalogQuery.needsSaleUrlCanonicalization) {
+    const qs = buildCatalogQueryString({
+      categoryId: catalogQuery.urlCategoryId,
+      minPrice: filters.minPrice,
+      maxPrice: filters.maxPrice,
+      page: filters.page > 1 ? filters.page : undefined,
+    });
+    redirect(
+      qs
+        ? `/brands/${encodeURIComponent(brand.slug)}?${qs}`
+        : `/brands/${encodeURIComponent(brand.slug)}`,
+    );
+  }
+
+  const catalog = await getProducts({
+    brandId: String(brand.id),
+    categoryId: catalogQuery.categoryId,
+    onSale: catalogQuery.onSale,
+    minPrice: filters.minPrice,
+    maxPrice: filters.maxPrice,
+    page: filters.page,
+    limit: CATALOG_PAGE_SIZE,
+  });
+
   if (catalog.totalPages > 0 && filters.page > catalog.totalPages) {
     const qs = buildCatalogQueryString({
-      categoryId: filters.categoryId,
+      categoryId: catalogQuery.urlCategoryId,
       minPrice: filters.minPrice,
       maxPrice: filters.maxPrice,
       page: 1,
@@ -81,10 +106,12 @@ export default async function BrandProductsPage({
     );
   }
 
+  const storefrontCategories = toStorefrontFilterCategories(categories ?? []);
+
   return (
     <>
       <Header
-        categories={categories ?? []}
+        categories={storefrontCategories}
         accountHref={user ? "/account" : "/account/login"}
       />
 
@@ -96,7 +123,7 @@ export default async function BrandProductsPage({
             total={catalog.total}
             currentPage={filters.page}
             totalPages={catalog.totalPages}
-            categories={categories ?? []}
+            categories={storefrontCategories}
           />
         </Suspense>
       </main>

@@ -14,6 +14,48 @@
 
 ---
 
+## 🚧 NEXT — Promo CMS / real Promo Slider #1
+
+- `PromoSlider` is currently a **visual frame only** (no real banners)
+- Remaining: banner data model (not locked), Admin management, image
+  upload, active/inactive, ordering, optional link/CTA, real carousel
+  when multiple records exist
+- Do **not** treat placeholder copy as a live campaign
+- No promotional banner table exists yet
+
+---
+
+## ✅ COMPLETED — Sale pricing, virtual Sale filter, homepage hero
+
+- `products.price` = regular/original; `products.sale_price` nullable
+- On sale iff `sale_price IS NOT NULL`; no `is_on_sale` DB boolean
+- Production CHECK is **executed**:
+  `sale_price IS NULL OR (sale_price > 0 AND sale_price < price)`
+- SQL history: `docs/sql/add-products-sale-price.sql` (not pending)
+- Admin: On Sale checkbox + Sale Price; unchecked → `sale_price = NULL`;
+  derived discount %; desktop one row
+  (Regular Price | On Sale | Sale Price + %); Create/Edit same model
+- Product form: top Create/Update + bottom submit share `#product-form`
+  / `handleSubmit` (image optimization included)
+- Storefront ფასდაკლება / Sale = virtual filter `?category=sale` →
+  `sale_price IS NOT NULL`; legacy Discount category membership is
+  ignored; Admin assignment hides that category; **DB row not deleted**
+- Effective price via `src/lib/products/pricing.ts`; Product Card /
+  Details / Wishlist / Cart display; checkout `resolveOrderItems`
+  re-fetches DB `price` + `sale_price` (cart is not authoritative)
+- ₾150 delivery threshold unchanged; uses effective subtotal; no fee;
+  no COD
+- Sale Slider #2: `getSaleSliderProducts()` `sale_price IS NOT NULL`,
+  `created_at` desc, limit 10, **no stock filter**; hidden when empty;
+  no autoplay; Latest Products unchanged
+- Visible cards: <360px = 1; 360px–md = 2; md–lg = 3; lg+ = 1
+  (narrow right column). Inverse of a typical 1→2→3 sequence
+- Promo Slider #1 **frame** + `HomepageHeroSliders` composition shipped;
+  Promo CMS / real banners **not** implemented
+- Catalog min/max/sort still on `products.price` (regular) — follow-up
+
+---
+
 ## ✅ COMPLETED — Checkout → Orders Integration
 
 - Checkout Page (`/checkout`)

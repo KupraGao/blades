@@ -1,4 +1,5 @@
 import ProductGallery from "@/components/product/ProductGallery";
+import { ProductPrice } from "@/components/product/ProductPrice";
 import { getSingleProduct } from "@/actions/products/get-single-product";
 import ProductDetailsContent from "@/components/product/ProductDetailsContent";
 import ProductPurchaseActions from "@/components/product/ProductPurchaseActions";
@@ -73,9 +74,9 @@ export default async function ProductDetailsPage({
           </h1>
 
           {/* PRICE */}
-          <p className="mt-5 text-3xl font-black tracking-tight text-brand-gold md:text-4xl">
-            ₾{product.price}
-          </p>
+          <div className="mt-5">
+            <ProductPrice product={product} size="detail" />
+          </div>
 
           {/* ===================================== */}
           {/* STOCK */}

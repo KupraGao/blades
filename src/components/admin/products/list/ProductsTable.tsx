@@ -4,6 +4,11 @@ import Link from "next/link";
 
 import DeleteProductButton from "@/app/admin/(protected)/products/DeleteProductButton";
 import { useLanguage } from "@/context/LanguageContext";
+import {
+  getEffectiveProductPrice,
+  getRegularProductPrice,
+  isProductOnSale,
+} from "@/lib/products/pricing";
 
 type ProductImage = {
   id: number;
@@ -16,6 +21,7 @@ type Product = {
   title: string;
   knife_type: string | null;
   price: number;
+  sale_price?: number | null;
   stock: number;
   product_images: ProductImage[];
 };
@@ -26,6 +32,23 @@ type Props = {
   onToggleProduct: (productId: string) => void;
   onToggleAll: () => void;
 };
+
+function AdminProductPrice({ product }: { product: Product }) {
+  const regularPrice = getRegularProductPrice(product);
+  const effectivePrice = getEffectiveProductPrice(product);
+
+  if (!isProductOnSale(product)) {
+    return <>₾{regularPrice}</>;
+  }
+
+  return (
+    <>
+      <span className="text-zinc-500 line-through">₾{regularPrice}</span>
+      <span className="mx-1 text-zinc-500">→</span>
+      <span>₾{effectivePrice}</span>
+    </>
+  );
+}
 
 export default function ProductsTable({
   products,
@@ -150,7 +173,7 @@ export default function ProductsTable({
 
                   {/* MOBILE PRICE */}
                   <p className="mt-2 font-medium text-white md:hidden">
-                    ₾{product.price}
+                    <AdminProductPrice product={product} />
                   </p>
 
                   {/* MOBILE STOCK */}
@@ -170,7 +193,7 @@ export default function ProductsTable({
 
               {/* PRICE */}
               <div className="hidden font-medium text-white md:block">
-                ₾{product.price}
+                <AdminProductPrice product={product} />
               </div>
 
               {/* STOCK */}

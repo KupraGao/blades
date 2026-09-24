@@ -7,6 +7,11 @@ import {
   useState,
   ReactNode,
 } from "react";
+import {
+  getEffectiveProductPrice,
+  getRegularProductPrice,
+  isProductOnSale,
+} from "@/lib/products/pricing";
 
 // =====================================
 // WISHLIST ITEM TYPE
@@ -22,6 +27,7 @@ export type WishlistItem = {
   id: string;
   title: string;
   price: number;
+  salePrice: number | null;
   image: string;
   stock: number;
 };
@@ -158,7 +164,11 @@ export function WishlistProvider({
 
         title: product.title,
 
-        price: Number(product.price),
+        price: getRegularProductPrice(product),
+
+        salePrice: isProductOnSale(product)
+          ? getEffectiveProductPrice(product)
+          : null,
 
         image:
           defaultImage?.image_url ||

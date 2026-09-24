@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 
 import { updateProductCategoriesBulk } from "@/actions/products/update-product-categories-bulk";
 import { useLanguage } from "@/context/LanguageContext";
+import { withoutObsoleteDiscountCategories } from "@/lib/catalog/sale-filter";
 
 type Category = {
   id: string;
@@ -29,6 +30,7 @@ export default function ChangeCategoriesModal({
 }: Props) {
   const { t, language } = useLanguage();
   const router = useRouter();
+  const selectableCategories = withoutObsoleteDiscountCategories(categories);
 
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
@@ -86,7 +88,7 @@ export default function ChangeCategoriesModal({
 
         <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
 
-          {categories.map((category) => (
+          {selectableCategories.map((category) => (
 
             <label
               key={category.id}

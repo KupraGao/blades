@@ -6,6 +6,7 @@ import { useWishlist } from "@/context/WishlistContext";
 import { useCart } from "@/context/CartContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { AddToCartFloatFeedback } from "@/components/product/AddToCartFloatFeedback";
+import { ProductPrice } from "@/components/product/ProductPrice";
 import { useAddToCartFloatFeedback } from "@/components/product/use-add-to-cart-float-feedback";
 
 // =====================================
@@ -111,9 +112,15 @@ export default function WishlistPageContent() {
                 {item.title}
               </Link>
 
-              <p className="mt-3 text-lg font-black text-brand-gold">
-                ₾{item.price}
-              </p>
+              <div className="mt-3">
+                <ProductPrice
+                  product={{
+                    price: item.price,
+                    salePrice: item.salePrice ?? null,
+                  }}
+                  size="card"
+                />
+              </div>
 
               {/* STOCK */}
               <div className="mt-2">

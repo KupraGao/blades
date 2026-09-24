@@ -186,6 +186,8 @@ export const ka = {
   logoAlt: "Blades ლოგო",
   toggleTheme: "თემის შეცვლა",
   sale: "ფასდაკლება",
+  promoBanner: "პრომო ბანერი",
+  promoBannerAdminHint: "მართვა ადმინიდან",
   locationTbilisi: "თბილისი, საქართველო",
   copyright: "© 2026 BLADES.GE — ყველა უფლება დაცულია.",
 
@@ -577,6 +579,11 @@ export const ka = {
   productTitleLabel: "პროდუქტის დასახელება",
   selectBrand: "აირჩიე ბრენდი",
   reviewLink: "განხილვის ლინკი",
+  onSale: "ფასდაკლება",
+  salePrice: "ფასდაკლებული ფასი",
+  productSalePriceInvalid: "შეიყვანეთ სწორი ფასდაკლებული ფასი.",
+  productSalePriceMustBeLower:
+    "ფასდაკლებული ფასი უნდა იყოს ჩვეულებრივ ფასზე ნაკლები.",
   existingPhotos: "არსებული ფოტოები",
   mainPhoto: "მთავარი ფოტო",
   uploading: "იტვირთება...",

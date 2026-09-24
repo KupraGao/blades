@@ -5,6 +5,7 @@ export function productMapper(product: ProductInput) {
     title: product.title,
     description: product.description,
     price: product.price,
+    sale_price: product.salePrice,
     stock: product.stock,
 
     brand_id: product.brandId,

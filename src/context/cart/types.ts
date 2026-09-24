@@ -5,7 +5,10 @@
 export type CartItem = {
   id: string;
   title: string;
+  /** Effective unit price snapshotted at add time. Not authoritative for checkout. */
   price: number;
+  regularPrice?: number | null;
+  salePrice?: number | null;
   image: string;
   quantity: number;
   stock: number;

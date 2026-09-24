@@ -1,5 +1,6 @@
 export const CATALOG_PAGE_SIZE = 20;
 export const LATEST_PRODUCTS_LIMIT = 10;
+export const SALE_PRODUCTS_SLIDER_LIMIT = 10;
 
 export type CatalogCategory = {
   id: number | string;
