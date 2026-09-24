@@ -30,6 +30,8 @@ export const ka = {
   contactFormSubmit: "შეტყობინების გაგზავნა",
 
   addToCart: "დამატება",
+  addToCartOutOfStock: "მარაგი ამოწურულია",
+  stockLimitReached: "მარაგის ლიმიტი მიღწეულია",
   addedToCartOnce: "✓ კალათაში დაემატა",
   addedToCartCount: "✓ {count} დაემატა კალათაში",
   addToWishlist: "ფავორიტებში დამატება",

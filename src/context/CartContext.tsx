@@ -8,7 +8,7 @@ import {
   ReactNode,
 } from "react";
 
-import { CartItem, CartContextType } from "./cart/types";
+import { CartItem, CartContextType, type AddToCartResult } from "./cart/types";
 
 import { addToCart as addToCartAction } from "./cart/actions/add-to-cart";
 import { increaseQuantity as increaseQuantityAction } from "./cart/actions/increase-quantity";
@@ -58,13 +58,22 @@ export function CartProvider({ children }: { children: ReactNode }) {
     saveCart(cartItems);
   }, [cartItems]);
 
-  function addToCart(product: any) {
-    setCartItems((currentItems) =>
-      addToCartAction({
+  function addToCart(product: any): AddToCartResult {
+    let result: AddToCartResult = {
+      success: false,
+      reason: "out_of_stock",
+    };
+
+    setCartItems((currentItems) => {
+      const next = addToCartAction({
         currentItems,
         product,
-      }),
-    );
+      });
+      result = next.result;
+      return next.items;
+    });
+
+    return result;
   }
 
   function increaseQuantity(id: string) {

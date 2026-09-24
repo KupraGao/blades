@@ -46,11 +46,20 @@ Working-tree snapshot of completed sale work. Promo CMS is **not** included.
   subtotal (example: regular 200 / sale 120 → subtotal 120 → delivery
   unavailable). No delivery fee. No COD.
 - **Sale Slider #2:** `getSaleSliderProducts()` — `sale_price IS NOT NULL`,
-  `created_at` desc, limit 10, no stock filter, no autoplay, no fake
-  fillers. Hidden when empty. Product Details links + `ProductPrice`.
+  `created_at` desc, limit 10, no stock **eligibility** filter (query still
+  selects `stock` for Add-to-Cart UX). No autoplay, no fake fillers.
+  Hidden when empty. Product Details via image/title/price link.
+  Shared `ProductCardAddToCartButton` (View Product CTA removed).
   Visible cards: <360px = 1; 360px to below `md` = 2; `md` to below
   `lg` = 3; `lg+` = 1 (narrow column beside Promo). Latest Products
   carousel is unchanged.
+- **Add to Cart result + stock UX:** `addToCart` returns
+  `{ success: true }` or `{ success: false; reason: "out_of_stock" |
+  "stock_limit" }`. Floating “Added to Cart” feedback increments only on
+  success. Out of Stock (`stock <= 0`) vs Stock limit reached (cart
+  already holds all units) are distinct disabled states. Client mutation
+  still enforces stock; checkout `resolveOrderItems` remains server
+  authority. Sale pricing unchanged.
 - **Promo Slider #1 frame only:** `PromoSlider` + `HomepageHeroSliders`
   (`lg:grid-cols-[minmax(0,2.3fr)_minmax(0,1fr)]`; always the HeaderExtras
   296px filter slot on `lg`). No banner table, upload, Admin CMS, real

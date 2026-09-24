@@ -16,6 +16,10 @@ export type CartItem = {
   selected: boolean;
 };
 
+export type AddToCartResult =
+  | { success: true }
+  | { success: false; reason: "out_of_stock" | "stock_limit" };
+
 // =====================================
 // CART CONTEXT
 // =====================================
@@ -23,7 +27,7 @@ export type CartItem = {
 export type CartContextType = {
   cartItems: CartItem[];
 
-  addToCart: (product: any) => void;
+  addToCart: (product: any) => AddToCartResult;
 
   increaseQuantity: (id: string) => void;
 

@@ -2,13 +2,11 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Heart, ShoppingBag } from "lucide-react";
+import { Heart } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
-import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
-import { AddToCartFloatFeedback } from "@/components/product/AddToCartFloatFeedback";
+import { ProductCardAddToCartButton } from "@/components/product/ProductCardAddToCartButton";
 import { ProductPrice } from "@/components/product/ProductPrice";
-import { useAddToCartFloatFeedback } from "@/components/product/use-add-to-cart-float-feedback";
 import { getProductDiscountPercent, isProductOnSale } from "@/lib/products/pricing";
 
 type ProductCardProps = {
@@ -20,9 +18,7 @@ export function ProductCard({ product }: ProductCardProps) {
   // LANGUAGE + CART + WISHLIST
   // =========================================
   const { t } = useLanguage();
-  const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
-  const floatFeedback = useAddToCartFloatFeedback();
 
   // =========================================
   // WISHLIST STATUS
@@ -109,28 +105,7 @@ export function ProductCard({ product }: ProductCardProps) {
               <ProductPrice product={product} size="card" showPercent={false} />
             </div>
 
-            <div className="relative shrink-0">
-              <AddToCartFloatFeedback
-                count={floatFeedback.count}
-                visible={floatFeedback.visible}
-                exiting={floatFeedback.exiting}
-                className="bottom-full right-0 mb-2"
-              />
-              <button
-                type="button"
-                aria-label={t.addToCart}
-                title={t.addToCart}
-                onClick={(e) => {
-                  e.preventDefault();
-                  addToCart(product);
-                  floatFeedback.notifyAdded();
-                }}
-                className="flex h-10 w-10 items-center justify-center gap-2 rounded-full bg-zinc-900 text-sm font-black text-white transition-all duration-300 hover:scale-105 hover:bg-brand-gold hover:text-black md:h-auto md:w-auto md:px-4 md:py-2 dark:bg-white dark:text-black dark:hover:bg-brand-gold dark:hover:text-black"
-              >
-                <ShoppingBag size={16} />
-                <span className="hidden md:inline">{t.addToCart}</span>
-              </button>
-            </div>
+            <ProductCardAddToCartButton product={product} />
           </div>
         </div>
       </article>

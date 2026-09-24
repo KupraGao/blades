@@ -178,6 +178,7 @@ src
 │   │   ├── CatalogPagination.tsx
 │   │   ├── LatestProductsSlider.tsx
 │   │   ├── ProductCard.tsx
+│   │   ├── ProductCardAddToCartButton.tsx
 │   │   ├── ProductDetailsContent.tsx
 │   │   ├── ProductGallery.tsx
 │   │   ├── ProductPurchaseActions.tsx
@@ -455,13 +456,17 @@ not this slider.
 ## A. Sale Products slider (independent)
 
 `getSaleSliderProducts()` — `sale_price IS NOT NULL`, `created_at` desc,
-limit **10**. **No** `stock > 0` filter. Not category membership. Not a
-featured-sale flag. Not affected by Featured Catalog Filters.
+limit **10**. Selects `stock` for Add-to-Cart UX only. **No** `stock > 0`
+eligibility filter. Not category membership. Not a featured-sale flag.
+Not affected by Featured Catalog Filters.
 
-`SaleProductsSlider`: Embla, no autoplay, Product Details links,
-`ProductPrice` (regular + sale + derived %). One Prev/Next pair for the
-carousel; shown only when Embla can scroll. Hidden when the product list
-is empty.
+`SaleProductsSlider`: Embla, no autoplay, `ProductPrice` (regular + sale
++ derived %). Image / title / price link to Product Details
+(`/products/[id]`). Add to Cart is the shared
+`ProductCardAddToCartButton` (same as `ProductCard`); **not** inside the
+product `Link`. No dedicated View Product CTA. One Prev/Next pair for
+the carousel; shown only when Embla can scroll. Hidden when the product
+list is empty.
 
 Visible cards (intentional inverse of typical 1→2→3):
 
@@ -652,6 +657,53 @@ Admin Pages
 ---
 
 # 🛒 Checkout → Orders Flow
+
+## Add to Cart (client)
+
+`ProductCard` and `SaleProductsSlider` share
+`ProductCardAddToCartButton`. It is **not** an inventory/security
+authority.
+
+```text
+UI
+  → disabled state + floating “Added to Cart” feedback
+Cart mutation (`addToCart` action + CartContext)
+  → client-side stock enforcement + operation result
+Checkout `resolveOrderItems`
+  → server-side product / price / stock authority
+```
+
+`addToCart` returns:
+
+```text
+{ success: true }
+| { success: false; reason: "out_of_stock" | "stock_limit" }
+```
+
+The action returns `{ items, result }`. CartContext applies items via the
+functional `setCartItems` updater and returns `result` to the caller.
+Quantity cannot exceed `product.stock` even if the button has not yet
+re-rendered as disabled.
+
+Floating Add-to-Cart feedback (`useAddToCartFloatFeedback`) increments
+**only** when `result.success === true`. Rejected clicks do not count.
+Repeated successful adds in the existing feedback window may still
+accumulate.
+
+Button states (localized):
+
+| Condition | Control | Label |
+|-----------|---------|--------|
+| `stock <= 0` | disabled | Out of Stock / მარაგი ამოწურულია |
+| `stock > 0` and cart quantity `>= stock` | disabled | Stock limit reached / მარაგის ლიმიტი მიღწეულია |
+| otherwise | enabled | Add / დამატება |
+
+Out of Stock ≠ cart already holding all available units.
+
+Sale pricing is unchanged: cart still snapshots effective price;
+checkout still re-resolves from the database.
+
+---
 
 Cart (`CartContext`) — lines may be `selected` / deselected (persisted).
 Checkout and `createOrder` use **selected** lines only; badge counts all.

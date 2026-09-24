@@ -30,6 +30,8 @@ export const en = {
   contactFormSubmit: "Send Message",
 
   addToCart: "Add",
+  addToCartOutOfStock: "Out of Stock",
+  stockLimitReached: "Stock limit reached",
   addedToCartOnce: "✓ Added to Cart",
   addedToCartCount: "✓ {count} Added to Cart",
   addToWishlist: "Add to wishlist",

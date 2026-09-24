@@ -46,8 +46,13 @@
 - ₾150 delivery threshold unchanged; uses effective subtotal; no fee;
   no COD
 - Sale Slider #2: `getSaleSliderProducts()` `sale_price IS NOT NULL`,
-  `created_at` desc, limit 10, **no stock filter**; hidden when empty;
-  no autoplay; Latest Products unchanged
+  `created_at` desc, limit 10, **no stock eligibility filter** (`stock`
+  is selected for Add-to-Cart UX only); hidden when empty; no autoplay;
+  Latest Products unchanged
+- Sale cards use shared `ProductCardAddToCartButton` (same as ProductCard);
+  View Product CTA removed; image/title/price still go to Product Details
+- Add to Cart feedback is success-driven (`AddToCartResult`); Out of Stock
+  vs Stock limit reached are distinct disabled states
 - Visible cards: <360px = 1; 360px–md = 2; md–lg = 3; lg+ = 1
   (narrow right column). Inverse of a typical 1→2→3 sequence
 - Promo Slider #1 **frame** + `HomepageHeroSliders` composition shipped;

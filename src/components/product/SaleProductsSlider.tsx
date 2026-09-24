@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
+import { ProductCardAddToCartButton } from "@/components/product/ProductCardAddToCartButton";
 import { ProductPrice } from "@/components/product/ProductPrice";
 import { useLanguage } from "@/context/LanguageContext";
 import type { SaleSliderProduct } from "@/actions/products/get-sale-slider-products";
@@ -100,32 +101,34 @@ export function SaleProductsSlider({ products }: SaleProductsSliderProps) {
               key={product.id}
               className="min-h-0 min-w-0 flex-[0_0_100%] self-stretch min-[360px]:flex-[0_0_calc((100%-0.75rem)/2)] md:flex-[0_0_calc((100%-1.5rem)/3)] lg:flex-[0_0_100%]"
             >
-              <Link
-                href={`/products/${product.id}`}
-                className="group flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white outline-none transition hover:border-brand-gold/50 focus-visible:ring-2 focus-visible:ring-brand-gold/50 dark:border-white/10 dark:bg-white/[0.04]"
-              >
-                <div className="relative aspect-[5/4] overflow-hidden bg-zinc-100 dark:bg-zinc-900">
-                  <img
-                    src={mainImageUrl(product)}
-                    alt={product.title}
-                    className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
-                  />
-                </div>
-
-                <div className="flex min-w-0 flex-col p-3 lg:p-4">
-                  <h3 className="line-clamp-2 min-w-0 font-serif text-sm font-bold text-zinc-900 sm:text-base dark:text-white lg:text-lg">
-                    {product.title}
-                  </h3>
-
-                  <div className="mt-2 min-w-0">
-                    <ProductPrice product={product} size="compact" />
+              <div className="group flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white transition hover:border-brand-gold/50 dark:border-white/10 dark:bg-white/[0.04]">
+                <Link
+                  href={`/products/${product.id}`}
+                  className="flex min-w-0 flex-1 flex-col outline-none focus-visible:ring-2 focus-visible:ring-brand-gold/50"
+                >
+                  <div className="relative aspect-[5/4] overflow-hidden bg-zinc-100 dark:bg-zinc-900">
+                    <img
+                      src={mainImageUrl(product)}
+                      alt={product.title}
+                      className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                    />
                   </div>
 
-                  <span className="mt-3 inline-flex min-h-10 w-fit max-w-full items-center rounded-xl bg-brand-gold px-3 py-2 text-xs font-bold text-black sm:text-sm lg:mt-4 lg:min-h-11 lg:px-4">
-                    {t.viewProduct}
-                  </span>
+                  <div className="flex min-w-0 flex-col p-3 pb-0 lg:p-4 lg:pb-0">
+                    <h3 className="line-clamp-2 min-w-0 font-serif text-sm font-bold text-zinc-900 sm:text-base dark:text-white lg:text-lg">
+                      {product.title}
+                    </h3>
+
+                    <div className="mt-2 min-w-0">
+                      <ProductPrice product={product} size="compact" />
+                    </div>
+                  </div>
+                </Link>
+
+                <div className="mt-3 px-3 pb-3 lg:mt-4 lg:px-4 lg:pb-4">
+                  <ProductCardAddToCartButton product={product} />
                 </div>
-              </Link>
+              </div>
             </div>
           ))}
         </div>
