@@ -84,6 +84,14 @@ export default function MobileSidebar({
           </Link>
 
           <Link
+            href="/admin/promos"
+            className={linkClass("/admin/promos")}
+            onClick={onClose}
+          >
+            {t.promoBanners}
+          </Link>
+
+          <Link
             href="/admin/orders"
             className={linkClass("/admin/orders")}
             onClick={onClose}

@@ -39,6 +39,7 @@ export const ka = {
 
   latestProducts: "ახალი პროდუქტები",
   categories: "კატეგორიები",
+  promoBanners: "პრომო ბანერები",
   filters: "ფილტრები",
   catalogFilterCategory: "კატეგორია",
   catalogFilterPrice: "ფასი",
@@ -189,6 +190,7 @@ export const ka = {
   toggleTheme: "თემის შეცვლა",
   sale: "ფასდაკლება",
   promoBanner: "პრომო ბანერი",
+  promoBannerGoToSlide: "პრომო სლაიდი {n}",
   promoBannerAdminHint: "მართვა ადმინიდან",
   locationTbilisi: "თბილისი, საქართველო",
   copyright: "© 2026 BLADES.GE — ყველა უფლება დაცულია.",
@@ -399,8 +401,8 @@ export const ka = {
   adminLogoutSubmitting: "გასვლა...",
   adminRoleLabel: "ადმინისტრატორი",
   adminBackToStore: "საიტზე გადასვლა",
-  dashboard: "დაფა",
-  dashboardSubtitle: "მაღაზიის მიმოხილვა და ოპერაციული მეტრიკები.",
+  dashboard: "მიმოხილვა",
+  dashboardTitle: "მაღაზიის მიმოხილვა",
   dashboardKpiProducts: "პროდუქტები",
   dashboardKpiTotalOrders: "ყველა შეკვეთა",
   dashboardKpiThisMonthOrders: "ამ თვის შეკვეთები",
@@ -447,13 +449,8 @@ export const ka = {
   tryChangingFilters: "სცადეთ ძებნის ან ფილტრების შეცვლა.",
 
   // =====================================
-  // ADMIN — DASHBOARD / NAV DESCRIPTIONS
+  // ADMIN — USERS
   // =====================================
-  manageProducts: "მართეთ თქვენი პროდუქტები",
-  manageBrands: "მართეთ თქვენი ბრენდები",
-  manageCategories: "მართეთ თქვენი კატეგორიები",
-  manageCustomerOrders: "მართეთ მომხმარებლის შეკვეთები",
-  manageUsers: "ნახეთ რეგისტრირებული მომხმარებლები",
   searchUsers: "ძებნა სახელი, ელფოსტა ან ტელეფონი...",
   joined: "რეგისტრაცია",
   emailStatus: "ელფოსტის სტატუსი",
@@ -488,8 +485,6 @@ export const ka = {
 
   backToOrders: "← შეკვეთებზე დაბრუნება",
   orderDetails: "შეკვეთის დეტალები",
-  orderDetailsDescription:
-    "ნახეთ მომხმარებლის ინფორმაცია, პროდუქტები და შეკვეთის მართვის მოქმედებები.",
   orderHeader: "შეკვეთის თავსართი",
   created: "შექმნის თარიღი",
   orderManagement: "შეკვეთის მართვა",
@@ -557,9 +552,7 @@ export const ka = {
   // ADMIN — PRODUCT FORM
   // =====================================
   addProductTitle: "პროდუქტის დამატება",
-  addProductDescription: "ახალი დანის პროდუქტის შექმნა",
   editProductTitle: "პროდუქტის რედაქტირება",
-  editProductDescription: "პროდუქტის ინფორმაციის განახლება",
   createProduct: "პროდუქტის შექმნა",
   updateProduct: "პროდუქტის განახლება",
   processingImages: "ფოტოების დამუშავება...",
@@ -600,9 +593,7 @@ export const ka = {
   // =====================================
   addBrand: "+ ბრენდის დამატება",
   createBrand: "ბრენდის შექმნა",
-  createBrandDescription: "ახალი ბრენდის დამატება",
   editBrand: "ბრენდის რედაქტირება",
-  editBrandDescription: "ბრენდის ინფორმაციის განახლება",
   brandName: "ბრენდის სახელი",
   logoUrl: "ლოგოს URL",
   saveBrand: "ბრენდის შენახვა",
@@ -616,9 +607,7 @@ export const ka = {
   // =====================================
   addCategory: "+ კატეგორიის დამატება",
   createCategory: "კატეგორიის შექმნა",
-  createCategoryDescription: "ახალი კატეგორიის დამატება",
   editCategory: "კატეგორიის რედაქტირება",
-  editCategoryDescription: "კატეგორიის ინფორმაციის განახლება",
   georgianName: "ქართული სახელი",
   englishName: "ინგლისური სახელი",
   georgian: "ქართული",
@@ -628,6 +617,56 @@ export const ka = {
   categoryNotFound: "კატეგორია ვერ მოიძებნა",
   noCategoriesFound: "კატეგორიები ვერ მოიძებნა",
   deleteCategoryConfirm: "წავშალოთ ეს კატეგორია?",
+
+  // =====================================
+  // ADMIN — PROMO BANNERS
+  // =====================================
+  addPromoBanner: "+ პრომო ბანერის დამატება",
+  createPromoBanner: "პრომო ბანერის შექმნა",
+  editPromoBanner: "პრომო ბანერის რედაქტირება",
+  promoBannerImage: "პოსტერის სურათი",
+  promoBannerCurrentImage: "მიმდინარე პრომო პოსტერი",
+  promoBannerImageHint:
+    "გამოიყენეთ ჰორიზონტალური პოსტერი (დაახლოებით 16:9). სურათი ჩარჩოს შეავსებს ამოჭრით. ტექსტი შეიძლება იყოს სურათშივე; ზედა ფენის ველები არასავალდებულოა.",
+  promoBannerOverlayOptionalHint:
+    "არასავალდებულოა — თუ ტექსტი უკვე პოსტერზეა, დატოვეთ ცარიელი.",
+  promoBannerTitleKa: "სათაური (ქართული)",
+  promoBannerTitleEn: "სათაური (ინგლისური)",
+  promoBannerSubtitleKa: "ქვესათაური (ქართული)",
+  promoBannerSubtitleEn: "ქვესათაური (ინგლისური)",
+  promoBannerLinkUrl: "ბანერზე გადასასვლელი ბმული",
+  promoBannerLinkHint:
+    "არასავალდებულო — მაგალითად /products/... ან /brands/...",
+  promoBannerActive: "აქტიურია მთავარ გვერდზე",
+  promoBannerSortOrder: "რიგითობა",
+  promoBannerStatus: "სტატუსი",
+  promoBannerStatusActive: "აქტიური",
+  promoBannerStatusInactive: "არააქტიური",
+  promoBannerUntitled: "უსათაურო პოსტერი",
+  savePromoBanner: "ბანერის შენახვა",
+  updatePromoBanner: "ბანერის განახლება",
+  promoBannerNotFound: "პრომო ბანერი ვერ მოიძებნა",
+  noPromoBannersFound: "პრომო ბანერები ჯერ არ არის",
+  promoBannersEmptyHint:
+    "დაამატეთ პოსტერი, რომ გამოჩნდეს მთავარი გვერდის პრომო სლაიდერში.",
+  deletePromoBannerConfirm: "წავშალოთ ეს პრომო ბანერი?",
+  promoBannerImageRequired: "პოსტერის სურათი აუცილებელია.",
+  promoBannerInvalidLink:
+    "გამოიყენეთ შიდა გზა, რომელიც იწყება / სიმბოლოთი (არა გარე URL).",
+  promoBannerInvalidSortOrder: "თანმიმდევრობისთვის შეიყვანეთ მთელი რიცხვი.",
+  promoBannerUploadFailed: "პოსტერის ატვირთვა ვერ მოხერხდა. სცადეთ თავიდან.",
+  promoBannerSaveFailed: "პრომო ბანერის შენახვა ვერ მოხერხდა. სცადეთ თავიდან.",
+  promoBannerDeleteFailed: "პრომო ბანერის წაშლა ვერ მოხერხდა. სცადეთ თავიდან.",
+  promoBannersLoadFailed:
+    "პრომო ბანერების ჩატვირთვა ვერ მოხერხდა. სცადეთ თავიდან.",
+  promoBannerImageSourceTooLarge:
+    "თითოეული პრომო პოსტერი უნდა იყოს 20 მბ-ზე ნაკლები ან ტოლი.",
+  promoBannerImageUnsupportedFormat:
+    "ამ სურათის ფორმატის დამუშავება ვერ მოხერხდა. გამოიყენეთ JPG, PNG ან WebP.",
+  promoBannerImageOptimizeFailed:
+    "პრომო პოსტერის დამუშავება ვერ მოხერხდა. სცადეთ სხვა სურათი.",
+  promoBannerImageOutputTooLarge:
+    "პოსტერი ოპტიმიზაციის შემდეგაც ძალიან დიდია. გამოიყენეთ უფრო პატარა სურათი.",
 
   // =====================================
   // STOREFRONT — FOOTER & INFORMATION

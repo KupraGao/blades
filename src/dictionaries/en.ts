@@ -39,6 +39,7 @@ export const en = {
 
   latestProducts: "Latest Products",
   categories: "Categories",
+  promoBanners: "Promo Banners",
   filters: "Filters",
   catalogFilterCategory: "Category",
   catalogFilterPrice: "Price",
@@ -190,6 +191,7 @@ export const en = {
   toggleTheme: "Toggle theme",
   sale: "Sale",
   promoBanner: "Promo Banner",
+  promoBannerGoToSlide: "Go to promo slide {n}",
   promoBannerAdminHint: "Managed from Admin",
   locationTbilisi: "Tbilisi, Georgia",
   copyright: "© 2026 BLADES.GE — All rights reserved.",
@@ -402,7 +404,7 @@ export const en = {
   adminRoleLabel: "Administrator",
   adminBackToStore: "Back to Store",
   dashboard: "Dashboard",
-  dashboardSubtitle: "Store overview and operational metrics.",
+  dashboardTitle: "Dashboard",
   dashboardKpiProducts: "Products",
   dashboardKpiTotalOrders: "Total Orders",
   dashboardKpiThisMonthOrders: "This Month Orders",
@@ -449,13 +451,8 @@ export const en = {
   tryChangingFilters: "Try changing your search or filters.",
 
   // =====================================
-  // ADMIN — DASHBOARD / NAV DESCRIPTIONS
+  // ADMIN — USERS
   // =====================================
-  manageProducts: "Manage your products",
-  manageBrands: "Manage your brands",
-  manageCategories: "Manage your categories",
-  manageCustomerOrders: "Manage customer orders",
-  manageUsers: "View registered customers",
   searchUsers: "Search name, email or phone...",
   joined: "Joined",
   emailStatus: "Email status",
@@ -490,8 +487,6 @@ export const en = {
 
   backToOrders: "← Back to Orders",
   orderDetails: "Order Details",
-  orderDetailsDescription:
-    "Review customer details, items, and order management actions.",
   orderHeader: "Order Header",
   created: "Created",
   orderManagement: "Order Management",
@@ -557,9 +552,7 @@ export const en = {
   // ADMIN — PRODUCT FORM
   // =====================================
   addProductTitle: "Add Product",
-  addProductDescription: "Create a new knife product",
   editProductTitle: "Edit Product",
-  editProductDescription: "Update product information",
   createProduct: "Create Product",
   updateProduct: "Update Product",
   processingImages: "Processing images...",
@@ -599,9 +592,7 @@ export const en = {
   // =====================================
   addBrand: "+ Add Brand",
   createBrand: "Create Brand",
-  createBrandDescription: "Add a new brand",
   editBrand: "Edit Brand",
-  editBrandDescription: "Update brand information",
   brandName: "Brand Name",
   logoUrl: "Logo URL",
   saveBrand: "Save Brand",
@@ -615,9 +606,7 @@ export const en = {
   // =====================================
   addCategory: "+ Add Category",
   createCategory: "Create Category",
-  createCategoryDescription: "Add a new category",
   editCategory: "Edit Category",
-  editCategoryDescription: "Update category information",
   georgianName: "Georgian Name",
   englishName: "English Name",
   georgian: "Georgian",
@@ -627,6 +616,55 @@ export const en = {
   categoryNotFound: "Category not found",
   noCategoriesFound: "No categories found",
   deleteCategoryConfirm: "Delete this category?",
+
+  // =====================================
+  // ADMIN — PROMO BANNERS
+  // =====================================
+  addPromoBanner: "+ Add Promo Banner",
+  createPromoBanner: "Create Promo Banner",
+  editPromoBanner: "Edit Promo Banner",
+  promoBannerImage: "Poster image",
+  promoBannerCurrentImage: "Current promo poster",
+  promoBannerImageHint:
+    "Use a wide landscape poster (about 16:9). Images fill the frame with crop. Text inside the image is fine; overlay fields are optional.",
+  promoBannerOverlayOptionalHint:
+    "Optional — if the text is already on the poster, leave these empty.",
+  promoBannerTitleKa: "Title (Georgian)",
+  promoBannerTitleEn: "Title (English)",
+  promoBannerSubtitleKa: "Subtitle (Georgian)",
+  promoBannerSubtitleEn: "Subtitle (English)",
+  promoBannerLinkUrl: "Banner destination link",
+  promoBannerLinkHint:
+    "Optional — for example /products/... or /brands/...",
+  promoBannerActive: "Active on homepage",
+  promoBannerSortOrder: "Order",
+  promoBannerStatus: "Status",
+  promoBannerStatusActive: "Active",
+  promoBannerStatusInactive: "Inactive",
+  promoBannerUntitled: "Untitled poster",
+  savePromoBanner: "Save Banner",
+  updatePromoBanner: "Update Banner",
+  promoBannerNotFound: "Promo banner not found",
+  noPromoBannersFound: "No promo banners yet",
+  promoBannersEmptyHint: "Add a poster to show it on the homepage Promo Slider.",
+  deletePromoBannerConfirm: "Delete this promo banner?",
+  promoBannerImageRequired: "A poster image is required.",
+  promoBannerInvalidLink:
+    "Use an internal path that starts with / (not an external URL).",
+  promoBannerInvalidSortOrder: "Enter a whole number for sort order.",
+  promoBannerUploadFailed: "The poster could not be uploaded. Please try again.",
+  promoBannerSaveFailed: "Could not save the promo banner. Please try again.",
+  promoBannerDeleteFailed: "Could not delete the promo banner. Please try again.",
+  promoBannersLoadFailed:
+    "Promo banners could not be loaded. Please try again.",
+  promoBannerImageSourceTooLarge:
+    "Each promo poster must be 20 MB or smaller.",
+  promoBannerImageUnsupportedFormat:
+    "This image format could not be processed. Please use JPG, PNG, or WebP.",
+  promoBannerImageOptimizeFailed:
+    "Could not process the promo poster. Please try another image.",
+  promoBannerImageOutputTooLarge:
+    "The poster is still too large after optimization. Please use a smaller image.",
 
   // =====================================
   // STOREFRONT — FOOTER & INFORMATION

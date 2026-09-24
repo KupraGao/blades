@@ -319,6 +319,14 @@ Bucket: `product-images`
 - Public **SELECT** remains
 - Admin uploads use privileged server client after `requireAdmin()`
 
+Bucket: `promo-banners` — **live / executed** (`docs/sql/create-promo-banners.sql`)
+
+- `public = true` for storefront poster URLs
+- Anonymous / authenticated **upload/write** policies must **not** be added
+- Admin uploads use privileged server client after `requireAdmin()`
+- Object keys: `{uuid}-promo-banner.webp` stored in
+  `promo_banners.image_path` (not a full public URL)
+
 ---
 
 ## Relationships
@@ -680,6 +688,36 @@ Dangerous public WRITE policies removed, including:
 - `brands` public INSERT / UPDATE / DELETE
 - `product_images` public DELETE
 
+### Promo banners (`public.promo_banners`) — **live / executed**
+
+Applied manually in the Supabase SQL Editor from
+`docs/sql/create-promo-banners.sql` (kept as migration history). The app
+does **not** auto-run SQL.
+
+| Column | Type | Notes |
+|--------|------|--------|
+| `id` | uuid PK | `gen_random_uuid()` |
+| `image_path` | text NOT NULL | Storage key in bucket `promo-banners` |
+| `title_ka` / `title_en` | text NULL | Optional overlay; all four may be empty |
+| `subtitle_ka` / `subtitle_en` | text NULL | Optional overlay |
+| `link_url` | text NULL | Internal path only (`/`…, not `//`); NULL = not clickable |
+| `is_active` | boolean NOT NULL default true | Storefront visibility |
+| `sort_order` | integer NOT NULL default 0 | **Internal** Admin order (`1..N`). Not an editable form field. Create appends; edit preserves; delete reindexes remaining rows. Includes inactive rows |
+| `created_at` / `updated_at` | timestamptz | `updated_at` via BEFORE UPDATE trigger |
+
+Privileges (live):
+
+| Role | SELECT | INSERT / UPDATE / DELETE |
+|------|--------|--------------------------|
+| `anon` / `authenticated` | active rows only (`is_active = true`) | **deny** |
+| `service_role` | all rows | **allow** (Admin CMS after `requireAdmin()`) |
+
+Storefront query also filters `is_active = true` and orders
+`sort_order ASC, created_at ASC`. Inactive rows remain Admin-editable
+via `createAdminClient()`.
+
+No `product_id`, scheduling, analytics, or CTA-label columns.
+
 ### Orders / Checkout (not closed by S5)
 
 Orders / Checkout security review remains a **separate next step**.
@@ -705,3 +743,8 @@ The app never auto-applies it.
 `docs/sql/add-products-effective-price.sql` — **executed** (history). Adds
 generated `products.effective_price` (`COALESCE(sale_price, price)`) +
 index `products_effective_price_idx`. The app never auto-applies it.
+
+`docs/sql/create-promo-banners.sql` — **executed** (history). Creates
+`public.promo_banners`, active-only public SELECT RLS, `updated_at`
+trigger, and public-read storage bucket `promo-banners`. The app never
+auto-applies it.

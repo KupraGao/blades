@@ -53,17 +53,24 @@ src
 │   │   ├── update-order-fulfillment.ts
 │   │   └── update-order-status.ts
 │   │
-│   └── products
-│       ├── change-main-image.ts
-│       ├── create-product.ts
-│       ├── delete-gallery-image.ts
-│       ├── delete-product.ts
-│       ├── delete-products-bulk.ts
-│       ├── get-products.ts
-│       ├── get-sale-slider-products.ts
-│       ├── get-single-product.ts
-│       ├── update-product-categories-bulk.ts
-│       └── update-product.ts
+│   ├── products
+│   │   ├── change-main-image.ts
+│   │   ├── create-product.ts
+│   │   ├── delete-gallery-image.ts
+│   │   ├── delete-product.ts
+│   │   ├── delete-products-bulk.ts
+│   │   ├── get-products.ts
+│   │   ├── get-sale-slider-products.ts
+│   │   ├── get-single-product.ts
+│   │   ├── update-product-categories-bulk.ts
+│   │   └── update-product.ts
+│   │
+│   └── promos
+│       ├── create-promo-banner.ts
+│       ├── delete-promo-banner.ts
+│       ├── get-active-promo-banners.ts
+│       ├── get-admin-promo-banners.ts
+│       └── update-promo-banner.ts
 │
 ├── app
 │   │
@@ -86,6 +93,7 @@ src
 │   │   ├── orders
 │   │   │   └── [id]
 │   │   ├── products
+│   │   ├── promos
 │   │   ├── layout.tsx
 │   │   └── page.tsx
 │   │
@@ -101,6 +109,11 @@ src
 │   │   │   ├── AdminLayout.tsx
 │   │   │   ├── MobileSidebar.tsx
 │   │   │   └── Sidebar.tsx
+│   │   │
+│   │   ├── promos
+│   │   │   ├── AdminPromosListContent.tsx
+│   │   │   ├── PromoBannerForm.tsx
+│   │   │   └── PromoBannerNotFound.tsx
 │   │   │
 │   │   ├── orders
 │   │   │   ├── AdminOrderDetailsContent.tsx
@@ -249,6 +262,16 @@ src
 │   │   ├── upload-main-image.ts
 │   │   └── validate-product.ts
 │   │
+│   ├── promo
+│   │   ├── constants.ts
+│   │   ├── localized-text.ts
+│   │   ├── parse-promo-banner-form.ts
+│   │   ├── promo-banner-storage.ts
+│   │   ├── public-url.ts
+│   │   ├── sort-order.ts
+│   │   ├── types.ts
+│   │   └── validate-link-url.ts
+│   │
 │   └── supabase
 │       ├── admin.ts
 │       └── server.ts
@@ -394,7 +417,7 @@ Storefront has no customer-facing price-sort UI. Checkout still resolves
 # 🏠 Home Storefront Catalog Flow
 
 Home (`src/app/(shop)/page.tsx`) runs **three independent** product reads
-plus the Promo frame (no banner query).
+plus `getActivePromoBanners()` for Promo Slider #1.
 
 ## Homepage composition (current)
 
@@ -404,7 +427,7 @@ Header
 Search / Filters (ShopHeaderExtrasHost + CategoriesSidebar)
 ↓
 HomepageHeroSliders
-  PromoSlider #1 (frame only)
+  PromoSlider #1 (DB-backed when SQL is live)
   SaleProductsSlider #2
 ↓
 LatestProductsSlider (New Products — unchanged)
@@ -421,15 +444,16 @@ Footer
 Desktop `lg+`:
 
 ```text
-[ wide Promo frame ][ narrow Sale carousel ]
+[ wide Promo carousel ][ narrow Sale carousel ]
 ```
 
 `HomepageHeroSliders` uses `container-page` plus the HeaderExtras filter
 slot (`w-[296px]` = 272px + 24px gap) on `lg`, whether Filters are
 expanded or collapsed.
 
-Grid: `lg:grid-cols-[minmax(0,2.3fr)_minmax(0,1fr)]`. Equal height via
-CSS Grid stretch on `lg` only (`items-start` below `lg`).
+Grid: `lg:grid-cols-[minmax(0,2.3fr)_minmax(0,1fr)]` **only when both**
+Promo and Sale have content. Equal height via CSS Grid stretch on `lg`
+only (`items-start` below `lg`).
 
 Below `lg`:
 
@@ -444,16 +468,39 @@ New Products
 If there are no sale products, the Sale column is omitted and Promo uses
 the remaining Search-aligned width. No fake sale products.
 
-## Promo slider frame (NOT CMS)
+If there are **no active Promo banners**, Promo is omitted (no placeholder
+rectangle). Sale occupies the remaining Search-aligned hero width. Sale
+visible-card breakpoints stay 1 → 2 → 3 → 1.
 
-`PromoSlider` is a visual/architectural frame for future **image-first**
-promotional posters (`relative` / `overflow-hidden` / fill + object-cover).
+If both are empty, the hero section is omitted.
 
-Implemented: placement, proportion, theme-aware surface, development
-placeholder copy only.
+## Promo Slider #1 CMS (**live / SQL executed**)
 
-**Not** implemented: banner table, Admin `/admin/banners`, upload,
-active/sort/link fields, real slides, Prev/Next, autoplay.
+`PromoSlider` is **image-first**. SQL
+`docs/sql/create-promo-banners.sql` was **executed** in the Supabase SQL
+Editor (app never auto-applies). Schema and bucket `promo-banners` are live.
+
+When live:
+
+- Table `public.promo_banners`; storage bucket `promo-banners`
+- Storefront: `is_active = true`, `sort_order ASC`, `created_at ASC`
+- Optional KA/EN overlay; empty both languages → image only; current
+  language falls back to the other. All four overlay fields may be empty
+- Optional internal `link_url` (whole poster is the link); empty → not
+  clickable; external URLs rejected
+- `sort_order` is **internal**. Admin never types it. Create appends after
+  all rows (including inactive). Edit preserves position. Delete reindexes
+  remaining rows to contiguous `1..N`
+- 1 banner: static; no prev/next/dots; no autoplay
+- 2+: existing Embla, `loop: true`, one at a time, prev/next + dots,
+  ~5s autoplay (`PROMO_AUTOPLAY_INTERVAL_MS`); Prev/Next/dot reset the
+  timer; hover, in-slider keyboard focus, and `document.hidden` pause;
+  `prefers-reduced-motion: reduce` disables autoplay. Sale Slider stays
+  `loop: false` / no autoplay
+- Admin `/admin/promos` (list / create / edit / delete)
+
+Admin still edits `price` / `sale_price` only. Checkout / catalog
+effective-price behavior is unchanged.
 
 Existing `PromoBanner.tsx` at the bottom of Home is a separate CTA block,
 not this slider.
@@ -1129,7 +1176,9 @@ Admin role management; Admin Add/Invite Customer.
 - ✅ S7B Checkout Payment Method — UI + server capture; valid combos only;
   `payment_status = unpaid` at create; rejects `delivery + pay_at_pickup` and
   unknown methods before inserts / stock (`payment-rules` / `validateOrder`)
-- ⬜ Promo CMS / real Promo Slider #1 (frame exists; no banner table)
+- ✅ Promo CMS / real Promo Slider #1 — **live** (SQL
+  `docs/sql/create-promo-banners.sql` **executed**; Admin `/admin/promos`;
+  storefront `getActivePromoBanners`; `sort_order` assigned server-side)
 - ✅ Catalog min/max (and Admin price sort) use live generated
   `effective_price` — SQL `docs/sql/add-products-effective-price.sql`
   **executed**; Min/Max runtime-verified

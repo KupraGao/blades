@@ -14,14 +14,42 @@
 
 ---
 
-## 🚧 NEXT — Promo CMS / real Promo Slider #1
+## 🚧 NEXT — Real online payment / provider integration
 
-- `PromoSlider` is currently a **visual frame only** (no real banners)
-- Remaining: banner data model (not locked), Admin management, image
-  upload, active/inactive, ordering, optional link/CTA, real carousel
-  when multiple records exist
-- Do **not** treat placeholder copy as a live campaign
-- No promotional banner table exists yet
+- S7A DB + S7B payment-method path shipped; provider **not** selected
+- Promo Slider #1 CMS SQL is **executed** (no longer blocking)
+
+---
+
+## ✅ COMPLETED — Promo Slider #1 CMS (live)
+
+- Table (**live / executed**): `public.promo_banners` — required
+  `image_path`; optional KA/EN title/subtitle (all may be empty);
+  optional internal `link_url`; `is_active`; internal `sort_order`;
+  `created_at` / `updated_at`
+- Storage (**live / executed**): dedicated public-read bucket
+  `promo-banners`. SQL `docs/sql/create-promo-banners.sql` **executed**
+  (history; not auto-applied)
+- Admin: `/admin/promos` list + create + edit + delete; `requireAdmin()`
+  + `createAdminClient()` for all mutations and Admin reads
+- Create/Edit form: poster required; destination link optional; active
+  checkbox; overlay titles optional. **No** manual `sort_order` input
+- Create assigns `sort_order` server-side (append after all rows,
+  including inactive). Edit does **not** change position
+- Delete: DB row first, then reindex remaining to contiguous `1..N`
+  (`sort_order ASC, created_at ASC, id ASC`), then owned storage cleanup
+- Image: client reuses product long-edge WebP optimizer (no square crop);
+  replace uploads new object then updates DB then removes old key
+- Storefront: `getActivePromoBanners()` — `is_active = true`,
+  `sort_order ASC`, `created_at ASC`; RLS also restricts public SELECT
+  to active rows. Inactive banners keep their Admin order numbers
+- Zero active banners: Promo omitted; Sale uses remaining hero width;
+  Sale breakpoints unchanged
+- One banner: image (optional overlay); **no** prev/next/dots; no autoplay
+- Multiple: existing Embla, `loop: true`, one slide at a time, prev/next
+  + dots, ~5s autoplay; manual nav resets the timer; hover/focus/hidden
+  tab pause; `prefers-reduced-motion: reduce` disables autoplay
+- Existing `PromoBanner.tsx` footer CTA is unrelated and unchanged
 
 ---
 
@@ -55,8 +83,9 @@
   vs Stock limit reached are distinct disabled states
 - Visible cards: <360px = 1; 360px–md = 2; md–lg = 3; lg+ = 1
   (narrow right column). Inverse of a typical 1→2→3 sequence
-- Promo Slider #1 **frame** + `HomepageHeroSliders` composition shipped;
-  Promo CMS / real banners **not** implemented
+- Promo Slider #1 **CMS live**; SQL executed; composition
+  `HomepageHeroSliders` still `[ wide Promo ][ narrow Sale ]` when both
+  have content
 - Catalog min/max (and Admin price sort) use live generated
   `effective_price` (`COALESCE(sale_price, price)`) and
   `products_effective_price_idx`. SQL

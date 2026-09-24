@@ -23,12 +23,6 @@ export default function CategoryForm({ mode, category, action }: Props) {
         <h1 className="text-4xl font-bold text-white">
           {mode === "create" ? t.createCategory : t.editCategory}
         </h1>
-
-        <p className="mt-2 text-zinc-400">
-          {mode === "create"
-            ? t.createCategoryDescription
-            : t.editCategoryDescription}
-        </p>
       </div>
 
       {/* FORM */}

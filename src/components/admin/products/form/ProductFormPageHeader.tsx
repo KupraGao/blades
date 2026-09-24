@@ -19,12 +19,6 @@ export default function ProductFormPageHeader({ mode, action }: Props) {
           <h1 className="text-3xl font-bold text-white md:text-4xl">
             {mode === "edit" ? t.editProductTitle : t.addProductTitle}
           </h1>
-
-          <p className="mt-2 text-zinc-400">
-            {mode === "edit"
-              ? t.editProductDescription
-              : t.addProductDescription}
-          </p>
         </div>
 
         {action ? (

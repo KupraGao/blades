@@ -49,10 +49,6 @@ export default function AdminOrdersListContent({
           {t.orders}
         </h1>
 
-        <p className="mt-2 text-zinc-400">
-          {t.manageCustomerOrders}
-        </p>
-
       </div>
 
       <OrdersToolbar />

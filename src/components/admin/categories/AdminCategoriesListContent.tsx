@@ -26,8 +26,6 @@ export default function AdminCategoriesListContent({ categories }: Props) {
           <h1 className="text-3xl font-bold text-white md:text-4xl">
             {t.categories}
           </h1>
-
-          <p className="mt-2 text-zinc-400">{t.manageCategories}</p>
         </div>
 
         <Link

@@ -14,6 +14,39 @@
 
 ---
 
+## v1.36.0 — Promo Slider #1 CMS (live)
+
+- Homepage Promo Slider #1 is **database-backed**. SQL
+  `docs/sql/create-promo-banners.sql` was **executed** in the Supabase SQL
+  Editor (app never auto-applies). Table `public.promo_banners` and bucket
+  `promo-banners` are live. Public SELECT RLS = active rows only.
+- Required `image_path`; optional KA/EN title/subtitle (all four may be
+  empty — image-only posters are valid); optional internal `link_url`;
+  `is_active`; internal `sort_order`; `created_at` / `updated_at`.
+- Admin `/admin/promos` list / create / edit / delete. Mutations and
+  Admin reads use `requireAdmin()` + `createAdminClient()`. Image
+  required on create; replace uploads the new object first, then updates
+  the row, then removes the old key. Delete removes the DB row, reindexes
+  remaining banners to contiguous `1..N`, then cleans the owned storage
+  object.
+- `sort_order` is **not** an Admin form field. Create appends after all
+  rows (including inactive). Edit preserves position. Inactive banners
+  keep their Admin order; storefront still fetches only `is_active = true`.
+- Storefront `getActivePromoBanners()`: `is_active = true`,
+  `sort_order ASC`, `created_at ASC`. Zero banners: omit Promo (no fake
+  placeholder); Sale keeps the remaining hero width. One banner: no
+  carousel controls and no autoplay. 2+: existing Embla, loop, one at a
+  time, prev/next + dots, ~5s autoplay (`PROMO_AUTOPLAY_INTERVAL_MS`).
+  Prev/Next/dot clicks reset the interval. Hover, keyboard focus inside
+  the slider, and a hidden document pause autoplay; reduced-motion
+  disables it. Sale Slider loop/autoplay unchanged.
+- Overlay uses current language with fallback to the other; both empty →
+  image only. `link_url` must be an internal path; external URLs rejected.
+- Sale Slider query/breakpoints, effective-price catalog, Cart, and
+  Checkout are unchanged. Footer `PromoBanner.tsx` CTA is unrelated.
+
+---
+
 ## v1.35.0 — Catalog Min/Max (and Admin price sort) on effective price
 
 - Storefront Min/Max and Admin `price-asc` / `price-desc` query

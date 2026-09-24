@@ -24,12 +24,6 @@ export default function BrandForm({ mode, brand, action }: Props) {
         <h1 className="text-4xl font-bold text-white">
           {mode === "create" ? t.createBrand : t.editBrand}
         </h1>
-
-        <p className="mt-2 text-zinc-400">
-          {mode === "create"
-            ? t.createBrandDescription
-            : t.editBrandDescription}
-        </p>
       </div>
 
       {/* FORM */}

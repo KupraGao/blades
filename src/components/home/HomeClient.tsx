@@ -12,10 +12,12 @@ import { FeatureStrip } from "@/components/home/FeatureStrip";
 import { ProductSectionClient } from "@/components/product/ProductSectionClient";
 import type { SaleSliderProduct } from "@/actions/products/get-sale-slider-products";
 import type { CatalogCategory } from "@/lib/catalog/catalog-search-params";
+import type { StorefrontPromoBanner } from "@/lib/promo/types";
 
 export function HomeClient({
   latestProducts,
   saleProducts,
+  promoBanners,
   catalogProducts,
   catalogTotal,
   catalogTotalPages,
@@ -25,6 +27,7 @@ export function HomeClient({
 }: {
   latestProducts: any[];
   saleProducts: SaleSliderProduct[];
+  promoBanners: StorefrontPromoBanner[];
   catalogProducts: any[];
   catalogTotal: number;
   catalogTotalPages: number;
@@ -46,7 +49,10 @@ export function HomeClient({
 
       {/* lg:pt-14 clears fixed ShopHeaderExtrasHost under the sticky Header */}
       <main className="lg:pt-14">
-        <HomepageHeroSliders saleProducts={saleProducts} />
+        <HomepageHeroSliders
+          saleProducts={saleProducts}
+          promoBanners={promoBanners}
+        />
 
         <LatestProductsSlider
           products={latestProducts}

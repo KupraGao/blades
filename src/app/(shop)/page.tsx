@@ -6,6 +6,7 @@ import { HomeClient } from "@/components/home/HomeClient";
 import { getCategories } from "@/actions/categories/get-categories";
 import { getProducts } from "@/actions/products/get-products";
 import { getSaleSliderProducts } from "@/actions/products/get-sale-slider-products";
+import { getActivePromoBanners } from "@/actions/promos/get-active-promo-banners";
 import { getAuthUser } from "@/lib/auth/get-auth-user";
 import {
   buildCatalogQueryString,
@@ -51,21 +52,23 @@ export default async function Home({ searchParams }: Props) {
     redirect(query ? `/?${query}` : "/");
   }
 
-  const [latestResult, catalogResult, saleProducts] = await Promise.all([
-    getProducts({
-      page: 1,
-      limit: LATEST_PRODUCTS_LIMIT,
-    }),
-    getProducts({
-      page: filters.page,
-      limit: CATALOG_PAGE_SIZE,
-      categoryId: catalogQuery.categoryId,
-      onSale: catalogQuery.onSale,
-      minPrice: filters.minPrice,
-      maxPrice: filters.maxPrice,
-    }),
-    getSaleSliderProducts(),
-  ]);
+  const [latestResult, catalogResult, saleProducts, promoBanners] =
+    await Promise.all([
+      getProducts({
+        page: 1,
+        limit: LATEST_PRODUCTS_LIMIT,
+      }),
+      getProducts({
+        page: filters.page,
+        limit: CATALOG_PAGE_SIZE,
+        categoryId: catalogQuery.categoryId,
+        onSale: catalogQuery.onSale,
+        minPrice: filters.minPrice,
+        maxPrice: filters.maxPrice,
+      }),
+      getSaleSliderProducts(),
+      getActivePromoBanners(),
+    ]);
 
   if (
     catalogResult.totalPages > 0 &&
@@ -87,6 +90,7 @@ export default async function Home({ searchParams }: Props) {
       <HomeClient
         latestProducts={latestResult.products ?? []}
         saleProducts={saleProducts}
+        promoBanners={promoBanners}
         catalogProducts={catalogResult.products ?? []}
         catalogTotal={catalogResult.total}
         catalogTotalPages={catalogResult.totalPages}

@@ -51,7 +51,6 @@ export default function AdminUsersListContent({
     <div>
       <div className="mb-8">
         <h1 className="text-4xl font-bold text-white">{t.users}</h1>
-        <p className="mt-2 text-zinc-400">{t.manageUsers}</p>
       </div>
 
       <div className="mb-6">

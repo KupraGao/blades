@@ -46,6 +46,10 @@ export default function Sidebar({ adminDisplayName = null }: Props) {
           {t.categories}
         </Link>
 
+        <Link href="/admin/promos" className={linkClass("/admin/promos")}>
+          {t.promoBanners}
+        </Link>
+
         <Link href="/admin/orders" className={linkClass("/admin/orders")}>
           {t.orders}
         </Link>

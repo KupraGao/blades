@@ -26,8 +26,6 @@ export default function AdminBrandsListContent({ brands }: Props) {
       <div className="mb-8 flex items-center justify-between gap-4">
         <div>
           <h1 className="text-4xl font-bold text-white">{t.brands}</h1>
-
-          <p className="mt-2 text-zinc-400">{t.manageBrands}</p>
         </div>
 
         <Link

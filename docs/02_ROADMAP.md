@@ -56,7 +56,8 @@
 - Virtual storefront Sale filter (ფასდაკლება → `sale_price IS NOT NULL`)
 - Admin Sale management (On Sale + Sale Price; derived %; Create/Edit)
 - Homepage Sale Products Slider #2 (`sale_price IS NOT NULL`; not category)
-- Promo Slider #1 visual/architectural frame only (no banner CMS/data)
+- Promo Slider #1 CMS **live** (`promo_banners` + `promo-banners` bucket +
+  `/admin/promos`; SQL executed)
 
 See `docs/06_CHANGELOG.md` for version history (S6 Customer Ownership complete;
 S7A–S7B payment-method path + S7B-1 delivery minimum — see latest changelog;
@@ -112,17 +113,6 @@ payment verification, automatic `paid`, refunds.
 
 ## 🚀 Immediate Next
 
-### Promo CMS / real Promo Slider #1 (catalog next)
-
-⬜ Promotional banner **data + Admin CMS** for homepage Promo Slider #1
-
-The visual `PromoSlider` **frame** and desktop Promo + Sale composition
-are already shipped. Remaining work is real banner records, Admin
-management, image upload, active/inactive, ordering, and optional
-link/CTA. Exact table/schema is **not** locked here.
-
-Do **not** treat the current development placeholder as a live campaign.
-
 ### Real online payment / provider integration (payments next)
 
 ⬜ Integrate a real payment provider for Checkout `online` orders
@@ -150,8 +140,8 @@ Price, URL state, 20/page server pagination) and independent Latest Products
 query are shipped. Storefront Brands directory + Brand PLP (Brand-scoped
 Category/Price Filters, shared toolbar) are shipped — see Architecture /
 Changelog. Sale pricing, virtual Sale filter, Admin Sale UI, and
-homepage Sale Slider #2 are shipped. Promo Slider #1 is a **frame only**.
-Catalog next: Promo CMS / real banners (schema not locked). Payments next
+homepage Sale Slider #2 are shipped. Promo Slider #1 CMS is **live**
+(SQL `docs/sql/create-promo-banners.sql` **executed**). Payments next
 remains S7 provider / webhooks / refunds (S7A–S7B partial progress
 preserved).
 
@@ -259,12 +249,18 @@ preserved).
 ✅ Homepage Sale Products Slider #2 — automatic `sale_price IS NOT NULL`;
   no featured-sale flag; Latest Products carousel remains intact
 
-✅ Promo Slider #1 **frame** — `PromoSlider` + `HomepageHeroSliders`
-  desktop `[ wide Promo ][ narrow Sale ]`; stacks below `lg`
-
-⬜ Promo CMS / real Promo Slider #1
-  (banner data model, Admin CRUD, upload, active, order, optional link;
-  schema **not** locked; no promotional banner table yet)
+✅ Promo Slider #1 **CMS live** —
+  `public.promo_banners` + dedicated `promo-banners` bucket;
+  Admin `/admin/promos`; homepage fetch of `is_active = true` ordered by
+  `sort_order ASC, created_at ASC`; KA/EN overlay fallback; internal
+  `link_url` only; zero banners omit Promo (Sale keeps its area);
+  one banner has no carousel controls or autoplay; 2+ reuse Embla with
+  loop and ~5s autoplay (pause on hover/focus/hidden tab; reduced-motion
+  disables autoplay). `sort_order` is an **internal** field: Admin does
+  not type it; new banners append; delete reindexes remaining rows to
+  `1..N` (inactive rows stay in canonical Admin order; edit preserves
+  position). Title/subtitle remain optional (image-only posters valid).
+  SQL `docs/sql/create-promo-banners.sql` is **executed**.
 
 ✅ Catalog min/max (storefront) and Admin `price-asc`/`price-desc` use
   live generated `products.effective_price` (`COALESCE(sale_price, price)`)
