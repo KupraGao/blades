@@ -28,7 +28,7 @@ html[lang="ka"] :is(button, input, select, textarea) {
 .section-title,
 h1.font-serif,
 h2.font-serif {
-  font-family: var(--font-playfair), ui-serif, Georgia, serif;
+  font-family: var(--font-barlow-condensed), var(--font-inter), system-ui, sans-serif;
 }
 
 html[lang="ka"] .display-font,
@@ -37,11 +37,10 @@ html[lang="ka"] .section-title,
 html[lang="ka"] h1.font-serif,
 html[lang="ka"] h2.font-serif,
 html[lang="ka"] .primary-nav-font {
-  font-family: var(--font-ka-heading), var(--font-playfair), ui-serif, Georgia, serif;
+  font-family: var(--font-ka-heading), var(--font-barlow-condensed), var(--font-inter), system-ui, sans-serif;
   font-synthesis: none;
 }
 
-/* Playfair + tracking-tight reads lighter than Nino Bold; open tracking instead. */
 .storefront-section-heading,
 .section-title {
   font-weight: 700;
@@ -60,7 +59,7 @@ html[lang="en"] .storefront-section-heading {
 }
 
 .primary-nav-font {
-  font-family: var(--font-playfair), ui-serif, Georgia, serif;
+  font-family: var(--font-barlow-condensed), var(--font-inter), system-ui, sans-serif;
   font-size: 0.9375rem;
   font-weight: 600;
   line-height: 1.25;

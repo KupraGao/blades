@@ -34,13 +34,14 @@ change.
   dictionaries stay title case. KA copy unchanged.
 - **Fonts:** local `src/fonts/` BPG Glaho Sylfaen (KA body/UI) and BPG
   Nino Mtavruli Bold (KA display) via `next/font/local`. EN body remains
-  Inter; EN display is existing Playfair Display (not loaded a second
-  time). `font-serif` was not globally remapped.
+  Inter; EN display is Barlow Condensed (`next/font/google`, weights
+  600 / 700 / 900). Playfair Display was removed after it stopped serving
+  any remaining usage. `font-serif` was not globally remapped.
 - **Language-aware CSS:** `LanguageProvider` still owns language and now
   sets root `html lang` (`ka` / `en`). Body/UI vs display vs primary nav
   follow that root state.
 - **Display pairing:** product-tile names (ProductCard, Sale slider,
-  Wishlist) and primary Header nav use KA Nino / EN Playfair. Product-name
+  Wishlist) and primary Header nav use KA Nino / EN Barlow Condensed. Product-name
   colors, title sizes, clamp, and layout unchanged. Prices stay outside
   the display system. Nav gold active-route state unchanged.
 - Sale Slider Embla/breakpoints, Promo CMS/autoplay, product queries, and

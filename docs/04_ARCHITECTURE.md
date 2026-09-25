@@ -726,14 +726,14 @@ to `ka` or `en`. Language-aware CSS uses that attribute — not a second
 language system.
 
 Local Georgian files live in `src/fonts/` and load with `next/font/local`
-(no extra network font request, no new dependency). Playfair Display was
-already loaded and is the EN display face (not loaded twice).
-`font-serif` is **not** globally remapped to Georgian.
+(no extra network font request, no new dependency). Barlow Condensed
+(`next/font/google`) is the EN display face. Playfair Display is not
+loaded. `font-serif` is **not** globally remapped to Georgian.
 
 | Role | KA | EN |
 |------|----|----|
 | Body / UI | BPG Glaho Sylfaen | Inter |
-| Display (section headings, product-tile names, primary Header nav) | BPG Nino Mtavruli Bold | Playfair Display |
+| Display (section headings, product-tile names, primary Header nav) | BPG Nino Mtavruli Bold | Barlow Condensed |
 
 Product-tile names (ProductCard, Sale slider, Wishlist) use the display
 pairing; colors, sizes, clamp, and layout were not changed by the

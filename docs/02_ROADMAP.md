@@ -276,7 +276,7 @@ behavior change). Payments next remains S7 provider / webhooks / refunds
 ✅ Storefront UI / typography polish — ProductCard spacing and square
   image area; storefront radius hierarchy; one gold heading per homepage
   product section (EN uppercase via CSS); local Georgian fonts
-  (Glaho body, Nino display) with existing Inter / Playfair for EN;
+  (Glaho body, Nino display) with Inter / Barlow Condensed for EN;
   product-tile names and primary Header nav use the display pairing.
   Queries, pricing, Promo CMS, Sale Slider behavior, Cart, Checkout,
   Auth, and Admin business logic are unchanged.

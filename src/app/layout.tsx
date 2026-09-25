@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Playfair_Display } from "next/font/google";
+import { Barlow_Condensed, Inter } from "next/font/google";
 import "./globals.css";
 
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
@@ -13,9 +13,11 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
-const playfair = Playfair_Display({
+const barlowCondensed = Barlow_Condensed({
   subsets: ["latin"],
-  variable: "--font-playfair",
+  weight: ["600", "700", "900"],
+  variable: "--font-barlow-condensed",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -28,7 +30,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="ka" suppressHydrationWarning data-scroll-behavior="smooth">
       <body
         suppressHydrationWarning
-        className={`${inter.variable} ${playfair.variable} ${kaBodyFont.variable} ${kaHeadingFont.variable} bg-white text-zinc-900 dark:bg-black dark:text-zinc-100 antialiased transition-colors duration-300`}
+        className={`${inter.variable} ${barlowCondensed.variable} ${kaBodyFont.variable} ${kaHeadingFont.variable} bg-white text-zinc-900 dark:bg-black dark:text-zinc-100 antialiased transition-colors duration-300`}
       >
         <ThemeProvider>
           <LanguageProvider>

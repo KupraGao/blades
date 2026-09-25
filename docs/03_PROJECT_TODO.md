@@ -37,12 +37,13 @@
   dictionary strings stay title case
 - Local Georgian fonts in `src/fonts/` via `next/font/local` (no extra
   request, no new dependency): Glaho = KA body/UI; Nino = KA display
-- EN body remains Inter; EN display remains existing Playfair Display
+- EN body remains Inter; EN display is Barlow Condensed (`next/font/google`).
+  Playfair Display was removed (unused after the EN display swap)
 - `LanguageProvider` still owns language and sets root `html lang`
   (`ka` / `en`). Language-aware CSS uses that attribute — not a second
   i18n system. `font-serif` was not globally redefined
 - Product-tile names (ProductCard, Sale slider, Wishlist) and primary
-  Header nav use KA Nino / EN Playfair. Product-name colors/sizes/clamp
+  Header nav use KA Nino / EN Barlow Condensed. Product-name colors/sizes/clamp
   and nav gold active-route state unchanged. Prices stay outside display
   fonts. Ordinary UI still KA Glaho / EN Inter
 - Unchanged: product queries, sale/effective price, Min/Max, stock,
