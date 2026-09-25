@@ -85,7 +85,7 @@ export default function ProductPurchaseActions({
   // =====================================
 
   return (
-    <div className="mt-8 overflow-hidden rounded-3xl border border-zinc-200 bg-zinc-50 dark:border-white/10 dark:bg-white/[0.04]">
+    <div className="mt-8 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50 dark:border-white/10 dark:bg-white/[0.04]">
 
       {/* ===================================== */}
       {/* QUANTITY */}

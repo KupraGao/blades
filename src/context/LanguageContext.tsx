@@ -44,6 +44,10 @@ export function LanguageProvider({
   }, []);
 
   useEffect(() => {
+    document.documentElement.lang = language;
+  }, [language]);
+
+  useEffect(() => {
     localStorage.setItem(
       "language",
       language

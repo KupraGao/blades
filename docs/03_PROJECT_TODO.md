@@ -18,6 +18,36 @@
 
 - S7A DB + S7B payment-method path shipped; provider **not** selected
 - Promo Slider #1 CMS SQL is **executed** (no longer blocking)
+- Storefront UI / typography polish is **completed** (visual checkpoint)
+
+---
+
+## ✅ COMPLETED — Storefront UI / typography polish
+
+- ProductCard: denser padding, square image area, restrained responsive
+  title size; clamp, price/Add-to-Cart alignment, Add-to-Cart, and stock
+  UX unchanged
+- Storefront radius: cards/panels generally `rounded-xl`; nested thumbs
+  `rounded-lg`; Promo/Hero posters `rounded-2xl`; pills/icon controls
+  `rounded-full`. Not a global replace; Admin not broadly redesigned
+- Homepage product sections each have **one** gold heading:
+  ფასდაკლება / SALE, ახალი პროდუქტები / LATEST PRODUCTS,
+  რჩეული პროდუქტები / FEATURED PRODUCTS. Duplicate eyebrow+title
+  removed from Latest and Featured. EN uppercase is CSS-only;
+  dictionary strings stay title case
+- Local Georgian fonts in `src/fonts/` via `next/font/local` (no extra
+  request, no new dependency): Glaho = KA body/UI; Nino = KA display
+- EN body remains Inter; EN display remains existing Playfair Display
+- `LanguageProvider` still owns language and sets root `html lang`
+  (`ka` / `en`). Language-aware CSS uses that attribute — not a second
+  i18n system. `font-serif` was not globally redefined
+- Product-tile names (ProductCard, Sale slider, Wishlist) and primary
+  Header nav use KA Nino / EN Playfair. Product-name colors/sizes/clamp
+  and nav gold active-route state unchanged. Prices stay outside display
+  fonts. Ordinary UI still KA Glaho / EN Inter
+- Unchanged: product queries, sale/effective price, Min/Max, stock,
+  Add-to-Cart, Sale Slider Embla, Promo CMS/autoplay, Cart/Checkout/Auth
+  business logic, Admin functionality, DB/schema/SQL/RLS/Storage
 
 ---
 

@@ -148,11 +148,11 @@ export function Header({
           {/* DESKTOP NAV */}
           {/* ===================================== */}
           <nav className="hidden items-center gap-8 lg:flex">
-            <a href="/" className="text-sm font-semibold text-zinc-700 transition hover:text-brand-gold dark:text-zinc-300">{t.home}</a>
-            <a href="/#products" className="text-sm font-semibold text-zinc-700 transition hover:text-brand-gold dark:text-zinc-300">{t.products}</a>
+            <a href="/" className="primary-nav-font text-zinc-700 transition hover:text-brand-gold dark:text-zinc-300">{t.home}</a>
+            <a href="/#products" className="primary-nav-font text-zinc-700 transition hover:text-brand-gold dark:text-zinc-300">{t.products}</a>
             <a
               href="/brands"
-              className={`text-sm font-semibold transition hover:text-brand-gold dark:hover:text-brand-gold ${
+              className={`primary-nav-font transition hover:text-brand-gold dark:hover:text-brand-gold ${
                 brandsActive
                   ? "text-brand-gold"
                   : "text-zinc-700 dark:text-zinc-300"
@@ -162,7 +162,7 @@ export function Header({
             </a>
             <a
               href="/contact"
-              className={`text-sm font-semibold transition hover:text-brand-gold dark:hover:text-brand-gold ${
+              className={`primary-nav-font transition hover:text-brand-gold dark:hover:text-brand-gold ${
                 pathname === "/contact"
                   ? "text-brand-gold"
                   : "text-zinc-700 dark:text-zinc-300"

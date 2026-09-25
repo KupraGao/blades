@@ -100,7 +100,7 @@ export default function WishlistPageContent() {
       {/* ===================================== */}
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {wishlistItems.map((item) => (
-          <article key={item.id} className="group overflow-hidden rounded-2xl border border-zinc-200 bg-white transition hover:border-brand-gold/50 dark:border-white/10 dark:bg-white/[0.04]">
+          <article key={item.id} className="group overflow-hidden rounded-xl border border-zinc-200 bg-white transition hover:border-brand-gold/50 dark:border-white/10 dark:bg-white/[0.04]">
             {/* PRODUCT IMAGE */}
             <Link href={`/products/${item.id}`} className="relative block aspect-[5/4] overflow-hidden bg-zinc-100 dark:bg-zinc-900">
               <img src={item.image} alt={item.title} className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105" />
@@ -108,7 +108,7 @@ export default function WishlistPageContent() {
 
             {/* PRODUCT CONTENT */}
             <div className="p-5">
-              <Link href={`/products/${item.id}`} className="line-clamp-1 font-serif text-xl font-bold text-zinc-900 transition hover:text-brand-gold dark:text-white">
+              <Link href={`/products/${item.id}`} className="display-font line-clamp-1 text-xl font-bold text-zinc-900 transition hover:text-brand-gold dark:text-white">
                 {item.title}
               </Link>
 

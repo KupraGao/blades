@@ -107,7 +107,7 @@ export default function CheckoutSuccessContent({
         </p>
       </div>
 
-      <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+      <div className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
 
         <div className="space-y-3 text-sm">
           <div className="flex items-start justify-between gap-4">
@@ -234,7 +234,7 @@ export default function CheckoutSuccessContent({
 
       </div>
 
-      <div className="mt-6 rounded-2xl border border-dashed border-zinc-300 bg-zinc-50 px-5 py-4 text-center dark:border-zinc-700 dark:bg-zinc-950">
+      <div className="mt-6 rounded-xl border border-dashed border-zinc-300 bg-zinc-50 px-5 py-4 text-center dark:border-zinc-700 dark:bg-zinc-950">
         {!isAuthenticated ? (
           <>
             <p className="text-sm text-zinc-600 dark:text-zinc-400">

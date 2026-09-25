@@ -102,7 +102,7 @@ export function ReturnsPageContent() {
 
   return (
     <InfoPageShell title={t.returnsTitle} intro={t.returnsIntro}>
-      <p className="rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm dark:border-zinc-800 dark:bg-zinc-900">
+      <p className="rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm dark:border-zinc-800 dark:bg-zinc-900">
         {t.infoNotLegalAdvice}
       </p>
 
@@ -145,7 +145,7 @@ export function PrivacyPageContent() {
 
   return (
     <InfoPageShell title={t.privacyTitle} intro={t.privacyIntro}>
-      <p className="rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm dark:border-zinc-800 dark:bg-zinc-900">
+      <p className="rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm dark:border-zinc-800 dark:bg-zinc-900">
         {t.privacyBaselineNote}
       </p>
 
@@ -201,7 +201,7 @@ export function TermsPageContent() {
 
   return (
     <InfoPageShell title={t.termsTitle} intro={t.termsIntro}>
-      <p className="rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm dark:border-zinc-800 dark:bg-zinc-900">
+      <p className="rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm dark:border-zinc-800 dark:bg-zinc-900">
         {t.infoNotLegalAdvice}
       </p>
 
@@ -322,7 +322,7 @@ export function FaqPageContent() {
         {items.map((item) => (
           <details
             key={item.question}
-            className="rounded-2xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900"
+            className="rounded-xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900"
           >
             <summary className="cursor-pointer list-inside px-4 py-3.5 text-sm font-semibold text-zinc-900 transition hover:text-brand-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold/50 focus-visible:ring-offset-2 dark:text-white dark:focus-visible:ring-offset-zinc-900">
               {item.question}

@@ -14,6 +14,40 @@
 
 ---
 
+## v1.37.0 — Storefront UI / typography polish
+
+Working-tree storefront visual checkpoint. No schema, SQL, RLS, Storage,
+pricing, catalog, Cart, Checkout, Auth, Admin business, or dependency
+change.
+
+- **ProductCard:** denser internal spacing; square image area
+  (`aspect-square`); restrained responsive title size; existing title
+  clamp and price / Add-to-Cart alignment kept. Add-to-Cart and stock
+  behavior unchanged.
+- **Radius:** storefront cards/panels generally `rounded-xl`; nested
+  thumbs generally `rounded-lg`; Promo/Hero posters `rounded-2xl`; pills
+  / circular controls `rounded-full`. Not a blind global replace; Admin
+  was not broadly redesigned.
+- **Section headings:** Sale / Latest Products / Featured Products share
+  one gold heading each (no duplicate eyebrow + title). Restrained
+  responsive size. EN uppercase via CSS `text-transform` only;
+  dictionaries stay title case. KA copy unchanged.
+- **Fonts:** local `src/fonts/` BPG Glaho Sylfaen (KA body/UI) and BPG
+  Nino Mtavruli Bold (KA display) via `next/font/local`. EN body remains
+  Inter; EN display is existing Playfair Display (not loaded a second
+  time). `font-serif` was not globally remapped.
+- **Language-aware CSS:** `LanguageProvider` still owns language and now
+  sets root `html lang` (`ka` / `en`). Body/UI vs display vs primary nav
+  follow that root state.
+- **Display pairing:** product-tile names (ProductCard, Sale slider,
+  Wishlist) and primary Header nav use KA Nino / EN Playfair. Product-name
+  colors, title sizes, clamp, and layout unchanged. Prices stay outside
+  the display system. Nav gold active-route state unchanged.
+- Sale Slider Embla/breakpoints, Promo CMS/autoplay, product queries, and
+  `ProductPrice` logic are unchanged.
+
+---
+
 ## v1.36.0 — Promo Slider #1 CMS (live)
 
 - Homepage Promo Slider #1 is **database-backed**. SQL

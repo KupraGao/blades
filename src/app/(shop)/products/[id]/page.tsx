@@ -52,7 +52,7 @@ export default async function ProductDetailsPage({
                 <ProductDetailsContent label="videoReview" />
               </h2>
 
-              <div className="overflow-hidden rounded-3xl border border-zinc-200 dark:border-zinc-800">
+              <div className="overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800">
                 <ProductReviewEmbed
                   src={product.review_link
                     .replace("watch?v=", "embed/")

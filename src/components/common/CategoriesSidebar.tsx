@@ -200,7 +200,7 @@ export function CategoriesSidebar({
     <aside className="pointer-events-none fixed left-0 top-[80px] z-[41] hidden w-full lg:block">
       <div className="container-page pointer-events-auto relative">
         <div className="absolute left-7 w-64">
-          <div className="overflow-hidden rounded-2xl border border-zinc-800/80 bg-white shadow-xl shadow-black/20">
+          <div className="overflow-hidden rounded-xl border border-zinc-800/80 bg-white shadow-xl shadow-black/20">
             <button
               type="button"
               aria-expanded={!collapsed}

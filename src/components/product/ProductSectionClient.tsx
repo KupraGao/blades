@@ -38,13 +38,12 @@ export function ProductSectionClient({
           onCollapsedChange={onFiltersCollapsedChange}
         />
 
-        <div className="flex flex-col gap-6">
-          <p className="small-label">{t.featuredProducts}</p>
-          <h2 className="section-title">{t.featuredProducts}</h2>
-        </div>
+        <h2 className="storefront-section-heading mb-3 lg:mb-4">
+          {t.featuredProducts}
+        </h2>
 
         {isEmpty ? (
-          <div className="mt-10 rounded-2xl border border-dashed border-zinc-300 bg-white/60 px-6 py-16 text-center dark:border-white/15 dark:bg-white/[0.03]">
+          <div className="rounded-xl border border-dashed border-zinc-300 bg-white/60 px-6 py-16 text-center dark:border-white/15 dark:bg-white/[0.03]">
             <p className="text-lg font-semibold text-zinc-900 dark:text-white">
               {t.catalogNoMatchingProducts}
             </p>
@@ -54,7 +53,7 @@ export function ProductSectionClient({
           </div>
         ) : (
           <>
-            <div className="mt-10 grid grid-cols-2 gap-x-3 gap-y-4 sm:grid-cols-3 sm:gap-6 lg:grid-cols-4 2xl:grid-cols-5">
+            <div className="grid grid-cols-2 gap-x-3 gap-y-4 sm:grid-cols-3 sm:gap-6 lg:grid-cols-4 2xl:grid-cols-5">
               {safeProducts.map((product: any) => (
                 <ProductCard key={product.id} product={product} />
               ))}

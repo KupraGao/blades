@@ -17,7 +17,7 @@ const linkClassName =
   "font-medium text-zinc-900 transition hover:text-brand-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold/50 focus-visible:ring-offset-2 dark:text-white dark:focus-visible:ring-offset-zinc-900";
 
 const cardClassName =
-  "flex h-full flex-col rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 sm:p-7";
+  "flex h-full flex-col rounded-xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 sm:p-7";
 
 export function ContactPageContent() {
   const { t, language } = useLanguage();
@@ -229,7 +229,7 @@ export function ContactPageContent() {
           </p>
         </div>
 
-        <div className="overflow-hidden rounded-2xl border border-zinc-200 shadow-sm dark:border-zinc-800">
+        <div className="overflow-hidden rounded-xl border border-zinc-200 shadow-sm dark:border-zinc-800">
           <iframe
             title={t.contactMapIframeTitle}
             src={mapsEmbedUrl}

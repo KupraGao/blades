@@ -98,7 +98,7 @@ export function CartDrawer({ open, setOpen }: CartDrawerProps) {
               {cartItems.map((item) => (
                 <div
                   key={item.id}
-                  className={`relative flex gap-3 rounded-2xl border p-3 dark:border-white/10 ${
+                  className={`relative flex gap-3 rounded-xl border p-3 dark:border-white/10 ${
                     item.selected
                       ? "border-zinc-200"
                       : "border-zinc-200 opacity-70"
@@ -112,7 +112,7 @@ export function CartDrawer({ open, setOpen }: CartDrawerProps) {
                     <img
                       src={item.image}
                       alt={item.title}
-                      className="h-24 w-24 rounded-xl object-cover transition duration-300 hover:opacity-80"
+                      className="h-24 w-24 rounded-lg object-cover transition duration-300 hover:opacity-80"
                     />
                   </Link>
 

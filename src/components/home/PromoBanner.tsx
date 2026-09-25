@@ -9,7 +9,7 @@ export function PromoBanner() {
   return (
     <section className="section-pad">
       <div className="container-page">
-        <div className="relative overflow-hidden rounded-[2rem] border border-zinc-200 bg-gradient-to-r from-white via-zinc-50 to-orange-100 p-8 shadow-premium dark:border-brand-gold/20 dark:from-zinc-950 dark:via-zinc-900 dark:to-orange-950 sm:p-12">
+        <div className="relative overflow-hidden rounded-2xl border border-zinc-200 bg-gradient-to-r from-white via-zinc-50 to-orange-100 p-8 shadow-premium dark:border-brand-gold/20 dark:from-zinc-950 dark:via-zinc-900 dark:to-orange-950 sm:p-12">
           <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-brand-orange/20 blur-3xl" />
 
           <div className="relative max-w-2xl">

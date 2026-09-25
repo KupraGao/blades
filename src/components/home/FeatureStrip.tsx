@@ -33,9 +33,9 @@ export function FeatureStrip() {
           return (
             <div
               key={feature.title}
-              className="flex items-center gap-4 rounded-2xl border border-white/10 bg-white/[0.03] p-5"
+              className="flex items-center gap-4 rounded-xl border border-white/10 bg-white/[0.03] p-5"
             >
-              <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-brand-orange/15 text-brand-gold">
+              <div className="grid h-12 w-12 shrink-0 place-items-center rounded-lg bg-brand-orange/15 text-brand-gold">
                 <Icon size={22} />
               </div>
               <div>

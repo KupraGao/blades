@@ -61,7 +61,7 @@ export function SaleProductsSlider({ products }: SaleProductsSliderProps) {
       aria-label={t.sale}
     >
       <div className="mb-3 flex min-w-0 items-center justify-between gap-3 lg:mb-4">
-        <h2 className="section-title min-w-0 truncate">{t.sale}</h2>
+        <h2 className="storefront-section-heading">{t.sale}</h2>
 
         {showNav ? (
           <div className="flex shrink-0 gap-2">
@@ -101,7 +101,7 @@ export function SaleProductsSlider({ products }: SaleProductsSliderProps) {
               key={product.id}
               className="min-h-0 min-w-0 flex-[0_0_100%] self-stretch min-[360px]:flex-[0_0_calc((100%-0.75rem)/2)] md:flex-[0_0_calc((100%-1.5rem)/3)] lg:flex-[0_0_100%]"
             >
-              <div className="group flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white transition hover:border-brand-gold/50 dark:border-white/10 dark:bg-white/[0.04]">
+              <div className="group flex h-full min-w-0 flex-col overflow-hidden rounded-xl border border-zinc-200 bg-white transition hover:border-brand-gold/50 dark:border-white/10 dark:bg-white/[0.04]">
                 <Link
                   href={`/products/${product.id}`}
                   className="flex min-w-0 flex-1 flex-col outline-none focus-visible:ring-2 focus-visible:ring-brand-gold/50"
@@ -115,7 +115,7 @@ export function SaleProductsSlider({ products }: SaleProductsSliderProps) {
                   </div>
 
                   <div className="flex min-w-0 flex-col p-3 pb-0 lg:p-4 lg:pb-0">
-                    <h3 className="line-clamp-2 min-w-0 font-serif text-sm font-bold text-zinc-900 sm:text-base dark:text-white lg:text-lg">
+                    <h3 className="display-font line-clamp-2 min-w-0 text-sm font-bold text-zinc-900 sm:text-base dark:text-white lg:text-lg">
                       {product.title}
                     </h3>
 

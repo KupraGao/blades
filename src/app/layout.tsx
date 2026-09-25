@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/components/layout/ThemeProvider";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { CartProvider } from "@/context/CartContext";
 import { WishlistProvider } from "@/context/WishlistContext";
+import { kaBodyFont, kaHeadingFont } from "@/fonts/georgian";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -27,7 +28,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="ka" suppressHydrationWarning data-scroll-behavior="smooth">
       <body
         suppressHydrationWarning
-        className={`${inter.variable} ${playfair.variable} bg-white text-zinc-900 dark:bg-black dark:text-zinc-100 antialiased transition-colors duration-300`}
+        className={`${inter.variable} ${playfair.variable} ${kaBodyFont.variable} ${kaHeadingFont.variable} bg-white text-zinc-900 dark:bg-black dark:text-zinc-100 antialiased transition-colors duration-300`}
       >
         <ThemeProvider>
           <LanguageProvider>

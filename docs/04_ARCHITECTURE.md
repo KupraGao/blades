@@ -221,6 +221,11 @@ src
 │   ├── en.ts
 │   └── ka.ts
 │
+├── fonts
+│   ├── georgian.ts
+│   ├── bpg_glaho_sylfaen.ttf
+│   └── bpg_nino_mtavruli_bold.ttf
+│
 ├── lib
 │   │
 │   ├── data
@@ -663,8 +668,8 @@ stable. Search width follows **route capability**, not sidebar open/closed.
 
 ### Controlled content motion (no ProductCard reflow)
 
-- **Home:** Filters open/close → only Latest Products title (eyebrow +
-  heading) moves horizontally
+- **Home:** Filters open/close → only the Latest Products heading moves
+  horizontally
 - **Brand PLP:** Filters open/close → only Brand identity header (logo /
   fallback, name, count) moves `lg:ml-[272px]`; product grid + pagination
   stay put
@@ -679,6 +684,63 @@ host allowlisting was added for this feature.
 
 Home Featured Catalog (full-catalog server Filters, 20/page, independent
 Latest Products) is unchanged by Brands work.
+
+---
+
+# Storefront visual system (implemented)
+
+Visual polish only. Product queries, pricing, Sale Slider Embla, Promo
+CMS/autoplay, Cart, Checkout, Auth, Admin business logic, and the
+database are unchanged.
+
+### ProductCard
+
+Shared storefront tile: denser internal spacing, square image area,
+restrained responsive title size. Existing title clamp and price /
+Add-to-Cart alignment are preserved. Add-to-Cart and stock UX are
+unchanged.
+
+### Radius hierarchy
+
+Not a blind global replace. Admin was not broadly redesigned.
+
+| Surface | Typical radius |
+|---------|----------------|
+| Structural cards / panels | `rounded-xl` |
+| Nested thumbnails / smaller nested surfaces | `rounded-lg` |
+| Promo / Hero posters | `rounded-2xl` (one step softer) |
+| Pills / badges / circular icon controls | `rounded-full` |
+
+### Homepage product-section headings
+
+Sale, Latest Products, and Featured Products each have **one** gold
+heading (duplicate eyebrow + title removed). Shared restrained
+responsive size. EN headings render uppercase through CSS
+(`text-transform`); dictionary strings stay title case. KA headings
+are unchanged.
+
+### Typography
+
+`LanguageProvider` remains the language source and sets root `html lang`
+to `ka` or `en`. Language-aware CSS uses that attribute — not a second
+language system.
+
+Local Georgian files live in `src/fonts/` and load with `next/font/local`
+(no extra network font request, no new dependency). Playfair Display was
+already loaded and is the EN display face (not loaded twice).
+`font-serif` is **not** globally remapped to Georgian.
+
+| Role | KA | EN |
+|------|----|----|
+| Body / UI | BPG Glaho Sylfaen | Inter |
+| Display (section headings, product-tile names, primary Header nav) | BPG Nino Mtavruli Bold | Playfair Display |
+
+Product-tile names (ProductCard, Sale slider, Wishlist) use the display
+pairing; colors, sizes, clamp, and layout were not changed by the
+font-family pass. Prices stay outside the display system
+(`ProductPrice` unchanged). Ordinary labels, forms, buttons, filters,
+cart, checkout, and account UI stay body/UI fonts. Primary Header nav
+uses the display pairing; gold active-route state is unchanged.
 
 ---
 

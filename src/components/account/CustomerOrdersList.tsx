@@ -35,7 +35,7 @@ export default function CustomerOrdersList({ orders }: Props) {
       </div>
 
       {orders.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-zinc-300 bg-white px-5 py-8 text-center shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
+        <div className="rounded-xl border border-dashed border-zinc-300 bg-white px-5 py-8 text-center shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
           <p className="text-sm text-zinc-500 dark:text-zinc-400">
             {t.accountMyOrdersEmpty}
           </p>
@@ -54,7 +54,7 @@ export default function CustomerOrdersList({ orders }: Props) {
             return (
               <li
                 key={order.id}
-                className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 sm:p-6"
+                className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 sm:p-6"
               >
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                   <div className="min-w-0 flex-1 space-y-3">

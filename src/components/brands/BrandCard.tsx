@@ -18,7 +18,7 @@ export function BrandCard({ brand }: Props) {
   return (
     <Link
       href={`/brands/${encodeURIComponent(brand.slug)}`}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white transition hover:border-brand-gold/60 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold/50 dark:border-white/10 dark:bg-white/[0.03] dark:hover:border-brand-gold/40"
+      className="group flex flex-col overflow-hidden rounded-xl border border-zinc-200 bg-white transition hover:border-brand-gold/60 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold/50 dark:border-white/10 dark:bg-white/[0.03] dark:hover:border-brand-gold/40"
     >
       <BrandLogo
         name={brand.name}

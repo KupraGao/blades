@@ -13,7 +13,7 @@ export function BrandsDirectoryContent({ brands }: Props) {
 
   if (brands.length === 0) {
     return (
-      <div className="mt-10 rounded-2xl border border-dashed border-zinc-300 bg-white/60 px-6 py-16 text-center dark:border-white/15 dark:bg-white/[0.03]">
+      <div className="mt-10 rounded-xl border border-dashed border-zinc-300 bg-white/60 px-6 py-16 text-center dark:border-white/15 dark:bg-white/[0.03]">
         <p className="text-lg font-semibold text-zinc-900 dark:text-white">
           {t.brandsEmpty}
         </p>

@@ -105,7 +105,7 @@ export default function CustomerOrderDetails({ order }: Props) {
       </div>
 
       {/* ORDER HEADER */}
-      <section className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 sm:p-6">
+      <section className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 sm:p-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-lg font-semibold text-zinc-900 dark:text-white">
             {t.orderHeader}
@@ -155,7 +155,7 @@ export default function CustomerOrderDetails({ order }: Props) {
       </section>
 
       {/* CUSTOMER INFORMATION */}
-      <section className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 sm:p-6">
+      <section className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 sm:p-6">
         <h2 className="text-lg font-semibold text-zinc-900 dark:text-white">
           {t.customerInformation}
         </h2>
@@ -190,7 +190,7 @@ export default function CustomerOrderDetails({ order }: Props) {
       </section>
 
       {/* ORDER ITEMS */}
-      <section className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 sm:p-6">
+      <section className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 sm:p-6">
         <h2 className="text-lg font-semibold text-zinc-900 dark:text-white">
           {t.orderItems}
         </h2>

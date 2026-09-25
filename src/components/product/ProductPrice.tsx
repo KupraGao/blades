@@ -27,7 +27,7 @@ export function ProductPrice({
       ? "text-3xl font-black tracking-tight text-brand-gold md:text-4xl"
       : size === "compact"
         ? "font-bold text-brand-gold"
-        : "text-lg font-black text-brand-gold";
+        : "text-base font-black text-brand-gold lg:text-lg";
 
   const regularClass =
     size === "detail"

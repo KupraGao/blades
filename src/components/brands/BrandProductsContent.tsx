@@ -77,7 +77,7 @@ export function BrandProductsContent({
           <BrandLogo
             name={brand.name}
             logo={brand.logo}
-            className="h-24 w-24 shrink-0 rounded-2xl border border-zinc-200 dark:border-white/10 sm:h-28 sm:w-28"
+            className="h-24 w-24 shrink-0 rounded-xl border border-zinc-200 dark:border-white/10 sm:h-28 sm:w-28"
             imgClassName="h-full w-full object-contain p-3"
             initialClassName="text-3xl font-bold text-zinc-400 dark:text-zinc-500"
           />
@@ -95,7 +95,7 @@ export function BrandProductsContent({
 
       <section id="products" className="mt-10">
         {isEmpty ? (
-          <div className="rounded-2xl border border-dashed border-zinc-300 bg-white/60 px-6 py-16 text-center dark:border-white/15 dark:bg-white/[0.03]">
+          <div className="rounded-xl border border-dashed border-zinc-300 bg-white/60 px-6 py-16 text-center dark:border-white/15 dark:bg-white/[0.03]">
             {hasActiveFilters ? (
               <>
                 <p className="text-lg font-semibold text-zinc-900 dark:text-white">

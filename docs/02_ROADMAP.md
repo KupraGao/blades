@@ -58,6 +58,10 @@
 - Homepage Sale Products Slider #2 (`sale_price IS NOT NULL`; not category)
 - Promo Slider #1 CMS **live** (`promo_banners` + `promo-banners` bucket +
   `/admin/promos`; SQL executed)
+- Storefront UI / typography polish (ProductCard proportions; radius
+  hierarchy; single gold section headings; local Georgian fonts;
+  language-aware KA/EN body vs display; product-tile + primary-nav
+  display pairing)
 
 See `docs/06_CHANGELOG.md` for version history (S6 Customer Ownership complete;
 S7A–S7B payment-method path + S7B-1 delivery minimum — see latest changelog;
@@ -141,9 +145,10 @@ query are shipped. Storefront Brands directory + Brand PLP (Brand-scoped
 Category/Price Filters, shared toolbar) are shipped — see Architecture /
 Changelog. Sale pricing, virtual Sale filter, Admin Sale UI, and
 homepage Sale Slider #2 are shipped. Promo Slider #1 CMS is **live**
-(SQL `docs/sql/create-promo-banners.sql` **executed**). Payments next
-remains S7 provider / webhooks / refunds (S7A–S7B partial progress
-preserved).
+(SQL `docs/sql/create-promo-banners.sql` **executed**). Storefront UI /
+typography polish is shipped (visual only; no catalog or payments
+behavior change). Payments next remains S7 provider / webhooks / refunds
+(S7A–S7B partial progress preserved).
 
 ---
 
@@ -267,6 +272,14 @@ preserved).
   plus `products_effective_price_idx`. SQL
   `docs/sql/add-products-effective-price.sql` is **executed** (history;
   app never auto-applies). Storefront has no customer-facing price-sort UI.
+
+✅ Storefront UI / typography polish — ProductCard spacing and square
+  image area; storefront radius hierarchy; one gold heading per homepage
+  product section (EN uppercase via CSS); local Georgian fonts
+  (Glaho body, Nino display) with existing Inter / Playfair for EN;
+  product-tile names and primary Header nav use the display pairing.
+  Queries, pricing, Promo CMS, Sale Slider behavior, Cart, Checkout,
+  Auth, and Admin business logic are unchanged.
 
 ---
 
