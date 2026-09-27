@@ -1238,13 +1238,19 @@ Admin role management; Admin Add/Invite Customer.
 - ✅ S7B Checkout Payment Method — UI + server capture; valid combos only;
   `payment_status = unpaid` at create; rejects `delivery + pay_at_pickup` and
   unknown methods before inserts / stock (`payment-rules` / `validateOrder`)
+- ✅ S7C-4 Targeted Payment Implementation Inspection — complete
+- ✅ S7C-5 Payment Persistence Foundation — **LIVE**
+  `orders.payment_provider_order_id` TEXT NULL (SQL Editor executed;
+  history `docs/sql/add-orders-payment-provider-order-id.sql`);
+  provider order-request id (BOG `order_id`);
+  `payment_transaction_id` remains final transaction id
 - ✅ Promo CMS / real Promo Slider #1 — **live** (SQL
   `docs/sql/create-promo-banners.sql` **executed**; Admin `/admin/promos`;
   storefront `getActivePromoBanners`; `sort_order` assigned server-side)
 - ✅ Catalog min/max (and Admin price sort) use live generated
   `effective_price` — SQL `docs/sql/add-products-effective-price.sql`
   **executed**; Min/Max runtime-verified
-- ⬜ Real online payment / provider integration (provider not chosen)
+- ⬜ S7C-6 BOG authentication + payment initiation
 - ⬜ Webhooks / payment verification / automatic `paid` / refunds
 - Guest `createOrder` abuse controls (rate limits / CAPTCHA / etc.)
 - Order Confirmation email (Guest + Customer) — documented only

@@ -109,23 +109,31 @@ Customer auth is separate from Admin authorization (`admin_users`).
   decrement. Persists `payment_method`; server sets `payment_status = unpaid`
   for all current combinations. **No** COD. Online = method selection only
   (not a real charge).
+- ✅ **S7C-4** Targeted Payment Implementation Inspection — complete
+  (read-only mapping of checkout / stock / payment fields).
+- ✅ **S7C-5** Payment Persistence Foundation — **LIVE** nullable
+  `orders.payment_provider_order_id` TEXT (SQL Editor executed).
+  Provider payment/order-request id (BOG `order_id`).
+  `payment_transaction_id` remains the final transaction id. Checkout
+  runtime unchanged.
 
-**Not** done yet: real online payment / provider integration, webhooks,
-payment verification, automatic `paid`, refunds.
+**Not** done yet: BOG API integration (S7C-6), webhooks, payment
+verification, automatic `paid`, refunds. Provider **selected** (Bank of
+Georgia / OPAY); no live charge yet.
 
 ---
 
 ## 🚀 Immediate Next
 
-### Real online payment / provider integration (payments next)
+### S7C-6 — BOG Authentication + Payment Initiation Foundation
 
-⬜ Integrate a real payment provider for Checkout `online` orders
-  (charge / session / verification) — provider **not** selected yet
+⬜ BOG auth + payment initiation for Checkout `online` orders
+  (session / redirect). Do **not** treat browser return as `paid`.
 
-- S7A DB + S7B-1 delivery minimum + S7B payment-method selection shipped
+- S7A–S7B payment-method path + S7C-4 inspection + S7C-5 column **LIVE**
+- SQL `docs/sql/add-orders-payment-provider-order-id.sql` is **executed**
 - Do **not** claim money is charged until provider + verification exist
-- Webhooks / refunds / automatic `paid` — later payment steps (not started)
-- No new S7C/S7D stage id assigned in docs yet
+- Callback / refunds / automatic `paid` — later payment steps (not started)
 
 ### Production hardening (remaining)
 
@@ -147,8 +155,9 @@ Changelog. Sale pricing, virtual Sale filter, Admin Sale UI, and
 homepage Sale Slider #2 are shipped. Promo Slider #1 CMS is **live**
 (SQL `docs/sql/create-promo-banners.sql` **executed**). Storefront UI /
 typography polish is shipped (visual only; no catalog or payments
-behavior change). Payments next remains S7 provider / webhooks / refunds
-(S7A–S7B partial progress preserved).
+behavior change). Payments next is S7C-6 BOG authentication + initiation
+(S7A–S7B + S7C-4/S7C-5 LIVE `payment_provider_order_id`; BOG API not
+started).
 
 ---
 
@@ -226,8 +235,8 @@ behavior change). Payments next remains S7 provider / webhooks / refunds
 
 ⬜ Shipping pricing (beyond free Tbilisi delivery + 150 GEL delivery minimum)
 
-⬜ Payments (S7) — **partial:** S7A DB ✅ + S7B-1 delivery minimum ✅ +
-  S7B payment-method Checkout ✅; real provider / webhooks / refunds remaining
+⬜ Payments (S7) — **partial:** S7A DB ✅ + S7B-1 ✅ + S7B ✅ + S7C-4 ✅ +
+  S7C-5 `payment_provider_order_id` **LIVE** ✅; S7C-6 BOG initiation remaining
   (**no** COD)
 
 ⬜ Coupons

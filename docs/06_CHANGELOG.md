@@ -14,6 +14,28 @@
 
 ---
 
+## v1.38.0 — S7C-5 Payment Persistence Foundation
+
+Additive nullable `orders.payment_provider_order_id` TEXT. Checkout,
+stock, and payment runtime are unchanged. BOG API integration is **not**
+started.
+
+- S7C-4 Targeted Payment Implementation Inspection is complete.
+- `payment_provider_order_id` is **LIVE / executed** in Supabase
+  (SQL Editor; `Success. No rows returned`). History file:
+  `docs/sql/add-orders-payment-provider-order-id.sql`. Type TEXT, nullable,
+  no default, no index, no extra CHECK.
+- Intended later use: BOG `order_id`. Existing
+  `payment_transaction_id` remains the final provider transaction id
+  (BOG `payment_detail.transaction_id`). Existing payment columns
+  unchanged.
+- `createOrder` / `orderMapper` still omit the new field; new orders stay
+  `NULL` until a later initiation step writes it. `payment_status`
+  remains `"unpaid"` at create.
+- Next: S7C-6 — BOG Authentication + Payment Initiation Foundation.
+
+---
+
 ## v1.37.0 — Storefront UI / typography polish
 
 Working-tree storefront visual checkpoint. No schema, SQL, RLS, Storage,

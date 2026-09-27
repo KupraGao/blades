@@ -178,6 +178,9 @@ Fields written/read by the application:
   - `payment_status` — TEXT NOT NULL DEFAULT `unpaid`; allowed: `unpaid` |
     `pending` | `paid` | `failed` | `refund_pending` | `refunded`
   - `payment_provider` / `payment_transaction_id` — TEXT NULL
+  - `payment_provider_order_id` — TEXT NULL (S7C-5; **LIVE / executed**).
+    Provider payment/order-request id (later BOG `order_id`). Distinct
+    from `payment_transaction_id`. Create path does not write it yet.
   - `paid_at` — TIMESTAMPTZ NULL
   - New Checkout orders (S7B): set `payment_method` from validated input;
     server sets `payment_status = unpaid` (online ≠ charged)
@@ -479,7 +482,9 @@ newest first; no stock predicate in the query).
 - Partial-failure compensation deletes / stock restore are best-effort
   (not a full DB transaction / RPC for **order creation**)
 - Checkout persists `payment_method`; server sets `payment_status = unpaid`
-  (S7B). Provider / webhooks / auto-`paid` / refunds not implemented
+  (S7B). Provider / webhooks / auto-`paid` / refunds not implemented.
+  S7C-5 `payment_provider_order_id` is **LIVE** (TEXT NULL); create path
+  does not write it yet.
 
 ### Stock semantics (current)
 
@@ -556,6 +561,12 @@ Exact RPC SQL is managed in the live Supabase database and is
   `unpaid` | `pending` | `paid` | `failed` | `refund_pending` | `refunded`
 - `payment_provider` TEXT NULL; `payment_transaction_id` TEXT NULL;
   `paid_at` TIMESTAMPTZ NULL
+- `payment_provider_order_id` TEXT NULL — S7C-5 **LIVE / executed** in
+  Supabase (`docs/sql/add-orders-payment-provider-order-id.sql` history;
+  app never auto-applies). Provider-neutral payment/order-request
+  identifier (later BOG `order_id`). Existing rows stay NULL. No index /
+  extra CHECK. `payment_transaction_id` remains the final provider
+  transaction id.
 - Historical orders verified: `payment_method` NULL, `payment_status` unpaid,
   provider / transaction / `paid_at` NULL
 - Order status and payment status remain independent
@@ -729,7 +740,10 @@ Exact Orders RLS policy SQL is not stored in this repository.
 
 აქ შეინახება ყველა Migration და SQL Script.
 
-Repository currently does not contain checked-in Orders migrations.
+`docs/sql/add-orders-payment-provider-order-id.sql` — **executed**
+(history). Adds nullable `orders.payment_provider_order_id text`
+(provider payment/order-request id, e.g. later BOG `order_id`). Distinct
+from `payment_transaction_id`. The app never auto-applies it.
 
 `public.profiles` foundation DDL was applied manually in the Supabase SQL
 Editor. There is **no** in-repo migration file for profiles as part of that

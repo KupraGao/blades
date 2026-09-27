@@ -14,11 +14,37 @@
 
 ---
 
-## 🚧 NEXT — Real online payment / provider integration
+## 🚧 NEXT — S7C-6 BOG Authentication + Payment Initiation Foundation
 
-- S7A DB + S7B payment-method path shipped; provider **not** selected
+- S7A DB + S7B payment-method path shipped; BOG selected; API **not** started
+- S7C-4 inspection complete; S7C-5 `payment_provider_order_id` **LIVE**
 - Promo Slider #1 CMS SQL is **executed** (no longer blocking)
 - Storefront UI / typography polish is **completed** (visual checkpoint)
+
+---
+
+## ✅ COMPLETED — S7C-5 Payment Persistence Foundation
+
+- Additive column: nullable `orders.payment_provider_order_id` TEXT
+  (`docs/sql/add-orders-payment-provider-order-id.sql`)
+- **LIVE / executed** in Supabase SQL Editor; existing rows stay NULL
+- Provider-neutral payment/order-request id (later BOG `order_id`)
+- `payment_transaction_id` remains the final provider transaction id
+- No index / extra CHECK; existing payment columns unchanged
+- Checkout / `createOrder` / stock / redirect unchanged (`payment_status`
+  still `"unpaid"` at create)
+- Next: S7C-6 — BOG Authentication + Payment Initiation Foundation
+
+---
+
+## ✅ COMPLETED — S7C-4 Targeted Payment Implementation Inspection
+
+- Read-only mapping of checkout → `createOrder` → items → stock → success
+- Confirmed: `online` and `pay_at_pickup` share the same create path;
+  both `payment_status = unpaid`; no BOG call; stock decrements after
+  items; success is order-creation confirmation, not paid
+- Confirmed: no persistent field for BOG `order_id` at inspection time
+  (added in S7C-5 as LIVE `payment_provider_order_id`)
 
 ---
 
@@ -186,6 +212,8 @@
     `paid` | `failed` | `refund_pending` | `refunded`
   - `payment_provider` / `payment_transaction_id` TEXT NULL;
     `paid_at` TIMESTAMPTZ NULL
+  - S7C-5 **LIVE:** `payment_provider_order_id` TEXT NULL (later BOG
+    `order_id`; distinct from `payment_transaction_id`)
 - Both payment CHECK constraints verified in Production
 - Historical test orders: method NULL, status unpaid, metadata NULL
 - Order status and payment status remain independent lifecycles
@@ -524,8 +552,8 @@ createOrder production RPC hardening.
 ⬜ Email Notifications — every successful order → confirmation email to
   `customer_email` (Guest + Customer); not tied to Account; not implemented
 
-⬜ Payments (S7) — **partial:** S7A DB ✅ + S7B-1 ✅ + S7B payment-method ✅;
-  next: real online payment / provider integration (provider not chosen);
+⬜ Payments (S7) — **partial:** S7A DB ✅ + S7B-1 ✅ + S7B ✅ + S7C-4 ✅ +
+  S7C-5 `payment_provider_order_id` **LIVE** ✅; next: S7C-6 BOG initiation;
   then webhooks / refunds / auto-`paid` (not started). No COD.
 
 ⬜ Shipping pricing (beyond free Tbilisi delivery + 150 GEL minimum)
