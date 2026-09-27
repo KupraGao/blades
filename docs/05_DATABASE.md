@@ -544,6 +544,9 @@ Exact RPC SQL is managed in the live Supabase database and is
   - `ORDER_ACCESS_SECRET` (server-only HMAC for guest checkout success
     proof cookies; **not** the Supabase service-role key; never
     `NEXT_PUBLIC_*`)
+  - `BOG_CLIENT_ID` / `BOG_CLIENT_SECRET` (server-only Bank of Georgia
+    OAuth; never `NEXT_PUBLIC_*`; unused by Checkout until a later
+    wiring step)
   - Also required for storefront Auth / SSR: `NEXT_PUBLIC_SUPABASE_URL`,
     `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - **Production (Vercel):** these names must match the same Supabase project

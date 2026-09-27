@@ -116,8 +116,11 @@ Customer auth is separate from Admin authorization (`admin_users`).
   Provider payment/order-request id (BOG `order_id`).
   `payment_transaction_id` remains the final transaction id. Checkout
   runtime unchanged.
+- ✅ **S7C-6** BOG Authentication + Payment Initiation Foundation —
+  server-only `src/lib/payments/bog/` (OAuth + Create Order helper).
+  Checkout is **not** wired; no redirect, callback, or DB write.
 
-**Not** done yet: BOG API integration (S7C-6), webhooks, payment
+**Not** done yet: Checkout BOG redirect, webhooks, payment
 verification, automatic `paid`, refunds. Provider **selected** (Bank of
 Georgia / OPAY); no live charge yet.
 
@@ -125,15 +128,8 @@ Georgia / OPAY); no live charge yet.
 
 ## 🚀 Immediate Next
 
-### S7C-6 — BOG Authentication + Payment Initiation Foundation
-
-⬜ BOG auth + payment initiation for Checkout `online` orders
-  (session / redirect). Do **not** treat browser return as `paid`.
-
-- S7A–S7B payment-method path + S7C-4 inspection + S7C-5 column **LIVE**
-- SQL `docs/sql/add-orders-payment-provider-order-id.sql` is **executed**
-- Do **not** claim money is charged until provider + verification exist
-- Callback / refunds / automatic `paid` — later payment steps (not started)
+Review S7C-6 foundation before Checkout wiring. Do **not** treat browser
+return as `paid`. Callback / refunds / automatic `paid` remain later.
 
 ### Production hardening (remaining)
 
@@ -155,9 +151,9 @@ Changelog. Sale pricing, virtual Sale filter, Admin Sale UI, and
 homepage Sale Slider #2 are shipped. Promo Slider #1 CMS is **live**
 (SQL `docs/sql/create-promo-banners.sql` **executed**). Storefront UI /
 typography polish is shipped (visual only; no catalog or payments
-behavior change). Payments next is S7C-6 BOG authentication + initiation
-(S7A–S7B + S7C-4/S7C-5 LIVE `payment_provider_order_id`; BOG API not
-started).
+behavior change). Payments: S7C-6 BOG auth + Create Order helpers exist
+and are **not** wired to Checkout (S7A–S7B + S7C-4/S7C-5 LIVE
+`payment_provider_order_id`).
 
 ---
 
@@ -236,8 +232,8 @@ started).
 ⬜ Shipping pricing (beyond free Tbilisi delivery + 150 GEL delivery minimum)
 
 ⬜ Payments (S7) — **partial:** S7A DB ✅ + S7B-1 ✅ + S7B ✅ + S7C-4 ✅ +
-  S7C-5 `payment_provider_order_id` **LIVE** ✅; S7C-6 BOG initiation remaining
-  (**no** COD)
+  S7C-5 `payment_provider_order_id` **LIVE** ✅ + S7C-6 BOG foundation ✅
+  (Checkout wiring remaining; **no** COD)
 
 ⬜ Coupons
 

@@ -1244,13 +1244,20 @@ Admin role management; Admin Add/Invite Customer.
   history `docs/sql/add-orders-payment-provider-order-id.sql`);
   provider order-request id (BOG `order_id`);
   `payment_transaction_id` remains final transaction id
+- ✅ S7C-6 BOG Authentication + Payment Initiation Foundation —
+  server-only `src/lib/payments/bog/` (OAuth client-credentials +
+  official Create Order request/response helper). Not imported by
+  Checkout. Env: `BOG_CLIENT_ID`, `BOG_CLIENT_SECRET` (never
+  `NEXT_PUBLIC_*`). Identifiers stay distinct: `orders.id` (our UUID /
+  BOG `external_order_id`), `payment_provider_order_id` (BOG response
+  `id`), `payment_transaction_id` (later BOG `payment_detail.transaction_id`)
 - ✅ Promo CMS / real Promo Slider #1 — **live** (SQL
   `docs/sql/create-promo-banners.sql` **executed**; Admin `/admin/promos`;
   storefront `getActivePromoBanners`; `sort_order` assigned server-side)
 - ✅ Catalog min/max (and Admin price sort) use live generated
   `effective_price` — SQL `docs/sql/add-products-effective-price.sql`
   **executed**; Min/Max runtime-verified
-- ⬜ S7C-6 BOG authentication + payment initiation
+- ⬜ Checkout BOG redirect / persist provider order id / payment pending
 - ⬜ Webhooks / payment verification / automatic `paid` / refunds
 - Guest `createOrder` abuse controls (rate limits / CAPTCHA / etc.)
 - Order Confirmation email (Guest + Customer) — documented only

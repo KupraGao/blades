@@ -42,6 +42,8 @@ Open: http://localhost:3000
 - Do not put secret/service-role keys in `NEXT_PUBLIC_*` variables.
 - Guest checkout success requires server-only `ORDER_ACCESS_SECRET`
   (HMAC proof cookies; not the Supabase service-role key).
+- Future BOG payments use server-only `BOG_CLIENT_ID` and
+  `BOG_CLIENT_SECRET` (never `NEXT_PUBLIC_*`; unused by Checkout yet).
 - Admin routes use Auth + `admin_users` authorization (not open).
 - The app is not claimed as fully production-ready (payments, claim/My Orders,
   SEO, etc. remain future work). See `docs/02_ROADMAP.md` and

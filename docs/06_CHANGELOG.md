@@ -14,6 +14,27 @@
 
 ---
 
+## v1.39.0 — S7C-6 BOG Authentication + Payment Initiation Foundation
+
+Reusable server-only Bank of Georgia helpers. Checkout, `createOrder`,
+stock, and redirect behavior are unchanged. No live charge, callback,
+or DB write of BOG ids.
+
+- Isolated module: `src/lib/payments/bog/`
+- OAuth token: official `POST` OpenID token URL, HTTP Basic
+  (`client_id:client_secret`), `grant_type=client_credentials`
+- Create Order: official `POST https://api.bog.ge/payments/v1/ecommerce/orders`
+  with confirmed fields only (`callback_url`, `external_order_id`,
+  `purchase_units`, optional `redirect_urls`, `Accept-Language`)
+- Response used later: BOG `id` + `_links.redirect.href`
+- Server-only env names: `BOG_CLIENT_ID`, `BOG_CLIENT_SECRET`
+  (never `NEXT_PUBLIC_*`; values not stored in the repo)
+- Errors: configuration / authentication / network / malformed; no
+  secrets or access tokens in messages or logs
+- Next: review this foundation before Checkout wiring
+
+---
+
 ## v1.38.0 — S7C-5 Payment Persistence Foundation
 
 Additive nullable `orders.payment_provider_order_id` TEXT. Checkout,

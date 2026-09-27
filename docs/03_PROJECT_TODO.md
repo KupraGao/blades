@@ -14,12 +14,22 @@
 
 ---
 
-## 🚧 NEXT — S7C-6 BOG Authentication + Payment Initiation Foundation
+## 🚧 NEXT — Review S7C-6 before Checkout wiring
 
-- S7A DB + S7B payment-method path shipped; BOG selected; API **not** started
-- S7C-4 inspection complete; S7C-5 `payment_provider_order_id` **LIVE**
-- Promo Slider #1 CMS SQL is **executed** (no longer blocking)
-- Storefront UI / typography polish is **completed** (visual checkpoint)
+- S7C-6 server-only BOG auth + Create Order helpers exist
+- Checkout / `createOrder` / stock / redirect are **unchanged**
+- Do **not** start browser redirect, callbacks, or DB writes until reviewed
+
+---
+
+## ✅ COMPLETED — S7C-6 BOG Authentication + Payment Initiation Foundation
+
+- Isolated server-only module: `src/lib/payments/bog/`
+- OAuth: `POST` token URL, HTTP Basic, `grant_type=client_credentials`
+- Create Order helper uses official `POST /payments/v1/ecommerce/orders`
+- Env names only: `BOG_CLIENT_ID`, `BOG_CLIENT_SECRET` (never `NEXT_PUBLIC_*`)
+- Not called from Checkout; no DB write; no live charge in this step
+- Next: review result before any Checkout / callback work
 
 ---
 
@@ -553,8 +563,9 @@ createOrder production RPC hardening.
   `customer_email` (Guest + Customer); not tied to Account; not implemented
 
 ⬜ Payments (S7) — **partial:** S7A DB ✅ + S7B-1 ✅ + S7B ✅ + S7C-4 ✅ +
-  S7C-5 `payment_provider_order_id` **LIVE** ✅; next: S7C-6 BOG initiation;
-  then webhooks / refunds / auto-`paid` (not started). No COD.
+  S7C-5 `payment_provider_order_id` **LIVE** ✅ + S7C-6 BOG auth/create-order
+  foundation ✅ (not wired to Checkout); then Checkout redirect / webhooks /
+  refunds / auto-`paid` (not started). No COD.
 
 ⬜ Shipping pricing (beyond free Tbilisi delivery + 150 GEL minimum)
 
