@@ -62,6 +62,8 @@
   hierarchy; single gold section headings; local Georgian fonts;
   language-aware KA/EN body vs display; product-tile + primary-nav
   display pairing)
+- Home Latest YouTube Videos (official Bladesge Atom feed; latest 3;
+  no API key / CMS; thumbnail-first inline player)
 
 See `docs/06_CHANGELOG.md` for version history (S6 Customer Ownership complete;
 S7A–S7B payment-method path + S7B-1 delivery minimum — see latest changelog;
@@ -151,7 +153,8 @@ Changelog. Sale pricing, virtual Sale filter, Admin Sale UI, and
 homepage Sale Slider #2 are shipped. Promo Slider #1 CMS is **live**
 (SQL `docs/sql/create-promo-banners.sql` **executed**). Storefront UI /
 typography polish is shipped (visual only; no catalog or payments
-behavior change). Payments: S7C-6 BOG auth + Create Order helpers exist
+behavior change). Home Latest YouTube Videos is shipped (Atom feed,
+no Admin/CMS). Payments: S7C-6 BOG auth + Create Order helpers exist
 and are **not** wired to Checkout (S7A–S7B + S7C-4/S7C-5 LIVE
 `payment_provider_order_id`).
 
@@ -285,6 +288,11 @@ and are **not** wired to Checkout (S7A–S7B + S7C-4/S7C-5 LIVE
   product-tile names and primary Header nav use the display pairing.
   Queries, pricing, Promo CMS, Sale Slider behavior, Cart, Checkout,
   Auth, and Admin business logic are unchanged.
+
+✅ Home Latest YouTube Videos — official channel Atom feed
+  (`UCV4ORvOeTcfirolaMQ5P86w`); server fetch + 30-minute revalidation;
+  latest 3 videos on Home; no YouTube API key, no DB/Admin. Replaced
+  the starter `PromoBanner` block. Promo Slider #1 CMS is unchanged.
 
 ---
 

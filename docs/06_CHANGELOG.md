@@ -14,6 +14,25 @@
 
 ---
 
+## v1.40.0 — Home Latest YouTube Videos
+
+Replaced the Home starter `PromoBanner` CTA with the official Bladesge
+YouTube channel’s latest three videos. Catalog, Promo Slider CMS,
+Checkout, and Payments are unchanged.
+
+- `src/lib/youtube/fetch-latest-videos.ts` — public Atom feed
+  (`channel_id=UCV4ORvOeTcfirolaMQ5P86w`); server `fetch`;
+  `revalidate: 1800`; no API key
+- Home fetches alongside existing page data; `LatestYoutubeVideos`
+  at the former `PromoBanner` slot
+- New YouTube publish needs no code, Admin, or redeploy (after cache)
+- Feed errors → empty list; Home still renders (heading + channel CTA)
+- Thumbnails on first paint; iframe only after play; one player max
+- KA/EN section copy in dictionaries; titles remain YouTube’s strings
+- Starter `PromoBanner.tsx` and unused `promo*` keys removed
+
+---
+
 ## v1.39.0 — S7C-6 BOG Authentication + Payment Initiation Foundation
 
 Reusable server-only Bank of Georgia helpers. Checkout, `createOrder`,

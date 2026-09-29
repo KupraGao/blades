@@ -22,6 +22,23 @@
 
 ---
 
+## ✅ COMPLETED — Home Latest YouTube Videos
+
+- Replaced starter Home `PromoBanner` with `LatestYoutubeVideos`
+- Official channel `@Bladesge` (`UCV4ORvOeTcfirolaMQ5P86w`) via public
+  Atom feed; no YouTube API key; no Supabase / Admin / CMS
+- Server `fetchLatestYoutubeVideos()`; `revalidate: 1800`; latest 3
+  valid entries; feed failure returns `[]` and does not crash Home
+- Thumbnail-first: 0 iframes on initial load; click plays inline;
+  at most one player mounted
+- Channel CTA still opens YouTube; KA/EN chrome via dictionaries;
+  video titles stay as YouTube supplies them
+- Unused starter `promo*` dictionary keys removed; `PromoSlider` /
+  Admin Promos unchanged
+- `tsc` + production build passed (local `npm run dev` verified)
+
+---
+
 ## ✅ COMPLETED — S7C-6 BOG Authentication + Payment Initiation Foundation
 
 - Isolated server-only module: `src/lib/payments/bog/`

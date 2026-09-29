@@ -175,7 +175,7 @@ src
 │   │   ├── Hero.tsx
 │   │   ├── HomeClient.tsx
 │   │   ├── HomepageHeroSliders.tsx
-│   │   ├── PromoBanner.tsx
+│   │   ├── LatestYoutubeVideos.tsx
 │   │   └── PromoSlider.tsx
 │   │
 │   ├── layout
@@ -238,6 +238,9 @@ src
 │   ├── i18n
 │   │   ├── format-admin-date.ts
 │   │   └── localize-storefront-message.ts
+│   │
+│   ├── youtube
+│   │   └── fetch-latest-videos.ts
 │   │
 │   ├── orders
 │   │   ├── decrement-product-stock.ts
@@ -422,7 +425,8 @@ Storefront has no customer-facing price-sort UI. Checkout still resolves
 # 🏠 Home Storefront Catalog Flow
 
 Home (`src/app/(shop)/page.tsx`) runs **three independent** product reads
-plus `getActivePromoBanners()` for Promo Slider #1.
+plus `getActivePromoBanners()` for Promo Slider #1 and
+`fetchLatestYoutubeVideos()` for the Home YouTube section.
 
 ## Homepage composition (current)
 
@@ -441,7 +445,7 @@ FeatureStrip (benefits)
 ↓
 Featured Catalog (ProductSectionClient)
 ↓
-existing PromoBanner CTA (unrelated to PromoSlider CMS)
+LatestYoutubeVideos (official Bladesge feed; not PromoSlider CMS)
 ↓
 Footer
 ```
@@ -507,8 +511,22 @@ When live:
 Admin still edits `price` / `sale_price` only. Checkout / catalog
 effective-price behavior is unchanged.
 
-Existing `PromoBanner.tsx` at the bottom of Home is a separate CTA block,
-not this slider.
+## Home Latest YouTube Videos
+
+```text
+YouTube Atom feed
+  (`https://www.youtube.com/feeds/videos.xml?channel_id=UCV4ORvOeTcfirolaMQ5P86w`)
+→ `fetchLatestYoutubeVideos()` (server-only parse; latest 3 valid IDs)
+→ Next.js fetch revalidation 1800s
+→ `page.tsx` → `HomeClient` → `LatestYoutubeVideos`
+```
+
+No YouTube API key. No Supabase table or Admin CMS. Official channel
+`https://www.youtube.com/@Bladesge`. Feed/timeout/parse failure returns
+`[]`; Home still renders. Thumbnails on first paint (0 iframes); play
+mounts one embed in the same 16:9 card; switching videos unmounts the
+previous player. Channel CTA opens YouTube. Distinct from Promo Slider
+#1 CMS.
 
 ## A. Sale Products slider (independent)
 
@@ -1254,6 +1272,9 @@ Admin role management; Admin Add/Invite Customer.
 - ✅ Promo CMS / real Promo Slider #1 — **live** (SQL
   `docs/sql/create-promo-banners.sql` **executed**; Admin `/admin/promos`;
   storefront `getActivePromoBanners`; `sort_order` assigned server-side)
+- ✅ Home Latest YouTube Videos — Atom feed → server helper (30 min
+  revalidate) → latest 3 → `LatestYoutubeVideos`; no API key / DB;
+  thumbnail-first, one on-demand iframe; starter `PromoBanner` removed
 - ✅ Catalog min/max (and Admin price sort) use live generated
   `effective_price` — SQL `docs/sql/add-products-effective-price.sql`
   **executed**; Min/Max runtime-verified

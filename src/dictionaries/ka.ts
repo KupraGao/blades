@@ -254,12 +254,12 @@ export const ka = {
   featurePaymentText: "შემდეგ ეტაპზე ინტეგრაცია",
   featureUxTitle: "პრემიუმ UX",
   featureUxText: "სუფთა კატალოგი და პროდუქტი",
-  promoLimitedOffer: "შეზღუდული შეთავაზება",
-  promoHeadline:
-    "შექმნილი როგორც რეალური ონლაინ მაღაზიის საწყისი პლატფორმა",
-  promoBody:
-    "შემდეგ ეტაპზე დავამატებთ უფრო მდიდარ პროდუქტის გვერდს, კალათის ლოგიკას, შეკვეთის ნაკადს და backend ფუნქციებს.",
-  promoCta: "შემდეგი ეტაპი",
+  youtubeEyebrow: "BLADES.GE • YOUTUBE",
+  youtubeHeading: "უახლესი ვიდეოები",
+  youtubeBody:
+    "Blades.ge-ის ოფიციალური YouTube არხის ბოლო ვიდეოები.",
+  youtubeChannelCta: "ყველა ვიდეოს ნახვა",
+  youtubeWatchVideo: "ვიდეოს ნახვა",
 
   // =====================================
   // CHECKOUT

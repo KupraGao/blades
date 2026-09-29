@@ -6,18 +6,20 @@ import { Header } from "@/components/layout/Header";
 
 import { HomepageHeroSliders } from "@/components/home/HomepageHeroSliders";
 import { LatestProductsSlider } from "@/components/product/LatestProductsSlider";
-import { PromoBanner } from "@/components/home/PromoBanner";
+import { LatestYoutubeVideos } from "@/components/home/LatestYoutubeVideos";
 import { FeatureStrip } from "@/components/home/FeatureStrip";
 
 import { ProductSectionClient } from "@/components/product/ProductSectionClient";
 import type { SaleSliderProduct } from "@/actions/products/get-sale-slider-products";
 import type { CatalogCategory } from "@/lib/catalog/catalog-search-params";
 import type { StorefrontPromoBanner } from "@/lib/promo/types";
+import type { LatestYoutubeVideo } from "@/lib/youtube/fetch-latest-videos";
 
 export function HomeClient({
   latestProducts,
   saleProducts,
   promoBanners,
+  youtubeVideos,
   catalogProducts,
   catalogTotal,
   catalogTotalPages,
@@ -28,6 +30,7 @@ export function HomeClient({
   latestProducts: any[];
   saleProducts: SaleSliderProduct[];
   promoBanners: StorefrontPromoBanner[];
+  youtubeVideos: LatestYoutubeVideo[];
   catalogProducts: any[];
   catalogTotal: number;
   catalogTotalPages: number;
@@ -71,7 +74,7 @@ export function HomeClient({
           onFiltersCollapsedChange={handleFiltersCollapsedChange}
         />
 
-        <PromoBanner />
+        <LatestYoutubeVideos videos={youtubeVideos} />
       </main>
     </>
   );

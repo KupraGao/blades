@@ -256,12 +256,12 @@ export const en = {
   featurePaymentText: "Integration coming in a later stage",
   featureUxTitle: "Premium UX",
   featureUxText: "Clean catalog and product experience",
-  promoLimitedOffer: "Limited offer",
-  promoHeadline:
-    "Built as a real online store starter platform",
-  promoBody:
-    "Next stages include richer product details, cart logic, checkout flow, and backend features.",
-  promoCta: "Next stage",
+  youtubeEyebrow: "BLADES.GE • YOUTUBE",
+  youtubeHeading: "Latest videos",
+  youtubeBody:
+    "The latest videos from the official Blades.ge YouTube channel.",
+  youtubeChannelCta: "Watch all videos",
+  youtubeWatchVideo: "Watch video",
 
   // =====================================
   // CHECKOUT

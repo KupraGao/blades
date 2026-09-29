@@ -8,6 +8,7 @@ import { getProducts } from "@/actions/products/get-products";
 import { getSaleSliderProducts } from "@/actions/products/get-sale-slider-products";
 import { getActivePromoBanners } from "@/actions/promos/get-active-promo-banners";
 import { getAuthUser } from "@/lib/auth/get-auth-user";
+import { fetchLatestYoutubeVideos } from "@/lib/youtube/fetch-latest-videos";
 import {
   buildCatalogQueryString,
   CATALOG_PAGE_SIZE,
@@ -52,7 +53,7 @@ export default async function Home({ searchParams }: Props) {
     redirect(query ? `/?${query}` : "/");
   }
 
-  const [latestResult, catalogResult, saleProducts, promoBanners] =
+  const [latestResult, catalogResult, saleProducts, promoBanners, youtubeVideos] =
     await Promise.all([
       getProducts({
         page: 1,
@@ -68,6 +69,7 @@ export default async function Home({ searchParams }: Props) {
       }),
       getSaleSliderProducts(),
       getActivePromoBanners(),
+      fetchLatestYoutubeVideos(),
     ]);
 
   if (
@@ -91,6 +93,7 @@ export default async function Home({ searchParams }: Props) {
         latestProducts={latestResult.products ?? []}
         saleProducts={saleProducts}
         promoBanners={promoBanners}
+        youtubeVideos={youtubeVideos}
         catalogProducts={catalogResult.products ?? []}
         catalogTotal={catalogResult.total}
         catalogTotalPages={catalogResult.totalPages}
