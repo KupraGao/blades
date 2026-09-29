@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { Heart } from "lucide-react";
@@ -12,6 +13,14 @@ import { getProductDiscountPercent, isProductOnSale } from "@/lib/products/prici
 type ProductCardProps = {
   product: any;
 };
+
+// Shared card is 2-col below md, 3-col md–lg, 4-col lg+ (Latest slider / catalog
+// with filters closed). Discovery/catalog go 5-col at 2xl, which is smaller.
+const PRODUCT_CARD_IMAGE_SIZES =
+  "(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw";
+
+const PRODUCT_CARD_THUMB_SIZES =
+  "(min-width: 1024px) 48px, (min-width: 640px) 40px, 32px";
 
 export function ProductCard({ product }: ProductCardProps) {
   // =========================================
@@ -50,7 +59,13 @@ export function ProductCard({ product }: ProductCardProps) {
         {/* IMAGE */}
         {/* ========================================= */}
         <div className="relative aspect-square overflow-hidden bg-zinc-100 dark:bg-zinc-900">
-          <img src={activeImage} alt={product.title} className="absolute inset-0 h-full w-full object-cover object-center transition duration-1000 ease-out group-hover:scale-110" />
+          <Image
+            src={activeImage}
+            alt={product.title}
+            fill
+            sizes={PRODUCT_CARD_IMAGE_SIZES}
+            className="object-cover object-center transition duration-1000 ease-out group-hover:scale-110"
+          />
 
           {/* OVERLAY */}
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/10 to-transparent" />
@@ -66,7 +81,19 @@ export function ProductCard({ product }: ProductCardProps) {
           {/* ========================================= */}
           <div className="absolute bottom-2.5 left-2.5 flex gap-1.5 opacity-0 transition duration-300 group-hover:opacity-100 sm:bottom-3 sm:left-3 sm:gap-2 lg:bottom-4 lg:left-4">
             {product.product_images?.slice(0, 3).map((img: any) => (
-              <img key={img.id} src={img.image_url} alt="" onMouseEnter={() => setActiveImage(img.image_url)} className="h-8 w-8 cursor-pointer rounded-md border border-zinc-200 bg-white object-cover shadow-md transition hover:scale-110 hover:border-brand-gold sm:h-10 sm:w-10 lg:h-12 lg:w-12 lg:rounded-lg" />
+              <div
+                key={img.id}
+                onMouseEnter={() => setActiveImage(img.image_url)}
+                className="relative h-8 w-8 cursor-pointer overflow-hidden rounded-md border border-zinc-200 bg-white shadow-md transition hover:scale-110 hover:border-brand-gold sm:h-10 sm:w-10 lg:h-12 lg:w-12 lg:rounded-lg"
+              >
+                <Image
+                  src={img.image_url}
+                  alt=""
+                  fill
+                  sizes={PRODUCT_CARD_THUMB_SIZES}
+                  className="object-cover"
+                />
+              </div>
             ))}
           </div>
 

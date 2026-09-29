@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
@@ -21,6 +22,11 @@ function mainImageUrl(product: SaleSliderProduct): string {
 
   return main?.image_url || "/placeholder.png";
 }
+
+// Below lg: 1 / 2 / 3 slides of full container-page. lg+: one slide in the
+// sale column (full remaining width if promo is absent; ~1fr of 3.3 if both).
+const SALE_SLIDER_IMAGE_SIZES =
+  "(min-width: 1024px) calc(min(1600px, 100vw) - 360px), (min-width: 768px) 33vw, (min-width: 360px) 50vw, calc(100vw - 2rem)";
 
 export function SaleProductsSlider({ products }: SaleProductsSliderProps) {
   const { t } = useLanguage();
@@ -107,10 +113,12 @@ export function SaleProductsSlider({ products }: SaleProductsSliderProps) {
                   className="flex min-w-0 flex-1 flex-col outline-none focus-visible:ring-2 focus-visible:ring-brand-gold/50"
                 >
                   <div className="relative aspect-[5/4] overflow-hidden bg-zinc-100 dark:bg-zinc-900">
-                    <img
+                    <Image
                       src={mainImageUrl(product)}
                       alt={product.title}
-                      className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                      fill
+                      sizes={SALE_SLIDER_IMAGE_SIZES}
+                      className="object-cover transition duration-700 group-hover:scale-105"
                     />
                   </div>
 
