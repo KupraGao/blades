@@ -1,13 +1,22 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
-import { Search, Check } from "lucide-react";
+import { Search } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
+import { CatalogBrandFilter } from "@/components/product/CatalogBrandFilter";
+import { CatalogCategoryFilter } from "@/components/product/CatalogCategoryFilter";
+import { CatalogFiltersScrollArea } from "@/components/product/CatalogFiltersScrollArea";
+import { CatalogSortSelect } from "@/components/product/CatalogSortSelect";
 import {
-  buildCatalogQueryString,
+  buildCatalogBrandLocation,
+  buildCatalogFilterHref,
+  catalogFiltersFromSearchParams,
   countActiveCatalogFilterGroups,
+  isStorefrontBrandPlpPath,
+  type CatalogBrandOption,
   type CatalogCategory,
+  type CatalogQueryFields,
 } from "@/lib/catalog/catalog-search-params";
 import { useLanguage } from "@/context/LanguageContext";
 
@@ -17,6 +26,8 @@ type MobileMenuDrawerProps = {
   tab: string;
   setTab: (tab: string) => void;
   categories: CatalogCategory[];
+  brands?: CatalogBrandOption[];
+  routeBrandSlug?: string | null;
 };
 
 const PRICE_DEBOUNCE_MS = 400;
@@ -27,8 +38,10 @@ export function MobileMenuDrawer({
   tab,
   setTab,
   categories,
+  brands = [],
+  routeBrandSlug = null,
 }: MobileMenuDrawerProps) {
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -51,14 +64,22 @@ export function MobileMenuDrawer({
 
   const navItems = [
     { label: t.home, href: "/" },
-    { label: t.products, href: "/#products" },
+    { label: t.products, href: "/products" },
     { label: t.brands, href: "/brands" },
     { label: t.contact, href: "/contact" },
   ];
 
   // Home + Brand PLP: catalog Filters. Brands directory: menu only.
   const showCatalogFilters =
-    pathname === "/" || Boolean(pathname?.startsWith("/brands/"));
+    pathname === "/" ||
+    pathname === "/products" ||
+    Boolean(pathname?.startsWith("/brands/"));
+  const showBrandFilter =
+    pathname === "/" ||
+    pathname === "/products" ||
+    isStorefrontBrandPlpPath(pathname);
+  const showCatalogSort =
+    pathname === "/products" || isStorefrontBrandPlpPath(pathname);
   const filtersTabActive = tab === "filters" || tab === "categories";
   const activeTab = showCatalogFilters
     ? filtersTabActive
@@ -68,53 +89,29 @@ export function MobileMenuDrawer({
         : "filters"
     : "menu";
 
-  const replaceCatalogParams = useCallback(
-    (next: {
-      categoryId?: string | null;
-      minPrice?: number | null;
-      maxPrice?: number | null;
-      page?: number;
-    }) => {
-      const currentCategory = searchParams.get("category");
-      const currentMin = searchParams.get("minPrice");
-      const currentMax = searchParams.get("maxPrice");
-
-      const categoryId =
-        next.categoryId !== undefined ? next.categoryId : currentCategory;
-
-      const minPrice =
-        next.minPrice !== undefined
-          ? next.minPrice
-          : currentMin !== null && currentMin !== ""
-            ? Number(currentMin)
-            : null;
-
-      const maxPrice =
-        next.maxPrice !== undefined
-          ? next.maxPrice
-          : currentMax !== null && currentMax !== ""
-            ? Number(currentMax)
-            : null;
-
-      const query = buildCatalogQueryString({
-        categoryId: categoryId || null,
-        minPrice:
-          minPrice !== null && Number.isFinite(minPrice) ? minPrice : null,
-        maxPrice:
-          maxPrice !== null && Number.isFinite(maxPrice) ? maxPrice : null,
-        page: next.page ?? 1,
-      });
-
+  const navigateCatalogHref = useCallback(
+    (href: string) => {
       startTransition(() => {
-        router.replace(query ? `${pathname}?${query}` : pathname, {
-          scroll: false,
-        });
+        if (pathname === "/") {
+          router.push(href);
+        } else {
+          router.replace(href, { scroll: false });
+        }
       });
     },
-    [pathname, router, searchParams],
+    [pathname, router],
+  );
+
+  const replaceCatalogParams = useCallback(
+    (next: CatalogQueryFields) => {
+      navigateCatalogHref(buildCatalogFilterHref(pathname, searchParams, next));
+    },
+    [navigateCatalogHref, pathname, searchParams],
   );
 
   function scrollToProducts() {
+    if (pathname === "/") return;
+
     setTimeout(() => {
       document.getElementById("products")?.scrollIntoView({
         behavior: "smooth",
@@ -124,6 +121,13 @@ export function MobileMenuDrawer({
 
   function handleCategoryClick(categoryId: string | null) {
     replaceCatalogParams({ categoryId, page: 1 });
+    setOpen(false);
+    scrollToProducts();
+  }
+
+  function handleBrandChange(brandSlug: string | null) {
+    const href = buildCatalogBrandLocation(pathname, searchParams, brandSlug);
+    navigateCatalogHref(href);
     setOpen(false);
     scrollToProducts();
   }
@@ -177,6 +181,9 @@ export function MobileMenuDrawer({
     scrollToProducts();
   }
 
+  const catalogFilters = catalogFiltersFromSearchParams(searchParams);
+  const selectedBrandSlug = catalogFilters.brandSlug ?? routeBrandSlug;
+
   const parsedUrlMin =
     urlMin !== "" && Number.isFinite(Number(urlMin)) ? Number(urlMin) : null;
   const parsedUrlMax =
@@ -186,6 +193,8 @@ export function MobileMenuDrawer({
     categoryId: selectedCategoryId,
     minPrice: parsedUrlMin,
     maxPrice: parsedUrlMax,
+    brandSlug: catalogFilters.brandSlug,
+    sort: catalogFilters.sort,
   });
 
   return (
@@ -252,8 +261,8 @@ export function MobileMenuDrawer({
         </div>
 
         <div className="flex min-h-0 flex-1 flex-col">
-          <div className="flex-1 overflow-y-auto p-4">
-            {activeTab === "menu" && (
+          {activeTab === "menu" ? (
+            <div className="flex-1 overflow-y-auto p-4">
               <div className="flex flex-col gap-2">
                 {navItems.map((item) => (
                   <a
@@ -266,70 +275,42 @@ export function MobileMenuDrawer({
                   </a>
                 ))}
               </div>
-            )}
+            </div>
+          ) : null}
 
-            {showCatalogFilters && activeTab === "filters" && (
-              <div
-                className={`flex flex-col gap-5 ${isPending ? "opacity-70" : ""}`}
-              >
-                <div>
-                  <p className="mb-2 text-sm font-semibold text-zinc-900">
-                    {t.catalogFilterCategory}
-                  </p>
-                  <div className="flex flex-col gap-0.5">
-                    <button
-                      type="button"
-                      onClick={() => handleCategoryClick(null)}
-                      aria-current={!selectedCategoryId ? "true" : undefined}
-                      className={`flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-left text-sm transition ${
-                        !selectedCategoryId
+          {showCatalogFilters && activeTab === "filters" ? (
+            <CatalogFiltersScrollArea
+              className={`min-h-0 flex-1 ${isPending ? "opacity-70" : ""}`}
+              contentClassName="p-4"
+            >
+              <div className="flex flex-col gap-5">
+                <CatalogCategoryFilter
+                  categories={categories}
+                  selectedCategoryId={selectedCategoryId}
+                  onCategoryChange={handleCategoryClick}
+                  rowClassName={(isActive) =>
+                    `flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-left text-sm transition ${
+                      isActive
+                        ? "bg-orange-50 font-semibold text-orange-600"
+                        : "font-medium text-zinc-700 hover:bg-zinc-50"
+                    }`
+                  }
+                />
+
+                {showBrandFilter ? (
+                  <CatalogBrandFilter
+                    brands={brands}
+                    selectedBrandSlug={selectedBrandSlug}
+                    onBrandChange={handleBrandChange}
+                    rowClassName={(isActive) =>
+                      `flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-left text-sm transition ${
+                        isActive
                           ? "bg-orange-50 font-semibold text-orange-600"
                           : "font-medium text-zinc-700 hover:bg-zinc-50"
-                      }`}
-                    >
-                      <span className="min-w-0 truncate">{t.allProducts}</span>
-                      {!selectedCategoryId ? (
-                        <Check
-                          size={14}
-                          className="shrink-0 text-orange-600"
-                          aria-hidden
-                        />
-                      ) : null}
-                    </button>
-
-                    {categories.map((category) => {
-                      const id = String(category.id);
-                      const label =
-                        language === "ka"
-                          ? category.name_ka
-                          : category.name_en;
-                      const isActive = selectedCategoryId === id;
-
-                      return (
-                        <button
-                          key={id}
-                          type="button"
-                          onClick={() => handleCategoryClick(id)}
-                          aria-current={isActive ? "true" : undefined}
-                          className={`flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-left text-sm transition ${
-                            isActive
-                              ? "bg-orange-50 font-semibold text-orange-600"
-                              : "font-medium text-zinc-700 hover:bg-zinc-50"
-                          }`}
-                        >
-                          <span className="min-w-0 truncate">{label}</span>
-                          {isActive ? (
-                            <Check
-                              size={14}
-                              className="shrink-0 text-orange-600"
-                              aria-hidden
-                            />
-                          ) : null}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
+                      }`
+                    }
+                  />
+                ) : null}
 
                 <div className="border-t border-zinc-200 pt-4">
                   <p className="mb-2 text-sm font-semibold text-zinc-900">
@@ -422,21 +403,31 @@ export function MobileMenuDrawer({
                       {priceError}
                     </p>
                   ) : null}
+                </div>
 
+                {showCatalogSort ? (
+                  <div className="border-t border-zinc-200 pt-4">
+                    <p className="mb-2 text-sm font-semibold text-zinc-900">
+                      {t.catalogFilterSort}
+                    </p>
+                    <CatalogSortSelect />
+                  </div>
+                ) : null}
+
+                {activeCount > 0 ? (
                   <div className="mt-3 flex justify-end">
                     <button
                       type="button"
                       onClick={handleClearFilters}
-                      disabled={activeCount === 0}
-                      className="rounded-lg border border-brand-orange/45 bg-brand-orange/10 px-3 py-1.5 text-sm font-semibold text-brand-orange transition hover:border-brand-orange hover:bg-brand-orange/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-orange/40 disabled:cursor-not-allowed disabled:opacity-40"
+                      className="rounded-lg border border-brand-orange/45 bg-brand-orange/10 px-3 py-1.5 text-sm font-semibold text-brand-orange transition hover:border-brand-orange hover:bg-brand-orange/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-orange/40"
                     >
                       {t.clearFilters}
                     </button>
                   </div>
-                </div>
+                ) : null}
               </div>
-            )}
-          </div>
+            </CatalogFiltersScrollArea>
+          ) : null}
         </div>
       </div>
     </>

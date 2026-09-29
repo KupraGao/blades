@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 import { ka } from "@/dictionaries/ka";
 import { en } from "@/dictionaries/en";
@@ -18,41 +18,32 @@ type LanguageContextType = {
   t: typeof ka;
 };
 
-const LanguageContext =
-  createContext<LanguageContextType | null>(
-    null
-  );
+const LanguageContext = createContext<LanguageContextType | null>(null);
 
 export function LanguageProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [language, setLanguage] =
-    useState<Language>("ka");
+  const [language, setLanguage] = useState<Language>("ka");
+  const [hasHydrated, setHasHydrated] = useState(false);
 
   useEffect(() => {
-    const savedLanguage =
-      localStorage.getItem("language");
+    const savedLanguage = localStorage.getItem("language");
 
-    if (
-      savedLanguage === "ka" ||
-      savedLanguage === "en"
-    ) {
+    if (savedLanguage === "ka" || savedLanguage === "en") {
       setLanguage(savedLanguage);
     }
+
+    setHasHydrated(true);
   }, []);
 
   useEffect(() => {
-    document.documentElement.lang = language;
-  }, [language]);
+    if (!hasHydrated) return;
 
-  useEffect(() => {
-    localStorage.setItem(
-      "language",
-      language
-    );
-  }, [language]);
+    document.documentElement.lang = language;
+    localStorage.setItem("language", language);
+  }, [hasHydrated, language]);
 
   return (
     <LanguageContext.Provider
@@ -68,13 +59,10 @@ export function LanguageProvider({
 }
 
 export function useLanguage() {
-  const context =
-    useContext(LanguageContext);
+  const context = useContext(LanguageContext);
 
   if (!context) {
-    throw new Error(
-      "useLanguage must be used inside LanguageProvider"
-    );
+    throw new Error("useLanguage must be used inside LanguageProvider");
   }
 
   return context;

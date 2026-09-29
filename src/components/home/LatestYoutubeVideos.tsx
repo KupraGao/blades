@@ -117,7 +117,7 @@ export function LatestYoutubeVideos({
     "inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-brand-gold transition hover:opacity-80";
 
   return (
-    <section className="section-pad">
+    <section className="py-12">
       <div className="container-page">
         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div className="max-w-2xl">

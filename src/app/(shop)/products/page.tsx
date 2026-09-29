@@ -1,8 +1,6 @@
-import type { Metadata } from "next";
-import { notFound, redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
-import { getBrandBySlug } from "@/actions/brands/get-brand-by-slug";
 import { getStorefrontBrands } from "@/actions/brands/get-brands";
 import { getCategories } from "@/actions/categories/get-categories";
 import { getProducts } from "@/actions/products/get-products";
@@ -13,59 +11,35 @@ import {
   parseCatalogSearchParams,
   type CatalogBrandOption,
 } from "@/lib/catalog/catalog-search-params";
+import { resolveCatalogBrandQuery } from "@/lib/catalog/resolve-catalog-brand";
 import {
   resolveStorefrontCatalogQuery,
   toStorefrontFilterCategories,
 } from "@/lib/catalog/sale-filter";
-import { BrandProductsContent } from "@/components/brands/BrandProductsContent";
 import { Header } from "@/components/layout/Header";
+import { ProductsPageContent } from "@/components/product/ProductsPageContent";
 
 type Props = {
-  params: Promise<{ slug: string }>;
   searchParams: Promise<{
     category?: string;
     minPrice?: string;
     maxPrice?: string;
     page?: string;
-    sort?: string;
+    brand?: string;
     stock?: string;
+    sort?: string;
   }>;
 };
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params;
-  const brand = await getBrandBySlug(decodeURIComponent(slug));
+export default async function ProductsPage({ searchParams }: Props) {
+  const params = await searchParams;
+  const filters = parseCatalogSearchParams(params);
 
-  if (!brand) {
-    return {
-      title: "Brand | Blades Premium Store",
-    };
-  }
-
-  return {
-    title: `${brand.name} | Blades Premium Store`,
-  };
-}
-
-export default async function BrandProductsPage({
-  params,
-  searchParams,
-}: Props) {
-  const { slug: rawSlug } = await params;
-  const slug = decodeURIComponent(rawSlug);
-  const query = await searchParams;
-  const filters = parseCatalogSearchParams(query);
-
-  const brand = await getBrandBySlug(slug);
-
-  if (!brand) {
-    notFound();
-  }
-
-  const [categories, user, storefrontBrands] = await Promise.all([
+  const [categories, user, storefrontBrands, catalogBrand] = await Promise.all([
     getCategories(),
     getAuthUser(),
     getStorefrontBrands(),
+    resolveCatalogBrandQuery(filters.brandSlug),
   ]);
 
   const catalogQuery = resolveStorefrontCatalogQuery(
@@ -74,53 +48,50 @@ export default async function BrandProductsPage({
   );
 
   if (catalogQuery.needsSaleUrlCanonicalization) {
-    const qs = buildCatalogQueryString({
+    const query = buildCatalogQueryString({
       categoryId: catalogQuery.urlCategoryId,
       minPrice: filters.minPrice,
       maxPrice: filters.maxPrice,
-      sort: filters.sort,
+      brandSlug: filters.brandSlug,
       stock: filters.stock,
+      sort: filters.sort,
       page: filters.page > 1 ? filters.page : undefined,
     });
-    redirect(
-      qs
-        ? `/brands/${encodeURIComponent(brand.slug)}?${qs}`
-        : `/brands/${encodeURIComponent(brand.slug)}`,
-    );
+    redirect(query ? `/products?${query}` : "/products");
   }
 
-  const catalog = await getProducts({
-    brandId: String(brand.id),
-    categoryId: catalogQuery.categoryId,
-    onSale: catalogQuery.onSale,
-    minPrice: filters.minPrice,
-    maxPrice: filters.maxPrice,
-    sort: filters.sort ?? undefined,
-    page: filters.page,
-    limit: CATALOG_PAGE_SIZE,
-  });
+  const catalog = catalogBrand.unknownBrand
+    ? { products: [], total: 0, totalPages: 0 }
+    : await getProducts({
+        page: filters.page,
+        limit: CATALOG_PAGE_SIZE,
+        categoryId: catalogQuery.categoryId,
+        onSale: catalogQuery.onSale,
+        minPrice: filters.minPrice,
+        maxPrice: filters.maxPrice,
+        brandId: catalogBrand.brandId,
+        stock: filters.stock ?? undefined,
+        sort: filters.sort ?? undefined,
+      });
 
   if (catalog.totalPages > 0 && filters.page > catalog.totalPages) {
-    const qs = buildCatalogQueryString({
+    const query = buildCatalogQueryString({
       categoryId: catalogQuery.urlCategoryId,
       minPrice: filters.minPrice,
       maxPrice: filters.maxPrice,
-      sort: filters.sort,
+      brandSlug: filters.brandSlug,
       stock: filters.stock,
+      sort: filters.sort,
       page: 1,
     });
-    redirect(
-      qs
-        ? `/brands/${encodeURIComponent(brand.slug)}?${qs}`
-        : `/brands/${encodeURIComponent(brand.slug)}`,
-    );
+    redirect(query ? `/products?${query}` : "/products");
   }
 
   const storefrontCategories = toStorefrontFilterCategories(categories ?? []);
   const brands: CatalogBrandOption[] = (storefrontBrands ?? []).map(
-    (item) => ({
-      slug: item.slug,
-      name: item.name,
+    (brand) => ({
+      slug: brand.slug,
+      name: brand.name,
     }),
   );
 
@@ -130,13 +101,11 @@ export default async function BrandProductsPage({
         categories={storefrontCategories}
         accountHref={user ? "/account" : "/account/login"}
         brands={brands}
-        routeBrandSlug={brand.slug}
       />
 
       <main className="section-pad lg:pt-14">
         <Suspense fallback={null}>
-          <BrandProductsContent
-            brand={brand}
+          <ProductsPageContent
             products={catalog.products ?? []}
             total={catalog.total}
             currentPage={filters.page}

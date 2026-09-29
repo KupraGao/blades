@@ -9,12 +9,10 @@ import { ProductCard } from "./ProductCard";
 
 type LatestProductsSliderProps = {
   products: any[];
-  isFiltersOpen?: boolean;
 };
 
 export function LatestProductsSlider({
   products,
-  isFiltersOpen = true,
 }: LatestProductsSliderProps) {
   const { t } = useLanguage();
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -75,11 +73,7 @@ export function LatestProductsSlider({
     <section className="py-12">
       <div className="container-page">
         <div className="mb-3 flex items-center justify-between gap-3 lg:mb-4">
-          <div
-            className={`min-w-0 transition-[margin] duration-300 ease-out motion-reduce:transition-none ${
-              isFiltersOpen ? "lg:ml-[272px]" : "lg:ml-0"
-            }`}
-          >
+          <div className="min-w-0">
             <h2 className="storefront-section-heading">{t.latestProducts}</h2>
           </div>
 

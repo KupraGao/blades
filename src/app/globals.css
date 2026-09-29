@@ -137,3 +137,15 @@ html[lang="ka"] .primary-nav-font {
 .animate-slideIn {
   animation: slideIn 0.3s ease;
 }
+
+/* Catalog filter panel — hide native scrollbar; overlay thumb is in CatalogFiltersScrollArea. */
+.catalog-filters-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.catalog-filters-scroll::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}

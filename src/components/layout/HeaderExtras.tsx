@@ -9,14 +9,16 @@ import { STORE_CONTACT } from "@/lib/storefront/contact";
 function shouldShowStorefrontToolbar(pathname: string | null): boolean {
   if (!pathname) return false;
   if (pathname === "/") return true;
+  if (pathname === "/products") return true;
   if (pathname === "/brands" || pathname.startsWith("/brands/")) return true;
   return false;
 }
 
 function supportsCatalogFiltersSlot(pathname: string | null): boolean {
   if (!pathname) return false;
-  // Home + Brand PLP reserve Filters geometry. Brands directory does not.
+  // Home, /products, and Brand PLP reserve Filters geometry. Brands directory does not.
   if (pathname === "/") return true;
+  if (pathname === "/products") return true;
   if (pathname.startsWith("/brands/")) return true;
   return false;
 }

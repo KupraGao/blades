@@ -7,6 +7,7 @@ import { HeaderExtras } from "@/components/layout/HeaderExtras";
 function shouldShowStorefrontToolbar(pathname: string | null): boolean {
   if (!pathname) return false;
   if (pathname === "/") return true;
+  if (pathname === "/products") return true;
   if (pathname === "/brands" || pathname.startsWith("/brands/")) return true;
   return false;
 }

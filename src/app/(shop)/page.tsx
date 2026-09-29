@@ -1,91 +1,47 @@
 import { Suspense } from "react";
-import { redirect } from "next/navigation";
 
 import { HomeClient } from "@/components/home/HomeClient";
 
+import { getStorefrontBrands } from "@/actions/brands/get-brands";
 import { getCategories } from "@/actions/categories/get-categories";
+import { getHomeDiscoveryProducts } from "@/actions/products/get-home-discovery-products";
 import { getProducts } from "@/actions/products/get-products";
 import { getSaleSliderProducts } from "@/actions/products/get-sale-slider-products";
 import { getActivePromoBanners } from "@/actions/promos/get-active-promo-banners";
 import { getAuthUser } from "@/lib/auth/get-auth-user";
 import { fetchLatestYoutubeVideos } from "@/lib/youtube/fetch-latest-videos";
 import {
-  buildCatalogQueryString,
-  CATALOG_PAGE_SIZE,
   LATEST_PRODUCTS_LIMIT,
-  parseCatalogSearchParams,
+  type CatalogBrandOption,
 } from "@/lib/catalog/catalog-search-params";
-import {
-  resolveStorefrontCatalogQuery,
-  toStorefrontFilterCategories,
-} from "@/lib/catalog/sale-filter";
+import { toStorefrontFilterCategories } from "@/lib/catalog/sale-filter";
 
-type Props = {
-  searchParams: Promise<{
-    category?: string;
-    minPrice?: string;
-    maxPrice?: string;
-    page?: string;
-  }>;
-};
-
-export default async function Home({ searchParams }: Props) {
-  const params = await searchParams;
-  const filters = parseCatalogSearchParams(params);
-
-  const [categories, user] = await Promise.all([
+export default async function Home() {
+  const [categories, user, storefrontBrands] = await Promise.all([
     getCategories(),
     getAuthUser(),
+    getStorefrontBrands(),
   ]);
 
-  const catalogQuery = resolveStorefrontCatalogQuery(
-    filters,
-    categories ?? [],
-  );
-
-  if (catalogQuery.needsSaleUrlCanonicalization) {
-    const query = buildCatalogQueryString({
-      categoryId: catalogQuery.urlCategoryId,
-      minPrice: filters.minPrice,
-      maxPrice: filters.maxPrice,
-      page: filters.page > 1 ? filters.page : undefined,
-    });
-    redirect(query ? `/?${query}` : "/");
-  }
-
-  const [latestResult, catalogResult, saleProducts, promoBanners, youtubeVideos] =
+  const [latestResult, discovery, saleProducts, promoBanners, youtubeVideos] =
     await Promise.all([
       getProducts({
         page: 1,
         limit: LATEST_PRODUCTS_LIMIT,
       }),
-      getProducts({
-        page: filters.page,
-        limit: CATALOG_PAGE_SIZE,
-        categoryId: catalogQuery.categoryId,
-        onSale: catalogQuery.onSale,
-        minPrice: filters.minPrice,
-        maxPrice: filters.maxPrice,
-      }),
+      getHomeDiscoveryProducts(),
       getSaleSliderProducts(),
       getActivePromoBanners(),
       fetchLatestYoutubeVideos(),
     ]);
 
-  if (
-    catalogResult.totalPages > 0 &&
-    filters.page > catalogResult.totalPages
-  ) {
-    const query = buildCatalogQueryString({
-      categoryId: catalogQuery.urlCategoryId,
-      minPrice: filters.minPrice,
-      maxPrice: filters.maxPrice,
-      page: 1,
-    });
-    redirect(query ? `/?${query}` : "/");
-  }
-
   const storefrontCategories = toStorefrontFilterCategories(categories ?? []);
+  const brands: CatalogBrandOption[] = (storefrontBrands ?? []).map(
+    (brand) => ({
+      slug: brand.slug,
+      name: brand.name,
+    }),
+  );
 
   return (
     <Suspense fallback={null}>
@@ -94,11 +50,10 @@ export default async function Home({ searchParams }: Props) {
         saleProducts={saleProducts}
         promoBanners={promoBanners}
         youtubeVideos={youtubeVideos}
-        catalogProducts={catalogResult.products ?? []}
-        catalogTotal={catalogResult.total}
-        catalogTotalPages={catalogResult.totalPages}
-        currentPage={filters.page}
+        discoveryProducts={discovery.products}
+        discoveryCatalogSize={discovery.catalogSize}
         categories={storefrontCategories}
+        brands={brands}
         accountHref={user ? "/account" : "/account/login"}
       />
     </Suspense>

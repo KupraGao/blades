@@ -271,7 +271,7 @@ export function FaqPageContent() {
     {
       question: t.faqQOrder,
       answer: t.faqAOrder,
-      href: "/#products",
+      href: "/products",
       linkLabel: t.products,
     },
     {

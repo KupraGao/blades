@@ -23,3 +23,25 @@ export function formatBrandProductCount(
 
   return template.replace("{count}", String(safeCount));
 }
+
+type CatalogProductsFoundDictionary = {
+  catalogProductsFoundOne: string;
+  catalogProductsFoundMany: string;
+};
+
+/** Compact catalog result count. KA: always catalogProductsFoundOne. EN: singular/plural. */
+export function formatCatalogProductsFound(
+  count: number,
+  language: "ka" | "en",
+  t: CatalogProductsFoundDictionary,
+): string {
+  const safeCount = Number.isFinite(count) && count >= 0 ? Math.floor(count) : 0;
+  const template =
+    language === "en" && safeCount === 1
+      ? t.catalogProductsFoundOne
+      : language === "en"
+        ? t.catalogProductsFoundMany
+        : t.catalogProductsFoundOne;
+
+  return template.replace("{count}", String(safeCount));
+}

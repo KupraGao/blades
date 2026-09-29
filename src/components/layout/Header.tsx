@@ -15,6 +15,7 @@ import { LanguageSwitcher, headerCircleControlClassName } from "@/components/com
 import { useLanguage } from "@/context/LanguageContext";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
+import type { CatalogBrandOption } from "@/lib/catalog/catalog-search-params";
 
 type CatalogCategory = {
   id: number | string;
@@ -25,6 +26,8 @@ type CatalogCategory = {
 type HeaderProps = {
   categories: CatalogCategory[];
   accountHref?: string;
+  brands?: CatalogBrandOption[];
+  routeBrandSlug?: string | null;
 };
 
 const RAIL_SCROLL_THRESHOLD_PX = 10;
@@ -36,6 +39,8 @@ const RAIL_ITEM_COUNT = 5;
 export function Header({
   categories,
   accountHref = "/account/login",
+  brands,
+  routeBrandSlug,
 }: HeaderProps) {
   const { t } = useLanguage();
   const pathname = usePathname();
@@ -149,7 +154,7 @@ export function Header({
           {/* ===================================== */}
           <nav className="hidden items-center gap-8 lg:flex">
             <a href="/" className="primary-nav-font text-zinc-700 transition hover:text-brand-gold dark:text-zinc-300">{t.home}</a>
-            <a href="/#products" className="primary-nav-font text-zinc-700 transition hover:text-brand-gold dark:text-zinc-300">{t.products}</a>
+            <a href="/products" className="primary-nav-font text-zinc-700 transition hover:text-brand-gold dark:text-zinc-300">{t.products}</a>
             <a
               href="/brands"
               className={`primary-nav-font transition hover:text-brand-gold dark:hover:text-brand-gold ${
@@ -264,6 +269,8 @@ export function Header({
         tab={tab}
         setTab={setTab}
         categories={categories}
+        brands={brands}
+        routeBrandSlug={routeBrandSlug}
       />
     </>
   );
