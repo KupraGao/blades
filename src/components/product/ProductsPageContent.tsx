@@ -71,7 +71,7 @@ export function ProductsPageContent({
               </p>
             </div>
 
-            <CatalogSortSelect className="hidden w-full shrink-0 sm:max-w-xs lg:block" />
+            <CatalogSortSelect className="hidden w-full shrink-0 sm:max-w-xs md:block" />
           </div>
         </header>
 
