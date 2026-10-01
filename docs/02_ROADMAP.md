@@ -64,6 +64,11 @@
   display pairing)
 - Home Latest YouTube Videos (official Bladesge Atom feed; latest 3;
   no API key / CMS; thumbnail-first inline player)
+- Contact form (public `/contact` + `submitContactMessage` + Resend to
+  `STORE_CONTACT.email`; not stored in DB; **not** Order Confirmation Email)
+- Storefront light-theme chrome polish (body `#eeeeee`; Footer
+  `bg-zinc-200`; Header/Footer responsive logo badges; Filters `248×40`;
+  Search `h-10`; HeaderExtras slot `272px`; desktop active nav)
 
 See `docs/06_CHANGELOG.md` for version history (S6 Customer Ownership complete;
 S7A–S7B payment-method path + S7B-1 delivery minimum — see latest changelog;
@@ -293,6 +298,14 @@ and are **not** wired to Checkout (S7A–S7B + S7C-4/S7C-5 LIVE
   (`UCV4ORvOeTcfirolaMQ5P86w`); server fetch + 30-minute revalidation;
   latest 3 videos on Home; no YouTube API key, no DB/Admin. Replaced
   the starter `PromoBanner` block. Promo Slider #1 CMS is unchanged.
+
+✅ Storefront light-theme chrome + Contact form — body `#eeeeee`; Footer
+  `bg-zinc-200`; Header/Footer white logo badges (Light black border /
+  Dark transparent; Header `145 / 175 / 220`; Footer `150 / 180 / 230 /
+  240`); Filters `248×40`; Search `h-10`; HeaderExtras slot `272px`;
+  desktop gold active nav (Home / Products / Brands / Contact). Public
+  `/contact` + Resend (`submitContactMessage`); no DB write; **not**
+  Order Confirmation Email.
 
 ---
 

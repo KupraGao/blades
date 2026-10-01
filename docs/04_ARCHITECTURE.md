@@ -44,6 +44,9 @@ src
 │   │   ├── get-single-category.ts
 │   │   └── update-category.ts
 │   │
+│   ├── contact
+│   │   └── submit-contact-message.ts
+│   │
 │   ├── orders
 │   │   ├── cancel-order.ts
 │   │   ├── create-order.ts
@@ -162,6 +165,9 @@ src
 │   │   ├── CategoriesSidebar.tsx
 │   │   ├── LanguageSwitcher.tsx
 │   │   └── ThemeToggle.tsx
+│   │
+│   ├── contact
+│   │   └── ContactPageContent.tsx
 │   │
 │   ├── brands
 │   │   ├── BrandCard.tsx
@@ -456,9 +462,15 @@ Desktop `lg+`:
 [ wide Promo carousel ][ narrow Sale carousel ]
 ```
 
-`HomepageHeroSliders` uses `container-page` plus the HeaderExtras filter
-slot (`w-[296px]` = 272px + 24px gap) on `lg`, whether Filters are
-expanded or collapsed.
+Toolbar geometry and the homepage hero spacer are **not** the same width:
+
+- `HeaderExtras` reserved Filters slot on `lg`: **`272px`** =
+  `248px` Filters + `24px` gap. Search is `h-10` (`40px`).
+- `CategoriesSidebar`: width `248px`, control height `40px` (`h-10`),
+  `px-3`, vertical offset `top-[4px]`.
+- `HomepageHeroSliders` still reserves a **`296px`** spacer on `lg`
+  (`w-[296px]`), whether Filters are expanded or collapsed. That spacer
+  was **not** retargeted to `272px`.
 
 Grid: `lg:grid-cols-[minmax(0,2.3fr)_minmax(0,1fr)]` **only when both**
 Promo and Sale have content. Equal height via CSS Grid stretch on `lg`
@@ -684,6 +696,10 @@ Route transitions (architecture-level): leaving Filters-capable routes for
 from `/brands` restores the Filters slot and contracts Search. Help stays
 stable. Search width follows **route capability**, not sidebar open/closed.
 
+Current toolbar sizes: Filters `248px` × `40px`; HeaderExtras reserved
+slot **`272px`** (`248px` + `24px` gap); Search `h-10`. Distinct from
+the `HomepageHeroSliders` **`296px`** `lg` spacer (unchanged).
+
 ### Controlled content motion (no ProductCard reflow)
 
 - **Home:** Filters open/close → only the Latest Products heading moves
@@ -758,7 +774,39 @@ pairing; colors, sizes, clamp, and layout were not changed by the
 font-family pass. Prices stay outside the display system
 (`ProductPrice` unchanged). Ordinary labels, forms, buttons, filters,
 cart, checkout, and account UI stay body/UI fonts. Primary Header nav
-uses the display pairing; gold active-route state is unchanged.
+uses the display pairing. Desktop gold active-route state: Home /
+Products / Brands / Contact.
+
+### Light surfaces + logos (current)
+
+- Body light background: `#eeeeee` (`dark:bg-black` unchanged)
+- Footer light background: `bg-zinc-200` (`dark:bg-black/50` unchanged)
+- `FeatureStrip`: light cards / borders / text with `dark:` fallbacks
+- Header and Footer logos: white `rounded-lg` badge; Light thin black
+  border; Dark transparent border
+- Header artwork: `145px` / `175px` / `220px`
+- Footer artwork: `150px` / `180px` / `230px` / `240px`
+
+Next/Image aspect-ratio, LCP, and preload warnings are **not** resolved
+here.
+
+---
+
+# 📬 Contact form flow
+
+```text
+/contact
+  → ContactPageContent (client form)
+  → submitContactMessage (Server Action)
+  → validation / honeypot `company`
+  → Resend
+  → STORE_CONTACT.email
+```
+
+Public storefront action. No Admin authorization. No Supabase write.
+Submissions are **not** Order Confirmation Email.
+
+Server-only env: `RESEND_API_KEY`, `CONTACT_FROM_EMAIL`.
 
 ---
 
@@ -1141,6 +1189,9 @@ Hard delete / archive is **not** part of the current architecture.
     status/cancel/return/fulfillment) + privileged Admin list `getOrders`
   - Intentionally ungated: `createOrder` (guest checkout), Auth login/logout,
     public catalog reads
+  - `submitContactMessage` — public `/contact` form; no Admin authorization;
+    validates + honeypot; Resend to `STORE_CONTACT.email`; no DB write.
+    Distinct from `createOrder`. **Not** Order Confirmation Email
   - Order reads (S6C Step 1):
     - Guest success: `getGuestSuccessOrder` — HMAC httpOnly proof required
       (`ORDER_ACCESS_SECRET`; UUID alone denied)

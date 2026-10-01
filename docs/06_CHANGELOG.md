@@ -14,6 +14,49 @@
 
 ---
 
+## v1.41.0 — Contact form + storefront visual polish
+
+Public Contact form and storefront chrome shipped in `7d61c2c`. Catalog
+queries, Checkout, Payments, and Order Confirmation Email are unchanged.
+
+### Contact
+
+- `/contact` form wired in `ContactPageContent` to `submitContactMessage`
+- Server validation (name / email / message / field length); honeypot
+  `company`; submit loading / success / error states
+- KA/EN `contactForm*` dictionary keys (sending, success, failures)
+- Delivery via Resend to `STORE_CONTACT.email`
+- Server-only env: `RESEND_API_KEY`, `CONTACT_FROM_EMAIL`
+- Submissions are **not** stored in the database
+- This is **not** Order Confirmation Email
+
+### Storefront / light theme
+
+- Body light background `#eeeeee`
+- `FeatureStrip` light surfaces / cards
+- Featured catalog section: `dark:bg-black/25` (no forced light black wash)
+- Footer light background `bg-zinc-200`
+- Header desktop gold active nav: Home / Products / Brands / Contact
+
+### Logo visual
+
+- Header: white `rounded-lg` badge; Light black border; Dark transparent
+  border; artwork `145px` → `175px` → `220px`
+- Footer: white `rounded-lg` badge; Light black border; Dark transparent
+  border; artwork `150px` → `180px` → `230px` → `240px`
+
+### Toolbar
+
+- Filters: `248px` × `40px`, `px-3`, `top-[4px]`
+- Search: `40px` (`h-10`)
+- HeaderExtras reserved slot: `272px` = `248px` Filters + `24px` gap
+
+### Localization
+
+- `ka` `discoverProducts` = `"რეკომენდებული"`
+
+---
+
 ## v1.40.0 — Home Latest YouTube Videos
 
 Replaced the Home starter `PromoBanner` CTA with the official Bladesge

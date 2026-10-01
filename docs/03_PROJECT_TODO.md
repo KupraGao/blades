@@ -22,6 +22,23 @@
 
 ---
 
+## ✅ COMPLETED — Contact form + storefront visual polish
+
+- Public `/contact` form: `ContactPageContent` → `submitContactMessage`
+- Validation, honeypot `company`, loading / success / error feedback
+- Resend to `STORE_CONTACT.email` (`RESEND_API_KEY`, `CONTACT_FROM_EMAIL`);
+  no DB persistence; **not** Order Confirmation Email
+- Light theme chrome: body `#eeeeee`; FeatureStrip light cards; featured
+  section `dark:bg-black/25`; Footer `bg-zinc-200`
+- Header desktop gold active nav: Home / Products / Brands / Contact
+- Header/Footer white `rounded-lg` logo badges; Light black border; Dark
+  transparent; Header `145 / 175 / 220`; Footer `150 / 180 / 230 / 240`
+- Filters `248px` × `40px` (`px-3`, `top-[4px]`); Search `h-10`;
+  HeaderExtras slot `272px` (`248 + 24`)
+- `ka` `discoverProducts` = `"რეკომენდებული"`
+
+---
+
 ## ✅ COMPLETED — Home Latest YouTube Videos
 
 - Replaced starter Home `PromoBanner` with `LatestYoutubeVideos`
