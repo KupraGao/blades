@@ -2,38 +2,6 @@
 
 import { useLanguage } from "@/context/LanguageContext";
 
-const bladeSteels = [
-  "CPM MagnaCut",
-  "CPM S45VN",
-  "CPM S35VN",
-  "CPM CruWear",
-  "CPM 20CV",
-  "CPM M4",
-  "CPM 3V",
-  "M390",
-  "Elmax",
-  "Böhler N690",
-  "154CM",
-  "D2",
-  "VG-10",
-  "AUS-10",
-  "14C28N",
-  "Sandvik 12C27",
-  "8Cr13MoV",
-];
-
-const lockingTypes = [
-  "Liner Lock",
-  "Frame Lock",
-  "Axis Lock",
-  "Crossbar Lock",
-  "Compression Lock",
-  "Back Lock",
-  "Button Lock",
-  "Tri-Ad Lock",
-  "Slip Joint",
-];
-
 type Product = {
   overall_length: string | null;
   blade_length: string | null;
@@ -128,21 +96,15 @@ export default function SpecificationsSection({
             {t.bladeSteel}
           </label>
 
-          <select
+          <input
             id="bladeSteel"
+            type="text"
             name="bladeSteel"
             defaultValue={product?.blade_steel ?? ""}
+            placeholder="CPM S35VN"
             title={t.bladeSteel}
             className="w-full rounded-xl border border-zinc-800 bg-black/40 px-4 py-3 text-white outline-none transition focus:border-white"
-          >
-            <option value="">{t.selectSteel}</option>
-
-            {bladeSteels.map((steel) => (
-              <option key={steel} value={steel}>
-                {steel}
-              </option>
-            ))}
-          </select>
+          />
         </div>
 
         {/* HANDLE MATERIAL */}
@@ -174,21 +136,15 @@ export default function SpecificationsSection({
             {t.lockingType}
           </label>
 
-          <select
+          <input
             id="lockingType"
+            type="text"
             name="lockingType"
             defaultValue={product?.locking_type ?? ""}
+            placeholder="Frame Lock"
             title={t.lockingType}
             className="w-full rounded-xl border border-zinc-800 bg-black/40 px-4 py-3 text-white outline-none transition focus:border-white"
-          >
-            <option value="">{t.selectLocking}</option>
-
-            {lockingTypes.map((type) => (
-              <option key={type} value={type}>
-                {type}
-              </option>
-            ))}
-          </select>
+          />
         </div>
 
         {/* KNIFE TYPE */}

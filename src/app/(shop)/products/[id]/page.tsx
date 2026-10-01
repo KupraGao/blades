@@ -118,9 +118,16 @@ export default async function ProductDetailsPage({
 
               <div className="flex justify-between border-b border-zinc-200 pb-2 dark:border-zinc-800">
                 <span className="font-medium">
-                  <ProductDetailsContent label="bladeSteel" />
+                  <ProductDetailsContent label="overallLength" />
                 </span>
-                <span>{product.blade_steel || "-"}</span>
+                <span>{product.overall_length || "-"}</span>
+              </div>
+
+              <div className="flex justify-between border-b border-zinc-200 pb-2 dark:border-zinc-800">
+                <span className="font-medium">
+                  <ProductDetailsContent label="bladeLength" />
+                </span>
+                <span>{product.blade_length || "-"}</span>
               </div>
 
               <div className="flex justify-between border-b border-zinc-200 pb-2 dark:border-zinc-800">
@@ -132,9 +139,9 @@ export default async function ProductDetailsPage({
 
               <div className="flex justify-between border-b border-zinc-200 pb-2 dark:border-zinc-800">
                 <span className="font-medium">
-                  <ProductDetailsContent label="bladeLength" />
+                  <ProductDetailsContent label="bladeSteel" />
                 </span>
-                <span>{product.blade_length || "-"}</span>
+                <span>{product.blade_steel || "-"}</span>
               </div>
 
               <div className="flex justify-between border-b border-zinc-200 pb-2 dark:border-zinc-800">
@@ -153,13 +160,6 @@ export default async function ProductDetailsPage({
 
               <div className="flex justify-between border-b border-zinc-200 pb-2 dark:border-zinc-800">
                 <span className="font-medium">
-                  <ProductDetailsContent label="knifeType" />
-                </span>
-                <span>{product.knife_type || "-"}</span>
-              </div>
-
-              <div className="flex justify-between border-b border-zinc-200 pb-2 dark:border-zinc-800">
-                <span className="font-medium">
                   <ProductDetailsContent label="weight" />
                 </span>
                 <span>{product.weight || "-"}</span>
@@ -167,9 +167,9 @@ export default async function ProductDetailsPage({
 
               <div className="flex justify-between border-b border-zinc-200 pb-2 dark:border-zinc-800">
                 <span className="font-medium">
-                  <ProductDetailsContent label="overallLength" />
+                  <ProductDetailsContent label="knifeType" />
                 </span>
-                <span>{product.overall_length || "-"}</span>
+                <span>{product.knife_type || "-"}</span>
               </div>
 
             </div>
