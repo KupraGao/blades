@@ -3,14 +3,10 @@
 import Image from "next/image";
 import { useEffect, useRef, useState, type PointerEvent } from "react";
 import { useLanguage } from "@/context/LanguageContext";
+import { sortProductImages } from "@/lib/products/sort-product-images";
+import type { ProductImage } from "@/types/product.types";
 
 const PRODUCT_GALLERY_ZOOM_SCALE = 2;
-
-type ProductImage = {
-  id: string;
-  image_url: string;
-  is_main: boolean;
-};
 
 type ProductGalleryProps = {
   title: string;
@@ -47,8 +43,9 @@ export default function ProductGallery({
   images,
 }: ProductGalleryProps) {
   const { t } = useLanguage();
+  const orderedImages = sortProductImages(images);
   const [activeImage, setActiveImage] = useState(
-    images?.[0]?.image_url || "/placeholder.png"
+    orderedImages[0]?.image_url || "/placeholder.png"
   );
   const [isZoomed, setIsZoomed] = useState(false);
   const zoomLayerRef = useRef<HTMLDivElement>(null);
@@ -123,7 +120,7 @@ export default function ProductGallery({
         />
 
         <div className="absolute left-4 top-4 z-10 flex flex-col gap-2">
-          {images?.map((image) => (
+          {orderedImages.map((image) => (
             <button
               key={image.id}
               type="button"

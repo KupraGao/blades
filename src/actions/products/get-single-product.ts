@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { PRODUCT_IMAGES_NESTED_ORDER } from "@/lib/products/sort-product-images";
 
 export async function getSingleProduct(id:string){
 
@@ -17,6 +18,7 @@ export async function getSingleProduct(id:string){
       )
     `)
     .eq("id",id)
+    .order("sort_order", PRODUCT_IMAGES_NESTED_ORDER)
     .single();
 
   if(error){

@@ -21,7 +21,7 @@ export async function deleteGalleryImage(
   // DELETE GALLERY IMAGE
   // =================================================
 
-  await deleteGalleryImageRecord(
+  const { productId } = await deleteGalleryImageRecord(
     supabase,
     imageId
   );
@@ -31,5 +31,7 @@ export async function deleteGalleryImage(
   // =================================================
 
   revalidatePath("/admin/products");
+  revalidatePath(`/admin/products/edit/${productId}`);
+  revalidatePath(`/products/${productId}`);
 
 }

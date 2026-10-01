@@ -13,6 +13,7 @@ export async function insertMainImage(
         product_id:productId,
         image_url:publicUrl,
         is_main:true,
+        sort_order:0,
       },
     ]);
 

@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { changeMainImageRecord } from "@/lib/products/change-main-image-record";
+import { applyMainImageSortOrder } from "@/lib/products/product-image-order";
 
 export async function changeMainImage(
   productId: string,
@@ -36,11 +37,18 @@ export async function changeMainImage(
     imageId
   );
 
+  await applyMainImageSortOrder(
+    supabase,
+    productId,
+    imageId
+  );
+
   // =================================================
   // CACHE
   // =================================================
 
   revalidatePath("/admin/products");
   revalidatePath(`/admin/products/edit/${productId}`);
+  revalidatePath(`/products/${productId}`);
 
 }

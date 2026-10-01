@@ -4,11 +4,12 @@ import { connection } from "next/server";
 
 import { createClient } from "@/lib/supabase/server";
 import { HOME_DISCOVERY_LIMIT } from "@/lib/catalog/catalog-search-params";
+import { PRODUCT_IMAGES_NESTED_ORDER } from "@/lib/products/sort-product-images";
 
 const PRODUCT_CARD_SELECT = `
   *,
   brands(id,name,slug,logo),
-  product_images(id,image_url,is_main),
+  product_images(id,image_url,is_main,sort_order),
   product_categories(category_id,categories(id,name_ka,name_en))
 `;
 
@@ -97,7 +98,8 @@ export async function getHomeDiscoveryProducts(
   const { data, error } = await supabase
     .from("products")
     .select(PRODUCT_CARD_SELECT)
-    .in("id", selectedIds);
+    .in("id", selectedIds)
+    .order("sort_order", PRODUCT_IMAGES_NESTED_ORDER);
 
   if (error) {
     console.log("HOME DISCOVERY PRODUCTS ERROR:", error);

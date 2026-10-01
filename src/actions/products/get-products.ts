@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { PRODUCT_IMAGES_NESTED_ORDER } from "@/lib/products/sort-product-images";
 
 type GetProductsOptions = {
   categoryId?: string;
@@ -45,7 +46,7 @@ export async function getProducts({
       `
       *,
       brands(id,name,slug,logo),
-      product_images(id,image_url,is_main),
+      product_images(id,image_url,is_main,sort_order),
       ${categoryEmbed}
     `,
       {
@@ -112,6 +113,8 @@ export async function getProducts({
     default:
       query = query.order("created_at", { ascending: false });
   }
+
+  query = query.order("sort_order", PRODUCT_IMAGES_NESTED_ORDER);
 
   const from = (safePage - 1) * safeLimit;
   const to = from + safeLimit - 1;

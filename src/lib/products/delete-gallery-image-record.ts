@@ -1,9 +1,11 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 
+import { resequenceProductImages } from "@/lib/products/product-image-order";
+
 export async function deleteGalleryImageRecord(
   supabase: SupabaseClient,
   imageId: string
-) {
+): Promise<{ productId: string }> {
 
   // =================================================
   // GET IMAGE
@@ -11,7 +13,7 @@ export async function deleteGalleryImageRecord(
 
   const { data, error } = await supabase
     .from("product_images")
-    .select("image_url")
+    .select("image_url, product_id")
     .eq("id", imageId)
     .single();
 
@@ -90,5 +92,11 @@ export async function deleteGalleryImageRecord(
     throw new Error(deleteError.message);
 
   }
+
+  const productId = String(data.product_id);
+
+  await resequenceProductImages(supabase, productId);
+
+  return { productId };
 
 }

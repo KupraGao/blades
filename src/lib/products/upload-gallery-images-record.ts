@@ -4,6 +4,7 @@ import {
   PRODUCT_IMAGE_UPLOAD_FAILED,
   productImageStorageFileName,
 } from "@/lib/products/product-image-storage-key";
+import { getNextGallerySortOrder } from "@/lib/products/product-image-order";
 
 type UploadGalleryImagesRecordParams = {
   supabase: SupabaseClient;
@@ -24,6 +25,13 @@ export async function uploadGalleryImagesRecord({
   if (images.length === 0) {
     return;
   }
+
+  // =================================================
+  // NEXT SORT ORDER
+  // Append after the current highest sort_order. Do not reset existing rows.
+  // =================================================
+
+  let sortOrder = await getNextGallerySortOrder(supabase, productId);
 
   // =================================================
   // UPLOAD GALLERY IMAGES
@@ -71,6 +79,7 @@ export async function uploadGalleryImagesRecord({
           product_id: productId,
           image_url: publicUrl,
           is_main: false,
+          sort_order: sortOrder,
         },
       ]);
 
@@ -78,6 +87,8 @@ export async function uploadGalleryImagesRecord({
       console.log("IMAGE INSERT ERROR:", insertError);
       throw insertError;
     }
+
+    sortOrder += 1;
 
   }
 

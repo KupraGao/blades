@@ -9,6 +9,14 @@ import { useWishlist } from "@/context/WishlistContext";
 import { ProductCardAddToCartButton } from "@/components/product/ProductCardAddToCartButton";
 import { ProductPrice } from "@/components/product/ProductPrice";
 import { getProductDiscountPercent, isProductOnSale } from "@/lib/products/pricing";
+import { sortProductImages } from "@/lib/products/sort-product-images";
+
+type ProductCardImage = {
+  id: string;
+  image_url: string;
+  is_main?: boolean | null;
+  sort_order?: number | null;
+};
 
 type ProductCardProps = {
   product: any;
@@ -37,7 +45,13 @@ export function ProductCard({ product }: ProductCardProps) {
   // =========================================
   // DEFAULT IMAGE
   // =========================================
-  const defaultImage = product.product_images?.find((img: any) => img.is_main) || product.product_images?.[0];
+  const orderedImages = sortProductImages(
+    Array.isArray(product.product_images)
+      ? (product.product_images as ProductCardImage[])
+      : [],
+  );
+  const defaultImage =
+    orderedImages.find((img) => img.is_main) || orderedImages[0];
 
   // =========================================
   // ACTIVE IMAGE
@@ -80,7 +94,7 @@ export function ProductCard({ product }: ProductCardProps) {
           {/* GALLERY PREVIEW */}
           {/* ========================================= */}
           <div className="absolute bottom-2.5 left-2.5 flex gap-1.5 opacity-0 transition duration-300 group-hover:opacity-100 sm:bottom-3 sm:left-3 sm:gap-2 lg:bottom-4 lg:left-4">
-            {product.product_images?.slice(0, 3).map((img: any) => (
+            {orderedImages.slice(0, 3).map((img) => (
               <div
                 key={img.id}
                 onMouseEnter={() => setActiveImage(img.image_url)}

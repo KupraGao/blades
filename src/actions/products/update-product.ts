@@ -14,6 +14,10 @@ import { attachProductCategories } from "@/lib/products/attach-product-categorie
 import { uploadMainImage } from "@/lib/products/upload-main-image";
 import { changeMainImageRecord } from "@/lib/products/change-main-image-record";
 import { uploadGalleryImagesRecord } from "@/lib/products/upload-gallery-images-record";
+import {
+  applyMainImageSortOrder,
+  getNextGallerySortOrder,
+} from "@/lib/products/product-image-order";
 
 export async function updateProduct(
   productId: string,
@@ -76,6 +80,8 @@ export async function updateProduct(
 
   // =================================================
   // CHANGE MAIN IMAGE
+  // New file → new product_images row (same as create/gallery),
+  // then promote by record UUID. Do not pass a Storage URL into id.
   // =================================================
 
   if (mainImage) {
@@ -85,11 +91,63 @@ export async function updateProduct(
       mainImage
     );
 
-    await changeMainImageRecord(
-      supabase,
-      productId,
-      imageUrl
-    );
+    let insertedImageId: string | null = null;
+
+    try {
+      const nextSortOrder = await getNextGallerySortOrder(
+        supabase,
+        productId
+      );
+
+      const { data: insertedImage, error: insertError } = await supabase
+        .from("product_images")
+        .insert([
+          {
+            product_id: productId,
+            image_url: imageUrl,
+            is_main: false,
+            sort_order: nextSortOrder,
+          },
+        ])
+        .select("id")
+        .single();
+
+      if (insertError) {
+        throw new Error(insertError.message);
+      }
+
+      if (!insertedImage?.id) {
+        throw new Error("Main image record was not created.");
+      }
+
+      insertedImageId = String(insertedImage.id);
+
+      await changeMainImageRecord(
+        supabase,
+        productId,
+        insertedImageId
+      );
+
+      await applyMainImageSortOrder(
+        supabase,
+        productId,
+        insertedImageId
+      );
+    } catch (error) {
+      if (!insertedImageId) {
+        const fileName = imageUrl.split("/").pop();
+
+        if (fileName) {
+          try {
+            await supabase.storage.from("product-images").remove([fileName]);
+          } catch {
+            // Best-effort: do not mask the original insert/upload failure.
+          }
+        }
+      }
+
+      throw error;
+    }
 
   }
 

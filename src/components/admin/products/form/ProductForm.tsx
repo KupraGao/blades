@@ -18,6 +18,7 @@ import {
   type ProductImageOptimizeErrorCode,
 } from "@/lib/products/optimize-product-image";
 import { PRODUCT_IMAGE_UPLOAD_FAILED } from "@/lib/products/product-image-storage-key";
+import type { ProductImage } from "@/types/product.types";
 
 type Brand = {
   id: number;
@@ -51,11 +52,7 @@ type Product = {
     category_id: string;
   }[];
 
-  product_images: {
-    id: string;
-    image_url: string;
-    is_main: boolean;
-  }[];
+  product_images: ProductImage[];
 };
 
 type ProductFormProps = {

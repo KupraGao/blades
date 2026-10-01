@@ -13,7 +13,10 @@ export async function uploadGalleryImages(
 
   // =================================================
   // GALLERY LOOP
+  // Main image is sort_order 0. Gallery follows upload order: 1, 2, 3...
   // =================================================
+
+  let sortOrder = 1;
 
   for(const image of galleryImages){
 
@@ -66,12 +69,15 @@ export async function uploadGalleryImages(
         product_id:productId,
         image_url:publicUrl,
         is_main:false,
+        sort_order:sortOrder,
       }]);
 
     if(imageInsertError){
       console.log("IMAGE INSERT ERROR:",imageInsertError);
       throw imageInsertError;
     }
+
+    sortOrder += 1;
 
   }
 
