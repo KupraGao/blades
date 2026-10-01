@@ -27,7 +27,7 @@ function supportsCatalogFiltersSlot(pathname: string | null): boolean {
  * Shared storefront toolbar (Search + Help).
  * Hosted from (shop) layout so it survives Home ↔ Brands client navigations.
  *
- * `/` and `/brands/[slug]`: reserves left Filters column (272px) for CategoriesSidebar.
+ * `/` and `/brands/[slug]`: reserves left Filters column (248px) for CategoriesSidebar.
  * `/brands`: column collapses; Search expands. No Filters control.
  */
 export function HeaderExtras() {
@@ -45,31 +45,31 @@ export function HeaderExtras() {
       <div className="container-page">
         <div className="flex items-center py-1">
           {/*
-            Filters geometry (272px) + its own right spacing (24px = gap-6).
-            Slot max-width animates 296 → 0 so no leftover parent gap before Search.
+            Filters geometry (248px) + its own right spacing (24px = gap-6).
+            Slot max-width animates 272 → 0 so no leftover parent gap before Search.
             Visibility is route capability — not sidebar open/closed.
           */}
           <div
             className={`overflow-hidden transition-[max-width,opacity,transform] duration-300 ease-out motion-reduce:transition-none ${
               showFiltersSlot
-                ? "max-w-[296px] translate-x-0 opacity-100"
+                ? "max-w-[272px] translate-x-0 opacity-100"
                 : "pointer-events-none max-w-0 -translate-x-3 opacity-0"
             }`}
             aria-hidden
           >
-            <div className="flex h-12 w-[296px] shrink-0">
-              <div className="w-[272px] shrink-0" />
+            <div className="flex h-10 w-[272px] shrink-0">
+              <div className="w-[248px] shrink-0" />
               <div className="w-6 shrink-0" />
             </div>
           </div>
 
           <div className="flex min-w-0 flex-1 items-center gap-6">
             {/* SEARCH */}
-            <div className="flex h-12 min-w-0 flex-1 items-center overflow-hidden rounded-xl border border-white/10 bg-white shadow-sm">
+            <div className="flex h-10 min-w-0 flex-1 items-center overflow-hidden rounded-xl border border-white/10 bg-white shadow-sm">
               <input
                 type="text"
                 placeholder={t.search}
-                className="h-full min-w-0 flex-1 bg-white px-4 text-sm text-black outline-none"
+                className="h-full min-w-0 flex-1 bg-white px-4 text-sm leading-none text-black outline-none"
               />
 
               <button

@@ -201,12 +201,12 @@ export function CategoriesSidebar({
   return (
     <aside className="pointer-events-none fixed left-0 top-[80px] z-[41] hidden w-full lg:block">
       <div className="container-page pointer-events-auto relative">
-        <div className="absolute left-7 w-64">
+        <div className="absolute left-7 top-[4px] w-[248px]">
           <div
-            className={`overflow-hidden rounded-xl border border-zinc-800/80 bg-white shadow-xl shadow-black/20 ${
+            className={`overflow-hidden rounded-xl ${
               collapsed
-                ? ""
-                : "flex max-h-[calc(100dvh-5rem-0.5rem)] flex-col"
+                ? "border border-white/10 shadow-sm"
+                : "flex max-h-[calc(100dvh-5rem-0.5rem)] flex-col border border-zinc-800/80 bg-white shadow-xl shadow-black/20"
             }`}
           >
             <button
@@ -214,7 +214,7 @@ export function CategoriesSidebar({
               aria-expanded={!collapsed}
               aria-controls={panelId}
               onClick={() => onCollapsedChange(!collapsed)}
-              className="flex w-full shrink-0 items-center justify-between bg-black px-4 py-4 text-white"
+              className="flex h-10 w-full shrink-0 items-center justify-between bg-black px-3 text-white"
             >
               <span className="flex items-center gap-2 text-sm font-bold">
                 <Menu size={18} />

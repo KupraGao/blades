@@ -37,21 +37,20 @@ export function Footer() {
   const mapsUrl = getStoreMapsDirectionsUrl();
 
   return (
-    <footer className="border-t border-zinc-200 bg-zinc-50 dark:border-white/10 dark:bg-black/50">
+    <footer className="border-t border-zinc-200 bg-zinc-200 dark:border-white/10 dark:bg-black/50">
       <div className="container-page grid gap-8 py-12 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr] lg:gap-8">
         <div className="text-left">
           <a
             href="/"
             aria-label={t.logoHomeAria}
-            className="inline-flex w-[120px] rounded-lg bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold/50"
+            className="inline-flex items-center justify-center rounded-lg border border-black bg-white px-2.5 py-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold/50 dark:border-transparent"
           >
             <Image
               src="/images/fonis-gareshe-1.png"
               alt={t.logoAlt}
-              width={100}
-              height={40}
-              className="!h-10 !w-auto object-contain"
-              style={{ width: "auto", height: "auto" }}
+              width={240}
+              height={81}
+              className="h-auto w-[150px] object-contain sm:w-[180px] lg:w-[230px] xl:w-[240px]"
             />
           </a>
 

@@ -48,6 +48,16 @@ export function Header({
   const { wishlistCount } = useWishlist();
   const brandsActive =
     pathname === "/brands" || Boolean(pathname?.startsWith("/brands/"));
+  const homeActive = pathname === "/";
+  const productsActive =
+    pathname === "/products" || Boolean(pathname?.startsWith("/products/"));
+  const contactActive = pathname === "/contact";
+
+  function desktopNavClassName(isActive: boolean) {
+    return `primary-nav-font transition hover:text-brand-gold dark:hover:text-brand-gold ${
+      isActive ? "text-brand-gold" : "text-zinc-700 dark:text-zinc-300"
+    }`;
+  }
 
   // =====================================
   // CART DRAWER STATE
@@ -137,15 +147,14 @@ export function Header({
           <a
             href="/"
             aria-label={t.logoHomeAria}
-            className="flex shrink-0 items-center gap-3 rounded-xl bg-white px-2 py-2 sm:px-3"
+            className="flex shrink-0 items-center justify-center rounded-lg border border-black bg-white px-2 py-1 dark:border-transparent"
           >
             <Image
               src="/images/fonis-gareshe-1.png"
               alt={t.logoAlt}
-              width={120}
-              height={40}
-              className="!h-9 !w-auto max-w-[7.5rem] object-contain sm:!h-10"
-              style={{ width: "auto", height: "auto" }}
+              width={220}
+              height={74}
+              className="h-auto w-[145px] object-contain sm:w-[175px] lg:w-[220px]"
             />
           </a>
 
@@ -153,26 +162,16 @@ export function Header({
           {/* DESKTOP NAV */}
           {/* ===================================== */}
           <nav className="hidden items-center gap-8 lg:flex">
-            <a href="/" className="primary-nav-font text-zinc-700 transition hover:text-brand-gold dark:text-zinc-300">{t.home}</a>
-            <a href="/products" className="primary-nav-font text-zinc-700 transition hover:text-brand-gold dark:text-zinc-300">{t.products}</a>
-            <a
-              href="/brands"
-              className={`primary-nav-font transition hover:text-brand-gold dark:hover:text-brand-gold ${
-                brandsActive
-                  ? "text-brand-gold"
-                  : "text-zinc-700 dark:text-zinc-300"
-              }`}
-            >
+            <a href="/" className={desktopNavClassName(homeActive)}>
+              {t.home}
+            </a>
+            <a href="/products" className={desktopNavClassName(productsActive)}>
+              {t.products}
+            </a>
+            <a href="/brands" className={desktopNavClassName(brandsActive)}>
               {t.brands}
             </a>
-            <a
-              href="/contact"
-              className={`primary-nav-font transition hover:text-brand-gold dark:hover:text-brand-gold ${
-                pathname === "/contact"
-                  ? "text-brand-gold"
-                  : "text-zinc-700 dark:text-zinc-300"
-              }`}
-            >
+            <a href="/contact" className={desktopNavClassName(contactActive)}>
               {t.contact}
             </a>
           </nav>

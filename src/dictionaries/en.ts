@@ -28,6 +28,13 @@ export const en = {
   contactFormPhone: "Phone",
   contactFormMessage: "Message",
   contactFormSubmit: "Send Message",
+  contactFormSending: "Sending...",
+  contactFormSuccess: "Your message was sent. We will get back to you soon.",
+  contactFormSendFailed: "We could not send your message. Please try again.",
+  contactFormNameRequired: "Please enter your full name.",
+  contactFormEmailInvalid: "Please enter a valid email address.",
+  contactFormMessageRequired: "Please enter a message.",
+  contactFormTooLong: "One of the fields is too long. Shorten it and try again.",
 
   addToCart: "Add",
   addToCartOutOfStock: "Out of Stock",

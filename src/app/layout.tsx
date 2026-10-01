@@ -30,7 +30,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="ka" suppressHydrationWarning data-scroll-behavior="smooth">
       <body
         suppressHydrationWarning
-        className={`${inter.variable} ${barlowCondensed.variable} ${kaBodyFont.variable} ${kaHeadingFont.variable} bg-white text-zinc-900 dark:bg-black dark:text-zinc-100 antialiased transition-colors duration-300`}
+        className={`${inter.variable} ${barlowCondensed.variable} ${kaBodyFont.variable} ${kaHeadingFont.variable} bg-[#eeeeee] text-zinc-900 dark:bg-black dark:text-zinc-100 antialiased transition-colors duration-300`}
       >
         <ThemeProvider>
           <LanguageProvider>

@@ -71,7 +71,7 @@ export function ProductSectionClient({
   }
 
   return (
-    <section id="products" className="bg-black/25 py-12">
+    <section id="products" className="py-12 dark:bg-black/25">
       <div className="container-page">
         <CategoriesSidebar
           categories={categories}

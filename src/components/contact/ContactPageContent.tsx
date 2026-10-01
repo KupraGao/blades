@@ -1,7 +1,9 @@
 "use client";
 
+import { useRef, useState, type FormEvent } from "react";
 import { ExternalLink, Mail, MapPin, Phone } from "lucide-react";
 
+import { submitContactMessage } from "@/actions/contact/submit-contact-message";
 import { useLanguage } from "@/context/LanguageContext";
 import {
   STORE_CONTACT,
@@ -25,6 +27,78 @@ export function ContactPageContent() {
   const mapsUrl = getStoreMapsDirectionsUrl();
   const mapsEmbedUrl = getStoreMapsEmbedUrl();
   const addressSummary = addressLines.join(" • ");
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [message, setMessage] = useState("");
+  const [company, setCompany] = useState("");
+  const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
+  const [feedback, setFeedback] = useState<string | null>(null);
+  const [isSending, setIsSending] = useState(false);
+  const sendLock = useRef(false);
+
+  function messageForErrorKey(
+    errorKey:
+      | "contactFormNameRequired"
+      | "contactFormEmailInvalid"
+      | "contactFormMessageRequired"
+      | "contactFormTooLong"
+      | "contactFormSendFailed",
+  ) {
+    switch (errorKey) {
+      case "contactFormNameRequired":
+        return t.contactFormNameRequired;
+      case "contactFormEmailInvalid":
+        return t.contactFormEmailInvalid;
+      case "contactFormMessageRequired":
+        return t.contactFormMessageRequired;
+      case "contactFormTooLong":
+        return t.contactFormTooLong;
+      default:
+        return t.contactFormSendFailed;
+    }
+  }
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    if (sendLock.current || isSending) return;
+
+    sendLock.current = true;
+    setIsSending(true);
+    setStatus("idle");
+    setFeedback(null);
+
+    try {
+      const result = await submitContactMessage({
+        fullName,
+        email,
+        phone,
+        message,
+        company,
+      });
+
+      if (result.success) {
+        setFullName("");
+        setEmail("");
+        setPhone("");
+        setMessage("");
+        setCompany("");
+        setStatus("success");
+        setFeedback(t.contactFormSuccess);
+        return;
+      }
+
+      setStatus("error");
+      setFeedback(messageForErrorKey(result.errorKey));
+    } catch {
+      setStatus("error");
+      setFeedback(t.contactFormSendFailed);
+    } finally {
+      sendLock.current = false;
+      setIsSending(false);
+    }
+  }
 
   return (
     <div className="space-y-8 sm:space-y-10">
@@ -137,12 +211,26 @@ export function ContactPageContent() {
           </h2>
 
           <form
-            className="mt-6 flex flex-1 flex-col gap-3.5"
-            onSubmit={(event) => {
-              event.preventDefault();
-            }}
+            className="relative mt-6 flex flex-1 flex-col gap-3.5"
+            onSubmit={handleSubmit}
             noValidate
           >
+            <div
+              className="absolute -left-[10000px] h-0 w-0 overflow-hidden"
+              aria-hidden="true"
+            >
+              <label htmlFor="contact-company">Company</label>
+              <input
+                id="contact-company"
+                name="company"
+                type="text"
+                tabIndex={-1}
+                autoComplete="off"
+                value={company}
+                onChange={(event) => setCompany(event.target.value)}
+              />
+            </div>
+
             <div>
               <label htmlFor="contact-full-name" className="sr-only">
                 {t.contactFormFullName}
@@ -154,6 +242,10 @@ export function ContactPageContent() {
                 autoComplete="name"
                 placeholder={t.contactFormFullName}
                 aria-label={t.contactFormFullName}
+                value={fullName}
+                onChange={(event) => setFullName(event.target.value)}
+                disabled={isSending}
+                maxLength={120}
                 className={inputClassName}
               />
             </div>
@@ -169,6 +261,10 @@ export function ContactPageContent() {
                 autoComplete="email"
                 placeholder={t.contactFormEmail}
                 aria-label={t.contactFormEmail}
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                disabled={isSending}
+                maxLength={254}
                 className={inputClassName}
               />
             </div>
@@ -184,6 +280,10 @@ export function ContactPageContent() {
                 autoComplete="tel"
                 placeholder={t.contactFormPhone}
                 aria-label={t.contactFormPhone}
+                value={phone}
+                onChange={(event) => setPhone(event.target.value)}
+                disabled={isSending}
+                maxLength={40}
                 className={inputClassName}
               />
             </div>
@@ -198,15 +298,35 @@ export function ContactPageContent() {
                 rows={5}
                 placeholder={t.contactFormMessage}
                 aria-label={t.contactFormMessage}
+                value={message}
+                onChange={(event) => setMessage(event.target.value)}
+                disabled={isSending}
+                maxLength={4000}
                 className={`${inputClassName} min-h-[8.5rem] flex-1 resize-y`}
               />
             </div>
 
+            {feedback ? (
+              <p
+                role="status"
+                aria-live="polite"
+                className={
+                  status === "success"
+                    ? "text-sm font-medium text-emerald-700 dark:text-emerald-400"
+                    : "text-sm font-medium text-red-600 dark:text-red-400"
+                }
+              >
+                {feedback}
+              </p>
+            ) : null}
+
             <button
               type="submit"
-              className="mt-1 inline-flex w-full items-center justify-center rounded-xl bg-zinc-900 px-4 py-3 text-sm font-bold text-white transition hover:bg-brand-gold hover:text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold/50 focus-visible:ring-offset-2 dark:bg-white dark:text-black dark:hover:bg-brand-gold dark:focus-visible:ring-offset-zinc-900 sm:w-auto sm:min-w-[12rem]"
+              disabled={isSending}
+              aria-busy={isSending}
+              className="mt-1 inline-flex w-full items-center justify-center rounded-xl bg-zinc-900 px-4 py-3 text-sm font-bold text-white transition hover:bg-brand-gold hover:text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold/50 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-white dark:text-black dark:hover:bg-brand-gold dark:focus-visible:ring-offset-zinc-900 sm:w-auto sm:min-w-[12rem]"
             >
-              {t.contactFormSubmit}
+              {isSending ? t.contactFormSending : t.contactFormSubmit}
             </button>
           </form>
         </section>
