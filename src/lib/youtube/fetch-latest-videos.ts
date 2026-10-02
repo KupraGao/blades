@@ -96,25 +96,17 @@ export async function fetchLatestYoutubeVideos(): Promise<LatestYoutubeVideo[]> 
     });
 
     if (!response.ok) {
-      console.error("[youtube-feed] request failed", {
-        status: response.status,
-        statusText: response.statusText,
-      });
       return [];
     }
 
     const xml = await response.text();
 
     if (!xml.trim()) {
-      console.error("[youtube-feed] empty response body");
       return [];
     }
 
     return parseLatestVideos(xml);
-  } catch (error) {
-    const name = error instanceof Error ? error.name : "UnknownError";
-    const message = error instanceof Error ? error.message : String(error);
-    console.error("[youtube-feed] request error", { name, message });
+  } catch {
     return [];
   } finally {
     clearTimeout(timeout);
