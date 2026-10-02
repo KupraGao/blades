@@ -46,10 +46,10 @@ export function Footer() {
             className="inline-flex items-center justify-center rounded-lg border border-black bg-white px-2.5 py-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold/50 dark:border-transparent"
           >
             <Image
-              src="/images/fonis-gareshe-1.png"
+              src="/images/footer-logo.png"
               alt={t.logoAlt}
-              width={240}
-              height={81}
+              width={320}
+              height={75}
               className="h-auto w-[150px] object-contain sm:w-[180px] lg:w-[230px] xl:w-[240px]"
             />
           </a>

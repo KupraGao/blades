@@ -152,8 +152,8 @@ export function Header({
             <Image
               src="/images/fonis-gareshe-1.png"
               alt={t.logoAlt}
-              width={220}
-              height={74}
+              width={320}
+              height={75}
               className="h-auto w-[145px] object-contain sm:w-[175px] lg:w-[220px]"
             />
           </a>
