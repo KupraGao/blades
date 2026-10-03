@@ -22,6 +22,24 @@
 
 ---
 
+## ✅ COMPLETED — ProductCard 4:3 + PDP gallery layout
+
+- ProductCard MAIN: `aspect-[4/3]` + `object-cover object-center` (source
+  photos ~4:3; 1:1 cover cropped sides)
+- Lighter MAIN gradient: `from-black/50 via-black/10 to-transparent`
+- Hover thumbs on content overlay (slide-down); title/price stay in DOM
+- Per-image zoom: new `activeImage` from `scale-100` to `scale-[1.07]`
+- PDP `< lg`: thumbs below MAIN, horizontal `overflow-x-auto`; `onClick`
+  + `onMouseEnter`; active `border-brand-gold`
+- PDP `lg+`: `4rem` vertical rail left of MAIN (`gap-2`); not overlay;
+  `overflow-x-hidden`; extra thumbs `overflow-y-auto`
+- PDP container: `max-w-[1352px]`; columns still `1.05fr / 0.95fr`
+- Unchanged: `sortProductImages` / `sort_order` / `is_main`; storage;
+  PDP mouse zoom (no zoom on touch); Next/Image `sizes` / LCP / preload
+  warnings still **unresolved**
+
+---
+
 ## ✅ COMPLETED — Contact form + storefront visual polish
 
 - Public `/contact` form: `ContactPageContent` → `submitContactMessage`

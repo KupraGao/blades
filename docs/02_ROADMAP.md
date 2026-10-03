@@ -69,6 +69,8 @@
 - Storefront light-theme chrome polish (body `#eeeeee`; Footer
   `bg-zinc-200`; Header/Footer responsive logo badges; Filters `248×40`;
   Search `h-10`; HeaderExtras slot `272px`; desktop active nav)
+- ProductCard 4:3 image + content-area hover thumbs; PDP gallery
+  responsive thumbs (horizontal `< lg`, left rail `lg+`; mouse zoom kept)
 
 See `docs/06_CHANGELOG.md` for version history (S6 Customer Ownership complete;
 S7A–S7B payment-method path + S7B-1 delivery minimum — see latest changelog;
@@ -306,6 +308,13 @@ and are **not** wired to Checkout (S7A–S7B + S7C-4/S7C-5 LIVE
   desktop gold active nav (Home / Products / Brands / Contact). Public
   `/contact` + Resend (`submitContactMessage`); no DB write; **not**
   Order Confirmation Email.
+
+✅ ProductCard + PDP gallery image UX — ProductCard MAIN `aspect-[4/3]`
+  `object-cover`; hover thumbs on content overlay (slide-down); per-image
+  zoom `scale-100` → `scale-[1.07]`. PDP `< lg` horizontal thumbs below
+  MAIN; `lg+` `4rem` rail left of MAIN (not overlay); PDP grid
+  `max-w-[1352px]`. `sort_order` / `is_main` / mouse-position zoom /
+  Next/Image warnings unchanged.
 
 ---
 

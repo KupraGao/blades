@@ -729,10 +729,34 @@ database are unchanged.
 
 ### ProductCard
 
-Shared storefront tile: denser internal spacing, square image area,
-restrained responsive title size. Existing title clamp and price /
-Add-to-Cart alignment are preserved. Add-to-Cart and stock UX are
-unchanged.
+Shared storefront tile (`src/components/product/ProductCard.tsx`): denser
+internal spacing (`p-3` content), **`aspect-[4/3]`** MAIN image (not
+square). Storefront source photos are practically 4:3 (measured example
+~314×235). MAIN Image is Next/Image `fill` + `object-cover object-center`.
+Gradient: `from-black/50 via-black/10 to-transparent`. Hover gallery
+thumbs (up to 3, `sortProductImages`) overlay the **content** area with a
+slide-down transition; they do not sit on the MAIN photo. Title / price /
+Add-to-Cart remain in the DOM under the overlay. Each new `activeImage`
+zooms from `scale-100` to **`scale-[1.07]`**. Title clamp, price /
+Add-to-Cart alignment, Add-to-Cart, and stock UX are otherwise unchanged.
+
+### ProductGallery (PDP)
+
+`src/components/product/ProductGallery.tsx` on `/products/[id]`. Image
+order is still `sortProductImages` (`sort_order`, `is_main` fallback).
+MAIN stays `aspect-[4/3]` `object-cover` with the existing mouse-position
+zoom (`PRODUCT_GALLERY_ZOOM_SCALE`; `pointer: fine` + `hover: hover`; no
+zoom on touch / reduced-motion).
+
+| Viewport | Thumbnails |
+|----------|------------|
+| `< lg` | Below MAIN; horizontal row; `overflow-x-auto`; `onClick` + `onMouseEnter`; active `border-brand-gold` |
+| `lg+` | Left of MAIN, **not** overlay: `lg:grid-cols-[4rem_minmax(0,1fr)]` `lg:gap-2`; `h-16 w-16`; `overflow-x-hidden`; extra thumbs `overflow-y-auto` within MAIN height |
+
+PDP inner grid: `max-w-[1352px]` with unchanged
+`lg:grid-cols-[1.05fr_0.95fr]` `lg:gap-14`
+(`src/app/(shop)/products/[id]/page.tsx`). Extra max-width is for the
+desktop rail column so MAIN is not taken only from the old 1280px cap.
 
 ### Radius hierarchy
 

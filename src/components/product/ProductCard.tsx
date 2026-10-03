@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Heart } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { useWishlist } from "@/context/WishlistContext";
@@ -57,8 +57,36 @@ export function ProductCard({ product }: ProductCardProps) {
   // ACTIVE IMAGE
   // =========================================
   const [activeImage, setActiveImage] = useState(defaultImage?.image_url || "/placeholder.png");
+  const [isCardHovered, setIsCardHovered] = useState(false);
+  const [imageZoomed, setImageZoomed] = useState(false);
   const onSale = isProductOnSale(product);
   const discountPercent = getProductDiscountPercent(product);
+
+  useEffect(() => {
+    if (!isCardHovered) {
+      setImageZoomed(false);
+      return;
+    }
+
+    setImageZoomed(false);
+    let innerId = 0;
+    const outerId = requestAnimationFrame(() => {
+      innerId = requestAnimationFrame(() => {
+        setImageZoomed(true);
+      });
+    });
+
+    return () => {
+      cancelAnimationFrame(outerId);
+      cancelAnimationFrame(innerId);
+    };
+  }, [activeImage, isCardHovered]);
+
+  const showImage = (url: string) => {
+    if (url === activeImage) return;
+    setActiveImage(url);
+    setImageZoomed(false);
+  };
 
   // =========================================
   // PRODUCT CATEGORIES
@@ -67,49 +95,35 @@ export function ProductCard({ product }: ProductCardProps) {
 
   return (
     <Link href={`/products/${product.id}`}>
-      <article className="group overflow-hidden rounded-xl border border-zinc-200 bg-white transition hover:border-brand-gold/50 dark:border-white/10 dark:bg-white/[0.04] dark:hover:bg-white/[0.06]">
+      <article
+        className="group overflow-hidden rounded-xl border border-zinc-200 bg-white transition hover:border-brand-gold/50 dark:border-white/10 dark:bg-white/[0.04] dark:hover:bg-white/[0.06]"
+        onMouseEnter={() => setIsCardHovered(true)}
+        onMouseLeave={() => setIsCardHovered(false)}
+      >
 
         {/* ========================================= */}
         {/* IMAGE */}
         {/* ========================================= */}
-        <div className="relative aspect-square overflow-hidden bg-zinc-100 dark:bg-zinc-900">
+        <div className="relative aspect-[4/3] overflow-hidden bg-zinc-100 dark:bg-zinc-900">
           <Image
+            key={activeImage}
             src={activeImage}
             alt={product.title}
             fill
             sizes={PRODUCT_CARD_IMAGE_SIZES}
-            className="object-cover object-center transition duration-1000 ease-out group-hover:scale-110"
+            className={`object-cover object-center transition duration-1000 ease-out ${
+              imageZoomed ? "scale-[1.07]" : "scale-100"
+            }`}
           />
 
           {/* OVERLAY */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/10 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
 
           {onSale && discountPercent !== null && discountPercent > 0 ? (
             <span className="absolute left-2.5 top-2.5 rounded-full bg-brand-orange px-2.5 py-1 text-xs font-bold text-white sm:left-3 sm:top-3 lg:left-4 lg:top-4">
               -{discountPercent}%
             </span>
           ) : null}
-
-          {/* ========================================= */}
-          {/* GALLERY PREVIEW */}
-          {/* ========================================= */}
-          <div className="absolute bottom-2.5 left-2.5 flex gap-1.5 opacity-0 transition duration-300 group-hover:opacity-100 sm:bottom-3 sm:left-3 sm:gap-2 lg:bottom-4 lg:left-4">
-            {orderedImages.slice(0, 3).map((img) => (
-              <div
-                key={img.id}
-                onMouseEnter={() => setActiveImage(img.image_url)}
-                className="relative h-8 w-8 cursor-pointer overflow-hidden rounded-md border border-zinc-200 bg-white shadow-md transition hover:scale-110 hover:border-brand-gold sm:h-10 sm:w-10 lg:h-12 lg:w-12 lg:rounded-lg"
-              >
-                <Image
-                  src={img.image_url}
-                  alt=""
-                  fill
-                  sizes={PRODUCT_CARD_THUMB_SIZES}
-                  className="object-cover"
-                />
-              </div>
-            ))}
-          </div>
 
           {/* ========================================= */}
           {/* WISHLIST */}
@@ -135,7 +149,7 @@ export function ProductCard({ product }: ProductCardProps) {
         {/* ========================================= */}
         {/* CONTENT */}
         {/* ========================================= */}
-        <div className="p-3 sm:p-3.5 lg:p-4">
+        <div className="relative overflow-hidden p-3">
           <h3 className="display-font line-clamp-1 text-sm font-bold leading-snug text-zinc-900 sm:text-base dark:text-white lg:text-lg">{product.title}</h3>
 
           {/* ========================================= */}
@@ -147,6 +161,27 @@ export function ProductCard({ product }: ProductCardProps) {
             </div>
 
             <ProductCardAddToCartButton product={product} />
+          </div>
+
+          {/* ========================================= */}
+          {/* GALLERY PREVIEW — content overlay, not on image */}
+          {/* ========================================= */}
+          <div className="pointer-events-none absolute inset-0 flex -translate-y-full items-center justify-center gap-1.5 bg-white/60 opacity-0 backdrop-blur-[2px] transition duration-500 ease-out group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100 sm:gap-2 dark:bg-zinc-950/60">
+            {orderedImages.slice(0, 3).map((img) => (
+              <div
+                key={img.id}
+                onMouseEnter={() => showImage(img.image_url)}
+                className="relative h-8 w-8 cursor-pointer overflow-hidden rounded-md border border-zinc-200 bg-white shadow-md transition hover:scale-110 hover:border-brand-gold sm:h-10 sm:w-10 lg:h-12 lg:w-12 lg:rounded-lg"
+              >
+                <Image
+                  src={img.image_url}
+                  alt=""
+                  fill
+                  sizes={PRODUCT_CARD_THUMB_SIZES}
+                  className="object-cover"
+                />
+              </div>
+            ))}
           </div>
         </div>
       </article>

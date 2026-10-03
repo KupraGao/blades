@@ -92,8 +92,8 @@ export default function ProductGallery({
   }
 
   return (
-    <div>
-      <div className="relative aspect-[4/3] overflow-hidden rounded-xl bg-zinc-100 dark:bg-zinc-900">
+    <div className="lg:grid lg:grid-cols-[4rem_minmax(0,1fr)] lg:items-start lg:gap-2">
+      <div className="relative aspect-[4/3] overflow-hidden rounded-xl bg-zinc-100 dark:bg-zinc-900 lg:col-start-2 lg:row-start-1">
         <div
           ref={zoomLayerRef}
           className="absolute inset-0"
@@ -118,25 +118,30 @@ export default function ProductGallery({
           onPointerMove={handlePointerMove}
           onPointerLeave={handlePointerLeave}
         />
+      </div>
 
-        <div className="absolute left-4 top-4 z-10 flex flex-col gap-2">
-          {orderedImages.map((image) => (
-            <button
-              key={image.id}
-              type="button"
-              aria-label={t.productPhoto}
-              onMouseEnter={() => setActiveImage(image.image_url)}
-              className="relative h-16 w-16 overflow-hidden rounded-lg border border-white/40 bg-black/20 backdrop-blur transition hover:scale-105 hover:border-white"
-            >
-              <Image
-                src={image.image_url}
-                alt={title}
-                fill
-                className="object-cover"
-              />
-            </button>
-          ))}
-        </div>
+      <div className="mt-3 flex max-w-full gap-2 overflow-x-auto lg:col-start-1 lg:row-start-1 lg:mt-0 lg:h-0 lg:min-h-full lg:flex-col lg:overflow-x-hidden lg:overflow-y-auto">
+        {orderedImages.map((image) => (
+          <button
+            key={image.id}
+            type="button"
+            aria-label={t.productPhoto}
+            onMouseEnter={() => setActiveImage(image.image_url)}
+            onClick={() => setActiveImage(image.image_url)}
+            className={`relative h-16 w-16 shrink-0 overflow-hidden rounded-lg border bg-black/20 backdrop-blur transition hover:scale-105 ${
+              activeImage === image.image_url
+                ? "border-brand-gold"
+                : "border-white/40 hover:border-white"
+            }`}
+          >
+            <Image
+              src={image.image_url}
+              alt={title}
+              fill
+              className="object-cover"
+            />
+          </button>
+        ))}
       </div>
     </div>
   );

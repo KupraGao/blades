@@ -14,6 +14,47 @@
 
 ---
 
+## v1.42.0 — ProductCard 4:3 + PDP gallery layout
+
+Storefront ProductCard and PDP `ProductGallery` image UX. Catalog queries,
+`sort_order` / `is_main`, Supabase storage, Checkout, and Payments are
+unchanged. Next/Image `sizes` / LCP / preload warnings are **not**
+resolved in this version.
+
+### ProductCard (`src/components/product/ProductCard.tsx`)
+
+- MAIN wrapper: `aspect-[4/3]` (was `aspect-square`). Storefront source
+  photos are practically 4:3 (measured example ~314×235, ratio ~1.336);
+  1:1 + `object-cover` cropped the sides
+- MAIN Image still `object-cover object-center` + Next/Image `fill`
+- Gradient: `from-black/50 via-black/10 to-transparent`
+- Hover thumbs moved off the MAIN image onto a content-area overlay
+  (slide-down `-translate-y-full` → `translate-y-0`, `duration-500
+  ease-out`; `bg-white/60` / `dark:bg-zinc-950/60`)
+- Title / price / Add-to-Cart stay in the DOM (not `hidden` / `opacity-0`)
+- Thumb hover still sets `activeImage` (`sortProductImages` order)
+- Per-image zoom: each new `activeImage` starts at `scale-100`, then
+  `scale-[1.07]` (107%; was 110%)
+
+### PDP gallery (`src/components/product/ProductGallery.tsx`)
+
+- `< lg`: MAIN image free of overlay; thumbs below in a horizontal
+  `overflow-x-auto` row; `onClick` + existing `onMouseEnter`; active
+  thumb `border-brand-gold`
+- `lg+`: vertical `4rem` rail left of MAIN (`lg:grid-cols-[4rem_minmax(0,1fr)]`
+  `lg:gap-2`); not an image overlay; `h-16 w-16` thumbs; many images
+  `overflow-y-auto` inside MAIN height; `overflow-x-hidden` (no
+  horizontal scrollbar)
+- MAIN still `aspect-[4/3]` `object-cover`; desktop mouse-position zoom
+  unchanged (`pointer: fine` + `hover: hover`; no zoom on touch)
+
+### PDP container (`src/app/(shop)/products/[id]/page.tsx`)
+
+- Inner grid: `max-w-[1352px]` (was `max-w-7xl` / 1280px)
+- Unchanged: `lg:grid-cols-[1.05fr_0.95fr]` `lg:gap-14`
+
+---
+
 ## v1.41.0 — Contact form + storefront visual polish
 
 Public Contact form and storefront chrome shipped in `7d61c2c`. Catalog

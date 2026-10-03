@@ -32,7 +32,7 @@ export default async function ProductDetailsPage({
     <>
       <StorefrontHeader />
       <main className="min-h-screen bg-zinc-50/50 px-4 py-8 dark:bg-black sm:px-6 md:py-12">
-      <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
+      <div className="mx-auto grid max-w-[1352px] gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
 
         {/* ===================================== */}
         {/* LEFT SIDE */}
