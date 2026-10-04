@@ -96,17 +96,32 @@ export async function fetchLatestYoutubeVideos(): Promise<LatestYoutubeVideo[]> 
     });
 
     if (!response.ok) {
+      console.error("[YouTube RSS] HTTP error", {
+        status: response.status,
+        statusText: response.statusText,
+      });
+
       return [];
     }
 
     const xml = await response.text();
 
     if (!xml.trim()) {
+      console.error("[YouTube RSS] Empty XML response");
       return [];
     }
 
-    return parseLatestVideos(xml);
-  } catch {
+    const videos = parseLatestVideos(xml);
+
+    if (videos.length === 0) {
+      console.error("[YouTube RSS] XML received but no videos were parsed", {
+        xmlLength: xml.length,
+      });
+    }
+
+    return videos;
+  } catch (error) {
+    console.error("[YouTube RSS] Fetch failed", error);
     return [];
   } finally {
     clearTimeout(timeout);
