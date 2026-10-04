@@ -1,3 +1,8 @@
+import {
+  readLatestYoutubeVideosCache,
+  writeLatestYoutubeVideosCache,
+} from "@/lib/youtube/latest-videos-cache";
+
 const YOUTUBE_CHANNEL_ID = "UCV4ORvOeTcfirolaMQ5P86w";
 const YOUTUBE_FEED_URL = `https://www.youtube.com/feeds/videos.xml?channel_id=${YOUTUBE_CHANNEL_ID}`;
 const YOUTUBE_VIDEO_ID_PATTERN = /^[A-Za-z0-9_-]{11}$/;
@@ -101,14 +106,14 @@ export async function fetchLatestYoutubeVideos(): Promise<LatestYoutubeVideo[]> 
         statusText: response.statusText,
       });
 
-      return [];
+      return readLatestYoutubeVideosCache();
     }
 
     const xml = await response.text();
 
     if (!xml.trim()) {
       console.error("[YouTube RSS] Empty XML response");
-      return [];
+      return readLatestYoutubeVideosCache();
     }
 
     const videos = parseLatestVideos(xml);
@@ -117,12 +122,23 @@ export async function fetchLatestYoutubeVideos(): Promise<LatestYoutubeVideo[]> 
       console.error("[YouTube RSS] XML received but no videos were parsed", {
         xmlLength: xml.length,
       });
+
+      return readLatestYoutubeVideosCache();
+    }
+
+    try {
+      await writeLatestYoutubeVideosCache(videos);
+    } catch (error) {
+      console.error(
+        "[YouTube cache] Write failed after successful RSS fetch",
+        error,
+      );
     }
 
     return videos;
   } catch (error) {
     console.error("[YouTube RSS] Fetch failed", error);
-    return [];
+    return readLatestYoutubeVideosCache();
   } finally {
     clearTimeout(timeout);
   }
