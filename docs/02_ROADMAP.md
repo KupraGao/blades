@@ -63,7 +63,8 @@
   language-aware KA/EN body vs display; product-tile + primary-nav
   display pairing)
 - Home Latest YouTube Videos (official Bladesge Atom feed; latest 3;
-  no API key / CMS; thumbnail-first inline player)
+  persistent Supabase snapshot fallback; no API key / CMS;
+  thumbnail-first inline player)
 - Contact form (public `/contact` + `submitContactMessage` + Resend to
   `STORE_CONTACT.email`; not stored in DB; **not** Order Confirmation Email)
 - Storefront light-theme chrome polish (body `#eeeeee`; Footer
@@ -297,9 +298,14 @@ and are **not** wired to Checkout (S7A–S7B + S7C-4/S7C-5 LIVE
   Auth, and Admin business logic are unchanged.
 
 ✅ Home Latest YouTube Videos — official channel Atom feed
-  (`UCV4ORvOeTcfirolaMQ5P86w`); server fetch + 30-minute revalidation;
-  latest 3 videos on Home; no YouTube API key, no DB/Admin. Replaced
-  the starter `PromoBanner` block. Promo Slider #1 CMS is unchanged.
+  (`UCV4ORvOeTcfirolaMQ5P86w`) is the primary source; server fetch +
+  30-minute revalidation + 8000ms timeout; latest 3 videos on Home;
+  no YouTube Data API / API key. Persistent fallback table
+  `public.youtube_latest_videos_cache` (singleton `bladesge`; SQL
+  `docs/sql/create-youtube-latest-videos-cache.sql` **executed**).
+  RSS 404 / timeout / empty parse uses the last successful snapshot.
+  Replaced the starter `PromoBanner` block. Promo Slider #1 CMS is
+  unchanged.
 
 ✅ Storefront light-theme chrome + Contact form — body `#eeeeee`; Footer
   `bg-zinc-200`; Header/Footer white logo badges (Light black border /

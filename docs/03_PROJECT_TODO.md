@@ -61,16 +61,24 @@
 
 - Replaced starter Home `PromoBanner` with `LatestYoutubeVideos`
 - Official channel `@Bladesge` (`UCV4ORvOeTcfirolaMQ5P86w`) via public
-  Atom feed; no YouTube API key; no Supabase / Admin / CMS
-- Server `fetchLatestYoutubeVideos()`; `revalidate: 1800`; latest 3
-  valid entries; feed failure returns `[]` and does not crash Home
+  Atom feed as **primary** source; no YouTube Data API / API key;
+  no Admin CMS
+- Server `fetchLatestYoutubeVideos()`; `revalidate: 1800`; timeout 8000ms;
+  latest 3 valid entries
+- Persistent fallback: `public.youtube_latest_videos_cache` (singleton
+  `bladesge`; SQL history `docs/sql/create-youtube-latest-videos-cache.sql`
+  **executed**). RSS failure (including confirmed HTTP 404) → last
+  successful snapshot; missing cache → `[]`. Write fail does not drop
+  fresh RSS videos
+- Recoverable RSS issues: `console.warn`; cache/DB failures:
+  `console.error`
 - Thumbnail-first: 0 iframes on initial load; click plays inline;
   at most one player mounted
 - Channel CTA still opens YouTube; KA/EN chrome via dictionaries;
   video titles stay as YouTube supplies them
 - Unused starter `promo*` dictionary keys removed; `PromoSlider` /
   Admin Promos unchanged
-- `tsc` + production build passed (local `npm run dev` verified)
+- Production-verified: Home still shows 3 videos while RSS returns 404
 
 ---
 

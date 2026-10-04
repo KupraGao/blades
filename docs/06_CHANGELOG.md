@@ -14,6 +14,43 @@
 
 ---
 
+## v1.43.0 — YouTube RSS persistent fallback
+
+Home Latest YouTube Videos keep showing the last successful 1–3 videos
+when the public Atom feed degrades. UI, channel ID, timeout (8000ms),
+and `revalidate` (1800) are unchanged. No YouTube Data API / API key.
+
+### Diagnosis
+
+- Feed `https://www.youtube.com/feeds/videos.xml?channel_id=UCV4ORvOeTcfirolaMQ5P86w`
+  was observed returning **HTTP 404** (`YouTube RSS Feeds server`)
+- Fetcher used to return `[]` on HTTP/empty/parse/timeout/network failure,
+  so the Home video grid disappeared even though section chrome remained
+
+### Persistent snapshot
+
+- Live table `public.youtube_latest_videos_cache` (manual SQL Editor;
+  history `docs/sql/create-youtube-latest-videos-cache.sql`)
+- Singleton `id = bladesge`; `videos` jsonb (1–3 items); RLS on;
+  `anon` / `authenticated` **REVOKE ALL**
+- Server-only `createAdminClient()` via
+  `src/lib/youtube/latest-videos-cache.ts`
+- RSS **success** → parse → upsert snapshot → return fresh videos
+  (write failure: `console.error`, still return fresh)
+- RSS **failure** → read snapshot → cached videos or `[]`
+- Snapshot rows are DB state, not hardcoded source
+
+### Logging
+
+- Recoverable RSS degradation: `console.warn` (avoids Next.js dev
+  Console Error overlay)
+- Cache/persistence failures remain `console.error`
+
+Verified on production (`blades-psi.vercel.app`) with RSS 404 and
+cached videos still rendering.
+
+---
+
 ## v1.42.0 — ProductCard 4:3 + PDP gallery layout
 
 Storefront ProductCard and PDP `ProductGallery` image UX. Catalog queries,

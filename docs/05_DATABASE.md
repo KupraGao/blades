@@ -31,6 +31,7 @@
 - order_items
 - admin_users
 - profiles
+- youtube_latest_videos_cache
 
 ---
 
@@ -732,6 +733,42 @@ via `createAdminClient()`.
 
 No `product_id`, scheduling, analytics, or CTA-label columns.
 
+### YouTube latest-videos cache (`public.youtube_latest_videos_cache`) — **live / executed**
+
+Applied manually in the Supabase SQL Editor. History:
+`docs/sql/create-youtube-latest-videos-cache.sql`. The app does **not**
+auto-run SQL. The live table already exists — do not re-execute this
+DDL against production unless documenting a new environment.
+
+**Purpose:** resilient storefront snapshot of the **last successful**
+Home YouTube Atom/RSS parse (1–3 videos). RSS remains the primary
+source. This is **not** CMS content, **not** customer data, and **not**
+order data.
+
+| Column | Type | Notes |
+|--------|------|--------|
+| `id` | text PK | Singleton. Application uses `bladesge` |
+| `videos` | jsonb NOT NULL | Array of `{ videoId, title, published, url, thumbnail }` |
+| `fetched_at` | timestamptz NOT NULL | Time of the successful RSS snapshot |
+| `updated_at` | timestamptz NOT NULL default `now()` | Last upsert |
+
+Constraints (live): `jsonb_typeof(videos) = 'array'`;
+`jsonb_array_length(videos) BETWEEN 1 AND 3`.
+
+Privileges (live):
+
+| Role | Access |
+|------|--------|
+| `anon` / `authenticated` | **REVOKE ALL** (no SELECT / INSERT / UPDATE / DELETE) |
+| Privileged server (`createAdminClient()`) | read + upsert (RLS bypass via service role) |
+
+RLS is **enabled**. No user-facing policies. Browser/client must never
+write this table. Snapshot rows are database state, not source-code
+configuration — do not hardcode video IDs in the app.
+
+Application: `src/lib/youtube/latest-videos-cache.ts` +
+`fetchLatestYoutubeVideos()`.
+
 ### Orders / Checkout (not closed by S5)
 
 Orders / Checkout security review remains a **separate next step**.
@@ -765,3 +802,10 @@ index `products_effective_price_idx`. The app never auto-applies it.
 `public.promo_banners`, active-only public SELECT RLS, `updated_at`
 trigger, and public-read storage bucket `promo-banners`. The app never
 auto-applies it.
+
+`docs/sql/create-youtube-latest-videos-cache.sql` — **executed**
+(history). Creates `public.youtube_latest_videos_cache` (singleton
+`bladesge`, jsonb 1–3 videos, RLS on, `anon`/`authenticated` revoked).
+Persistent fallback for Home YouTube RSS — not CMS. The app never
+auto-applies it. The live table already existed when this history file
+was added.

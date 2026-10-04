@@ -526,19 +526,39 @@ effective-price behavior is unchanged.
 ## Home Latest YouTube Videos
 
 ```text
-YouTube Atom feed
-  (`https://www.youtube.com/feeds/videos.xml?channel_id=UCV4ORvOeTcfirolaMQ5P86w`)
-→ `fetchLatestYoutubeVideos()` (server-only parse; latest 3 valid IDs)
-→ Next.js fetch revalidation 1800s
-→ `page.tsx` → `HomeClient` → `LatestYoutubeVideos`
+Home (`src/app/(shop)/page.tsx`)
+  → fetchLatestYoutubeVideos()   (server-only)
+  → YouTube Atom/RSS
+     https://www.youtube.com/feeds/videos.xml?channel_id=UCV4ORvOeTcfirolaMQ5P86w
+
+SUCCESS (ok + non-empty XML + ≥1 valid video)
+  → parse (latest 3 valid IDs)
+  → writeLatestYoutubeVideosCache(videos)   (try; write fail ≠ RSS fail)
+  → return fresh videos
+
+FAILURE (HTTP non-OK, empty XML, 0 parsed, timeout, network)
+  → readLatestYoutubeVideosCache()
+  → last successful 1–3 videos, or [] if none
+
+  → HomeClient
+  → LatestYoutubeVideos
 ```
 
-No YouTube API key. No Supabase table or Admin CMS. Official channel
-`https://www.youtube.com/@Bladesge`. Feed/timeout/parse failure returns
-`[]`; Home still renders. Thumbnails on first paint (0 iframes); play
-mounts one embed in the same 16:9 card; switching videos unmounts the
-previous player. Channel CTA opens YouTube. Distinct from Promo Slider
-#1 CMS.
+RSS is the **primary** source. `public.youtube_latest_videos_cache`
+(singleton `bladesge`) is a **fallback snapshot**, not CMS and not a
+YouTube Data API store. Official channel `https://www.youtube.com/@Bladesge`.
+No API key. Fetch `revalidate: 1800`. Timeout **8000ms**. Recoverable RSS
+degradation: `console.warn`. Cache/persistence failures: `console.error`;
+successful RSS videos are still returned if snapshot write fails.
+
+Thumbnails on first paint (0 iframes); play mounts one embed in the same
+16:9 card; switching videos unmounts the previous player. Channel CTA
+opens YouTube. UI (`LatestYoutubeVideos`) is unchanged: `videos.length > 0`
+shows the grid, else heading/CTA only. Distinct from Promo Slider #1 CMS.
+
+SQL history: `docs/sql/create-youtube-latest-videos-cache.sql` (**executed**;
+live table already existed). Privileged server client only
+(`createAdminClient()`). `anon` / `authenticated` have no table grants.
 
 ## A. Sale Products slider (independent)
 
@@ -1347,9 +1367,13 @@ Admin role management; Admin Add/Invite Customer.
 - ✅ Promo CMS / real Promo Slider #1 — **live** (SQL
   `docs/sql/create-promo-banners.sql` **executed**; Admin `/admin/promos`;
   storefront `getActivePromoBanners`; `sort_order` assigned server-side)
-- ✅ Home Latest YouTube Videos — Atom feed → server helper (30 min
-  revalidate) → latest 3 → `LatestYoutubeVideos`; no API key / DB;
-  thumbnail-first, one on-demand iframe; starter `PromoBanner` removed
+- ✅ Home Latest YouTube Videos — Atom feed primary source → server
+  helper (`revalidate` 1800s, timeout 8000ms) → latest 3 →
+  `LatestYoutubeVideos`; persistent fallback
+  `public.youtube_latest_videos_cache` (SQL history
+  `docs/sql/create-youtube-latest-videos-cache.sql` **executed**);
+  no YouTube Data API / API key; thumbnail-first, one on-demand iframe;
+  starter `PromoBanner` removed
 - ✅ Catalog min/max (and Admin price sort) use live generated
   `effective_price` — SQL `docs/sql/add-products-effective-price.sql`
   **executed**; Min/Max runtime-verified
