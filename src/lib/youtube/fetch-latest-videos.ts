@@ -101,7 +101,7 @@ export async function fetchLatestYoutubeVideos(): Promise<LatestYoutubeVideo[]> 
     });
 
     if (!response.ok) {
-      console.error("[YouTube RSS] HTTP error", {
+      console.warn("[YouTube RSS] HTTP error", {
         status: response.status,
         statusText: response.statusText,
       });
@@ -112,14 +112,14 @@ export async function fetchLatestYoutubeVideos(): Promise<LatestYoutubeVideo[]> 
     const xml = await response.text();
 
     if (!xml.trim()) {
-      console.error("[YouTube RSS] Empty XML response");
+      console.warn("[YouTube RSS] Empty XML response");
       return readLatestYoutubeVideosCache();
     }
 
     const videos = parseLatestVideos(xml);
 
     if (videos.length === 0) {
-      console.error("[YouTube RSS] XML received but no videos were parsed", {
+      console.warn("[YouTube RSS] XML received but no videos were parsed", {
         xmlLength: xml.length,
       });
 
@@ -137,7 +137,7 @@ export async function fetchLatestYoutubeVideos(): Promise<LatestYoutubeVideo[]> 
 
     return videos;
   } catch (error) {
-    console.error("[YouTube RSS] Fetch failed", error);
+    console.warn("[YouTube RSS] Fetch failed", error);
     return readLatestYoutubeVideosCache();
   } finally {
     clearTimeout(timeout);
