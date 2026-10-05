@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Heart } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { useWishlist } from "@/context/WishlistContext";
@@ -29,6 +29,8 @@ const PRODUCT_CARD_IMAGE_SIZES =
 
 const PRODUCT_CARD_THUMB_SIZES =
   "(min-width: 1024px) 48px, (min-width: 640px) 40px, 32px";
+
+const GALLERY_PREVIEW_CLOSE_MS = 120;
 
 export function ProductCard({ product }: ProductCardProps) {
   // =========================================
@@ -58,9 +60,39 @@ export function ProductCard({ product }: ProductCardProps) {
   // =========================================
   const [activeImage, setActiveImage] = useState(defaultImage?.image_url || "/placeholder.png");
   const [isCardHovered, setIsCardHovered] = useState(false);
+  const [isGalleryPreviewOpen, setIsGalleryPreviewOpen] = useState(false);
   const [imageZoomed, setImageZoomed] = useState(false);
+  const galleryPreviewCloseTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const onSale = isProductOnSale(product);
   const discountPercent = getProductDiscountPercent(product);
+
+  const cancelGalleryPreviewClose = () => {
+    if (galleryPreviewCloseTimeoutRef.current !== null) {
+      clearTimeout(galleryPreviewCloseTimeoutRef.current);
+      galleryPreviewCloseTimeoutRef.current = null;
+    }
+  };
+
+  const openGalleryPreview = () => {
+    cancelGalleryPreviewClose();
+    setIsGalleryPreviewOpen(true);
+  };
+
+  const scheduleGalleryPreviewClose = () => {
+    cancelGalleryPreviewClose();
+    galleryPreviewCloseTimeoutRef.current = setTimeout(() => {
+      galleryPreviewCloseTimeoutRef.current = null;
+      setIsGalleryPreviewOpen(false);
+    }, GALLERY_PREVIEW_CLOSE_MS);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (galleryPreviewCloseTimeoutRef.current !== null) {
+        clearTimeout(galleryPreviewCloseTimeoutRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (!isCardHovered) {
@@ -96,7 +128,7 @@ export function ProductCard({ product }: ProductCardProps) {
   return (
     <Link href={`/products/${product.id}`}>
       <article
-        className="group overflow-hidden rounded-xl border border-zinc-200 bg-white transition hover:border-brand-gold/50 dark:border-white/10 dark:bg-white/[0.04] dark:hover:bg-white/[0.06]"
+        className="overflow-hidden rounded-xl border border-zinc-200 bg-white transition hover:border-brand-gold/50 dark:border-white/10 dark:bg-white/[0.04] dark:hover:bg-white/[0.06]"
         onMouseEnter={() => setIsCardHovered(true)}
         onMouseLeave={() => setIsCardHovered(false)}
       >
@@ -104,7 +136,11 @@ export function ProductCard({ product }: ProductCardProps) {
         {/* ========================================= */}
         {/* IMAGE */}
         {/* ========================================= */}
-        <div className="relative aspect-[4/3] overflow-hidden bg-zinc-100 dark:bg-zinc-900">
+        <div
+          className="relative aspect-[4/3] overflow-hidden bg-zinc-100 dark:bg-zinc-900"
+          onMouseEnter={openGalleryPreview}
+          onMouseLeave={scheduleGalleryPreviewClose}
+        >
           <Image
             key={activeImage}
             src={activeImage}
@@ -164,9 +200,17 @@ export function ProductCard({ product }: ProductCardProps) {
           </div>
 
           {/* ========================================= */}
-          {/* GALLERY PREVIEW — content overlay, not on image */}
+          {/* GALLERY PREVIEW — content overlay; open from image, stay on preview */}
           {/* ========================================= */}
-          <div className="pointer-events-none absolute inset-0 flex -translate-y-full items-center justify-center gap-1.5 bg-white/60 opacity-0 backdrop-blur-[2px] transition duration-500 ease-out group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100 sm:gap-2 dark:bg-zinc-950/60">
+          <div
+            onMouseEnter={openGalleryPreview}
+            onMouseLeave={scheduleGalleryPreviewClose}
+            className={`absolute inset-0 flex items-center justify-center gap-1.5 bg-white/60 backdrop-blur-[2px] transition duration-500 ease-out sm:gap-2 dark:bg-zinc-950/60 ${
+              isGalleryPreviewOpen
+                ? "pointer-events-auto translate-y-0 opacity-100"
+                : "pointer-events-none -translate-y-full opacity-0"
+            }`}
+          >
             {orderedImages.slice(0, 3).map((img) => (
               <div
                 key={img.id}
