@@ -33,6 +33,7 @@ function BannerSlide({
   accessibleName,
   reserveDots = false,
   isInitial = false,
+  loadImage = false,
 }: {
   banner: StorefrontPromoBanner;
   fillHeight: boolean;
@@ -40,6 +41,7 @@ function BannerSlide({
   accessibleName: string;
   reserveDots?: boolean;
   isInitial?: boolean;
+  loadImage?: boolean;
 }) {
   const title = pickLocalizedText(banner.title_ka, banner.title_en, language);
   const subtitle = pickLocalizedText(
@@ -51,17 +53,20 @@ function BannerSlide({
     banner.link_url && isInternalAppPath(banner.link_url)
       ? banner.link_url
       : null;
+  const shouldRenderImage = isInitial || loadImage;
 
   const media = (
     <>
-      <img
-        src={banner.imageUrl}
-        alt={href ? "" : title || ""}
-        fetchPriority={isInitial ? "high" : "low"}
-        loading={isInitial ? "eager" : "lazy"}
-        decoding="async"
-        className="absolute inset-0 h-full w-full object-cover"
-      />
+      {shouldRenderImage ? (
+        <img
+          src={banner.imageUrl}
+          alt={href ? "" : title || ""}
+          fetchPriority={isInitial ? "high" : "low"}
+          loading={isInitial ? "eager" : "lazy"}
+          decoding="async"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+      ) : null}
       {title || subtitle ? (
         <div
           className={`pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/25 to-transparent px-4 pt-12 sm:px-6 ${
@@ -157,6 +162,7 @@ function PromoCarousel({
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const [autoplayReady, setAutoplayReady] = useState(false);
   const [interactionNonce, setInteractionNonce] = useState(0);
+  const [loadedIndexes, setLoadedIndexes] = useState(() => new Set([0]));
 
   const timerRef = useRef<number | null>(null);
   const emblaApiRef = useRef<EmblaApi | undefined>(undefined);
@@ -184,6 +190,22 @@ function PromoCarousel({
   const bumpInteraction = useCallback(() => {
     setInteractionNonce((value) => value + 1);
   }, []);
+
+  const unlockIndexes = useCallback((...indexes: number[]) => {
+    setLoadedIndexes((prev) => {
+      let changed = false;
+      const next = new Set(prev);
+
+      for (const index of indexes) {
+        if (index >= 0 && index < banners.length && !next.has(index)) {
+          next.add(index);
+          changed = true;
+        }
+      }
+
+      return changed ? next : prev;
+    });
+  }, [banners.length]);
 
   useEffect(() => {
     if (!emblaApi) return;
@@ -262,6 +284,29 @@ function PromoCarousel({
     };
   }, [clearTimer]);
 
+  useEffect(() => {
+    const count = banners.length;
+    if (count < 2) return;
+
+    unlockIndexes(selectedIndex, (selectedIndex + 1) % count);
+  }, [banners.length, selectedIndex, unlockIndexes]);
+
+  useEffect(() => {
+    if (!emblaApi || banners.length < 2) return;
+
+    const unlockNeighbors = () => {
+      const count = banners.length;
+      const current = emblaApi.selectedScrollSnap();
+      unlockIndexes((current - 1 + count) % count, (current + 1) % count);
+    };
+
+    emblaApi.on("pointerDown", unlockNeighbors);
+
+    return () => {
+      emblaApi.off("pointerDown", unlockNeighbors);
+    };
+  }, [emblaApi, banners.length, unlockIndexes]);
+
   const slideName = (banner: StorefrontPromoBanner) =>
     pickLocalizedText(banner.title_ka, banner.title_en, language) ||
     t.promoBanner;
@@ -297,6 +342,7 @@ function PromoCarousel({
                 accessibleName={slideName(banner)}
                 reserveDots
                 isInitial={index === 0}
+                loadImage={loadedIndexes.has(index)}
               />
             </div>
           ))}
@@ -308,6 +354,11 @@ function PromoCarousel({
         aria-label={t.previous}
         title={t.previous}
         onClick={() => {
+          const count = banners.length;
+          unlockIndexes(
+            (selectedIndex - 1 + count) % count,
+            (selectedIndex + 1) % count,
+          );
           emblaApi?.scrollPrev();
           bumpInteraction();
         }}
@@ -321,6 +372,7 @@ function PromoCarousel({
         aria-label={t.next}
         title={t.next}
         onClick={() => {
+          unlockIndexes((selectedIndex + 1) % banners.length);
           emblaApi?.scrollNext();
           bumpInteraction();
         }}
@@ -342,6 +394,7 @@ function PromoCarousel({
               )}
               aria-current={selected ? "true" : undefined}
               onClick={() => {
+                unlockIndexes(index, (index + 1) % banners.length);
                 emblaApi?.scrollTo(index);
                 bumpInteraction();
               }}
