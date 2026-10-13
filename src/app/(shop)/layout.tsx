@@ -8,7 +8,7 @@ export default function ShopLayout({
 }) {
   return (
     <>
-      {children}
+      <div className="min-h-screen">{children}</div>
       <ShopHeaderExtrasHost />
       <Footer />
     </>
