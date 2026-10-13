@@ -32,12 +32,14 @@ function BannerSlide({
   language,
   accessibleName,
   reserveDots = false,
+  isInitial = false,
 }: {
   banner: StorefrontPromoBanner;
   fillHeight: boolean;
   language: "ka" | "en";
   accessibleName: string;
   reserveDots?: boolean;
+  isInitial?: boolean;
 }) {
   const title = pickLocalizedText(banner.title_ka, banner.title_en, language);
   const subtitle = pickLocalizedText(
@@ -55,6 +57,9 @@ function BannerSlide({
       <img
         src={banner.imageUrl}
         alt={href ? "" : title || ""}
+        fetchPriority={isInitial ? "high" : "low"}
+        loading={isInitial ? "eager" : "lazy"}
+        decoding="async"
         className="absolute inset-0 h-full w-full object-cover"
       />
       {title || subtitle ? (
@@ -119,6 +124,7 @@ export function PromoSlider({
           fillHeight={fillHeight}
           language={language}
           accessibleName={slideName(banners[0])}
+          isInitial
         />
       </div>
     );
@@ -279,7 +285,7 @@ function PromoCarousel({
     >
       <div ref={emblaRef} className="h-full min-h-0 min-w-0 overflow-hidden">
         <div className="flex h-full min-w-0">
-          {banners.map((banner) => (
+          {banners.map((banner, index) => (
             <div
               key={banner.id}
               className="min-h-0 min-w-0 flex-[0_0_100%] self-stretch"
@@ -290,6 +296,7 @@ function PromoCarousel({
                 language={language}
                 accessibleName={slideName(banner)}
                 reserveDots
+                isInitial={index === 0}
               />
             </div>
           ))}
