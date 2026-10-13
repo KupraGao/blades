@@ -14,6 +14,27 @@
 
 ---
 
+## v1.44.0 — ProductCard gallery hover trigger
+
+ProductCard thumbnail preview still slides down over the **content**
+area (title / price / Add-to-Cart). Trigger scope is no longer
+article-level `group-hover`.
+
+- Opens only from MAIN image hover (`isGalleryPreviewOpen`)
+- Stays open while the pointer moves from the image onto the overlay
+  (120ms delayed close, `GALLERY_PREVIEW_CLOSE_MS`) so thumbnails remain
+  reachable
+- Overlay hover keeps it open; thumb `onMouseEnter` still sets
+  `activeImage`
+- Hovering title / price / Add-to-Cart alone does **not** open it
+- Leaving the image + overlay region closes it; Add-to-Cart is then
+  clickable
+- `isCardHovered` still drives MAIN zoom only
+- Unchanged: overlay placement/styles, wishlist, sale badge, navigation,
+  `sortProductImages`, pricing, PDP `ProductGallery`
+
+---
+
 ## v1.43.0 — YouTube RSS persistent fallback
 
 Home Latest YouTube Videos keep showing the last successful 1–3 videos

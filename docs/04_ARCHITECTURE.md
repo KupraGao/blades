@@ -755,10 +755,16 @@ square). Storefront source photos are practically 4:3 (measured example
 ~314×235). MAIN Image is Next/Image `fill` + `object-cover object-center`.
 Gradient: `from-black/50 via-black/10 to-transparent`. Hover gallery
 thumbs (up to 3, `sortProductImages`) overlay the **content** area with a
-slide-down transition; they do not sit on the MAIN photo. Title / price /
-Add-to-Cart remain in the DOM under the overlay. Each new `activeImage`
-zooms from `scale-100` to **`scale-[1.07]`**. Title clamp, price /
-Add-to-Cart alignment, Add-to-Cart, and stock UX are otherwise unchanged.
+slide-down transition; they do not sit on the MAIN photo. The preview
+opens from MAIN image hover (`isGalleryPreviewOpen`), not article
+`group-hover`. A 120ms delayed close (`GALLERY_PREVIEW_CLOSE_MS`) keeps it
+open while the pointer moves from the image onto the overlay; leaving that
+image/preview region closes it. Hovering title / price / Add-to-Cart
+alone does not open it. Title / price / Add-to-Cart remain in the DOM
+under the overlay. Card hover (`isCardHovered`) still drives MAIN zoom
+only. Each new `activeImage` zooms from `scale-100` to **`scale-[1.07]`**.
+Title clamp, price / Add-to-Cart alignment, Add-to-Cart, and stock UX are
+otherwise unchanged.
 
 ### ProductGallery (PDP)
 

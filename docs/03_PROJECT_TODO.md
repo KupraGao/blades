@@ -27,7 +27,10 @@
 - ProductCard MAIN: `aspect-[4/3]` + `object-cover object-center` (source
   photos ~4:3; 1:1 cover cropped sides)
 - Lighter MAIN gradient: `from-black/50 via-black/10 to-transparent`
-- Hover thumbs on content overlay (slide-down); title/price stay in DOM
+- Hover thumbs on content overlay (slide-down); title/price stay in DOM.
+  Opens from MAIN image hover only (not article `group-hover`); 120ms
+  delayed close so image → overlay stays reachable; content / Add-to-Cart
+  hover does not open it; `isCardHovered` still drives MAIN zoom only
 - Per-image zoom: new `activeImage` from `scale-100` to `scale-[1.07]`
 - PDP `< lg`: thumbs below MAIN, horizontal `overflow-x-auto`; `onClick`
   + `onMouseEnter`; active `border-brand-gold`
