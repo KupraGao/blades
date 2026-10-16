@@ -25,12 +25,23 @@ export type BogCreateOrderInput = {
     fail?: string;
   };
   language?: BogCreateOrderLanguage;
+  idempotencyKey: string;
 };
 
 export type BogCreateOrderResult = {
   orderId: string;
   redirectUrl: string;
 };
+
+const CURRENCIES: readonly BogCreateOrderCurrency[] = [
+  "GEL",
+  "USD",
+  "EUR",
+  "GBP",
+];
+
+// Host from the official create-order response example. Other hosts are rejected.
+const DOCUMENTED_PAYMENT_REDIRECT_HOST = "payment.bog.ge";
 
 function requireNonEmptyString(value: string | undefined, label: string): string {
   const trimmed = value?.trim() ?? "";
@@ -45,24 +56,126 @@ function requireNonEmptyString(value: string | undefined, label: string): string
   return trimmed;
 }
 
-function buildCreateOrderBody(input: BogCreateOrderInput): Record<string, unknown> {
-  const callbackUrl = requireNonEmptyString(input.callback_url, "callback_url");
+function invalid(label: string): never {
+  throw providerFailure(
+    "malformed",
+    `BOG create-order ${label} is invalid.`,
+  );
+}
+
+function unexpectedResponse(): never {
+  throw providerFailure(
+    "malformed",
+    "BOG create-order returned an unexpected response.",
+  );
+}
+
+const IDEMPOTENCY_KEY_V4 =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+export function assertIdempotencyKey(value: string): string {
+  const key = requireNonEmptyString(value, "idempotencyKey");
+
+  if (!IDEMPOTENCY_KEY_V4.test(key)) {
+    invalid("idempotencyKey");
+  }
+
+  return key;
+}
+
+export function buildCreateOrderHeaders(
+  accessToken: string,
+  idempotencyKey: string,
+  language?: BogCreateOrderLanguage,
+): Record<string, string> {
+  const key = assertIdempotencyKey(idempotencyKey);
+  const headers: Record<string, string> = {
+    Authorization: `Bearer ${accessToken}`,
+    "Content-Type": "application/json",
+    "Idempotency-Key": key,
+  };
+
+  if (language) {
+    headers["Accept-Language"] = language;
+  }
+
+  return headers;
+}
+
+function assertAbsoluteHttpsUrl(value: string, label: string): string {
+  const trimmed = requireNonEmptyString(value, label);
+  let url: URL;
+
+  try {
+    url = new URL(trimmed);
+  } catch {
+    invalid(label);
+  }
+
+  if (url.protocol !== "https:" || url.username || url.password || !url.hostname) {
+    invalid(label);
+  }
+
+  return trimmed;
+}
+
+function lariToTetri(amount: number, label: string): number {
+  if (typeof amount !== "number" || !Number.isFinite(amount) || amount <= 0) {
+    invalid(label);
+  }
+
+  const scaled = amount * 100;
+  const tetri = Math.round(scaled);
+
+  if (
+    !Number.isSafeInteger(tetri) ||
+    tetri <= 0 ||
+    Math.abs(scaled - tetri) > 1e-6
+  ) {
+    invalid(label);
+  }
+
+  return tetri;
+}
+
+function assertQuantity(quantity: number): number {
+  if (
+    typeof quantity !== "number" ||
+    !Number.isSafeInteger(quantity) ||
+    quantity < 1
+  ) {
+    invalid("basket.quantity");
+  }
+
+  return quantity;
+}
+
+function assertCurrency(value: string): BogCreateOrderCurrency {
+  if (!(CURRENCIES as readonly string[]).includes(value)) {
+    invalid("purchase_units.currency");
+  }
+
+  return value as BogCreateOrderCurrency;
+}
+
+export function buildCreateOrderBody(
+  input: BogCreateOrderInput,
+): Record<string, unknown> {
+  const callbackUrl = assertAbsoluteHttpsUrl(input.callback_url, "callback_url");
   const externalOrderId = requireNonEmptyString(
     input.external_order_id,
     "external_order_id",
   );
-  const currency = requireNonEmptyString(
-    input.purchase_units.currency,
-    "purchase_units.currency",
+  const currency = assertCurrency(
+    requireNonEmptyString(
+      input.purchase_units.currency,
+      "purchase_units.currency",
+    ),
   );
-  const totalAmount = input.purchase_units.total_amount;
-
-  if (typeof totalAmount !== "number" || !Number.isFinite(totalAmount)) {
-    throw providerFailure(
-      "malformed",
-      "BOG create-order purchase_units.total_amount is invalid.",
-    );
-  }
+  const totalTetri = lariToTetri(
+    input.purchase_units.total_amount,
+    "purchase_units.total_amount",
+  );
 
   if (!Array.isArray(input.purchase_units.basket) || input.purchase_units.basket.length === 0) {
     throw providerFailure(
@@ -71,29 +184,27 @@ function buildCreateOrderBody(input: BogCreateOrderInput): Record<string, unknow
     );
   }
 
+  let basketTetri = 0;
   const basket = input.purchase_units.basket.map((item) => {
     const productId = requireNonEmptyString(item.product_id, "basket.product_id");
-    const quantity = item.quantity;
-    const unitPrice = item.unit_price;
+    const quantity = assertQuantity(item.quantity);
+    const unitTetri = lariToTetri(item.unit_price, "basket.unit_price");
+    const lineTetri = unitTetri * quantity;
 
-    if (typeof quantity !== "number" || !Number.isFinite(quantity) || quantity < 1) {
-      throw providerFailure(
-        "malformed",
-        "BOG create-order basket.quantity is invalid.",
-      );
+    if (!Number.isSafeInteger(lineTetri)) {
+      invalid("basket.unit_price");
     }
 
-    if (typeof unitPrice !== "number" || !Number.isFinite(unitPrice)) {
-      throw providerFailure(
-        "malformed",
-        "BOG create-order basket.unit_price is invalid.",
-      );
+    basketTetri += lineTetri;
+
+    if (!Number.isSafeInteger(basketTetri)) {
+      invalid("purchase_units.total_amount");
     }
 
     const row: Record<string, unknown> = {
       product_id: productId,
       quantity,
-      unit_price: unitPrice,
+      unit_price: unitTetri / 100,
     };
 
     if (item.description !== undefined) {
@@ -103,12 +214,16 @@ function buildCreateOrderBody(input: BogCreateOrderInput): Record<string, unknow
     return row;
   });
 
+  if (basketTetri !== totalTetri) {
+    invalid("purchase_units.total_amount");
+  }
+
   const body: Record<string, unknown> = {
     callback_url: callbackUrl,
     external_order_id: externalOrderId,
     purchase_units: {
       currency,
-      total_amount: totalAmount,
+      total_amount: totalTetri / 100,
       basket,
     },
   };
@@ -117,11 +232,17 @@ function buildCreateOrderBody(input: BogCreateOrderInput): Record<string, unknow
     const redirectUrls: Record<string, string> = {};
 
     if (input.redirect_urls.success?.trim()) {
-      redirectUrls.success = input.redirect_urls.success.trim();
+      redirectUrls.success = assertAbsoluteHttpsUrl(
+        input.redirect_urls.success,
+        "redirect_urls.success",
+      );
     }
 
     if (input.redirect_urls.fail?.trim()) {
-      redirectUrls.fail = input.redirect_urls.fail.trim();
+      redirectUrls.fail = assertAbsoluteHttpsUrl(
+        input.redirect_urls.fail,
+        "redirect_urls.fail",
+      );
     }
 
     if (Object.keys(redirectUrls).length > 0) {
@@ -132,12 +253,9 @@ function buildCreateOrderBody(input: BogCreateOrderInput): Record<string, unknow
   return body;
 }
 
-function readCreateOrderResult(payload: unknown): BogCreateOrderResult {
+export function readCreateOrderResult(payload: unknown): BogCreateOrderResult {
   if (!isRecord(payload) || typeof payload.id !== "string" || !payload.id.trim()) {
-    throw providerFailure(
-      "malformed",
-      "BOG create-order returned an unexpected response.",
-    );
+    unexpectedResponse();
   }
 
   const links = isRecord(payload._links) ? payload._links : null;
@@ -146,10 +264,26 @@ function readCreateOrderResult(payload: unknown): BogCreateOrderResult {
     redirect && typeof redirect.href === "string" ? redirect.href.trim() : "";
 
   if (!redirectUrl) {
-    throw providerFailure(
-      "malformed",
-      "BOG create-order returned an unexpected response.",
-    );
+    unexpectedResponse();
+  }
+
+  let url: URL;
+
+  try {
+    url = new URL(redirectUrl);
+  } catch {
+    unexpectedResponse();
+  }
+
+  if (
+    url.protocol !== "https:" ||
+    url.username ||
+    url.password ||
+    !url.hostname ||
+    url.port !== "" ||
+    url.hostname !== DOCUMENTED_PAYMENT_REDIRECT_HOST
+  ) {
+    unexpectedResponse();
   }
 
   return {
@@ -163,15 +297,14 @@ export async function createBogOrder(
 ): Promise<BogCreateOrderResult> {
   assertBogServerOnly();
 
+  const idempotencyKey = assertIdempotencyKey(input.idempotencyKey);
+  const requestBody = buildCreateOrderBody(input);
   const accessToken = await getBogAccessToken();
-  const headers: Record<string, string> = {
-    Authorization: `Bearer ${accessToken}`,
-    "Content-Type": "application/json",
-  };
-
-  if (input.language) {
-    headers["Accept-Language"] = input.language;
-  }
+  const headers = buildCreateOrderHeaders(
+    accessToken,
+    idempotencyKey,
+    input.language,
+  );
 
   let response: Response;
 
@@ -179,7 +312,7 @@ export async function createBogOrder(
     response = await fetch(BOG_CREATE_ORDER_URL, {
       method: "POST",
       headers,
-      body: JSON.stringify(buildCreateOrderBody(input)),
+      body: JSON.stringify(requestBody),
       cache: "no-store",
     });
   } catch (cause) {
