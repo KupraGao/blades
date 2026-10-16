@@ -8,9 +8,7 @@
 
 როდესაც რომელიმე ფუნქცია დასრულდება, ის წაიშლება Roadmap-იდან და გადავა Foundation-ში ან Changelog-ში.
 
----
-
-# 🚀 Ecommerce Advanced Roadmap
+მიმდინარე დარჩენილი სამუშაო: [03_PROJECT_TODO.md](03_PROJECT_TODO.md). განხორციელებული ისტორია: [06_CHANGELOG.md](06_CHANGELOG.md).
 
 ---
 
@@ -128,18 +126,28 @@ Customer auth is separate from Admin authorization (`admin_users`).
   runtime unchanged.
 - ✅ **S7C-6** BOG Authentication + Payment Initiation Foundation —
   server-only `src/lib/payments/bog/` (OAuth + Create Order helper).
-  Checkout is **not** wired; no redirect, callback, or DB write.
+  Checkout is **not** wired.
+- ✅ Payment Details + Callback კოდი — **Implemented**, production-ready
+  **არ არის**. Route `POST /api/payments/bog/callback` აბრუნებს HTTP **503**-ს.
+  Base64 ხელმოწერის კოდირება რეალურ callback-ზე დადასტურებული არ არის.
+  ცოცხალი ბანკის გამოძახება დადასტურებული არ არის
+- ✅ **BOG-05C** — commit `00c1bf0`. `prepare-bog-create-order.ts` ამზადებს
+  Create Order-ს შენახული `online` შეკვეთიდან (`orders.id`, `GEL`,
+  `capture: "automatic"`, server-only `BOG_CALLBACK_URL`). Checkout ამ
+  helper-ს არ იძახებს. `payment_provider_order_id` არ იწერება. გარემოს
+  ცვლადების დაყენება ამ დოკუმენტით დადასტურებული არ არის
 
-**Not** done yet: Checkout BOG redirect, webhooks, payment
-verification, automatic `paid`, refunds. Provider **selected** (Bank of
-Georgia / OPAY); no live charge yet.
+**დასრულებული არ არის:** Checkout-ის BOG-ზე დაკავშირება, ბანკის Order ID-ის
+შენახვა, callback-ით გადახდის სტატუსის უსაფრთხო განახლება, რეალური
+end-to-end გადახდა, refunds. ბრაუზერის redirect `paid` არ არის.
 
 ---
 
 ## 🚀 Immediate Next
 
-Review S7C-6 foundation before Checkout wiring. Do **not** treat browser
-return as `paid`. Callback / refunds / automatic `paid` remain later.
+შემდეგი ნაბიჯია Checkout-ის დაკავშირება უკვე არსებულ BOG helper-თან, მხოლოდ
+`online` შეკვეთისთვის. მანამდე callback route 503-ზე რჩება. ბრაუზერის
+დაბრუნება `paid`-ად არ ჩაითვალოს.
 
 ### Production hardening (remaining)
 
@@ -162,9 +170,11 @@ homepage Sale Slider #2 are shipped. Promo Slider #1 CMS is **live**
 (SQL `docs/sql/create-promo-banners.sql` **executed**). Storefront UI /
 typography polish is shipped (visual only; no catalog or payments
 behavior change). Home Latest YouTube Videos is shipped (Atom feed,
-no Admin/CMS). Payments: S7C-6 BOG auth + Create Order helpers exist
-and are **not** wired to Checkout (S7A–S7B + S7C-4/S7C-5 LIVE
-`payment_provider_order_id`).
+no Admin/CMS). Home YouTube hydration fix is commit `a0e3bc2` (this
+section only; not every hydration issue in the project). Payments:
+BOG-05C can prepare a Create Order and is **not** wired to Checkout.
+S7A–S7B + S7C-5 `payment_provider_order_id` are LIVE as columns; the
+app still does not write that column. Callback returns **503**.
 
 ---
 
@@ -243,8 +253,10 @@ and are **not** wired to Checkout (S7A–S7B + S7C-4/S7C-5 LIVE
 ⬜ Shipping pricing (beyond free Tbilisi delivery + 150 GEL delivery minimum)
 
 ⬜ Payments (S7) — **partial:** S7A DB ✅ + S7B-1 ✅ + S7B ✅ + S7C-4 ✅ +
-  S7C-5 `payment_provider_order_id` **LIVE** ✅ + S7C-6 BOG foundation ✅
-  (Checkout wiring remaining; **no** COD)
+  S7C-5 `payment_provider_order_id` **LIVE** ✅ + S7C-6 ✅ + Payment
+  Details/Callback კოდი ✅ (route **503**) + BOG-05C helper ✅ (`00c1bf0`).
+  Checkout wiring, provider-id write, payment-status update, and a live
+  bank payment are **Planned**. **No** COD. Integration is not complete.
 
 ⬜ Coupons
 
@@ -305,7 +317,11 @@ and are **not** wired to Checkout (S7A–S7B + S7C-4/S7C-5 LIVE
   `docs/sql/create-youtube-latest-videos-cache.sql` **executed**).
   RSS 404 / timeout / empty parse uses the last successful snapshot.
   Replaced the starter `PromoBanner` block. Promo Slider #1 CMS is
-  unchanged.
+  unchanged. Commit `a0e3bc2`: `LatestYoutubeVideos` keeps its own
+  `hasMounted` state so the first render matches the server `ka` text
+  when the `Suspense` boundary hydrates after the saved language is
+  applied. Chosen KA/EN copy follows after mount. This does not close
+  every hydration issue in the project.
 
 ✅ Storefront light-theme chrome + Contact form — body `#eeeeee`; Footer
   `bg-zinc-200`; Header/Footer white logo badges (Light black border /

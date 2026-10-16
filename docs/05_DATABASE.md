@@ -16,9 +16,6 @@
 ეს დოკუმენტი გამოიყენება მონაცემთა ბაზის სტრუქტურის სამართავად.
 
 ---
-# Database Documentation
-
----
 
 ## Tables
 
@@ -548,6 +545,10 @@ Exact RPC SQL is managed in the live Supabase database and is
   - `BOG_CLIENT_ID` / `BOG_CLIENT_SECRET` (server-only Bank of Georgia
     OAuth; never `NEXT_PUBLIC_*`; unused by Checkout until a later
     wiring step)
+  - `BOG_CALLBACK_URL` (server-only absolute `https` callback address
+    read by `getBogCallbackUrl()`; not `NEXT_PUBLIC_*`; not taken from
+    the request Origin). This document does not confirm that the
+    variable is set in any environment
   - Also required for storefront Auth / SSR: `NEXT_PUBLIC_SUPABASE_URL`,
     `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - **Production (Vercel):** these names must match the same Supabase project
@@ -576,8 +577,14 @@ Exact RPC SQL is managed in the live Supabase database and is
 - Order status and payment status remain independent
 - **S7B app usage:** Checkout writes `payment_method`; create path forces
   `payment_status = unpaid`. No S7B DDL / migration.
-- **Not** yet: real provider writes, webhooks, payment verification, refunds
-  (no app migration file in repo for the original S7A DDL)
+- **Not** yet: Checkout does not call BOG. The app still does not write
+  `payment_provider_order_id`. Commit `00c1bf0` added
+  `src/lib/orders/prepare-bog-create-order.ts`, which can read a saved
+  `online` order and build a Create Order body; `createOnlineBogOrder`
+  can call Create Order, but nothing in Checkout imports it. The callback
+  route still returns HTTP **503**. No live bank operation is confirmed
+  here. Refunds are not implemented. There is no in-repo migration for
+  the original S7A DDL
 
 ### Guest success order access (S6C Step 1)
 

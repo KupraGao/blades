@@ -14,9 +14,7 @@
 
 ეს დოკუმენტი აღწერს როგორ არის აგებული პროექტი და რა წესებით ვითარდება.
 
----
-
-# Project Architecture
+მიმდინარე დარჩენილი სამუშაო: [03_PROJECT_TODO.md](03_PROJECT_TODO.md). ისტორია: [06_CHANGELOG.md](06_CHANGELOG.md).
 
 ---
 
@@ -553,8 +551,16 @@ successful RSS videos are still returned if snapshot write fails.
 
 Thumbnails on first paint (0 iframes); play mounts one embed in the same
 16:9 card; switching videos unmounts the previous player. Channel CTA
-opens YouTube. UI (`LatestYoutubeVideos`) is unchanged: `videos.length > 0`
-shows the grid, else heading/CTA only. Distinct from Promo Slider #1 CMS.
+opens YouTube. `videos.length > 0` shows the grid, else heading/CTA only.
+Distinct from Promo Slider #1 CMS.
+
+`LatestYoutubeVideos` არის client component `Suspense` boundary-ში.
+`LanguageProvider` პირველ render-ზე `ka`-ს იყენებს და შენახულ ენას
+`useEffect`-ში კითხულობს. ამ სექციის საკუთარი `hasMounted` (commit
+`a0e3bc2`) პირველ render-ს სერვერის `ka` ტექსტზე ტოვებს მაშინაც, თუ
+boundary მოგვიანებით ჰიდრირდება. მაუნთის შემდეგ სათაური, აღწერა, ღილაკები
+და თარიღი არჩეულ KA/EN ენას მიჰყვება. ეს მხოლოდ ამ სექციის ცნობილ
+შეუსაბამობას ეხება.
 
 SQL history: `docs/sql/create-youtube-latest-videos-cache.sql` (**executed**;
 live table already existed). Privileged server client only
@@ -1380,7 +1386,20 @@ Admin role management; Admin Add/Invite Customer.
   `POST /api/payments/bog/callback` returns **503** even when the
   signature and receipt succeed, so it is not a production callback.
   Base64 signature encoding is not confirmed on a real BOG callback.
-  No live bank call. Checkout does not import these helpers
+  No live bank call is confirmed. Checkout does not import these helpers
+- ✅ BOG-05C — commit `00c1bf0`,
+  `src/lib/orders/prepare-bog-create-order.ts`.
+  `prepareOnlineBogCreateOrderInput` reads one saved `online` order and
+  its `order_items`. `orders.id` is both `external_order_id` and the
+  `Idempotency-Key`. Currency is `GEL`. `capture` is `"automatic"`.
+  `callback_url` comes from server-only `getBogCallbackUrl()`
+  (`BOG_CALLBACK_URL`, absolute `https`, not the request Origin).
+  `createOnlineBogOrder` calls existing `createBogOrder`. No other
+  module imports these functions. They do not change stock, order
+  status, or `payment_status`, and they do not write
+  `payment_provider_order_id`. This documentation does not confirm that
+  `BOG_CALLBACK_URL` is set, or that a live bank call succeeded.
+  The integration is **not** complete
 - ✅ Promo CMS / real Promo Slider #1 — **live** (SQL
   `docs/sql/create-promo-banners.sql` **executed**; Admin `/admin/promos`;
   storefront `getActivePromoBanners`; `sort_order` assigned server-side)
@@ -1390,7 +1409,10 @@ Admin role management; Admin Add/Invite Customer.
   `public.youtube_latest_videos_cache` (SQL history
   `docs/sql/create-youtube-latest-videos-cache.sql` **executed**);
   no YouTube Data API / API key; thumbnail-first, one on-demand iframe;
-  starter `PromoBanner` removed
+  starter `PromoBanner` removed. Commit `a0e3bc2`: first render of
+  `LatestYoutubeVideos` stays on the server `ka` copy via `hasMounted`,
+  then follows the saved language. This does not cover every hydration
+  case in the project
 - ✅ Catalog min/max (and Admin price sort) use live generated
   `effective_price` — SQL `docs/sql/add-products-effective-price.sql`
   **executed**; Min/Max runtime-verified
