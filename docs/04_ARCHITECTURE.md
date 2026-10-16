@@ -1369,7 +1369,18 @@ Admin role management; Admin Add/Invite Customer.
   Checkout. Env: `BOG_CLIENT_ID`, `BOG_CLIENT_SECRET` (never
   `NEXT_PUBLIC_*`). Identifiers stay distinct: `orders.id` (our UUID /
   BOG `external_order_id`), `payment_provider_order_id` (BOG response
-  `id`), `payment_transaction_id` (later BOG `payment_detail.transaction_id`)
+  `id`), `payment_transaction_id` (later BOG `payment_detail.transaction_id`).
+  Static doc review only; not executed against BOG. This foundation is
+  **not** a finished integration
+- 🚧 BOG Payment Details + Callback — code only.
+  `src/lib/payments/bog/receipt.ts` calls official
+  `GET /payments/v1/receipt/{order_id}`.
+  `src/lib/payments/bog/callback.ts` checks `Callback-Signature` on the
+  raw body before JSON parse (published RSA key, SHA256withRSA).
+  `POST /api/payments/bog/callback` returns **503** even when the
+  signature and receipt succeed, so it is not a production callback.
+  Base64 signature encoding is not confirmed on a real BOG callback.
+  No live bank call. Checkout does not import these helpers
 - ✅ Promo CMS / real Promo Slider #1 — **live** (SQL
   `docs/sql/create-promo-banners.sql` **executed**; Admin `/admin/promos`;
   storefront `getActivePromoBanners`; `sort_order` assigned server-side)
@@ -1383,8 +1394,10 @@ Admin role management; Admin Add/Invite Customer.
 - ✅ Catalog min/max (and Admin price sort) use live generated
   `effective_price` — SQL `docs/sql/add-products-effective-price.sql`
   **executed**; Min/Max runtime-verified
-- ⬜ Checkout BOG redirect / persist provider order id / payment pending
-- ⬜ Webhooks / payment verification / automatic `paid` / refunds
+- ⬜ Checkout BOG redirect / persist provider order id / compare amount,
+  currency, and order ids / safe payment-status update
+- ⬜ Refunds / automatic `paid` (not implied by the browser redirect or
+  by the current 503 callback)
 - Guest `createOrder` abuse controls (rate limits / CAPTCHA / etc.)
 - Order Confirmation email (Guest + Customer) — documented only
 - Customer email change; Admin customer mutations / invite / ban;

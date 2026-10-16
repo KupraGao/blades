@@ -14,11 +14,34 @@
 
 ---
 
-## 🚧 NEXT — Review S7C-6 before Checkout wiring
+## 🚧 NEXT — BOG integration still open
 
-- S7C-6 server-only BOG auth + Create Order helpers exist
-- Checkout / `createOrder` / stock / redirect are **unchanged**
-- Do **not** start browser redirect, callbacks, or DB writes until reviewed
+BOG is **not** complete. Do **not** register the callback URL in production.
+
+- Checkout / `createOrder` / stock / redirect are **unchanged**;
+  `payment_status` stays `unpaid` at create
+- Still to do: Checkout wiring; persist `payment_provider_order_id`;
+  compare amount, currency, and order ids with the local order;
+  idempotent payment-status update
+- Do **not** mark an order paid from the browser redirect or from the
+  current callback route
+
+## 🚧 IN PROGRESS — BOG Payment Details + Callback (code only)
+
+- Payment Details: `src/lib/payments/bog/receipt.ts` —
+  `GET /payments/v1/receipt/{order_id}` (Bearer). Reads `order_status.key`,
+  `external_order_id`, amount strings, and `currency_code`
+- Callback helper: `src/lib/payments/bog/callback.ts` — `Callback-Signature`
+  on the **raw** body before JSON parse; published RSA key; SHA256withRSA
+- Route: `POST /api/payments/bog/callback`. After a valid signature it
+  loads the receipt, then still returns **503**. Not production-ready.
+  A live `callback_url` must return HTTP 200 only after the local order
+  is safely updated
+- `Callback-Signature` is decoded as Base64. That encoding is **not**
+  confirmed against a real BOG callback
+- Checked by reading the code against the official Payments docs.
+  No automated tests in the repo. No live OAuth, Create Order, Payment
+  Details, or Callback call to the bank
 
 ---
 
@@ -90,9 +113,13 @@
 - Isolated server-only module: `src/lib/payments/bog/`
 - OAuth: `POST` token URL, HTTP Basic, `grant_type=client_credentials`
 - Create Order helper uses official `POST /payments/v1/ecommerce/orders`
+- Project rule, not a bank requirement: `Idempotency-Key` must be a
+  UUID v4. Our helper also requires `external_order_id` (optional at
+  the bank)
 - Env names only: `BOG_CLIENT_ID`, `BOG_CLIENT_SECRET` (never `NEXT_PUBLIC_*`)
-- Not called from Checkout; no DB write; no live charge in this step
-- Next: review result before any Checkout / callback work
+- Not called from Checkout; no DB write; no live bank call in this step
+- Foundation only. Payment Details + Callback code is separate and
+  unfinished (see IN PROGRESS). BOG integration is **not** complete
 
 ---
 
@@ -625,10 +652,13 @@ createOrder production RPC hardening.
 ⬜ Email Notifications — every successful order → confirmation email to
   `customer_email` (Guest + Customer); not tied to Account; not implemented
 
-⬜ Payments (S7) — **partial:** S7A DB ✅ + S7B-1 ✅ + S7B ✅ + S7C-4 ✅ +
-  S7C-5 `payment_provider_order_id` **LIVE** ✅ + S7C-6 BOG auth/create-order
-  foundation ✅ (not wired to Checkout); then Checkout redirect / webhooks /
-  refunds / auto-`paid` (not started). No COD.
+⬜ Payments (S7) — **partial, not complete:** S7A DB ✅ + S7B-1 ✅ + S7B ✅ +
+  S7C-4 ✅ + S7C-5 `payment_provider_order_id` **LIVE** ✅ + S7C-6 OAuth /
+  Create Order helpers (code; not bank-verified; not wired to Checkout).
+  Payment Details + Callback route exist as code; the route returns **503**
+  and is not production-ready. Still open: Checkout integration,
+  amount / currency / id match, safe payment-status update, refunds.
+  No live BOG call. No COD.
 
 ⬜ Shipping pricing (beyond free Tbilisi delivery + 150 GEL minimum)
 

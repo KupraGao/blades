@@ -14,6 +14,41 @@
 
 ---
 
+## v1.45.0 — BOG Payment Details + Callback (not production)
+
+Code on top of the S7C-6 foundation (v1.39.0). Checkout, `createOrder`,
+stock, and `payment_status` are unchanged. The BOG integration is **not**
+complete.
+
+### Code
+
+- OAuth remains `src/lib/payments/bog/auth.ts` (official token URL, HTTP
+  Basic, `grant_type=client_credentials`)
+- Create Order remains `src/lib/payments/bog/create-order.ts` (official
+  `POST /payments/v1/ecommerce/orders`). Our helper requires a UUID v4
+  `Idempotency-Key` and `external_order_id`; the bank marks both optional
+- Payment Details: `src/lib/payments/bog/receipt.ts` —
+  `GET /payments/v1/receipt/{order_id}`
+- Callback: `src/lib/payments/bog/callback.ts` verifies
+  `Callback-Signature` on the raw body before JSON parse (published RSA
+  key, SHA256withRSA). Route: `POST /api/payments/bog/callback`
+
+### Verification level
+
+- Compared by reading the code against the official Payments docs
+- No automated tests in the repo
+- No live OAuth, Create Order, Payment Details, or Callback call to BOG
+- Base64 for `Callback-Signature` is an assumption; not confirmed on a
+  real callback
+- The route returns **503** after a valid signature and receipt. It is
+  not production-ready. HTTP 200 belongs only after amount, currency,
+  and order ids match the local order and payment status is updated
+  safely
+
+Still open: Checkout wiring, that comparison, and the status update.
+
+---
+
 ## v1.44.0 — ProductCard gallery hover trigger
 
 ProductCard thumbnail preview still slides down over the **content**
