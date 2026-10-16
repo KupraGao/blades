@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowRight, Play } from "lucide-react";
 
 import { useLanguage } from "@/context/LanguageContext";
+import { ka } from "@/dictionaries/ka";
 import { formatAdminDate } from "@/lib/i18n/format-admin-date";
 import type { LatestYoutubeVideo } from "@/lib/youtube/fetch-latest-videos";
 
@@ -113,8 +114,17 @@ export function LatestYoutubeVideos({
 }) {
   const { t, language } = useLanguage();
   const [activeVideoId, setActiveVideoId] = useState<string | null>(null);
+  // ამ კომპონენტის პირველი render ყოველთვის `ka`-ა, სერვერის HTML-ის შესატყვისად.
+  // `LanguageProvider`-ის ენა უკვე `en` შეიძლება იყოს, თუ Suspense გვიან ჰიდრირდება.
+  const [hasMounted, setHasMounted] = useState(false);
+  const copy = hasMounted ? t : ka;
+  const dateLanguage = hasMounted ? language : "ka";
   const channelLinkClass =
     "inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-brand-gold transition hover:opacity-80";
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
 
   return (
     <section className="py-12">
@@ -122,17 +132,17 @@ export function LatestYoutubeVideos({
         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div className="max-w-2xl">
             <p className="small-label flex items-center gap-2">
-              {t.youtubeEyebrow}
+              {copy.youtubeEyebrow}
               <YoutubeBrandMark />
             </p>
             <h2 className="storefront-section-heading mt-3">
-              {t.youtubeHeading}
+              {copy.youtubeHeading}
             </h2>
-            <p className="section-subtitle">{t.youtubeBody}</p>
+            <p className="section-subtitle">{copy.youtubeBody}</p>
           </div>
 
           <YoutubeChannelLink
-            label={t.youtubeChannelCta}
+            label={copy.youtubeChannelCta}
             className={`${channelLinkClass} shrink-0`}
           />
         </div>
@@ -143,8 +153,8 @@ export function LatestYoutubeVideos({
               <YoutubeVideoCard
                 key={video.videoId}
                 video={video}
-                watchLabel={t.youtubeWatchVideo}
-                dateLabel={formatAdminDate(video.published, language)}
+                watchLabel={copy.youtubeWatchVideo}
+                dateLabel={formatAdminDate(video.published, dateLanguage)}
                 isActive={activeVideoId === video.videoId}
                 onPlay={setActiveVideoId}
               />
