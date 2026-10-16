@@ -15,7 +15,9 @@ export function assertBogServerOnly(): void {
   }
 }
 
-function readRequiredEnv(name: "BOG_CLIENT_ID" | "BOG_CLIENT_SECRET"): string {
+function readRequiredEnv(
+  name: "BOG_CLIENT_ID" | "BOG_CLIENT_SECRET" | "BOG_CALLBACK_URL",
+): string {
   const value = process.env[name]?.trim();
 
   if (!value) {
@@ -23,6 +25,25 @@ function readRequiredEnv(name: "BOG_CLIENT_ID" | "BOG_CLIENT_SECRET"): string {
       "configuration",
       `${name} is not configured.`,
     );
+  }
+
+  return value;
+}
+
+export function getBogCallbackUrl(): string {
+  assertBogServerOnly();
+
+  const value = readRequiredEnv("BOG_CALLBACK_URL");
+  let url: URL;
+
+  try {
+    url = new URL(value);
+  } catch {
+    throw new BogError("configuration", "BOG_CALLBACK_URL is invalid.");
+  }
+
+  if (url.protocol !== "https:" || url.username || url.password || !url.hostname) {
+    throw new BogError("configuration", "BOG_CALLBACK_URL is invalid.");
   }
 
   return value;

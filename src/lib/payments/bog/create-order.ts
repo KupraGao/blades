@@ -4,6 +4,7 @@ import { providerFailure, isRecord, readJsonBody } from "./http";
 
 export type BogCreateOrderLanguage = "ka" | "en";
 export type BogCreateOrderCurrency = "GEL" | "USD" | "EUR" | "GBP";
+export type BogCreateOrderCapture = "automatic" | "manual";
 
 export type BogCreateOrderBasketItem = {
   product_id: string;
@@ -25,6 +26,7 @@ export type BogCreateOrderInput = {
     fail?: string;
   };
   language?: BogCreateOrderLanguage;
+  capture?: BogCreateOrderCapture;
   idempotencyKey: string;
 };
 
@@ -248,6 +250,14 @@ export function buildCreateOrderBody(
     if (Object.keys(redirectUrls).length > 0) {
       body.redirect_urls = redirectUrls;
     }
+  }
+
+  if (input.capture !== undefined) {
+    if (input.capture !== "automatic" && input.capture !== "manual") {
+      invalid("capture");
+    }
+
+    body.capture = input.capture;
   }
 
   return body;
