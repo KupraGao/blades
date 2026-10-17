@@ -48,10 +48,15 @@ export default function ProductGallery({
     orderedImages[0]?.image_url || "/placeholder.png"
   );
   const [isZoomed, setIsZoomed] = useState(false);
+  const [zoomImage, setZoomImage] = useState(activeImage);
   const zoomLayerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  if (activeImage !== zoomImage) {
+    setZoomImage(activeImage);
     setIsZoomed(false);
+  }
+
+  useEffect(() => {
     const layer = zoomLayerRef.current;
     if (layer) {
       layer.style.transformOrigin = "50% 50%";

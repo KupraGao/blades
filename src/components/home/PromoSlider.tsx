@@ -165,15 +165,13 @@ function PromoCarousel({
   const [loadedIndexes, setLoadedIndexes] = useState(() => new Set([0]));
 
   const timerRef = useRef<number | null>(null);
-  const emblaApiRef = useRef<EmblaApi | undefined>(undefined);
 
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: "start",
     loop: true,
     watchDrag: true,
   });
-
-  emblaApiRef.current = emblaApi;
+  const [trackedApi, setTrackedApi] = useState<EmblaApi | null>(null);
 
   const syncState = useCallback(() => {
     if (!emblaApi) return;
@@ -210,7 +208,6 @@ function PromoCarousel({
   useEffect(() => {
     if (!emblaApi) return;
 
-    syncState();
     emblaApi.on("select", syncState);
     emblaApi.on("reInit", syncState);
 
@@ -265,7 +262,7 @@ function PromoCarousel({
     }
 
     timerRef.current = window.setTimeout(() => {
-      emblaApiRef.current?.scrollNext();
+      emblaApi.scrollNext();
     }, PROMO_AUTOPLAY_INTERVAL_MS);
 
     return clearTimer;
@@ -285,13 +282,6 @@ function PromoCarousel({
   }, [clearTimer]);
 
   useEffect(() => {
-    const count = banners.length;
-    if (count < 2) return;
-
-    unlockIndexes(selectedIndex, (selectedIndex + 1) % count);
-  }, [banners.length, selectedIndex, unlockIndexes]);
-
-  useEffect(() => {
     if (!emblaApi || banners.length < 2) return;
 
     const unlockNeighbors = () => {
@@ -306,6 +296,26 @@ function PromoCarousel({
       emblaApi.off("pointerDown", unlockNeighbors);
     };
   }, [emblaApi, banners.length, unlockIndexes]);
+
+  if (emblaApi && trackedApi !== emblaApi) {
+    setTrackedApi(emblaApi);
+    setSelectedIndex(emblaApi.selectedScrollSnap());
+  }
+
+  const bannerCount = banners.length;
+  if (bannerCount >= 2) {
+    const upcoming = (selectedIndex + 1) % bannerCount;
+    if (
+      selectedIndex >= 0 &&
+      selectedIndex < bannerCount &&
+      (!loadedIndexes.has(selectedIndex) || !loadedIndexes.has(upcoming))
+    ) {
+      const nextLoaded = new Set(loadedIndexes);
+      nextLoaded.add(selectedIndex);
+      nextLoaded.add(upcoming);
+      setLoadedIndexes(nextLoaded);
+    }
+  }
 
   const slideName = (banner: StorefrontPromoBanner) =>
     pickLocalizedText(banner.title_ka, banner.title_en, language) ||

@@ -59,10 +59,11 @@ export function ProductCard({ product }: ProductCardProps) {
   // ACTIVE IMAGE
   // =========================================
   const [activeImage, setActiveImage] = useState(defaultImage?.image_url || "/placeholder.png");
-  const [isCardHovered, setIsCardHovered] = useState(false);
   const [isGalleryPreviewOpen, setIsGalleryPreviewOpen] = useState(false);
   const [imageZoomed, setImageZoomed] = useState(false);
   const galleryPreviewCloseTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const zoomFrameRef = useRef<number | null>(null);
+  const zoomInnerFrameRef = useRef<number | null>(null);
   const onSale = isProductOnSale(product);
   const discountPercent = getProductDiscountPercent(product);
 
@@ -86,38 +87,42 @@ export function ProductCard({ product }: ProductCardProps) {
     }, GALLERY_PREVIEW_CLOSE_MS);
   };
 
+  const cancelZoomFrames = () => {
+    if (zoomFrameRef.current !== null) {
+      cancelAnimationFrame(zoomFrameRef.current);
+      zoomFrameRef.current = null;
+    }
+    if (zoomInnerFrameRef.current !== null) {
+      cancelAnimationFrame(zoomInnerFrameRef.current);
+      zoomInnerFrameRef.current = null;
+    }
+  };
+
+  const armZoom = () => {
+    cancelZoomFrames();
+    setImageZoomed(false);
+    zoomFrameRef.current = requestAnimationFrame(() => {
+      zoomFrameRef.current = null;
+      zoomInnerFrameRef.current = requestAnimationFrame(() => {
+        zoomInnerFrameRef.current = null;
+        setImageZoomed(true);
+      });
+    });
+  };
+
   useEffect(() => {
     return () => {
       if (galleryPreviewCloseTimeoutRef.current !== null) {
         clearTimeout(galleryPreviewCloseTimeoutRef.current);
       }
+      cancelZoomFrames();
     };
   }, []);
-
-  useEffect(() => {
-    if (!isCardHovered) {
-      setImageZoomed(false);
-      return;
-    }
-
-    setImageZoomed(false);
-    let innerId = 0;
-    const outerId = requestAnimationFrame(() => {
-      innerId = requestAnimationFrame(() => {
-        setImageZoomed(true);
-      });
-    });
-
-    return () => {
-      cancelAnimationFrame(outerId);
-      cancelAnimationFrame(innerId);
-    };
-  }, [activeImage, isCardHovered]);
 
   const showImage = (url: string) => {
     if (url === activeImage) return;
     setActiveImage(url);
-    setImageZoomed(false);
+    armZoom();
   };
 
   // =========================================
@@ -129,8 +134,11 @@ export function ProductCard({ product }: ProductCardProps) {
     <Link href={`/products/${product.id}`}>
       <article
         className="overflow-hidden rounded-xl border border-zinc-200 bg-white transition hover:border-brand-gold/50 dark:border-white/10 dark:bg-white/[0.04] dark:hover:bg-white/[0.06]"
-        onMouseEnter={() => setIsCardHovered(true)}
-        onMouseLeave={() => setIsCardHovered(false)}
+        onMouseEnter={() => armZoom()}
+        onMouseLeave={() => {
+          cancelZoomFrames();
+          setImageZoomed(false);
+        }}
       >
 
         {/* ========================================= */}

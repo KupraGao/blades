@@ -26,6 +26,7 @@ export function LatestProductsSlider({
     slidesToScroll: "auto",
     loop: false,
   });
+  const [trackedApi, setTrackedApi] = useState<typeof emblaApi>(undefined);
 
   const syncState = useCallback(() => {
     if (!emblaApi) return;
@@ -38,7 +39,6 @@ export function LatestProductsSlider({
   useEffect(() => {
     if (!emblaApi) return;
 
-    syncState();
     emblaApi.on("select", syncState);
     emblaApi.on("reInit", syncState);
 
@@ -66,6 +66,14 @@ export function LatestProductsSlider({
     const interval = setInterval(autoplay, 5000);
     return () => clearInterval(interval);
   }, [emblaApi, autoplay, canScrollNext, canScrollPrev]);
+
+  if (emblaApi && trackedApi !== emblaApi) {
+    setTrackedApi(emblaApi);
+    setSelectedIndex(emblaApi.selectedScrollSnap());
+    setScrollSnaps(emblaApi.scrollSnapList());
+    setCanScrollPrev(emblaApi.canScrollPrev());
+    setCanScrollNext(emblaApi.canScrollNext());
+  }
 
   const showNav = scrollSnaps.length > 1;
 

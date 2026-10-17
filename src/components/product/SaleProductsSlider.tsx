@@ -2,31 +2,180 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { ProductCardAddToCartButton } from "@/components/product/ProductCardAddToCartButton";
 import { ProductPrice } from "@/components/product/ProductPrice";
 import { useLanguage } from "@/context/LanguageContext";
+import { sortProductImages } from "@/lib/products/sort-product-images";
 import type { SaleSliderProduct } from "@/actions/products/get-sale-slider-products";
 
 type SaleProductsSliderProps = {
   products: SaleSliderProduct[];
 };
 
-function mainImageUrl(product: SaleSliderProduct): string {
-  const main =
-    product.product_images?.find((image) => image.is_main) ||
-    product.product_images?.[0];
-
-  return main?.image_url || "/placeholder.png";
-}
-
 // Below lg: 1 / 2 / 3 slides of full container-page. lg+: one slide in the
 // sale column (full remaining width if promo is absent; ~1fr of 3.3 if both).
 const SALE_SLIDER_IMAGE_SIZES =
   "(min-width: 1024px) calc(min(1600px, 100vw) - 360px), (min-width: 768px) 33vw, (min-width: 360px) 50vw, calc(100vw - 2rem)";
+
+const SALE_THUMB_SIZES =
+  "(min-width: 1024px) 48px, (min-width: 640px) 40px, 32px";
+
+const GALLERY_PREVIEW_CLOSE_MS = 120;
+
+function SaleProductCard({ product }: { product: SaleSliderProduct }) {
+  const orderedImages = sortProductImages(product.product_images);
+  const defaultImage =
+    orderedImages.find((image) => image.is_main) || orderedImages[0];
+  const [activeImage, setActiveImage] = useState(
+    defaultImage?.image_url || "/placeholder.png",
+  );
+  const [isGalleryPreviewOpen, setIsGalleryPreviewOpen] = useState(false);
+  const [imageZoomed, setImageZoomed] = useState(false);
+  const galleryPreviewCloseTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
+  const zoomFrameRef = useRef<number | null>(null);
+  const zoomInnerFrameRef = useRef<number | null>(null);
+  const previewImages = orderedImages.slice(0, 3);
+  const hasExtraImages = orderedImages.length > 1;
+
+  const cancelGalleryPreviewClose = () => {
+    if (galleryPreviewCloseTimeoutRef.current !== null) {
+      clearTimeout(galleryPreviewCloseTimeoutRef.current);
+      galleryPreviewCloseTimeoutRef.current = null;
+    }
+  };
+
+  const openGalleryPreview = () => {
+    cancelGalleryPreviewClose();
+    setIsGalleryPreviewOpen(true);
+  };
+
+  const scheduleGalleryPreviewClose = () => {
+    cancelGalleryPreviewClose();
+    galleryPreviewCloseTimeoutRef.current = setTimeout(() => {
+      galleryPreviewCloseTimeoutRef.current = null;
+      setIsGalleryPreviewOpen(false);
+    }, GALLERY_PREVIEW_CLOSE_MS);
+  };
+
+  const cancelZoomFrames = () => {
+    if (zoomFrameRef.current !== null) {
+      cancelAnimationFrame(zoomFrameRef.current);
+      zoomFrameRef.current = null;
+    }
+    if (zoomInnerFrameRef.current !== null) {
+      cancelAnimationFrame(zoomInnerFrameRef.current);
+      zoomInnerFrameRef.current = null;
+    }
+  };
+
+  const armZoom = () => {
+    cancelZoomFrames();
+    setImageZoomed(false);
+    zoomFrameRef.current = requestAnimationFrame(() => {
+      zoomFrameRef.current = null;
+      zoomInnerFrameRef.current = requestAnimationFrame(() => {
+        zoomInnerFrameRef.current = null;
+        setImageZoomed(true);
+      });
+    });
+  };
+
+  useEffect(() => {
+    return () => {
+      if (galleryPreviewCloseTimeoutRef.current !== null) {
+        clearTimeout(galleryPreviewCloseTimeoutRef.current);
+      }
+      cancelZoomFrames();
+    };
+  }, []);
+
+  const showImage = (url: string) => {
+    if (url === activeImage) return;
+    setActiveImage(url);
+    armZoom();
+  };
+
+  return (
+    <div
+      className="flex h-full min-w-0 flex-col overflow-hidden rounded-xl border border-zinc-200 bg-white transition hover:border-brand-gold/50 dark:border-white/10 dark:bg-white/[0.04]"
+      onMouseEnter={() => armZoom()}
+      onMouseLeave={() => {
+        cancelZoomFrames();
+        setImageZoomed(false);
+      }}
+    >
+      <Link
+        href={`/products/${product.id}`}
+        className="flex min-w-0 flex-1 flex-col outline-none focus-visible:ring-2 focus-visible:ring-brand-gold/50"
+      >
+        <div
+          className="relative aspect-[5/4] overflow-hidden bg-zinc-100 dark:bg-zinc-900"
+          onMouseEnter={hasExtraImages ? openGalleryPreview : undefined}
+          onMouseLeave={hasExtraImages ? scheduleGalleryPreviewClose : undefined}
+        >
+          <Image
+            key={activeImage}
+            src={activeImage}
+            alt={product.title}
+            fill
+            sizes={SALE_SLIDER_IMAGE_SIZES}
+            className={`object-cover transition duration-1000 ease-out ${
+              imageZoomed ? "scale-[1.07]" : "scale-100"
+            }`}
+          />
+        </div>
+
+        <div className="relative flex min-w-0 flex-col overflow-hidden p-3 pb-0 lg:p-4 lg:pb-0">
+          <h3 className="display-font line-clamp-2 min-w-0 text-sm font-bold text-zinc-900 sm:text-base dark:text-white lg:text-lg">
+            {product.title}
+          </h3>
+
+          <div className="mt-2 min-w-0">
+            <ProductPrice product={product} size="compact" />
+          </div>
+
+          {hasExtraImages ? (
+            <div
+              onMouseEnter={openGalleryPreview}
+              onMouseLeave={scheduleGalleryPreviewClose}
+              className={`absolute inset-0 flex items-center justify-center gap-1.5 bg-white/60 backdrop-blur-[2px] transition duration-500 ease-out sm:gap-2 dark:bg-zinc-950/60 ${
+                isGalleryPreviewOpen
+                  ? "pointer-events-auto translate-y-0 opacity-100"
+                  : "pointer-events-none -translate-y-full opacity-0"
+              }`}
+            >
+              {previewImages.map((image) => (
+                <div
+                  key={image.id}
+                  onMouseEnter={() => showImage(image.image_url)}
+                  className="relative h-8 w-8 cursor-pointer overflow-hidden rounded-md border border-zinc-200 bg-white shadow-md transition hover:scale-110 hover:border-brand-gold sm:h-10 sm:w-10 lg:h-12 lg:w-12 lg:rounded-lg"
+                >
+                  <Image
+                    src={image.image_url}
+                    alt=""
+                    fill
+                    sizes={SALE_THUMB_SIZES}
+                    className="object-cover"
+                  />
+                </div>
+              ))}
+            </div>
+          ) : null}
+        </div>
+      </Link>
+
+      <div className="mt-3 px-3 pb-3 lg:mt-4 lg:px-4 lg:pb-4">
+        <ProductCardAddToCartButton product={product} />
+      </div>
+    </div>
+  );
+}
 
 export function SaleProductsSlider({ products }: SaleProductsSliderProps) {
   const { t } = useLanguage();
@@ -38,6 +187,7 @@ export function SaleProductsSlider({ products }: SaleProductsSliderProps) {
     containScroll: "trimSnaps",
     loop: false,
   });
+  const [trackedApi, setTrackedApi] = useState<typeof emblaApi>(undefined);
 
   const syncState = useCallback(() => {
     if (!emblaApi) return;
@@ -48,7 +198,6 @@ export function SaleProductsSlider({ products }: SaleProductsSliderProps) {
   useEffect(() => {
     if (!emblaApi) return;
 
-    syncState();
     emblaApi.on("select", syncState);
     emblaApi.on("reInit", syncState);
 
@@ -57,6 +206,12 @@ export function SaleProductsSlider({ products }: SaleProductsSliderProps) {
       emblaApi.off("reInit", syncState);
     };
   }, [emblaApi, syncState]);
+
+  if (emblaApi && trackedApi !== emblaApi) {
+    setTrackedApi(emblaApi);
+    setCanScrollPrev(emblaApi.canScrollPrev());
+    setCanScrollNext(emblaApi.canScrollNext());
+  }
 
   const showNav = canScrollPrev || canScrollNext;
 
@@ -107,36 +262,7 @@ export function SaleProductsSlider({ products }: SaleProductsSliderProps) {
               key={product.id}
               className="min-h-0 min-w-0 flex-[0_0_100%] self-stretch min-[360px]:flex-[0_0_calc((100%-0.75rem)/2)] md:flex-[0_0_calc((100%-1.5rem)/3)] lg:flex-[0_0_100%]"
             >
-              <div className="group flex h-full min-w-0 flex-col overflow-hidden rounded-xl border border-zinc-200 bg-white transition hover:border-brand-gold/50 dark:border-white/10 dark:bg-white/[0.04]">
-                <Link
-                  href={`/products/${product.id}`}
-                  className="flex min-w-0 flex-1 flex-col outline-none focus-visible:ring-2 focus-visible:ring-brand-gold/50"
-                >
-                  <div className="relative aspect-[5/4] overflow-hidden bg-zinc-100 dark:bg-zinc-900">
-                    <Image
-                      src={mainImageUrl(product)}
-                      alt={product.title}
-                      fill
-                      sizes={SALE_SLIDER_IMAGE_SIZES}
-                      className="object-cover transition duration-700 group-hover:scale-105"
-                    />
-                  </div>
-
-                  <div className="flex min-w-0 flex-col p-3 pb-0 lg:p-4 lg:pb-0">
-                    <h3 className="display-font line-clamp-2 min-w-0 text-sm font-bold text-zinc-900 sm:text-base dark:text-white lg:text-lg">
-                      {product.title}
-                    </h3>
-
-                    <div className="mt-2 min-w-0">
-                      <ProductPrice product={product} size="compact" />
-                    </div>
-                  </div>
-                </Link>
-
-                <div className="mt-3 px-3 pb-3 lg:mt-4 lg:px-4 lg:pb-4">
-                  <ProductCardAddToCartButton product={product} />
-                </div>
-              </div>
+              <SaleProductCard product={product} />
             </div>
           ))}
         </div>
