@@ -10,6 +10,7 @@ import { CatalogFiltersScrollArea } from "@/components/product/CatalogFiltersScr
 import { CatalogSortSelect } from "@/components/product/CatalogSortSelect";
 import {
   buildCatalogBrandLocation,
+  buildCatalogClearFiltersHref,
   buildCatalogFilterHref,
   catalogFiltersFromSearchParams,
   countActiveCatalogFilterGroups,
@@ -18,6 +19,7 @@ import {
   type CatalogCategory,
   type CatalogQueryFields,
 } from "@/lib/catalog/catalog-search-params";
+import { useStorefrontProductSearch } from "@/components/layout/use-storefront-product-search";
 import { useLanguage } from "@/context/LanguageContext";
 
 type MobileMenuDrawerProps = {
@@ -42,6 +44,8 @@ export function MobileMenuDrawer({
   routeBrandSlug = null,
 }: MobileMenuDrawerProps) {
   const { t } = useLanguage();
+  const { value: searchValue, setValue: setSearchValue, submit: submitSearch } =
+    useStorefrontProductSearch();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -175,7 +179,9 @@ export function MobileMenuDrawer({
     setMaxDraft("");
     setPriceError(null);
     startTransition(() => {
-      router.replace(pathname, { scroll: false });
+      router.replace(buildCatalogClearFiltersHref(pathname, searchParams), {
+        scroll: false,
+      });
     });
     setOpen(false);
     scrollToProducts();
@@ -213,20 +219,28 @@ export function MobileMenuDrawer({
         }`}
       >
         <div className="border-b p-4">
-          <div className="flex gap-2">
+          <form
+            className="flex gap-2"
+            onSubmit={(event) => {
+              event.preventDefault();
+              if (submitSearch()) setOpen(false);
+            }}
+          >
             <input
               type="text"
+              value={searchValue}
+              onChange={(event) => setSearchValue(event.target.value)}
               placeholder={t.search}
               className="min-w-0 flex-1 rounded-lg border px-3 py-2 outline-none"
             />
             <button
-              type="button"
+              type="submit"
               aria-label={t.search}
               className="shrink-0 rounded-lg bg-black px-3 text-white"
             >
               <Search size={18} />
             </button>
-          </div>
+          </form>
         </div>
 
         <div className="flex border-b">

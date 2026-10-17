@@ -2,7 +2,9 @@
 
 import { Phone, Search } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { Suspense } from "react";
 
+import { useStorefrontProductSearch } from "@/components/layout/use-storefront-product-search";
 import { useLanguage } from "@/context/LanguageContext";
 import { STORE_CONTACT } from "@/lib/storefront/contact";
 
@@ -21,6 +23,56 @@ function supportsCatalogFiltersSlot(pathname: string | null): boolean {
   if (pathname === "/products") return true;
   if (pathname.startsWith("/brands/")) return true;
   return false;
+}
+
+function DesktopSearchForm({
+  value,
+  onValueChange,
+  onSubmit,
+}: {
+  value: string;
+  onValueChange: (value: string) => void;
+  onSubmit: () => void;
+}) {
+  const { t } = useLanguage();
+
+  return (
+    <form
+      className="flex h-10 min-w-0 flex-1 items-center overflow-hidden rounded-xl border border-white/10 bg-white shadow-sm"
+      onSubmit={(event) => {
+        event.preventDefault();
+        onSubmit();
+      }}
+    >
+      <input
+        type="text"
+        value={value}
+        onChange={(event) => onValueChange(event.target.value)}
+        placeholder={t.search}
+        className="h-full min-w-0 flex-1 bg-white px-4 text-sm leading-none text-black outline-none"
+      />
+
+      <button
+        type="submit"
+        aria-label={t.search}
+        className="flex h-full shrink-0 items-center bg-black px-4 text-white transition hover:text-orange-400"
+      >
+        <Search size={18} />
+      </button>
+    </form>
+  );
+}
+
+function ConnectedDesktopSearchForm() {
+  const { value, setValue, submit } = useStorefrontProductSearch();
+
+  return (
+    <DesktopSearchForm
+      value={value}
+      onValueChange={setValue}
+      onSubmit={submit}
+    />
+  );
 }
 
 /**
@@ -65,21 +117,17 @@ export function HeaderExtras() {
 
           <div className="flex min-w-0 flex-1 items-center gap-6">
             {/* SEARCH */}
-            <div className="flex h-10 min-w-0 flex-1 items-center overflow-hidden rounded-xl border border-white/10 bg-white shadow-sm">
-              <input
-                type="text"
-                placeholder={t.search}
-                className="h-full min-w-0 flex-1 bg-white px-4 text-sm leading-none text-black outline-none"
-              />
-
-              <button
-                type="button"
-                aria-label={t.search}
-                className="flex h-full shrink-0 items-center bg-black px-4 text-white transition hover:text-orange-400"
-              >
-                <Search size={18} />
-              </button>
-            </div>
+            <Suspense
+              fallback={
+                <DesktopSearchForm
+                  value=""
+                  onValueChange={() => {}}
+                  onSubmit={() => {}}
+                />
+              }
+            >
+              <ConnectedDesktopSearchForm />
+            </Suspense>
 
             {/* HELP / SUPPORT */}
             <a

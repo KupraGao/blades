@@ -9,6 +9,7 @@ import { CatalogCategoryFilter } from "@/components/product/CatalogCategoryFilte
 import { CatalogFiltersScrollArea } from "@/components/product/CatalogFiltersScrollArea";
 import {
   buildCatalogBrandLocation,
+  buildCatalogClearFiltersHref,
   buildCatalogFilterHref,
   catalogFiltersFromSearchParams,
   countActiveCatalogFilterGroups,
@@ -164,7 +165,9 @@ export function CategoriesSidebar({
     setMaxDraft("");
     setPriceError(null);
     startTransition(() => {
-      router.replace(pathname, { scroll: false });
+      router.replace(buildCatalogClearFiltersHref(pathname, searchParams), {
+        scroll: false,
+      });
     });
     scrollToProducts();
   }

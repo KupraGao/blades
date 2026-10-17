@@ -29,6 +29,7 @@ type Props = {
     page?: string;
     sort?: string;
     stock?: string;
+    search?: string;
   }>;
 };
 
@@ -80,6 +81,7 @@ export default async function BrandProductsPage({
       maxPrice: filters.maxPrice,
       sort: filters.sort,
       stock: filters.stock,
+      search: filters.search,
       page: filters.page > 1 ? filters.page : undefined,
     });
     redirect(
@@ -96,6 +98,7 @@ export default async function BrandProductsPage({
     minPrice: filters.minPrice,
     maxPrice: filters.maxPrice,
     sort: filters.sort ?? undefined,
+    search: filters.search ?? undefined,
     page: filters.page,
     limit: CATALOG_PAGE_SIZE,
   });
@@ -107,6 +110,7 @@ export default async function BrandProductsPage({
       maxPrice: filters.maxPrice,
       sort: filters.sort,
       stock: filters.stock,
+      search: filters.search,
       page: 1,
     });
     redirect(

@@ -42,6 +42,7 @@ export type CatalogFilters = {
   brandSlug: string | null;
   stock: CatalogStockFilter | null;
   sort: CatalogSortValue | null;
+  search: string | null;
 };
 
 export type CatalogSearchParamsInput = {
@@ -52,6 +53,7 @@ export type CatalogSearchParamsInput = {
   brand?: string;
   stock?: string;
   sort?: string;
+  search?: string;
 };
 
 export type CatalogQueryFields = {
@@ -62,6 +64,7 @@ export type CatalogQueryFields = {
   brandSlug?: string | null;
   stock?: CatalogStockFilter | null;
   sort?: CatalogSortValue | null;
+  search?: string | null;
 };
 
 function parseNonNegativeNumber(raw: string | undefined): number | null {
@@ -92,6 +95,14 @@ function parseCatalogSort(raw: string | undefined): CatalogSortValue | null {
     return value as CatalogSortValue;
   }
   return null;
+}
+
+/** Trimmed storefront search text. Whitespace-only input is not a search. */
+export function parseCatalogSearchTerm(
+  raw: string | null | undefined,
+): string | null {
+  const value = raw?.trim() ?? "";
+  return value.length > 0 ? value : null;
 }
 
 /** Parse catalog filters from URL search params. Invalid min>max → both price bounds ignored. Invalid stock/sort → ignored (default). */
@@ -125,6 +136,7 @@ export function parseCatalogSearchParams(
     brandSlug: parseBrandSlug(params.brand),
     stock: parseCatalogStock(params.stock),
     sort: parseCatalogSort(params.sort),
+    search: parseCatalogSearchTerm(params.search),
   };
 }
 
@@ -139,6 +151,7 @@ export function catalogFiltersFromSearchParams(
     brand: searchParams.get("brand") ?? undefined,
     stock: searchParams.get("stock") ?? undefined,
     sort: searchParams.get("sort") ?? undefined,
+    search: searchParams.get("search") ?? undefined,
   });
 }
 
@@ -204,7 +217,28 @@ export function buildCatalogQueryString(filters: CatalogQueryFields): string {
     params.set("page", String(filters.page));
   }
 
+  if (filters.search) {
+    params.set("search", filters.search);
+  }
+
   return params.toString();
+}
+
+/** New storefront search: `/products?search=` only. Drops page and existing filters. */
+export function buildStorefrontProductSearchHref(raw: string): string | null {
+  const search = parseCatalogSearchTerm(raw);
+  if (!search) return null;
+  return `/products?${buildCatalogQueryString({ search })}`;
+}
+
+/** Drop catalog filters and keep an active storefront search term. */
+export function buildCatalogClearFiltersHref(
+  pathname: string,
+  searchParams: { get: (name: string) => string | null },
+): string {
+  const { search } = catalogFiltersFromSearchParams(searchParams);
+  const query = buildCatalogQueryString({ search });
+  return query ? `${pathname}?${query}` : pathname;
 }
 
 export function mergeCatalogQueryString(
@@ -222,6 +256,7 @@ export function mergeCatalogQueryString(
       patch.brandSlug !== undefined ? patch.brandSlug : current.brandSlug,
     stock: patch.stock !== undefined ? patch.stock : current.stock,
     sort: patch.sort !== undefined ? patch.sort : current.sort,
+    search: patch.search !== undefined ? patch.search : current.search,
     page: patch.page ?? 1,
   });
 }

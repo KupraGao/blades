@@ -28,6 +28,7 @@ type Props = {
     brand?: string;
     stock?: string;
     sort?: string;
+    search?: string;
   }>;
 };
 
@@ -55,6 +56,7 @@ export default async function ProductsPage({ searchParams }: Props) {
       brandSlug: filters.brandSlug,
       stock: filters.stock,
       sort: filters.sort,
+      search: filters.search,
       page: filters.page > 1 ? filters.page : undefined,
     });
     redirect(query ? `/products?${query}` : "/products");
@@ -72,6 +74,7 @@ export default async function ProductsPage({ searchParams }: Props) {
         brandId: catalogBrand.brandId,
         stock: filters.stock ?? undefined,
         sort: filters.sort ?? undefined,
+        search: filters.search ?? undefined,
       });
 
   if (catalog.totalPages > 0 && filters.page > catalog.totalPages) {
@@ -82,6 +85,7 @@ export default async function ProductsPage({ searchParams }: Props) {
       brandSlug: filters.brandSlug,
       stock: filters.stock,
       sort: filters.sort,
+      search: filters.search,
       page: 1,
     });
     redirect(query ? `/products?${query}` : "/products");
