@@ -5,6 +5,7 @@ import Link from "next/link";
 
 import DeleteBrandButton from "@/app/admin/(protected)/brands/DeleteBrandButton";
 import { useLanguage } from "@/context/LanguageContext";
+import { isStoredBrandLogo } from "@/lib/brands/brand-logo-storage";
 
 type Brand = {
   id: number;
@@ -68,7 +69,7 @@ export default function AdminBrandsListContent({ brands }: Props) {
             >
               {/* LOGO */}
               <div className="hidden lg:block">
-                {brand.logo ? (
+                {isStoredBrandLogo(brand.logo) ? (
                   <Image
                     src={brand.logo}
                     alt={brand.name}
