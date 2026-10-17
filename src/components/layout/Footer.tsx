@@ -40,7 +40,7 @@ export function Footer() {
     <footer className="border-t border-zinc-200 bg-zinc-200 dark:border-white/10 dark:bg-black/50">
       <div className="container-page grid gap-8 py-12 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr] lg:gap-8">
         <div className="text-left">
-          <a
+          <Link
             href="/"
             aria-label={t.logoHomeAria}
             className="inline-flex items-center justify-center rounded-lg border border-black bg-white px-2.5 py-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold/50 dark:border-transparent"
@@ -52,7 +52,7 @@ export function Footer() {
               height={75}
               className="h-auto w-[150px] object-contain sm:w-[180px] lg:w-[230px] xl:w-[240px]"
             />
-          </a>
+          </Link>
 
           <ul className="mt-4 space-y-2 text-left text-sm text-zinc-600 dark:text-zinc-400">
             <li>

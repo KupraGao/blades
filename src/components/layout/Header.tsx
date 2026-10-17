@@ -144,7 +144,7 @@ export function Header({
           {/* ===================================== */}
           {/* LOGO */}
           {/* ===================================== */}
-          <a
+          <Link
             href="/"
             aria-label={t.logoHomeAria}
             className="flex shrink-0 items-center justify-center rounded-lg border border-black bg-white px-2 py-1 dark:border-transparent"
@@ -156,24 +156,24 @@ export function Header({
               height={75}
               className="h-auto w-[145px] object-contain sm:w-[175px] lg:w-[220px]"
             />
-          </a>
+          </Link>
 
           {/* ===================================== */}
           {/* DESKTOP NAV */}
           {/* ===================================== */}
           <nav className="hidden items-center gap-8 lg:flex">
-            <a href="/" className={desktopNavClassName(homeActive)}>
+            <Link href="/" className={desktopNavClassName(homeActive)}>
               {t.home}
-            </a>
-            <a href="/products" className={desktopNavClassName(productsActive)}>
+            </Link>
+            <Link href="/products" className={desktopNavClassName(productsActive)}>
               {t.products}
-            </a>
-            <a href="/brands" className={desktopNavClassName(brandsActive)}>
+            </Link>
+            <Link href="/brands" className={desktopNavClassName(brandsActive)}>
               {t.brands}
-            </a>
-            <a href="/contact" className={desktopNavClassName(contactActive)}>
+            </Link>
+            <Link href="/contact" className={desktopNavClassName(contactActive)}>
               {t.contact}
-            </a>
+            </Link>
           </nav>
 
           {/* ===================================== */}

@@ -27,7 +27,7 @@ export default function ProductSearch() {
     }, 300);
 
     return () => clearTimeout(timeout);
-  }, [value]);
+  }, [router, value]);
 
   return (
     <div className="relative w-full lg:w-80">
