@@ -3,8 +3,8 @@
 import {
   createContext,
   useContext,
-  useEffect,
-  useState,
+  useMemo,
+  useSyncExternalStore,
   ReactNode,
 } from "react";
 import {
@@ -59,6 +59,109 @@ const WishlistContext =
     undefined
   );
 
+const WISHLIST_STORAGE_KEY = "wishlist";
+const WISHLIST_CHANGE_EVENT = "blades-wishlist-change";
+const EMPTY_WISHLIST: WishlistItem[] = [];
+
+// undefined ნიშნავს, რომ წყარო localStorage-ია.
+// სტრიქონი ინახება მხოლოდ მაშინ, როცა ჩაწერა ვერ მოხერხდა.
+let memoryRaw: string | undefined;
+
+function subscribeToWishlist(onStoreChange: () => void) {
+  const onStorage = (event: StorageEvent) => {
+    if (event.key !== null && event.key !== WISHLIST_STORAGE_KEY) {
+      return;
+    }
+
+    onStoreChange();
+  };
+
+  window.addEventListener("storage", onStorage);
+  window.addEventListener(WISHLIST_CHANGE_EVENT, onStoreChange);
+
+  return () => {
+    window.removeEventListener("storage", onStorage);
+    window.removeEventListener(WISHLIST_CHANGE_EVENT, onStoreChange);
+  };
+}
+
+function getWishlistSnapshot(): string | null {
+  if (memoryRaw !== undefined) {
+    return memoryRaw;
+  }
+
+  try {
+    return localStorage.getItem(WISHLIST_STORAGE_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function getWishlistServerSnapshot(): string | null {
+  return null;
+}
+
+function parseWishlist(raw: string | null): WishlistItem[] {
+  if (!raw) {
+    return EMPTY_WISHLIST;
+  }
+
+  try {
+    const parsed: unknown = JSON.parse(raw);
+
+    if (!Array.isArray(parsed) || parsed.length === 0) {
+      return EMPTY_WISHLIST;
+    }
+
+    return parsed as WishlistItem[];
+  } catch {
+    return EMPTY_WISHLIST;
+  }
+}
+
+function readWishlistItems(): WishlistItem[] {
+  return parseWishlist(getWishlistSnapshot());
+}
+
+function commitWishlist(items: WishlistItem[]) {
+  const raw = JSON.stringify(items);
+
+  try {
+    localStorage.setItem(WISHLIST_STORAGE_KEY, raw);
+    memoryRaw = undefined;
+  } catch {
+    memoryRaw = raw;
+  }
+
+  window.dispatchEvent(new Event(WISHLIST_CHANGE_EVENT));
+}
+
+function createWishlistItem(product: any): WishlistItem {
+  const defaultImage =
+    product.product_images?.find(
+      (img: any) => img.is_main
+    ) ||
+    product.product_images?.[0];
+
+  return {
+    id: product.id,
+
+    title: product.title,
+
+    price: getRegularProductPrice(product),
+
+    salePrice: isProductOnSale(product)
+      ? getEffectiveProductPrice(product)
+      : null,
+
+    image:
+      defaultImage?.image_url ||
+      "/placeholder.png",
+
+    stock: Number(product.stock ?? 0),
+  };
+}
+
 // =====================================
 // WISHLIST PROVIDER
 // =====================================
@@ -68,120 +171,43 @@ export function WishlistProvider({
 }: {
   children: ReactNode;
 }) {
-  // =====================================
-  // WISHLIST STATE
-  // =====================================
+  const wishlistRaw = useSyncExternalStore(
+    subscribeToWishlist,
+    getWishlistSnapshot,
+    getWishlistServerSnapshot,
+  );
 
-  const [wishlistItems, setWishlistItems] =
-    useState<WishlistItem[]>([]);
-
-  // =====================================
-  // STORAGE READY
-  // =====================================
-
-  // ეს გვჭირდება იმისთვის,
-  // რომ პირველივე render-ზე ცარიელი Wishlist
-  // localStorage-ში არ შევინახოთ.
-
-  const [storageReady, setStorageReady] =
-    useState(false);
-
-  // =====================================
-  // LOAD WISHLIST FROM LOCAL STORAGE
-  // =====================================
-
-  useEffect(() => {
-    const savedWishlist =
-      localStorage.getItem("wishlist");
-
-    if (savedWishlist) {
-      try {
-        const parsedWishlist =
-          JSON.parse(savedWishlist);
-
-        setWishlistItems(parsedWishlist);
-      } catch (error) {
-        console.log(
-          "Wishlist load error:",
-          error
-        );
-      }
-    }
-
-    setStorageReady(true);
-  }, []);
-
-  // =====================================
-  // SAVE WISHLIST TO LOCAL STORAGE
-  // =====================================
-
-  useEffect(() => {
-    if (!storageReady) return;
-
-    localStorage.setItem(
-      "wishlist",
-      JSON.stringify(wishlistItems)
-    );
-  }, [wishlistItems, storageReady]);
+  const wishlistItems = useMemo(
+    () => parseWishlist(wishlistRaw),
+    [wishlistRaw],
+  );
 
   // =====================================
   // ADD TO WISHLIST
   // =====================================
 
   function addToWishlist(product: any) {
-    setWishlistItems((currentItems) => {
-      // ვამოწმებთ უკვე არის თუ არა
-      // პროდუქტი Wishlist-ში.
+    const currentItems = readWishlistItems();
 
-      const existingItem =
-        currentItems.find(
-          (item) => item.id === product.id
-        );
+    // ვამოწმებთ უკვე არის თუ არა
+    // პროდუქტი Wishlist-ში.
 
-      // თუ უკვე არსებობს,
-      // მეორედ აღარ ვამატებთ.
+    const existingItem =
+      currentItems.find(
+        (item) => item.id === product.id
+      );
 
-      if (existingItem) {
-        return currentItems;
-      }
+    // თუ უკვე არსებობს,
+    // მეორედ აღარ ვამატებთ.
 
-      // =====================================
-      // PRODUCT IMAGE
-      // =====================================
+    if (existingItem) {
+      return;
+    }
 
-      const defaultImage =
-        product.product_images?.find(
-          (img: any) => img.is_main
-        ) ||
-        product.product_images?.[0];
-
-      // =====================================
-      // NEW WISHLIST ITEM
-      // =====================================
-
-      const newItem: WishlistItem = {
-        id: product.id,
-
-        title: product.title,
-
-        price: getRegularProductPrice(product),
-
-        salePrice: isProductOnSale(product)
-          ? getEffectiveProductPrice(product)
-          : null,
-
-        image:
-          defaultImage?.image_url ||
-          "/placeholder.png",
-
-        stock: Number(product.stock ?? 0),
-      };
-
-      return [
-        ...currentItems,
-        newItem,
-      ];
-    });
+    commitWishlist([
+      ...currentItems,
+      createWishlistItem(product),
+    ]);
   }
 
   // =====================================
@@ -189,7 +215,17 @@ export function WishlistProvider({
   // =====================================
 
   function removeFromWishlist(id: string) {
-    setWishlistItems((currentItems) =>
+    const currentItems = readWishlistItems();
+
+    if (
+      !currentItems.some(
+        (item) => item.id === id
+      )
+    ) {
+      return;
+    }
+
+    commitWishlist(
       currentItems.filter(
         (item) => item.id !== id
       )

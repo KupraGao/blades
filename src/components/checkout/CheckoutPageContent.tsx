@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createOrder } from "@/actions/orders/create-order";
 import { useCart } from "@/context/CartContext";
@@ -49,30 +49,32 @@ export default function CheckoutPageContent() {
 
   const deliveryAllowed = isDeliverySubtotalAllowed(selectedCartTotal);
   const deliveryDisabled = !deliveryAllowed;
+  // Starts true so an initial subtotal under 150 GEL still forces pickup.
+  const [appliedDeliveryAllowed, setAppliedDeliveryAllowed] = useState(true);
 
-  useEffect(() => {
-    if (deliveryAllowed) {
-      return;
-    }
+  if (appliedDeliveryAllowed !== deliveryAllowed) {
+    setAppliedDeliveryAllowed(deliveryAllowed);
 
-    setValues((current) => {
-      if (current.fulfillmentMethod !== "delivery") {
-        return current;
-      }
+    if (!deliveryAllowed) {
+      setValues((current) => {
+        if (current.fulfillmentMethod !== "delivery") {
+          return current;
+        }
 
-      return {
+        return {
+          ...current,
+          fulfillmentMethod: "pickup",
+          address: "",
+        };
+      });
+
+      setTouched((current) => ({
         ...current,
-        fulfillmentMethod: "pickup",
-        address: "",
-      };
-    });
-
-    setTouched((current) => ({
-      ...current,
-      address: false,
-      fulfillmentMethod: true,
-    }));
-  }, [deliveryAllowed]);
+        address: false,
+        fulfillmentMethod: true,
+      }));
+    }
+  }
 
   const errors = getCustomerFormErrors(values);
   const isFormValid = isCustomerFormValid(values);

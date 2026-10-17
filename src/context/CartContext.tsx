@@ -3,9 +3,9 @@
 import {
   createContext,
   useContext,
-  useEffect,
-  useState,
-  ReactNode,
+  useMemo,
+  useSyncExternalStore,
+  type ReactNode,
 } from "react";
 
 import { CartItem, CartContextType, type AddToCartResult } from "./cart/types";
@@ -24,6 +24,7 @@ import {
 import {
   areAllItemsSelected,
   getSelectedItems,
+  normalizeCartItem,
 } from "./cart/normalize-cart-item";
 import {
   getCartCount,
@@ -34,7 +35,6 @@ import {
   getSelectedCartTotal,
 } from "./cart/selectors/cart-total";
 
-import { loadCart } from "./cart/storage/load-cart";
 import { saveCart } from "./cart/storage/save-cart";
 
 // =====================================
@@ -43,41 +43,160 @@ import { saveCart } from "./cart/storage/save-cart";
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
+const CART_STORAGE_KEY = "cart";
+const CART_CHANGE_EVENT = "blades-cart-change";
+const EMPTY_CART: CartItem[] = [];
+
+// წარუმატებელი ჩაწერისას კალათას დროებით ვინახავთ მეხსიერებაში.
+let memoryRaw: string | undefined;
+// მნიშვნელობა, რომელიც localStorage-ში იყო fallback-ის შექმნისას.
+let memoryBaseRaw: string | null | undefined;
+
+function subscribeToCart(onStoreChange: () => void) {
+  const onStorage = (event: StorageEvent) => {
+    if (event.key !== null && event.key !== CART_STORAGE_KEY) {
+      return;
+    }
+
+    onStoreChange();
+  };
+
+  window.addEventListener("storage", onStorage);
+  window.addEventListener(CART_CHANGE_EVENT, onStoreChange);
+
+  return () => {
+    window.removeEventListener("storage", onStorage);
+    window.removeEventListener(CART_CHANGE_EVENT, onStoreChange);
+  };
+}
+
+function getCartSnapshot(): string | null {
+  let storedRaw: string | null;
+
+  try {
+    storedRaw = localStorage.getItem(CART_STORAGE_KEY);
+  } catch {
+    return memoryRaw ?? null;
+  }
+
+  if (memoryRaw !== undefined) {
+    if (storedRaw === memoryBaseRaw) {
+      return memoryRaw;
+    }
+
+    // სხვა ჩანართში შენახული ახალი მონაცემი მოძველებულ fallback-ს ანაცვლებს.
+    memoryRaw = undefined;
+    memoryBaseRaw = undefined;
+  }
+
+  return storedRaw;
+}
+
+function getCartServerSnapshot(): string | null {
+  return null;
+}
+
+function parseCart(raw: string | null): CartItem[] {
+  if (!raw) {
+    return EMPTY_CART;
+  }
+
+  try {
+    const parsed: unknown = JSON.parse(raw);
+
+    if (!Array.isArray(parsed)) {
+      return EMPTY_CART;
+    }
+
+    const items = parsed
+      .map((item) => normalizeCartItem(item))
+      .filter((item): item is CartItem => item !== null);
+
+    return items.length === 0 ? EMPTY_CART : items;
+  } catch {
+    return EMPTY_CART;
+  }
+}
+
+function readCartItems(): CartItem[] {
+  return parseCart(getCartSnapshot());
+}
+
+function commitCart(items: CartItem[]) {
+  const raw = JSON.stringify(items);
+
+  // საწყის მდგომარეობას ვინახავთ, რათა სხვა ჩანართის ცვლილება ამოვიცნოთ.
+  let baseRaw: string | null | undefined;
+
+  try {
+    baseRaw = localStorage.getItem(CART_STORAGE_KEY);
+  } catch {
+    baseRaw = undefined;
+  }
+
+  saveCart(items);
+
+  let persisted = false;
+
+  try {
+    persisted = localStorage.getItem(CART_STORAGE_KEY) === raw;
+  } catch {
+    persisted = false;
+  }
+
+  if (persisted) {
+    memoryRaw = undefined;
+    memoryBaseRaw = undefined;
+  } else {
+    memoryRaw = raw;
+    memoryBaseRaw = baseRaw;
+  }
+
+  window.dispatchEvent(new Event(CART_CHANGE_EVENT));
+}
+
+function commitCartIfChanged(currentItems: CartItem[], nextItems: CartItem[]) {
+  if (nextItems === currentItems) {
+    return;
+  }
+
+  if (JSON.stringify(nextItems) === JSON.stringify(currentItems)) {
+    return;
+  }
+
+  commitCart(nextItems);
+}
+
 // =====================================
 // CART PROVIDER
 // =====================================
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const cartRaw = useSyncExternalStore(
+    subscribeToCart,
+    getCartSnapshot,
+    getCartServerSnapshot,
+  );
 
-  useEffect(() => {
-    setCartItems(loadCart());
-  }, []);
-
-  useEffect(() => {
-    saveCart(cartItems);
-  }, [cartItems]);
+  const cartItems = useMemo(() => parseCart(cartRaw), [cartRaw]);
 
   function addToCart(product: any): AddToCartResult {
-    let result: AddToCartResult = {
-      success: false,
-      reason: "out_of_stock",
-    };
-
-    setCartItems((currentItems) => {
-      const next = addToCartAction({
-        currentItems,
-        product,
-      });
-      result = next.result;
-      return next.items;
+    const currentItems = readCartItems();
+    const next = addToCartAction({
+      currentItems,
+      product,
     });
 
-    return result;
+    commitCartIfChanged(currentItems, next.items);
+
+    return next.result;
   }
 
   function increaseQuantity(id: string) {
-    setCartItems((currentItems) =>
+    const currentItems = readCartItems();
+
+    commitCartIfChanged(
+      currentItems,
       increaseQuantityAction({
         currentItems,
         id,
@@ -86,7 +205,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }
 
   function decreaseQuantity(id: string) {
-    setCartItems((currentItems) =>
+    const currentItems = readCartItems();
+
+    commitCartIfChanged(
+      currentItems,
       decreaseQuantityAction({
         currentItems,
         id,
@@ -95,7 +217,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }
 
   function removeFromCart(id: string) {
-    setCartItems((currentItems) =>
+    const currentItems = readCartItems();
+
+    commitCartIfChanged(
+      currentItems,
       removeFromCartAction({
         currentItems,
         id,
@@ -104,11 +229,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }
 
   function clearCart() {
-    setCartItems(clearCartAction());
+    commitCartIfChanged(readCartItems(), clearCartAction());
   }
 
   function toggleItemSelected(id: string) {
-    setCartItems((currentItems) =>
+    const currentItems = readCartItems();
+
+    commitCartIfChanged(
+      currentItems,
       toggleItemSelectedAction({
         currentItems,
         id,
@@ -117,7 +245,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }
 
   function setAllSelected(selected: boolean) {
-    setCartItems((currentItems) =>
+    const currentItems = readCartItems();
+
+    commitCartIfChanged(
+      currentItems,
       setAllSelectedAction({
         currentItems,
         selected,
@@ -126,7 +257,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }
 
   function removeItemsByIds(ids: string[]) {
-    setCartItems((currentItems) =>
+    const currentItems = readCartItems();
+
+    commitCartIfChanged(
+      currentItems,
       removeItemsByIdsAction({
         currentItems,
         ids,
