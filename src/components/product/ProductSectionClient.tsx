@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { ArrowRight, RefreshCw } from "lucide-react";
+import Link from "next/link";
 
 import { ProductCard } from "./ProductCard";
 import { CategoriesSidebar } from "@/components/common/CategoriesSidebar";
@@ -104,13 +105,13 @@ export function ProductSectionClient({
               </button>
             ) : null}
 
-            <a
+            <Link
               href="/products"
               className="inline-flex min-h-11 shrink-0 items-center gap-2 text-sm font-semibold text-brand-gold transition hover:opacity-80"
             >
               {t.viewAllProducts}
               <ArrowRight size={16} />
-            </a>
+            </Link>
           </div>
         </div>
 
