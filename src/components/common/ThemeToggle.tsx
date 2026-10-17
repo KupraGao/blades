@@ -1,19 +1,31 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { useTheme } from "next-themes";
 import { Moon, Sun } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { headerCircleControlClassName } from "@/components/common/LanguageSwitcher";
 
+function subscribeToClientMount() {
+  return () => {};
+}
+
+function getClientMounted() {
+  return true;
+}
+
+function getServerMounted() {
+  return false;
+}
+
 export function ThemeToggle() {
-  const [mounted, setMounted] = useState(false);
+  const mounted = useSyncExternalStore(
+    subscribeToClientMount,
+    getClientMounted,
+    getServerMounted,
+  );
   const { theme, setTheme } = useTheme();
   const { t } = useLanguage();
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   if (!mounted) {
     return (

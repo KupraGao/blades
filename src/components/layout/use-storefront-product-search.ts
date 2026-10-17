@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import {
@@ -13,10 +13,12 @@ export function useStorefrontProductSearch() {
   const searchParams = useSearchParams();
   const urlSearch = parseCatalogSearchTerm(searchParams.get("search")) ?? "";
   const [value, setValue] = useState(urlSearch);
+  const [trackedSearch, setTrackedSearch] = useState(urlSearch);
 
-  useEffect(() => {
+  if (trackedSearch !== urlSearch) {
+    setTrackedSearch(urlSearch);
     setValue(urlSearch);
-  }, [urlSearch]);
+  }
 
   function submit() {
     const href = buildStorefrontProductSearchHref(value);

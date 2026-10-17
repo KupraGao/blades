@@ -55,13 +55,18 @@ export function CategoriesSidebar({
   const [minDraft, setMinDraft] = useState(urlMin);
   const [maxDraft, setMaxDraft] = useState(urlMax);
   const [priceError, setPriceError] = useState<string | null>(null);
+  const [trackedPrices, setTrackedPrices] = useState({
+    min: urlMin,
+    max: urlMax,
+  });
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => {
+  if (trackedPrices.min !== urlMin || trackedPrices.max !== urlMax) {
+    setTrackedPrices({ min: urlMin, max: urlMax });
     setMinDraft(urlMin);
     setMaxDraft(urlMax);
     setPriceError(null);
-  }, [urlMin, urlMax]);
+  }
 
   useEffect(() => {
     if (!syncCollapsedOnScroll) return;

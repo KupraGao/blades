@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, useTransition } from "react";
+import { useCallback, useRef, useState, useTransition } from "react";
 import { Search } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
@@ -58,13 +58,18 @@ export function MobileMenuDrawer({
   const [minDraft, setMinDraft] = useState(urlMin);
   const [maxDraft, setMaxDraft] = useState(urlMax);
   const [priceError, setPriceError] = useState<string | null>(null);
+  const [trackedPrices, setTrackedPrices] = useState({
+    min: urlMin,
+    max: urlMax,
+  });
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => {
+  if (trackedPrices.min !== urlMin || trackedPrices.max !== urlMax) {
+    setTrackedPrices({ min: urlMin, max: urlMax });
     setMinDraft(urlMin);
     setMaxDraft(urlMax);
     setPriceError(null);
-  }, [urlMin, urlMax]);
+  }
 
   const navItems = [
     { label: t.home, href: "/" },

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState, useTransition, type FormEvent } from "react";
+import { useState, useTransition, type FormEvent } from "react";
 
 import {
   updateCustomerProfile,
@@ -44,15 +44,25 @@ export default function AccountOverview({
     type: "success" | "error";
     message: string;
   } | null>(null);
+  const [trackedProfile, setTrackedProfile] = useState({
+    fullName,
+    phone,
+    isEditing,
+  });
 
-  useEffect(() => {
+  if (
+    trackedProfile.fullName !== fullName ||
+    trackedProfile.phone !== phone ||
+    trackedProfile.isEditing !== isEditing
+  ) {
+    setTrackedProfile({ fullName, phone, isEditing });
     setDisplayFullName(fullName);
     setDisplayPhone(phone);
     if (!isEditing) {
       setDraftFullName(fullName);
       setDraftPhone(phone);
     }
-  }, [fullName, phone, isEditing]);
+  }
 
   function handleLogout() {
     startLogoutTransition(async () => {

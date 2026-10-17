@@ -12,11 +12,14 @@ export default function AdminUsersSearch() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const [value, setValue] = useState(searchParams.get("search") ?? "");
+  const urlSearch = searchParams.get("search") ?? "";
+  const [value, setValue] = useState(urlSearch);
+  const [trackedSearch, setTrackedSearch] = useState(urlSearch);
 
-  useEffect(() => {
-    setValue(searchParams.get("search") ?? "");
-  }, [searchParams]);
+  if (trackedSearch !== urlSearch) {
+    setTrackedSearch(urlSearch);
+    setValue(urlSearch);
+  }
 
   useEffect(() => {
     const timeout = setTimeout(() => {

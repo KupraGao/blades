@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { ArrowRight, Play } from "lucide-react";
 
 import { useLanguage } from "@/context/LanguageContext";
@@ -9,6 +9,18 @@ import { formatAdminDate } from "@/lib/i18n/format-admin-date";
 import type { LatestYoutubeVideo } from "@/lib/youtube/fetch-latest-videos";
 
 const CHANNEL_URL = "https://www.youtube.com/@Bladesge";
+
+function subscribeToClientMount() {
+  return () => {};
+}
+
+function getClientMounted() {
+  return true;
+}
+
+function getServerMounted() {
+  return false;
+}
 
 function YoutubeBrandMark() {
   return (
@@ -116,15 +128,15 @@ export function LatestYoutubeVideos({
   const [activeVideoId, setActiveVideoId] = useState<string | null>(null);
   // ამ კომპონენტის პირველი render ყოველთვის `ka`-ა, სერვერის HTML-ის შესატყვისად.
   // `LanguageProvider`-ის ენა უკვე `en` შეიძლება იყოს, თუ Suspense გვიან ჰიდრირდება.
-  const [hasMounted, setHasMounted] = useState(false);
+  const hasMounted = useSyncExternalStore(
+    subscribeToClientMount,
+    getClientMounted,
+    getServerMounted,
+  );
   const copy = hasMounted ? t : ka;
   const dateLanguage = hasMounted ? language : "ka";
   const channelLinkClass =
     "inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-brand-gold transition hover:opacity-80";
-
-  useEffect(() => {
-    setHasMounted(true);
-  }, []);
 
   return (
     <section className="py-12">
