@@ -41,8 +41,6 @@ export const en = {
   stockLimitReached: "Stock limit reached",
   addedToCartOnce: "✓ Added to Cart",
   addedToCartCount: "✓ {count} Added to Cart",
-  addToWishlist: "Add to wishlist",
-  wishlist: "Wishlist",
 
   latestProducts: "Latest Products",
   categories: "Categories",
@@ -250,15 +248,6 @@ export const en = {
   shipping: "Shipping",
   shippingFree: "Free",
   productsCountLabel: "Products",
-
-  // =====================================
-  // WISHLIST
-  // =====================================
-  emptyWishlist: "Your wishlist is empty",
-  emptyWishlistDescription:
-    "You haven't added any products to your wishlist yet.",
-  savedProducts: "Saved products",
-  removeFromWishlist: "Remove from wishlist",
 
   // =====================================
   // HOME FEATURES / PROMO

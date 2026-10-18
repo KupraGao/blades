@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { usePathname } from "next/navigation";
-import { Heart, Menu, ShoppingBag, UserRound, X } from "lucide-react";
+import { Menu, ShoppingBag, UserRound, X } from "lucide-react";
 
 import { MobileMenuDrawer } from "./MobileMenuDrawer";
 
@@ -14,7 +14,6 @@ import { LanguageSwitcher, headerCircleControlClassName } from "@/components/com
 
 import { useLanguage } from "@/context/LanguageContext";
 import { useCart } from "@/context/CartContext";
-import { useWishlist } from "@/context/WishlistContext";
 import type { CatalogBrandOption } from "@/lib/catalog/catalog-search-params";
 
 type CatalogCategory = {
@@ -34,7 +33,7 @@ const RAIL_SCROLL_THRESHOLD_PX = 10;
 const RAIL_TOP_FORCE_VISIBLE_PX = 16;
 const RAIL_TRANSITION_MS = 200;
 const RAIL_STAGGER_MS = 40;
-const RAIL_ITEM_COUNT = 5;
+const RAIL_ITEM_COUNT = 4;
 
 export function Header({
   categories,
@@ -45,7 +44,6 @@ export function Header({
   const { t } = useLanguage();
   const pathname = usePathname();
   const { cartCount } = useCart();
-  const { wishlistCount } = useWishlist();
   const brandsActive =
     pathname === "/brands" || Boolean(pathname?.startsWith("/brands/"));
   const homeActive = pathname === "/";
@@ -196,22 +194,6 @@ export function Header({
               </div>
 
               <div className={railItemClassName()} style={railItemStyle(2)}>
-                <Link
-                  href="/wishlist"
-                  aria-label={t.wishlist}
-                  title={t.wishlist}
-                  className={`relative ${headerCircleControlClassName}`}
-                >
-                  <Heart size={18} strokeWidth={2} />
-                  {wishlistCount > 0 && (
-                    <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-brand-orange px-1 text-[11px] font-bold text-white">
-                      {wishlistCount}
-                    </span>
-                  )}
-                </Link>
-              </div>
-
-              <div className={railItemClassName()} style={railItemStyle(3)}>
                 <button
                   type="button"
                   aria-label={t.cart}
@@ -225,7 +207,7 @@ export function Header({
                 </button>
               </div>
 
-              <div className={railItemClassName()} style={railItemStyle(4)}>
+              <div className={railItemClassName()} style={railItemStyle(3)}>
                 <Link
                   href={accountHref}
                   aria-label={t.account}

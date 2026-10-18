@@ -1,10 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Heart, Minus, Plus, ShoppingBag } from "lucide-react";
+import { Minus, Plus, ShoppingBag } from "lucide-react";
 
 import { useCart } from "@/context/CartContext";
-import { useWishlist } from "@/context/WishlistContext";
 import { useLanguage } from "@/context/LanguageContext";
 
 import { AddToCartFloatFeedback } from "@/components/product/AddToCartFloatFeedback";
@@ -20,17 +19,12 @@ export default function ProductPurchaseActions({
 }: ProductPurchaseActionsProps) {
 
   // =====================================
-  // CART + WISHLIST
+  // CART
   // =====================================
 
   const { addToCart } = useCart();
   const { t } = useLanguage();
   const floatFeedback = useAddToCartFloatFeedback();
-
-  const {
-    toggleWishlist,
-    isInWishlist,
-  } = useWishlist();
 
   // =====================================
   // QUANTITY
@@ -43,8 +37,6 @@ export default function ProductPurchaseActions({
   // =====================================
 
   const stock = Number(product.stock) || 0;
-
-  const liked = isInWishlist(product.id);
 
   // =====================================
   // DECREASE
@@ -167,35 +159,6 @@ export default function ProductPurchaseActions({
             <ProductDetailsContent label="addToCart" />
           </button>
         </div>
-
-        {/* ===================================== */}
-        {/* WISHLIST */}
-        {/* ===================================== */}
-
-        <button
-          type="button"
-          aria-label={
-            liked
-              ? t.removeFromWishlist
-              : t.addToWishlist
-          }
-          title={
-            liked
-              ? t.removeFromWishlist
-              : t.addToWishlist
-          }
-          onClick={() => toggleWishlist(product)}
-          className={`grid h-14 w-14 shrink-0 place-items-center rounded-xl border transition ${
-            liked
-              ? "border-brand-orange bg-brand-orange text-white"
-              : "border-zinc-300 bg-white text-zinc-700 hover:border-brand-orange hover:text-brand-orange dark:border-white/10 dark:bg-white/5 dark:text-white"
-          }`}
-        >
-          <Heart
-            size={21}
-            fill={liked ? "currentColor" : "none"}
-          />
-        </button>
 
       </div>
 

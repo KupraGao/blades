@@ -41,8 +41,6 @@ export const ka = {
   stockLimitReached: "მარაგის ლიმიტი მიღწეულია",
   addedToCartOnce: "✓ კალათაში დაემატა",
   addedToCartCount: "✓ {count} დაემატა კალათაში",
-  addToWishlist: "ფავორიტებში დამატება",
-  wishlist: "ფავორიტები",
 
   latestProducts: "ახალი პროდუქტები",
   categories: "კატეგორიები",
@@ -249,14 +247,6 @@ export const ka = {
   shipping: "მიწოდება",
   shippingFree: "უფასო",
   productsCountLabel: "პროდუქტები",
-
-  // =====================================
-  // WISHLIST
-  // =====================================
-  emptyWishlist: "ფავორიტები ცარიელია",
-  emptyWishlistDescription: "ფავორიტებში ჯერ პროდუქტი არ დაგიმატებია.",
-  savedProducts: "შენახული პროდუქტები",
-  removeFromWishlist: "ფავორიტებიდან წაშლა",
 
   // =====================================
   // HOME FEATURES / PROMO

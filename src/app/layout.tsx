@@ -5,7 +5,6 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { CartProvider } from "@/context/CartContext";
-import { WishlistProvider } from "@/context/WishlistContext";
 import { kaBodyFont, kaHeadingFont } from "@/fonts/georgian";
 
 const inter = Inter({
@@ -47,11 +46,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       >
         <ThemeProvider>
           <LanguageProvider>
-            <CartProvider>
-              <WishlistProvider>
-                {children}
-              </WishlistProvider>
-            </CartProvider>
+            <CartProvider>{children}</CartProvider>
           </LanguageProvider>
         </ThemeProvider>
       </body>
