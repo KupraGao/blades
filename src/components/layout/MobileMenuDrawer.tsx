@@ -19,6 +19,8 @@ import {
   type CatalogCategory,
   type CatalogQueryFields,
 } from "@/lib/catalog/catalog-search-params";
+import { ProductSearchFrame } from "@/components/layout/ProductSearchSuggestions";
+import { useProductSearchSuggestions } from "@/components/layout/use-product-search-suggestions";
 import { useStorefrontProductSearch } from "@/components/layout/use-storefront-product-search";
 import { useLanguage } from "@/context/LanguageContext";
 
@@ -46,6 +48,11 @@ export function MobileMenuDrawer({
   const { t } = useLanguage();
   const { value: searchValue, setValue: setSearchValue, submit: submitSearch } =
     useStorefrontProductSearch();
+  const suggestions = useProductSearchSuggestions(searchValue, () => setOpen(false));
+  const searchActiveDescendant =
+    suggestions.open && suggestions.activeIndex >= 0
+      ? `${suggestions.listId}-option-${suggestions.activeIndex}`
+      : undefined;
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -224,19 +231,38 @@ export function MobileMenuDrawer({
         }`}
       >
         <div className="border-b p-4">
+          <ProductSearchFrame
+            className="relative"
+            listId={suggestions.listId}
+            open={suggestions.open}
+            loading={suggestions.loading}
+            empty={suggestions.empty}
+            suggestions={suggestions.suggestions}
+            activeIndex={suggestions.activeIndex}
+            seeAllHref={suggestions.seeAllHref}
+            onClose={suggestions.close}
+            onNavigate={() => setOpen(false)}
+          >
           <form
             className="flex gap-2"
             onSubmit={(event) => {
               event.preventDefault();
+              suggestions.close();
               if (submitSearch()) setOpen(false);
             }}
           >
             <input
               type="text"
+              role="combobox"
+              aria-autocomplete="list"
+              aria-expanded={suggestions.open}
+              aria-controls={suggestions.open ? suggestions.listId : undefined}
+              aria-activedescendant={searchActiveDescendant}
               value={searchValue}
               onChange={(event) => setSearchValue(event.target.value)}
+              onKeyDown={suggestions.onInputKeyDown}
               placeholder={t.search}
-              className="min-w-0 flex-1 rounded-lg border px-3 py-2 outline-none"
+              className="min-w-0 flex-1 rounded-lg border border-zinc-300 bg-white px-3 py-2 text-zinc-900 outline-none [color-scheme:light] placeholder:text-zinc-500"
             />
             <button
               type="submit"
@@ -246,6 +272,7 @@ export function MobileMenuDrawer({
               <Search size={18} />
             </button>
           </form>
+          </ProductSearchFrame>
         </div>
 
         <div className="flex border-b">

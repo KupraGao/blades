@@ -2,8 +2,10 @@
 
 import { Phone, Search } from "lucide-react";
 import { usePathname } from "next/navigation";
-import { Suspense } from "react";
+import { Suspense, type KeyboardEvent } from "react";
 
+import { ProductSearchFrame } from "@/components/layout/ProductSearchSuggestions";
+import { useProductSearchSuggestions } from "@/components/layout/use-product-search-suggestions";
 import { useStorefrontProductSearch } from "@/components/layout/use-storefront-product-search";
 import { useLanguage } from "@/context/LanguageContext";
 import { STORE_CONTACT } from "@/lib/storefront/contact";
@@ -29,16 +31,26 @@ function DesktopSearchForm({
   value,
   onValueChange,
   onSubmit,
+  onKeyDown,
+  listId,
+  expanded,
+  activeDescendant,
+  className = "min-w-0 flex-1",
 }: {
   value: string;
   onValueChange: (value: string) => void;
   onSubmit: () => void;
+  onKeyDown?: (event: KeyboardEvent<HTMLInputElement>) => void;
+  listId?: string;
+  expanded?: boolean;
+  activeDescendant?: string;
+  className?: string;
 }) {
   const { t } = useLanguage();
 
   return (
     <form
-      className="flex h-10 min-w-0 flex-1 items-center overflow-hidden rounded-xl border border-white/10 bg-white shadow-sm"
+      className={`flex h-10 items-center overflow-hidden rounded-xl border border-white/10 bg-white shadow-sm ${className}`}
       onSubmit={(event) => {
         event.preventDefault();
         onSubmit();
@@ -46,8 +58,14 @@ function DesktopSearchForm({
     >
       <input
         type="text"
+        role="combobox"
+        aria-autocomplete="list"
+        aria-expanded={expanded ?? false}
+        aria-controls={expanded ? listId : undefined}
+        aria-activedescendant={activeDescendant}
         value={value}
         onChange={(event) => onValueChange(event.target.value)}
+        onKeyDown={onKeyDown}
         placeholder={t.search}
         className="h-full min-w-0 flex-1 bg-white px-4 text-sm leading-none text-black outline-none"
       />
@@ -65,13 +83,38 @@ function DesktopSearchForm({
 
 function ConnectedDesktopSearchForm() {
   const { value, setValue, submit } = useStorefrontProductSearch();
+  const suggestions = useProductSearchSuggestions(value);
+  const activeDescendant =
+    suggestions.open && suggestions.activeIndex >= 0
+      ? `${suggestions.listId}-option-${suggestions.activeIndex}`
+      : undefined;
 
   return (
-    <DesktopSearchForm
-      value={value}
-      onValueChange={setValue}
-      onSubmit={submit}
-    />
+    <ProductSearchFrame
+      className="relative min-w-0 flex-1"
+      listId={suggestions.listId}
+      open={suggestions.open}
+      loading={suggestions.loading}
+      empty={suggestions.empty}
+      suggestions={suggestions.suggestions}
+      activeIndex={suggestions.activeIndex}
+      seeAllHref={suggestions.seeAllHref}
+      onClose={suggestions.close}
+    >
+      <DesktopSearchForm
+        value={value}
+        onValueChange={setValue}
+        onSubmit={() => {
+          suggestions.close();
+          submit();
+        }}
+        onKeyDown={suggestions.onInputKeyDown}
+        listId={suggestions.listId}
+        expanded={suggestions.open}
+        activeDescendant={activeDescendant}
+        className="w-full"
+      />
+    </ProductSearchFrame>
   );
 }
 
