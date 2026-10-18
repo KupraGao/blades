@@ -1,5 +1,7 @@
+
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 
 import DeletePromoBannerButton from "@/app/admin/(protected)/promos/DeletePromoBannerButton";
@@ -60,7 +62,14 @@ function PosterPreview({
   }
 
   return (
-    <img src={src} alt={alt} className={`object-cover ${className}`} />
+    <Image
+      src={src}
+      alt={alt}
+      width={1120}
+      height={630}
+      unoptimized
+      className={`object-cover ${className}`}
+    />
   );
 }
 
@@ -89,7 +98,9 @@ export default function AdminPromosListContent({ banners }: Props) {
           <p className="text-lg font-semibold text-white">
             {t.noPromoBannersFound}
           </p>
-          <p className="mt-2 text-sm text-zinc-500">{t.promoBannersEmptyHint}</p>
+          <p className="mt-2 text-sm text-zinc-500">
+            {t.promoBannersEmptyHint}
+          </p>
         </div>
       ) : (
         <>

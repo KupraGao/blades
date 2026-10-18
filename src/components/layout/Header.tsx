@@ -52,9 +52,8 @@ export function Header({
   const contactActive = pathname === "/contact";
 
   function desktopNavClassName(isActive: boolean) {
-    return `primary-nav-font transition hover:text-brand-gold dark:hover:text-brand-gold ${
-      isActive ? "text-brand-gold" : "text-zinc-700 dark:text-zinc-300"
-    }`;
+    return `primary-nav-font transition hover:text-brand-gold dark:hover:text-brand-gold ${isActive ? "text-brand-gold" : "text-zinc-700 dark:text-zinc-300"
+      }`;
   }
 
   // =====================================
@@ -139,6 +138,7 @@ export function Header({
       <header className="sticky top-0 z-50 border-b border-zinc-200 bg-white/80 backdrop-blur-x dark:border-white/10 dark:bg-black/70">
         <div className="container-page flex h-20 items-center justify-between gap-3 lg:gap-6">
 
+
           {/* ===================================== */}
           {/* LOGO */}
           {/* ===================================== */}
@@ -152,9 +152,11 @@ export function Header({
               alt={t.logoAlt}
               width={320}
               height={75}
+              loading="eager"
               className="h-auto w-[145px] object-contain sm:w-[175px] lg:w-[220px]"
             />
           </Link>
+
 
           {/* ===================================== */}
           {/* DESKTOP NAV */}

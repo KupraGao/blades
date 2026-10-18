@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
@@ -26,6 +27,7 @@ function frameClass(fillHeight: boolean) {
     : "aspect-[16/9]";
 }
 
+
 function BannerSlide({
   banner,
   fillHeight,
@@ -43,30 +45,40 @@ function BannerSlide({
   isInitial?: boolean;
   loadImage?: boolean;
 }) {
-  const title = pickLocalizedText(banner.title_ka, banner.title_en, language);
+  const title = pickLocalizedText(
+    banner.title_ka,
+    banner.title_en,
+    language,
+  );
+
   const subtitle = pickLocalizedText(
     banner.subtitle_ka,
     banner.subtitle_en,
     language,
   );
+
   const href =
     banner.link_url && isInternalAppPath(banner.link_url)
       ? banner.link_url
       : null;
+
   const shouldRenderImage = isInitial || loadImage;
 
   const media = (
     <>
       {shouldRenderImage ? (
-        <img
+        <Image
           src={banner.imageUrl}
           alt={href ? "" : title || ""}
+          fill
+          sizes="(max-width: 1024px) 100vw, 70vw"
+          unoptimized
           fetchPriority={isInitial ? "high" : "low"}
           loading={isInitial ? "eager" : "lazy"}
-          decoding="async"
           className="absolute inset-0 h-full w-full object-cover"
         />
       ) : null}
+
       {title || subtitle ? (
         <div
           className={`pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/25 to-transparent px-4 pt-12 sm:px-6 ${
@@ -78,6 +90,7 @@ function BannerSlide({
               {title}
             </p>
           ) : null}
+
           {subtitle ? (
             <p className="mt-1 max-w-xl text-sm text-white/85 sm:text-base">
               {subtitle}
@@ -104,6 +117,7 @@ function BannerSlide({
 
   return <div className={className}>{media}</div>;
 }
+
 
 export function PromoSlider({
   banners,

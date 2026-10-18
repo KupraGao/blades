@@ -1,5 +1,7 @@
+
 "use client";
 
+import Image from "next/image";
 import { useState, type FormEvent } from "react";
 
 import { useLanguage } from "@/context/LanguageContext";
@@ -127,9 +129,12 @@ export default function PromoBannerForm({ mode, banner, action }: Props) {
           </label>
 
           {mode === "edit" && banner?.imageUrl ? (
-            <img
+            <Image
               src={banner.imageUrl}
               alt={t.promoBannerCurrentImage}
+              width={1120}
+              height={630}
+              unoptimized
               className="mb-4 h-40 w-full max-w-xl rounded-xl object-cover"
             />
           ) : null}
@@ -142,7 +147,9 @@ export default function PromoBannerForm({ mode, banner, action }: Props) {
             required={mode === "create"}
             className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-sm text-white file:mr-4 file:rounded-lg file:border-0 file:bg-white file:px-3 file:py-1.5 file:text-sm file:font-semibold file:text-black"
           />
-          <p className="mt-2 text-xs text-zinc-500">{t.promoBannerImageHint}</p>
+          <p className="mt-2 text-xs text-zinc-500">
+            {t.promoBannerImageHint}
+          </p>
         </div>
 
         <div>
@@ -150,73 +157,73 @@ export default function PromoBannerForm({ mode, banner, action }: Props) {
             {t.promoBannerOverlayOptionalHint}
           </p>
           <div className="grid gap-6 md:grid-cols-2">
-          <div>
-            <label
-              htmlFor="title_ka"
-              className="mb-2 block text-sm font-medium text-zinc-300"
-            >
-              {t.promoBannerTitleKa}
-            </label>
-            <input
-              id="title_ka"
-              name="title_ka"
-              type="text"
-              maxLength={120}
-              defaultValue={banner?.title_ka ?? ""}
-              className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white outline-none transition focus:border-white"
-            />
-          </div>
+            <div>
+              <label
+                htmlFor="title_ka"
+                className="mb-2 block text-sm font-medium text-zinc-300"
+              >
+                {t.promoBannerTitleKa}
+              </label>
+              <input
+                id="title_ka"
+                name="title_ka"
+                type="text"
+                maxLength={120}
+                defaultValue={banner?.title_ka ?? ""}
+                className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white outline-none transition focus:border-white"
+              />
+            </div>
 
-          <div>
-            <label
-              htmlFor="title_en"
-              className="mb-2 block text-sm font-medium text-zinc-300"
-            >
-              {t.promoBannerTitleEn}
-            </label>
-            <input
-              id="title_en"
-              name="title_en"
-              type="text"
-              maxLength={120}
-              defaultValue={banner?.title_en ?? ""}
-              className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white outline-none transition focus:border-white"
-            />
-          </div>
+            <div>
+              <label
+                htmlFor="title_en"
+                className="mb-2 block text-sm font-medium text-zinc-300"
+              >
+                {t.promoBannerTitleEn}
+              </label>
+              <input
+                id="title_en"
+                name="title_en"
+                type="text"
+                maxLength={120}
+                defaultValue={banner?.title_en ?? ""}
+                className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white outline-none transition focus:border-white"
+              />
+            </div>
 
-          <div>
-            <label
-              htmlFor="subtitle_ka"
-              className="mb-2 block text-sm font-medium text-zinc-300"
-            >
-              {t.promoBannerSubtitleKa}
-            </label>
-            <input
-              id="subtitle_ka"
-              name="subtitle_ka"
-              type="text"
-              maxLength={200}
-              defaultValue={banner?.subtitle_ka ?? ""}
-              className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white outline-none transition focus:border-white"
-            />
-          </div>
+            <div>
+              <label
+                htmlFor="subtitle_ka"
+                className="mb-2 block text-sm font-medium text-zinc-300"
+              >
+                {t.promoBannerSubtitleKa}
+              </label>
+              <input
+                id="subtitle_ka"
+                name="subtitle_ka"
+                type="text"
+                maxLength={200}
+                defaultValue={banner?.subtitle_ka ?? ""}
+                className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white outline-none transition focus:border-white"
+              />
+            </div>
 
-          <div>
-            <label
-              htmlFor="subtitle_en"
-              className="mb-2 block text-sm font-medium text-zinc-300"
-            >
-              {t.promoBannerSubtitleEn}
-            </label>
-            <input
-              id="subtitle_en"
-              name="subtitle_en"
-              type="text"
-              maxLength={200}
-              defaultValue={banner?.subtitle_en ?? ""}
-              className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white outline-none transition focus:border-white"
-            />
-          </div>
+            <div>
+              <label
+                htmlFor="subtitle_en"
+                className="mb-2 block text-sm font-medium text-zinc-300"
+              >
+                {t.promoBannerSubtitleEn}
+              </label>
+              <input
+                id="subtitle_en"
+                name="subtitle_en"
+                type="text"
+                maxLength={200}
+                defaultValue={banner?.subtitle_en ?? ""}
+                className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white outline-none transition focus:border-white"
+              />
+            </div>
           </div>
         </div>
 
@@ -235,7 +242,9 @@ export default function PromoBannerForm({ mode, banner, action }: Props) {
             defaultValue={banner?.link_url ?? ""}
             className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white outline-none transition focus:border-white"
           />
-          <p className="mt-2 text-xs text-zinc-500">{t.promoBannerLinkHint}</p>
+          <p className="mt-2 text-xs text-zinc-500">
+            {t.promoBannerLinkHint}
+          </p>
         </div>
 
         <div>

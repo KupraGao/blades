@@ -1,7 +1,10 @@
+
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
+
 import { ProductPrice } from "@/components/product/ProductPrice";
 import { useCart } from "@/context/CartContext";
 import { useLanguage } from "@/context/LanguageContext";
@@ -25,6 +28,7 @@ export function CartDrawer({ open, setOpen }: CartDrawerProps) {
     toggleItemSelected,
     setAllSelected,
   } = useCart();
+
   const { t } = useLanguage();
 
   const hasSelection = selectedItems.length > 0;
@@ -43,7 +47,6 @@ export function CartDrawer({ open, setOpen }: CartDrawerProps) {
           open ? "translate-x-0" : "translate-x-full"
         }`}
       >
-
         <div className="flex h-20 items-center justify-between border-b border-zinc-200 px-6 dark:border-white/10">
           <div className="flex items-center gap-3">
             <ShoppingBag size={20} />
@@ -70,7 +73,6 @@ export function CartDrawer({ open, setOpen }: CartDrawerProps) {
         <div className="flex-1 overflow-y-auto p-6">
           {cartItems.length === 0 ? (
             <div className="flex h-full flex-col items-center justify-center text-center">
-
               <div className="mb-4 grid h-16 w-16 place-items-center rounded-full bg-zinc-100 dark:bg-white/5">
                 <ShoppingBag size={28} className="text-zinc-400" />
               </div>
@@ -109,9 +111,12 @@ export function CartDrawer({ open, setOpen }: CartDrawerProps) {
                     onClick={() => setOpen(false)}
                     className="shrink-0"
                   >
-                    <img
+                    <Image
                       src={item.image}
                       alt={item.title}
+                      width={96}
+                      height={96}
+                      unoptimized
                       className="h-24 w-24 rounded-lg object-cover transition duration-300 hover:opacity-80"
                     />
                   </Link>
@@ -202,7 +207,10 @@ export function CartDrawer({ open, setOpen }: CartDrawerProps) {
             </div>
 
             {!hasSelection ? (
-              <p className="mt-3 text-sm text-red-600 dark:text-red-400" role="status">
+              <p
+                className="mt-3 text-sm text-red-600 dark:text-red-400"
+                role="status"
+              >
                 {t.noCartItemsSelected}
               </p>
             ) : null}

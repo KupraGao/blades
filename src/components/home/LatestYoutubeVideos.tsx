@@ -1,5 +1,7 @@
+
 "use client";
 
+import Image from "next/image";
 import { useState, useSyncExternalStore } from "react";
 import { ArrowRight, Play } from "lucide-react";
 
@@ -88,13 +90,13 @@ function YoutubeVideoCard({
             aria-label={`${watchLabel}: ${video.title}`}
             className="group relative h-full w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-gold/70"
           >
-            <img
+            <Image
               src={video.thumbnail}
               alt=""
               width={480}
               height={360}
+              unoptimized
               loading="lazy"
-              decoding="async"
               className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.03]"
             />
             <span className="pointer-events-none absolute inset-0 bg-black/20 transition group-hover:bg-black/30" />
@@ -112,7 +114,9 @@ function YoutubeVideoCard({
           {video.title}
         </h3>
         {dateLabel && dateLabel !== "—" ? (
-          <p className="text-xs text-zinc-500 dark:text-zinc-400">{dateLabel}</p>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400">
+            {dateLabel}
+          </p>
         ) : null}
       </div>
     </article>
@@ -126,6 +130,7 @@ export function LatestYoutubeVideos({
 }) {
   const { t, language } = useLanguage();
   const [activeVideoId, setActiveVideoId] = useState<string | null>(null);
+
   // ამ კომპონენტის პირველი render ყოველთვის `ka`-ა, სერვერის HTML-ის შესატყვისად.
   // `LanguageProvider`-ის ენა უკვე `en` შეიძლება იყოს, თუ Suspense გვიან ჰიდრირდება.
   const hasMounted = useSyncExternalStore(
@@ -133,8 +138,10 @@ export function LatestYoutubeVideos({
     getClientMounted,
     getServerMounted,
   );
+
   const copy = hasMounted ? t : ka;
   const dateLanguage = hasMounted ? language : "ka";
+
   const channelLinkClass =
     "inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-brand-gold transition hover:opacity-80";
 
@@ -147,9 +154,11 @@ export function LatestYoutubeVideos({
               {copy.youtubeEyebrow}
               <YoutubeBrandMark />
             </p>
+
             <h2 className="storefront-section-heading mt-3">
               {copy.youtubeHeading}
             </h2>
+
             <p className="section-subtitle">{copy.youtubeBody}</p>
           </div>
 

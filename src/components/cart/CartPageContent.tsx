@@ -1,5 +1,7 @@
+
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
 import { ProductPrice } from "@/components/product/ProductPrice";
@@ -29,11 +31,18 @@ export default function CartPageContent() {
           <ShoppingBag size={34} className="text-zinc-400" />
         </div>
 
-        <h1 className="text-3xl font-bold text-zinc-900 dark:text-white">{t.emptyCart}</h1>
+        <h1 className="text-3xl font-bold text-zinc-900 dark:text-white">
+          {t.emptyCart}
+        </h1>
 
-        <p className="mt-3 text-zinc-500 dark:text-zinc-400">{t.emptyCartDescription}</p>
+        <p className="mt-3 text-zinc-500 dark:text-zinc-400">
+          {t.emptyCartDescription}
+        </p>
 
-        <Link href="/" className="mt-6 rounded-2xl bg-brand-orange px-6 py-3 font-bold text-white transition hover:opacity-90">
+        <Link
+          href="/"
+          className="mt-6 rounded-2xl bg-brand-orange px-6 py-3 font-bold text-white transition hover:opacity-90"
+        >
           {t.continueShopping}
         </Link>
       </div>
@@ -42,31 +51,42 @@ export default function CartPageContent() {
 
   return (
     <div className="grid gap-8 lg:grid-cols-[1fr_380px]">
-
       <div>
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-zinc-900 dark:text-white">{t.cart}</h1>
-          <span className="text-sm text-zinc-500 dark:text-zinc-400">{cartCount} {t.products}</span>
+          <h1 className="text-3xl font-bold text-zinc-900 dark:text-white">
+            {t.cart}
+          </h1>
+          <span className="text-sm text-zinc-500 dark:text-zinc-400">
+            {cartCount} {t.products}
+          </span>
         </div>
 
         {!hasSelection ? (
           <div className="rounded-xl border border-dashed border-zinc-300 bg-zinc-50 px-5 py-10 text-center dark:border-zinc-700 dark:bg-zinc-950">
-            <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300" role="status">
+            <p
+              className="text-sm font-medium text-zinc-700 dark:text-zinc-300"
+              role="status"
+            >
               {t.noCartItemsSelected}
             </p>
           </div>
         ) : (
           <div className="space-y-4">
             {selectedItems.map((item) => (
-              <div key={item.id} className="flex gap-4 rounded-xl border border-zinc-200 bg-white p-4 dark:border-white/10 dark:bg-white/[0.04]">
-
+              <div
+                key={item.id}
+                className="flex gap-4 rounded-xl border border-zinc-200 bg-white p-4 dark:border-white/10 dark:bg-white/[0.04]"
+              >
                 <Link
                   href={`/products/${item.id}`}
                   className="shrink-0 overflow-hidden rounded-lg"
                 >
-                  <img
+                  <Image
                     src={item.image}
                     alt={item.title}
+                    width={112}
+                    height={112}
+                    unoptimized
                     className="h-28 w-28 rounded-lg object-cover transition duration-300 hover:scale-105"
                   />
                 </Link>
@@ -74,7 +94,10 @@ export default function CartPageContent() {
                 <div className="flex min-w-0 flex-1 flex-col justify-between">
                   <div className="flex items-start justify-between gap-4">
                     <div>
-                      <Link href={`/products/${item.id}`} className="font-bold text-zinc-900 transition hover:text-brand-gold dark:text-white">
+                      <Link
+                        href={`/products/${item.id}`}
+                        className="font-bold text-zinc-900 transition hover:text-brand-gold dark:text-white"
+                      >
                         {item.title}
                       </Link>
 
@@ -87,20 +110,40 @@ export default function CartPageContent() {
                       </div>
                     </div>
 
-                    <button type="button" aria-label={t.removeProduct} title={t.removeProduct} onClick={() => removeFromCart(item.id)} className="grid h-9 w-9 shrink-0 place-items-center rounded-lg text-red-500 transition hover:bg-red-500/10">
+                    <button
+                      type="button"
+                      aria-label={t.removeProduct}
+                      title={t.removeProduct}
+                      onClick={() => removeFromCart(item.id)}
+                      className="grid h-9 w-9 shrink-0 place-items-center rounded-lg text-red-500 transition hover:bg-red-500/10"
+                    >
                       <Trash2 size={18} />
                     </button>
                   </div>
 
                   <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
                     <div className="flex items-center gap-2">
-                      <button type="button" aria-label={t.decreaseQuantity} onClick={() => decreaseQuantity(item.id)} disabled={item.quantity === 1} className="grid h-9 w-9 place-items-center rounded-lg border border-zinc-200 transition hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-40 dark:border-white/10 dark:hover:bg-white/10">
+                      <button
+                        type="button"
+                        aria-label={t.decreaseQuantity}
+                        onClick={() => decreaseQuantity(item.id)}
+                        disabled={item.quantity === 1}
+                        className="grid h-9 w-9 place-items-center rounded-lg border border-zinc-200 transition hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-40 dark:border-white/10 dark:hover:bg-white/10"
+                      >
                         <Minus size={16} />
                       </button>
 
-                      <span className="min-w-10 text-center font-bold">{item.quantity}</span>
+                      <span className="min-w-10 text-center font-bold">
+                        {item.quantity}
+                      </span>
 
-                      <button type="button" aria-label={t.increaseQuantity} onClick={() => increaseQuantity(item.id)} disabled={item.quantity >= item.stock} className="grid h-9 w-9 place-items-center rounded-lg border border-zinc-200 transition hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-40 dark:border-white/10 dark:hover:bg-white/10">
+                      <button
+                        type="button"
+                        aria-label={t.increaseQuantity}
+                        onClick={() => increaseQuantity(item.id)}
+                        disabled={item.quantity >= item.stock}
+                        className="grid h-9 w-9 place-items-center rounded-lg border border-zinc-200 transition hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-40 dark:border-white/10 dark:hover:bg-white/10"
+                      >
                         <Plus size={16} />
                       </button>
                     </div>
@@ -117,7 +160,9 @@ export default function CartPageContent() {
       </div>
 
       <aside className="h-fit rounded-xl border border-zinc-200 bg-zinc-50 p-6 dark:border-white/10 dark:bg-white/[0.04]">
-        <h2 className="text-xl font-bold text-zinc-900 dark:text-white">{t.orderSummary}</h2>
+        <h2 className="text-xl font-bold text-zinc-900 dark:text-white">
+          {t.orderSummary}
+        </h2>
 
         <div className="mt-6 space-y-4">
           <div className="flex justify-between text-zinc-600 dark:text-zinc-300">
@@ -126,13 +171,20 @@ export default function CartPageContent() {
           </div>
 
           <div className="flex justify-between border-t border-zinc-200 pt-4 dark:border-white/10">
-            <span className="text-lg font-bold text-zinc-900 dark:text-white">{t.total}</span>
-            <span className="text-2xl font-black text-brand-gold">₾{selectedCartTotal}</span>
+            <span className="text-lg font-bold text-zinc-900 dark:text-white">
+              {t.total}
+            </span>
+            <span className="text-2xl font-black text-brand-gold">
+              ₾{selectedCartTotal}
+            </span>
           </div>
         </div>
 
         {!hasSelection ? (
-          <p className="mt-4 text-sm text-red-600 dark:text-red-400" role="status">
+          <p
+            className="mt-4 text-sm text-red-600 dark:text-red-400"
+            role="status"
+          >
             {t.noCartItemsSelected}
           </p>
         ) : null}
@@ -154,7 +206,10 @@ export default function CartPageContent() {
           </button>
         )}
 
-        <Link href="/" className="mt-3 block text-center text-sm font-semibold text-zinc-500 transition hover:text-brand-gold">
+        <Link
+          href="/"
+          className="mt-3 block text-center text-sm font-semibold text-zinc-500 transition hover:text-brand-gold"
+        >
           {t.continueShopping}
         </Link>
       </aside>

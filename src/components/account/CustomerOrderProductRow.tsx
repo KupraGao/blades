@@ -1,5 +1,7 @@
+
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 
 type Props = {
@@ -22,9 +24,12 @@ export default function CustomerOrderProductRow({
   imageClassName = "h-12 w-12",
 }: Props) {
   const image = (
-    <img
+    <Image
       src={imageUrl || "/placeholder.png"}
       alt=""
+      width={48}
+      height={48}
+      unoptimized
       className={`${imageClassName} shrink-0 rounded-lg border border-zinc-200 bg-white object-cover dark:border-zinc-700`}
     />
   );

@@ -1,5 +1,7 @@
+
 "use client";
 
+import Image from "next/image";
 import { useTransition } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 
@@ -12,7 +14,6 @@ import type { ProductImage } from "@/types/product.types";
 
 type Product = {
   id: string;
-
   product_images: ProductImage[];
 };
 
@@ -49,9 +50,12 @@ export default function ImagesSection({ product }: ImagesSectionProps) {
                     className="overflow-hidden rounded-2xl border border-zinc-800 bg-black/30"
                   >
                     <div className="relative">
-                      <img
+                      <Image
                         src={image.image_url}
                         alt={t.productPhoto}
+                        width={400}
+                        height={160}
+                        unoptimized
                         className="h-40 w-full object-cover"
                       />
                       <span className="absolute left-2 top-2 rounded-md bg-black/70 px-2 py-0.5 text-xs font-bold text-white">
