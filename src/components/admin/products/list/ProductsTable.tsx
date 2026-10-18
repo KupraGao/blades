@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 
 import DeleteProductButton from "@/app/admin/(protected)/products/DeleteProductButton";
@@ -74,13 +75,9 @@ export default function ProductsTable({
         </div>
 
         <div className="hidden lg:block">{t.image}</div>
-
         <div>{t.productColumn}</div>
-
         <div className="hidden md:block">{t.price}</div>
-
         <div className="hidden lg:block">{t.stock}</div>
-
         <div className="text-right">{t.actions}</div>
       </div>
 
@@ -88,7 +85,6 @@ export default function ProductsTable({
       {products.length === 0 ? (
         <div className="flex flex-col items-center justify-center px-6 py-20 text-center">
           <p className="text-lg font-semibold text-white">{t.noProductsFound}</p>
-
           <p className="mt-2 text-sm text-zinc-500">
             {t.tryChangingFilters}
           </p>
@@ -118,9 +114,12 @@ export default function ProductsTable({
               <div className="hidden lg:block">
                 <Link href={`/products/${product.id}`} target="_blank">
                   {mainImage ? (
-                    <img
+                    <Image
                       src={mainImage.image_url}
                       alt={product.title}
+                      width={56}
+                      height={56}
+                      unoptimized
                       className="h-14 w-14 rounded-lg object-cover transition duration-300 hover:scale-105"
                     />
                   ) : (
@@ -146,9 +145,12 @@ export default function ProductsTable({
                   className="shrink-0 lg:hidden"
                 >
                   {mainImage ? (
-                    <img
+                    <Image
                       src={mainImage.image_url}
                       alt={product.title}
+                      width={56}
+                      height={56}
+                      unoptimized
                       className="h-14 w-14 rounded-lg object-cover transition duration-300 hover:scale-105"
                     />
                   ) : (
@@ -165,7 +167,6 @@ export default function ProductsTable({
                     <h3 className="truncate font-semibold text-white transition group-hover:text-zinc-300">
                       {product.title}
                     </h3>
-
                     <p className="truncate text-sm text-zinc-400">
                       {product.knife_type || "-"}
                     </p>
@@ -217,7 +218,6 @@ export default function ProductsTable({
                 >
                   {t.edit}
                 </Link>
-
                 <DeleteProductButton productId={product.id} />
               </div>
             </div>
