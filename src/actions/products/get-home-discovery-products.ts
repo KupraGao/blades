@@ -9,7 +9,7 @@ import { PRODUCT_IMAGES_NESTED_ORDER } from "@/lib/products/sort-product-images"
 const PRODUCT_CARD_SELECT = `
   *,
   brands(id,name,slug,logo),
-  product_images(id,image_url,is_main,sort_order),
+  product_images(id,image_url,is_main,sort_order,variant_widths),
   product_categories(category_id,categories(id,name_ka,name_en))
 `;
 

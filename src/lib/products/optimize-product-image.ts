@@ -1,8 +1,9 @@
+import { masterImageSize } from "@/lib/products/product-image-dimensions";
+
 export const PRODUCT_IMAGE_SOURCE_MAX_BYTES = 20 * 1024 * 1024;
 export const PRODUCT_IMAGE_OPTIMIZED_MAX_BYTES = 2 * 1024 * 1024;
 export const PRODUCT_IMAGE_COMBINED_OPTIMIZED_MAX_BYTES = 8 * 1024 * 1024;
 
-const MAX_LONG_EDGE = 2048;
 const WEBP_QUALITY = 0.84;
 const WEBP_FALLBACK_QUALITY = 0.78;
 
@@ -52,7 +53,7 @@ export async function optimizeProductImage(file: File): Promise<File> {
       throw new ProductImageOptimizeError("UNSUPPORTED_FORMAT");
     }
 
-    const { width, height } = scaledSize(decoded.width, decoded.height);
+    const { width, height } = masterImageSize(decoded.width, decoded.height);
     const canvas = document.createElement("canvas");
     canvas.width = width;
     canvas.height = height;
@@ -90,21 +91,6 @@ export async function optimizeProductImage(file: File): Promise<File> {
   } finally {
     decoded.close();
   }
-}
-
-function scaledSize(width: number, height: number) {
-  const longEdge = Math.max(width, height);
-
-  if (longEdge <= MAX_LONG_EDGE) {
-    return { width, height };
-  }
-
-  const scale = MAX_LONG_EDGE / longEdge;
-
-  return {
-    width: Math.max(1, Math.round(width * scale)),
-    height: Math.max(1, Math.round(height * scale)),
-  };
 }
 
 function toWebpFileName(originalName: string) {

@@ -574,6 +574,35 @@ export const en = {
     "Too many photos in one save. Please upload fewer images and try again.",
   productImageUploadFailed:
     "The product photo could not be uploaded. Please try again.",
+  generateImageVariants: "Create WebP variants",
+  generatingImageVariants: "Creating WebP variants...",
+  imageVariantsHint:
+    "New photos create WebP variants after the product is saved. If that step fails, the saved photo remains and this button retries it.",
+  imageVariantsAutomaticFailed:
+    "The product was saved, but some WebP variants could not be created. Open this product's edit page with ?webpRetry=1 and use Create WebP variants to retry. The saved photo remains available.",
+  imageVariantsFinished: "WebP variant upload finished.",
+  imageVariantsFinishedWithErrors:
+    "Some variants could not be uploaded. Product saving is not cancelled by this.",
+  imageVariantPhoto: "Photo {index}",
+  imageVariantCreated: "Uploaded",
+  imageVariantAlreadyStored: "Already stored",
+  imageVariantNoWidths: "No extra variant is needed.",
+  imageVariantFetchFailed: "The saved photo could not be read.",
+  imageVariantUnreadable: "The saved photo could not be processed.",
+  imageVariantEncodeFailed: "The WebP variant could not be created.",
+  imageVariantInvalidMaster: "The saved WebP photo could not be confirmed.",
+  imageVariantInvalidVariant: "The variant does not match the saved photo.",
+  imageVariantInvalidInput: "The variant data is invalid.",
+  imageVariantImageNotFound: "This photo does not belong to the product.",
+  imageVariantUploadFailed: "The variant could not be uploaded. Please try again.",
+  imageVariantMetadataFailed:
+    "The variant was stored, but its record could not be updated. Please try again.",
+  imageVariantWritesBlocked:
+    "This photo is already being deleted, so the variant was not recorded.",
+  imageVariantStoredUnconfirmed: "The uploaded variant could not be confirmed.",
+  imageVariantExistingUnconfirmed: "The existing variant could not be confirmed.",
+  imageVariantUnauthorized: "Only an authorized administrator can upload a variant.",
+  imageVariantUnknown: "The variant could not be uploaded.",
   basicInfo: "Basic Information",
   productTitleLabel: "Product Title",
   selectBrand: "Select brand",

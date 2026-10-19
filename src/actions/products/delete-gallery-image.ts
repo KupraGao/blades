@@ -23,7 +23,8 @@ export async function deleteGalleryImage(
 
   const { productId } = await deleteGalleryImageRecord(
     supabase,
-    imageId
+    imageId,
+    { admin: true },
   );
 
   // =================================================

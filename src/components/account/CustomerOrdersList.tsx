@@ -98,6 +98,7 @@ export default function CustomerOrdersList({ orders }: Props) {
                               <CustomerOrderProductRow
                                 href={item.product_href}
                                 imageUrl={item.image_url}
+                                confirmedWidths={item.variant_widths}
                                 title={item.product_title}
                                 quantity={item.quantity}
                               />

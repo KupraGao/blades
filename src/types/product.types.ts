@@ -7,6 +7,7 @@ export interface ProductImage {
   image_url: string;
   is_main: boolean;
   sort_order: number;
+  variant_widths?: number[] | null;
 }
 
 // ======================================================

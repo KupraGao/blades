@@ -576,6 +576,36 @@ export const ka = {
     "ერთ შენახვაში ძალიან ბევრი ფოტოა. ატვირთეთ ნაკლები ფოტო და სცადეთ თავიდან.",
   productImageUploadFailed:
     "პროდუქტის ფოტოს ატვირთვა ვერ მოხერხდა. სცადეთ თავიდან.",
+  generateImageVariants: "WebP ვარიანტების შექმნა",
+  generatingImageVariants: "WebP ვარიანტები იქმნება...",
+  imageVariantsHint:
+    "ახალი ფოტოების WebP ვარიანტები იქმნება პროდუქტის შენახვის შემდეგ. თუ ეს ნაბიჯი ვერ შესრულდა, შენახული ფოტო რჩება და ეს ღილაკი გამეორებას იძლევა.",
+  imageVariantsAutomaticFailed:
+    "პროდუქტი შენახულია, მაგრამ ზოგიერთი WebP ვარიანტი ვერ შეიქმნა. გახსენით ამ პროდუქტის რედაქტირება მისამართზე ?webpRetry=1 და გამოიყენეთ „WebP ვარიანტების შექმნა“. შენახული ფოტო ხელმისაწვდომი რჩება.",
+  imageVariantsFinished: "WebP ვარიანტების ატვირთვა დასრულდა.",
+  imageVariantsFinishedWithErrors:
+    "ზოგიერთი ვარიანტი ვერ აიტვირთა. პროდუქტის შენახვა ამით არ უქმდება.",
+  imageVariantPhoto: "ფოტო {index}",
+  imageVariantCreated: "აიტვირთა",
+  imageVariantAlreadyStored: "უკვე შენახულია",
+  imageVariantNoWidths: "დამატებითი ვარიანტი საჭირო არ არის.",
+  imageVariantFetchFailed: "შენახული ფოტოს წაკითხვა ვერ მოხერხდა.",
+  imageVariantUnreadable: "შენახული ფოტო ვერ დამუშავდა.",
+  imageVariantEncodeFailed: "WebP ვარიანტის შექმნა ვერ მოხერხდა.",
+  imageVariantInvalidMaster: "შენახული WebP ფოტო ვერ დადასტურდა.",
+  imageVariantInvalidVariant: "ვარიანტი შენახულ ფოტოს არ შეესაბამება.",
+  imageVariantInvalidInput: "ვარიანტის მონაცემები არასწორია.",
+  imageVariantImageNotFound: "ფოტო ამ პროდუქტს არ ეკუთვნის.",
+  imageVariantUploadFailed: "ვარიანტის ატვირთვა ვერ მოხერხდა. სცადეთ თავიდან.",
+  imageVariantMetadataFailed:
+    "ვარიანტი შეინახა, მაგრამ ჩანაწერი ვერ განახლდა. სცადეთ თავიდან.",
+  imageVariantWritesBlocked:
+    "ფოტოს წაშლა უკვე დაწყებულია, ამიტომ ვარიანტი ჩანაწერში არ ჩაიწერა.",
+  imageVariantStoredUnconfirmed: "ატვირთული ვარიანტი ვერ დადასტურდა.",
+  imageVariantExistingUnconfirmed: "არსებული ვარიანტი დადასტურებული ვერ არის.",
+  imageVariantUnauthorized:
+    "ვარიანტის ატვირთვა მხოლოდ ავტორიზებულ ადმინისტრატორს შეუძლია.",
+  imageVariantUnknown: "ვარიანტის ატვირთვა ვერ მოხერხდა.",
   basicInfo: "ძირითადი ინფორმაცია",
   productTitleLabel: "პროდუქტის დასახელება",
   selectBrand: "აირჩიე ბრენდი",

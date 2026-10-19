@@ -47,7 +47,7 @@ export async function getProducts({
       `
       *,
       brands(id,name,slug,logo),
-      product_images(id,image_url,is_main,sort_order),
+      product_images(id,image_url,is_main,sort_order,variant_widths),
       ${categoryEmbed}
     `,
       {

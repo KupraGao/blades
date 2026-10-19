@@ -22,6 +22,7 @@ export type CustomerOrderListItem = {
     product_title: string;
     quantity: number;
     image_url: string | null;
+    variant_widths: number[];
     product_href: string | null;
   }>;
 };
@@ -52,7 +53,8 @@ export async function getCustomerOrders(): Promise<CustomerOrderListItem[]> {
           id,
           product_images (
             image_url,
-            is_main
+            is_main,
+            variant_widths
           )
         )
       )
@@ -82,6 +84,7 @@ export async function getCustomerOrders(): Promise<CustomerOrderListItem[]> {
             product_title: mapped.product_title,
             quantity: mapped.quantity,
             image_url: mapped.image_url,
+            variant_widths: mapped.variant_widths,
             product_href: mapped.product_href,
           };
         })

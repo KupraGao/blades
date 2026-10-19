@@ -38,6 +38,7 @@ export async function getGuestSuccessOrder(id: string) {
             product_price: mapped.product_price,
             quantity: mapped.quantity,
             image_url: mapped.image_url,
+            variant_widths: mapped.variant_widths,
             product_href: mapped.product_href,
           };
         })

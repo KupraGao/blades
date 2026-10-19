@@ -1,10 +1,10 @@
 
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
 import { ProductPrice } from "@/components/product/ProductPrice";
+import { ProductResponsiveImage } from "@/components/product/ProductResponsiveImage";
 import { useCart } from "@/context/CartContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { getCartItemPricing } from "@/lib/products/pricing";
@@ -81,12 +81,12 @@ export default function CartPageContent() {
                   href={`/products/${item.id}`}
                   className="shrink-0 overflow-hidden rounded-lg"
                 >
-                  <Image
+                  <ProductResponsiveImage
                     src={item.image}
                     alt={item.title}
                     width={112}
                     height={112}
-                    unoptimized
+                    sizes="112px"
                     className="h-28 w-28 rounded-lg object-cover transition duration-300 hover:scale-105"
                   />
                 </Link>

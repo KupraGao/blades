@@ -1,11 +1,21 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 
 import { resequenceProductImages } from "@/lib/products/product-image-order";
+import { blockProductImageVariantWrites } from "@/lib/products/product-image-variant-metadata";
+import {
+  ProductImageVariantCleanupError,
+  removeExactProductImageVariants,
+  variantObjectNamesFromMasterUrl,
+} from "@/lib/products/product-image-variant-storage";
 
 export async function deleteGalleryImageRecord(
   supabase: SupabaseClient,
-  imageId: string
+  imageId: string,
+  authorization: { admin: boolean },
 ): Promise<{ productId: string }> {
+  if (authorization.admin !== true) {
+    throw new ProductImageVariantCleanupError("UNAUTHORIZED");
+  }
 
   // =================================================
   // GET IMAGE
@@ -39,6 +49,37 @@ export async function deleteGalleryImageRecord(
   // =================================================
 
   const fileName = data.image_url.split("/").pop();
+  const variantNames = variantObjectNamesFromMasterUrl(data.image_url);
+
+  if (variantNames || fileName) {
+    await blockProductImageVariantWrites(supabase, data.product_id, imageId);
+  }
+
+  if (variantNames) {
+    await removeExactProductImageVariants(
+      { admin: true },
+      async (variantFileName) => {
+        if (!variantNames.includes(variantFileName)) {
+          return { error: { message: "Rejected storage name." } };
+        }
+
+        const { error: variantError } = await supabase.storage
+          .from("product-images")
+          .remove([variantFileName]);
+
+        if (variantError) {
+          console.error("========== STORAGE DELETE ERROR ==========");
+          console.error("MESSAGE:", variantError.message);
+          console.error(variantError);
+
+          return { error: { message: variantError.message } };
+        }
+
+        return { error: null };
+      },
+      data.image_url,
+    );
+  }
 
   // =================================================
   // DELETE STORAGE FILE

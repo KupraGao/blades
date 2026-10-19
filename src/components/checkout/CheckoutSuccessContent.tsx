@@ -16,6 +16,7 @@ type OrderItem = {
   product_price: number;
   quantity: number;
   image_url?: string | null;
+  variant_widths?: number[];
   product_href?: string | null;
 };
 
@@ -211,6 +212,8 @@ export default function CheckoutSuccessContent({
                 <CustomerOrderProductRow
                   href={item.product_href ?? null}
                   imageUrl={item.image_url ?? null}
+                  confirmedWidths={item.variant_widths}
+                  sizes="(min-width: 640px) 80px, 64px"
                   title={item.product_title}
                   quantity={item.quantity}
                   priceLine={`₾${item.product_price} × ${item.quantity}`}

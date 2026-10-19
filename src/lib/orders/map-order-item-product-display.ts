@@ -1,6 +1,9 @@
+import { confirmedVariantWidthsFromMetadata } from "@/lib/products/product-image-delivery";
+
 type ProductImageRow = {
   image_url?: string | null;
   is_main?: boolean | null;
+  variant_widths?: unknown;
 };
 
 export type OrderItemProductDisplay = {
@@ -9,6 +12,7 @@ export type OrderItemProductDisplay = {
   product_price?: number;
   id?: string;
   image_url: string | null;
+  variant_widths: number[];
   product_href: string | null;
 };
 
@@ -27,7 +31,7 @@ export function resolveMainImageUrl(
 
 export function resolveLiveProduct(
   productRelation: unknown,
-): { id: string; image_url: string | null } | null {
+): { id: string; image_url: string | null; variant_widths: number[] } | null {
   const product = Array.isArray(productRelation)
     ? productRelation[0]
     : productRelation;
@@ -45,11 +49,15 @@ export function resolveLiveProduct(
     return null;
   }
 
+  const images = (product as { product_images?: ProductImageRow[] | null }).product_images;
+  const main = Array.isArray(images)
+    ? (images.find((image) => image.is_main) ?? images[0])
+    : undefined;
+
   return {
     id,
-    image_url: resolveMainImageUrl(
-      (product as { product_images?: ProductImageRow[] | null }).product_images,
-    ),
+    image_url: resolveMainImageUrl(images),
+    variant_widths: confirmedVariantWidthsFromMetadata(main?.variant_widths),
   };
 }
 
@@ -59,6 +67,7 @@ export function mapOrderItemProductDisplay(item: any): {
   product_price: number;
   id: string | undefined;
   image_url: string | null;
+  variant_widths: number[];
   product_href: string | null;
 } {
   const live = resolveLiveProduct(item?.products);
@@ -69,6 +78,7 @@ export function mapOrderItemProductDisplay(item: any): {
     product_price: Number(item?.product_price) || 0,
     id: typeof item?.id === "string" ? item.id : undefined,
     image_url: live?.image_url ?? null,
+    variant_widths: live?.variant_widths ?? [],
     product_href: live ? `/products/${live.id}` : null,
   };
 }

@@ -17,6 +17,7 @@ export async function uploadGalleryImages(
   // =================================================
 
   let sortOrder = 1;
+  const saved: { id: string; imageUrl: string }[] = [];
 
   for(const image of galleryImages){
 
@@ -63,22 +64,35 @@ export async function uploadGalleryImages(
     // IMAGE INSERT
     // =================================================
 
-    const{error:imageInsertError}=await supabase
+    const{data,error:imageInsertError}=await supabase
       .from("product_images")
       .insert([{
         product_id:productId,
         image_url:publicUrl,
         is_main:false,
         sort_order:sortOrder,
-      }]);
+      }])
+      .select("id, image_url")
+      .single();
 
     if(imageInsertError){
       console.log("IMAGE INSERT ERROR:",imageInsertError);
       throw imageInsertError;
     }
 
+    if(!data?.id || !data.image_url){
+      throw new Error("IMAGE INSERT ERROR");
+    }
+
+    saved.push({
+      id: String(data.id),
+      imageUrl: data.image_url,
+    });
+
     sortOrder += 1;
 
   }
+
+  return saved;
 
 }

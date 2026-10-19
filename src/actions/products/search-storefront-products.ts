@@ -2,6 +2,7 @@
 
 import { parseCatalogSearchTerm } from "@/lib/catalog/catalog-search-params";
 import { productSearchOrFilter } from "@/lib/products/product-search-filter";
+import { confirmedVariantWidthsFromMetadata } from "@/lib/products/product-image-delivery";
 import {
   PRODUCT_IMAGES_NESTED_ORDER,
   sortProductImages,
@@ -16,12 +17,14 @@ export type StorefrontProductSuggestion = {
   price: number;
   sale_price: number | null;
   imageUrl: string | null;
+  variantWidths: number[];
 };
 
 type SuggestionImage = {
   image_url?: string | null;
   is_main?: boolean | null;
   sort_order?: number | null;
+  variant_widths?: unknown;
 };
 
 type SuggestionRow = {
@@ -32,11 +35,15 @@ type SuggestionRow = {
   product_images: SuggestionImage[] | null;
 };
 
-function suggestionImageUrl(images: SuggestionImage[] | null): string | null {
+function suggestionImage(images: SuggestionImage[] | null) {
   const ordered = sortProductImages(images);
   const main = ordered.find((image) => image.is_main) ?? ordered[0];
   const url = typeof main?.image_url === "string" ? main.image_url.trim() : "";
-  return url || null;
+
+  return {
+    imageUrl: url || null,
+    variantWidths: confirmedVariantWidthsFromMetadata(main?.variant_widths),
+  };
 }
 
 function suggestionPrice(value: number | string | null): number | null {
@@ -64,7 +71,7 @@ export async function searchStorefrontProducts(
       title,
       price,
       sale_price,
-      product_images(id, image_url, is_main, sort_order)
+      product_images(id, image_url, is_main, sort_order, variant_widths)
     `,
     )
     .or(searchFilter)
@@ -89,7 +96,7 @@ export async function searchStorefrontProducts(
         title,
         price,
         sale_price: suggestionPrice(row.sale_price),
-        imageUrl: suggestionImageUrl(row.product_images),
+        ...suggestionImage(row.product_images),
       },
     ];
   });

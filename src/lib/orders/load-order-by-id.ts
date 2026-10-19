@@ -19,7 +19,8 @@ const ORDER_WITH_ITEMS_SELECT = `
       id,
       product_images (
         image_url,
-        is_main
+        is_main,
+        variant_widths
       )
     )
   )

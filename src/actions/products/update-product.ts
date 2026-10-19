@@ -1,7 +1,6 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -84,6 +83,8 @@ export async function updateProduct(
   // then promote by record UUID. Do not pass a Storage URL into id.
   // =================================================
 
+  const savedImages: { id: string; imageUrl: string }[] = [];
+
   if (mainImage) {
 
     const imageUrl = await uploadMainImage(
@@ -133,6 +134,11 @@ export async function updateProduct(
         productId,
         insertedImageId
       );
+
+      savedImages.push({
+        id: insertedImageId,
+        imageUrl,
+      });
     } catch (error) {
       if (!insertedImageId) {
         const fileName = imageUrl.split("/").pop();
@@ -157,11 +163,13 @@ export async function updateProduct(
 
   if (galleryImages.length > 0) {
 
-    await uploadGalleryImagesRecord({
-      supabase,
-      productId,
-      images: galleryImages,
-    });
+    savedImages.push(
+      ...await uploadGalleryImagesRecord({
+        supabase,
+        productId,
+        images: galleryImages,
+      })
+    );
 
   }
 
@@ -171,10 +179,9 @@ export async function updateProduct(
 
   revalidatePath("/admin/products");
 
-  // =================================================
-  // REDIRECT
-  // =================================================
-
-  redirect("/admin/products");
+  return {
+    productId,
+    images: savedImages,
+  };
 
 }

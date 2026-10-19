@@ -1,6 +1,12 @@
 "use server";
 
 import { requireAdmin } from "@/lib/auth/require-admin";
+import {
+  cleanupStoredProductImages,
+  loadProductImageRefs,
+  removeProductImageObject,
+} from "@/lib/products/product-image-storage-cleanup";
+import { clearStoredVariantWidths } from "@/lib/products/product-image-variant-metadata";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 type Props = {
@@ -19,41 +25,42 @@ export async function deleteProductsBulk({
   }
 
 
-  // პროდუქტების კატეგორიებთან კავშირების წაშლა
-  const { error: categoryError } = await supabase
-    .from("product_categories")
-    .delete()
-    .in("product_id", productIds);
+  await cleanupStoredProductImages({
+    authorization: { admin: true },
+    productIds,
+    loadImages: () => loadProductImageRefs(supabase),
+    clearVariantWidths: (imageIds) => clearStoredVariantWidths(supabase, imageIds),
+    removeExact: (fileName) => removeProductImageObject(supabase, fileName),
+    deleteDatabase: async () => {
+      const { error: categoryError } = await supabase
+        .from("product_categories")
+        .delete()
+        .in("product_id", productIds);
 
+      if (categoryError) {
+        return { error: { message: categoryError.message } };
+      }
 
-  if (categoryError) {
-    throw new Error(categoryError.message);
-  }
+      const { error: imageError } = await supabase
+        .from("product_images")
+        .delete()
+        .in("product_id", productIds);
 
+      if (imageError) {
+        return { error: { message: imageError.message } };
+      }
 
+      const { error: productError } = await supabase
+        .from("products")
+        .delete()
+        .in("id", productIds);
 
-  // პროდუქტების სურათების წაშლა
-  const { error: imageError } = await supabase
-    .from("product_images")
-    .delete()
-    .in("product_id", productIds);
+      if (productError) {
+        return { error: { message: productError.message } };
+      }
 
-
-  if (imageError) {
-    throw new Error(imageError.message);
-  }
-
-
-
-  // პროდუქტების წაშლა
-  const { error: productError } = await supabase
-    .from("products")
-    .delete()
-    .in("id", productIds);
-
-
-  if (productError) {
-    throw new Error(productError.message);
-  }
+      return { error: null };
+    },
+  });
 
 }

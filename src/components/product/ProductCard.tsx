@@ -1,10 +1,10 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { ProductCardAddToCartButton } from "@/components/product/ProductCardAddToCartButton";
 import { ProductPrice } from "@/components/product/ProductPrice";
+import { ProductResponsiveImage } from "@/components/product/ProductResponsiveImage";
 import { getProductDiscountPercent, isProductOnSale } from "@/lib/products/pricing";
 import { sortProductImages } from "@/lib/products/sort-product-images";
 
@@ -13,6 +13,7 @@ type ProductCardImage = {
   image_url: string;
   is_main?: boolean | null;
   sort_order?: number | null;
+  variant_widths?: unknown;
 };
 
 type ProductCardProps = {
@@ -111,6 +112,9 @@ export function ProductCard({ product }: ProductCardProps) {
     armZoom();
   };
 
+  const activeWidths = orderedImages.find((image) => image.image_url === activeImage)
+    ?.variant_widths;
+
   // =========================================
   // PRODUCT CATEGORIES
   // =========================================
@@ -135,12 +139,13 @@ export function ProductCard({ product }: ProductCardProps) {
           onMouseEnter={openGalleryPreview}
           onMouseLeave={scheduleGalleryPreviewClose}
         >
-          <Image
+          <ProductResponsiveImage
             key={activeImage}
             src={activeImage}
             alt={product.title}
             fill
             sizes={PRODUCT_CARD_IMAGE_SIZES}
+            confirmedWidths={activeWidths}
             className={`object-cover object-center transition duration-1000 ease-out ${
               imageZoomed ? "scale-[1.07]" : "scale-100"
             }`}
@@ -191,11 +196,12 @@ export function ProductCard({ product }: ProductCardProps) {
                 onMouseEnter={() => showImage(img.image_url)}
                 className="relative h-8 w-8 cursor-pointer overflow-hidden rounded-md border border-zinc-200 bg-white shadow-md transition hover:scale-110 hover:border-brand-gold sm:h-10 sm:w-10 lg:h-12 lg:w-12 lg:rounded-lg"
               >
-                <Image
+                <ProductResponsiveImage
                   src={img.image_url}
                   alt=""
                   fill
                   sizes={PRODUCT_CARD_THUMB_SIZES}
+                  confirmedWidths={img.variant_widths}
                   className="object-cover"
                 />
               </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 
 import { createProduct } from "@/actions/products/create-product";
 import { updateProduct } from "@/actions/products/update-product";
@@ -18,6 +19,7 @@ import {
   type ProductImageOptimizeErrorCode,
 } from "@/lib/products/optimize-product-image";
 import { PRODUCT_IMAGE_UPLOAD_FAILED } from "@/lib/products/product-image-storage-key";
+import { uploadSavedProductImageVariants } from "@/lib/products/upload-saved-product-image-variants";
 import type { ProductImage } from "@/types/product.types";
 
 type Brand = {
@@ -62,7 +64,7 @@ type ProductFormProps = {
   product?: Product;
 };
 
-type SubmitPhase = "idle" | "processing" | "saving";
+type SubmitPhase = "idle" | "processing" | "saving" | "variants";
 
 function isNewImageFile(value: FormDataEntryValue | null): value is File {
   return value instanceof File && value.size > 0 && Boolean(value.name);
@@ -119,6 +121,7 @@ export default function ProductForm({
 }: ProductFormProps) {
   const { t } = useLanguage();
   const [submitPhase, setSubmitPhase] = useState<SubmitPhase>("idle");
+  const router = useRouter();
   const submitLockRef = useRef(false);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -199,11 +202,39 @@ export default function ProductForm({
 
       setSubmitPhase("saving");
 
-      if (mode === "edit" && product) {
-        await updateProduct(product.id, optimizedFormData);
-      } else {
-        await createProduct(optimizedFormData);
+      const saved =
+        mode === "edit" && product
+          ? await updateProduct(product.id, optimizedFormData)
+          : await createProduct(optimizedFormData);
+
+      if (saved.images.length > 0) {
+        setSubmitPhase("variants");
+        let failed = false;
+
+        try {
+          const result = await uploadSavedProductImageVariants(
+            saved.productId,
+            saved.images,
+            (update) => {
+              if (update.state === "error") {
+                failed = true;
+              }
+            },
+          );
+
+          if (result !== "started") {
+            failed = true;
+          }
+        } catch {
+          failed = true;
+        }
+
+        if (failed) {
+          alert(t.imageVariantsAutomaticFailed);
+        }
       }
+
+      router.push("/admin/products");
     } catch (error: unknown) {
       // =================================================
       // NEXT.JS REDIRECT
@@ -269,9 +300,11 @@ export default function ProductForm({
       ? t.processingImages
       : submitPhase === "saving"
         ? t.uploading
-        : mode === "edit"
-          ? t.updateProduct
-          : t.createProduct;
+        : submitPhase === "variants"
+          ? t.generatingImageVariants
+          : mode === "edit"
+            ? t.updateProduct
+            : t.createProduct;
 
   const submitDisabled = submitPhase !== "idle";
 
@@ -306,7 +339,10 @@ export default function ProductForm({
 
       <SpecificationsSection product={product} />
 
-      <ImagesSection product={product} />
+      <ImagesSection
+        product={product}
+        saveInProgress={submitPhase !== "idle"}
+      />
 
       <button
         type="submit"

@@ -1,12 +1,15 @@
 
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
+
+import { ProductResponsiveImage } from "@/components/product/ProductResponsiveImage";
 
 type Props = {
   href: string | null;
   imageUrl: string | null;
+  confirmedWidths?: unknown;
+  sizes?: string;
   title: string;
   quantity: number;
   priceLine?: string | null;
@@ -17,6 +20,8 @@ type Props = {
 export default function CustomerOrderProductRow({
   href,
   imageUrl,
+  confirmedWidths,
+  sizes = "48px",
   title,
   quantity,
   priceLine = null,
@@ -24,12 +29,13 @@ export default function CustomerOrderProductRow({
   imageClassName = "h-12 w-12",
 }: Props) {
   const image = (
-    <Image
+    <ProductResponsiveImage
       src={imageUrl || "/placeholder.png"}
       alt=""
       width={48}
       height={48}
-      unoptimized
+      sizes={sizes}
+      confirmedWidths={confirmedWidths}
       className={`${imageClassName} shrink-0 rounded-lg border border-zinc-200 bg-white object-cover dark:border-zinc-700`}
     />
   );

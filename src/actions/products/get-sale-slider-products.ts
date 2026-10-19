@@ -13,6 +13,7 @@ export type SaleSliderProduct = {
     id: string;
     image_url: string;
     is_main: boolean;
+    variant_widths?: unknown;
   }[];
 };
 
@@ -23,7 +24,7 @@ export async function getSaleSliderProducts(): Promise<SaleSliderProduct[]> {
 
   const { data, error } = await supabase
     .from("products")
-    .select("id, title, price, sale_price, stock, product_images(id, image_url, is_main)")
+    .select("id, title, price, sale_price, stock, product_images(id, image_url, is_main, variant_widths)")
     .not("sale_price", "is", null)
     .order("created_at", { ascending: false })
     .range(0, to);

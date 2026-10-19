@@ -1,11 +1,11 @@
 "use client";
 
-import Image from "next/image";
+import { ProductPrice } from "@/components/product/ProductPrice";
+import { ProductResponsiveImage } from "@/components/product/ProductResponsiveImage";
 import Link from "next/link";
 import { useEffect, useRef, type ReactNode } from "react";
 
 import type { StorefrontProductSuggestion } from "@/actions/products/search-storefront-products";
-import { ProductPrice } from "@/components/product/ProductPrice";
 import { useLanguage } from "@/context/LanguageContext";
 
 type ProductSearchSuggestionsProps = {
@@ -114,11 +114,13 @@ function ProductSearchSuggestions({
                 }}
               >
                 {product.imageUrl ? (
-                  <Image
+                  <ProductResponsiveImage
                     src={product.imageUrl}
                     alt=""
                     width={48}
                     height={48}
+                    sizes="48px"
+                    confirmedWidths={product.variantWidths}
                     className="h-12 w-12 shrink-0 rounded-lg object-cover"
                   />
                 ) : (

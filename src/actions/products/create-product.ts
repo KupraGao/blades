@@ -1,7 +1,6 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -85,20 +84,24 @@ export async function createProduct(formData: FormData) {
   // MAIN IMAGE
   // =================================================
 
-  await insertMainImage(
-    supabase,
-    productId,
-    publicUrl
-  );
+  const savedImages = [
+    await insertMainImage(
+      supabase,
+      productId,
+      publicUrl
+    ),
+  ];
 
   // =================================================
   // GALLERY IMAGES
   // =================================================
 
-  await uploadGalleryImages(
-    supabase,
-    productId,
-    galleryImages
+  savedImages.push(
+    ...await uploadGalleryImages(
+      supabase,
+      productId,
+      galleryImages
+    )
   );
 
   // =================================================
@@ -107,10 +110,9 @@ export async function createProduct(formData: FormData) {
 
   revalidatePath("/admin/products");
 
-  // =================================================
-  // REDIRECT
-  // =================================================
-
-  redirect("/admin/products");
+  return {
+    productId: String(productId),
+    images: savedImages,
+  };
 
 }

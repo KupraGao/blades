@@ -1,9 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 
 import DeleteProductButton from "@/app/admin/(protected)/products/DeleteProductButton";
+import { ProductResponsiveImage } from "@/components/product/ProductResponsiveImage";
 import { useLanguage } from "@/context/LanguageContext";
 import {
   getEffectiveProductPrice,
@@ -15,6 +15,7 @@ type ProductImage = {
   id: number;
   image_url: string;
   is_main: boolean;
+  variant_widths?: unknown;
 };
 
 type Product = {
@@ -114,12 +115,13 @@ export default function ProductsTable({
               <div className="hidden lg:block">
                 <Link href={`/products/${product.id}`} target="_blank">
                   {mainImage ? (
-                    <Image
+                    <ProductResponsiveImage
                       src={mainImage.image_url}
                       alt={product.title}
                       width={56}
                       height={56}
-                      unoptimized
+                      sizes="56px"
+                      confirmedWidths={mainImage.variant_widths}
                       className="h-14 w-14 rounded-lg object-cover transition duration-300 hover:scale-105"
                     />
                   ) : (
@@ -145,12 +147,13 @@ export default function ProductsTable({
                   className="shrink-0 lg:hidden"
                 >
                   {mainImage ? (
-                    <Image
+                    <ProductResponsiveImage
                       src={mainImage.image_url}
                       alt={product.title}
                       width={56}
                       height={56}
-                      unoptimized
+                      sizes="56px"
+                      confirmedWidths={mainImage.variant_widths}
                       className="h-14 w-14 rounded-lg object-cover transition duration-300 hover:scale-105"
                     />
                   ) : (

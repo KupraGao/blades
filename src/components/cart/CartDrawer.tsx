@@ -1,11 +1,11 @@
 
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
 
 import { ProductPrice } from "@/components/product/ProductPrice";
+import { ProductResponsiveImage } from "@/components/product/ProductResponsiveImage";
 import { useCart } from "@/context/CartContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { getCartItemPricing } from "@/lib/products/pricing";
@@ -111,12 +111,12 @@ export function CartDrawer({ open, setOpen }: CartDrawerProps) {
                     onClick={() => setOpen(false)}
                     className="shrink-0"
                   >
-                    <Image
+                    <ProductResponsiveImage
                       src={item.image}
                       alt={item.title}
                       width={96}
                       height={96}
-                      unoptimized
+                      sizes="96px"
                       className="h-24 w-24 rounded-lg object-cover transition duration-300 hover:opacity-80"
                     />
                   </Link>

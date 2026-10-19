@@ -1,8 +1,8 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useRef, useState, type PointerEvent } from "react";
 import { useLanguage } from "@/context/LanguageContext";
+import { ProductResponsiveImage } from "@/components/product/ProductResponsiveImage";
 import { sortProductImages } from "@/lib/products/sort-product-images";
 import type { ProductImage } from "@/types/product.types";
 
@@ -104,6 +104,8 @@ export default function ProductGallery({
     setIsZoomed(false);
   }
 
+  const activeRecord = orderedImages.find((image) => image.image_url === activeImage);
+
   return (
     <div className="lg:grid lg:grid-cols-[4rem_minmax(0,1fr)] lg:items-start lg:gap-2">
       <div className="relative aspect-[4/3] overflow-hidden rounded-xl bg-zinc-100 dark:bg-zinc-900 lg:col-start-2 lg:row-start-1">
@@ -117,11 +119,13 @@ export default function ProductGallery({
             transition: isZoomed ? "none" : "transform 150ms ease-out",
           }}
         >
-          <Image
+          <ProductResponsiveImage
             src={activeImage}
             alt={title}
             fill
             sizes={PRODUCT_GALLERY_MAIN_SIZES}
+            confirmedWidths={activeRecord?.variant_widths}
+            zoom={isZoomed}
             className="object-cover"
           />
         </div>
@@ -148,11 +152,12 @@ export default function ProductGallery({
                 : "border-white/40 hover:border-white"
             }`}
           >
-            <Image
+            <ProductResponsiveImage
               src={image.image_url}
               alt={title}
               fill
               sizes={PRODUCT_GALLERY_THUMB_SIZES}
+              confirmedWidths={image.variant_widths}
               className="object-cover"
             />
           </button>

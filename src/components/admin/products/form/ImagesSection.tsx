@@ -1,13 +1,15 @@
 
 "use client";
 
-import Image from "next/image";
 import { useTransition } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 
 import { changeMainImage } from "@/actions/products/change-main-image";
+import { ProductResponsiveImage } from "@/components/product/ProductResponsiveImage";
 import { deleteGalleryImage } from "@/actions/products/delete-gallery-image";
 import { moveProductImage } from "@/actions/products/move-product-image";
+import ProductImageVariantsControl from "@/components/admin/products/form/ProductImageVariantsControl";
 import { useLanguage } from "@/context/LanguageContext";
 import { sortProductImages } from "@/lib/products/sort-product-images";
 import type { ProductImage } from "@/types/product.types";
@@ -19,11 +21,16 @@ type Product = {
 
 type ImagesSectionProps = {
   product?: Product;
+  saveInProgress?: boolean;
 };
 
-export default function ImagesSection({ product }: ImagesSectionProps) {
+export default function ImagesSection({
+  product,
+  saveInProgress = false,
+}: ImagesSectionProps) {
   const { t } = useLanguage();
   const [isPending, startTransition] = useTransition();
+  const showVariantRecovery = useSearchParams().get("webpRetry") === "1";
   const orderedImages = sortProductImages(product?.product_images);
 
   return (
@@ -50,12 +57,13 @@ export default function ImagesSection({ product }: ImagesSectionProps) {
                     className="overflow-hidden rounded-2xl border border-zinc-800 bg-black/30"
                   >
                     <div className="relative">
-                      <Image
+                      <ProductResponsiveImage
                         src={image.image_url}
                         alt={t.productPhoto}
                         width={400}
                         height={160}
-                        unoptimized
+                        sizes="(min-width: 768px) 25vw, 50vw"
+                        confirmedWidths={image.variant_widths}
                         className="h-40 w-full object-cover"
                       />
                       <span className="absolute left-2 top-2 rounded-md bg-black/70 px-2 py-0.5 text-xs font-bold text-white">
@@ -133,6 +141,17 @@ export default function ImagesSection({ product }: ImagesSectionProps) {
                 );
               })}
             </div>
+
+            {showVariantRecovery && (
+              <ProductImageVariantsControl
+                productId={product.id}
+                images={orderedImages.map((image) => ({
+                  id: image.id,
+                  imageUrl: image.image_url,
+                }))}
+                disabled={saveInProgress}
+              />
+            )}
           </div>
         )}
 

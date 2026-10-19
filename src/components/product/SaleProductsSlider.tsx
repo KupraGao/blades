@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
@@ -8,6 +7,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { ProductCardAddToCartButton } from "@/components/product/ProductCardAddToCartButton";
 import { ProductPrice } from "@/components/product/ProductPrice";
+import { ProductResponsiveImage } from "@/components/product/ProductResponsiveImage";
 import { useLanguage } from "@/context/LanguageContext";
 import { sortProductImages } from "@/lib/products/sort-product-images";
 import type { SaleSliderProduct } from "@/actions/products/get-sale-slider-products";
@@ -102,6 +102,9 @@ function SaleProductCard({ product }: { product: SaleSliderProduct }) {
     armZoom();
   };
 
+  const activeWidths = orderedImages.find((image) => image.image_url === activeImage)
+    ?.variant_widths;
+
   return (
     <div
       className="flex h-full min-w-0 flex-col overflow-hidden rounded-xl border border-zinc-200 bg-white transition hover:border-brand-gold/50 dark:border-white/10 dark:bg-white/[0.04]"
@@ -120,12 +123,13 @@ function SaleProductCard({ product }: { product: SaleSliderProduct }) {
           onMouseEnter={hasExtraImages ? openGalleryPreview : undefined}
           onMouseLeave={hasExtraImages ? scheduleGalleryPreviewClose : undefined}
         >
-          <Image
+          <ProductResponsiveImage
             key={activeImage}
             src={activeImage}
             alt={product.title}
             fill
             sizes={SALE_SLIDER_IMAGE_SIZES}
+            confirmedWidths={activeWidths}
             className={`object-cover transition duration-1000 ease-out ${
               imageZoomed ? "scale-[1.07]" : "scale-100"
             }`}
@@ -157,11 +161,12 @@ function SaleProductCard({ product }: { product: SaleSliderProduct }) {
                   onMouseEnter={() => showImage(image.image_url)}
                   className="relative h-8 w-8 cursor-pointer overflow-hidden rounded-md border border-zinc-200 bg-white shadow-md transition hover:scale-110 hover:border-brand-gold sm:h-10 sm:w-10 lg:h-12 lg:w-12 lg:rounded-lg"
                 >
-                  <Image
+                  <ProductResponsiveImage
                     src={image.image_url}
                     alt=""
                     fill
                     sizes={SALE_THUMB_SIZES}
+                    confirmedWidths={image.variant_widths}
                     className="object-cover"
                   />
                 </div>
