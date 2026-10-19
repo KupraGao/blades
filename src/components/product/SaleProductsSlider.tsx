@@ -16,10 +16,11 @@ type SaleProductsSliderProps = {
   products: SaleSliderProduct[];
 };
 
-// Below lg: 1 / 2 / 3 slides of full container-page. lg+: one slide in the
-// sale column (full remaining width if promo is absent; ~1fr of 3.3 if both).
+// 1 slide below 360px, 2 until md, 3 until lg, then the 1fr column beside the 2.3fr promo.
+// No whitespace before 100vw: Next.js treats a whitespace-delimited vw unit as the
+// srcset floor, and " 100vw" removes every candidate below 640.
 const SALE_SLIDER_IMAGE_SIZES =
-  "(min-width: 1024px) calc(min(1600px, 100vw) - 360px), (min-width: 768px) 33vw, (min-width: 360px) 50vw, calc(100vw - 2rem)";
+  "(min-width: 1024px) calc((min(1600px,100vw) - 4rem - 296px - 1.5rem) / 3.3), (min-width: 768px) calc((min(1600px,100vw) - 3rem - 1.5rem) / 3), (min-width: 640px) calc((100vw - 3rem - 0.75rem) / 2), (min-width: 360px) calc((100vw - 2rem - 0.75rem) / 2), calc(100vw - 2rem)";
 
 const SALE_THUMB_SIZES =
   "(min-width: 1024px) 48px, (min-width: 640px) 40px, 32px";

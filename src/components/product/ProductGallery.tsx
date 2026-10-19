@@ -8,6 +8,14 @@ import type { ProductImage } from "@/types/product.types";
 
 const PRODUCT_GALLERY_ZOOM_SCALE = 2;
 
+// Main slot: full content width below lg; at lg the 1.05fr column minus the 4rem thumb rail.
+// No whitespace before 100vw: Next.js treats a whitespace-delimited vw unit as the
+// srcset floor, and " 100vw" removes every candidate below 640.
+const PRODUCT_GALLERY_MAIN_SIZES =
+  "(min-width: 1024px) calc((min(1352px,100vw - 3rem) - 3.5rem) * 1.05 / 2 - 4.5rem), (min-width: 640px) calc(100vw - 3rem), calc(100vw - 2rem)";
+
+const PRODUCT_GALLERY_THUMB_SIZES = "4rem";
+
 type ProductGalleryProps = {
   title: string;
   images: ProductImage[];
@@ -113,6 +121,7 @@ export default function ProductGallery({
             src={activeImage}
             alt={title}
             fill
+            sizes={PRODUCT_GALLERY_MAIN_SIZES}
             className="object-cover"
           />
         </div>
@@ -143,6 +152,7 @@ export default function ProductGallery({
               src={image.image_url}
               alt={title}
               fill
+              sizes={PRODUCT_GALLERY_THUMB_SIZES}
               className="object-cover"
             />
           </button>
