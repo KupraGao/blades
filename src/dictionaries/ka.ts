@@ -383,6 +383,12 @@ export const ka = {
   orderErrorInsufficientStock: "მარაგი არასაკმარისია: {product}.",
   orderErrorProductTitleRequired: "პროდუქტის დასახელება აუცილებელია.",
   orderErrorSaveOrder: "შეკვეთის შენახვა ვერ მოხერხდა.",
+  orderErrorIdempotencyConflict:
+    "ეს შეკვეთის მცდელობა უკვე სხვა მონაცემებით დაიწყო. განაახლეთ გვერდი და სცადეთ თავიდან.",
+  orderErrorInvalidIdempotencyKey:
+    "შეკვეთის მცდელობის იდენტიფიკატორი არასწორია. განაახლეთ გვერდი და სცადეთ თავიდან.",
+  orderErrorIdempotencyUnavailable:
+    "შეკვეთის გაფორმება ამ გარემოში ჯერ არ არის ჩართული.",
   orderErrorSaveOrderItems: "შეკვეთის პროდუქტების შენახვა ვერ მოხერხდა.",
   orderErrorUpdateStock: "მარაგის განახლება ვერ მოხერხდა.",
   orderErrorStockChanged: "მარაგი შეიცვალა ან არასაკმარისია: {product}.",

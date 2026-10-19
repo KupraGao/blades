@@ -384,6 +384,12 @@ export const en = {
   orderErrorInsufficientStock: "Insufficient stock: {product}.",
   orderErrorProductTitleRequired: "Product title is required.",
   orderErrorSaveOrder: "Unable to save the order.",
+  orderErrorIdempotencyConflict:
+    "This checkout attempt was already started with different details. Refresh the page and try again.",
+  orderErrorInvalidIdempotencyKey:
+    "The checkout attempt identifier is invalid. Refresh the page and try again.",
+  orderErrorIdempotencyUnavailable:
+    "Checkout cannot be completed in this environment yet.",
   orderErrorSaveOrderItems: "Unable to save order items.",
   orderErrorUpdateStock: "Unable to update stock.",
   orderErrorStockChanged: "Stock changed or is insufficient: {product}.",

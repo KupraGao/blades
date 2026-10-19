@@ -6,6 +6,11 @@ import { createOrder } from "@/actions/orders/create-order";
 import { useCart } from "@/context/CartContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { localizeStorefrontMessage } from "@/lib/i18n/localize-storefront-message";
+import {
+  browserCheckoutIdempotencyStorage,
+  clearCheckoutIdempotencyAttempt,
+  resolveCheckoutIdempotencyKey,
+} from "@/lib/orders/checkout-idempotency-key";
 import { isDeliverySubtotalAllowed } from "@/lib/orders/delivery-rules";
 import {
   DEFAULT_PAYMENT_METHOD,
@@ -176,6 +181,10 @@ export default function CheckoutPageContent() {
 
     const purchasedIds = purchasedItems.map((item) => item.id);
     const isPickup = values.fulfillmentMethod === "pickup";
+    const orderItems = purchasedItems.map((item) => ({
+      productId: item.id,
+      quantity: item.quantity,
+    }));
 
     const payload: CreateOrderInput = {
       customerName: values.fullName,
@@ -184,19 +193,29 @@ export default function CheckoutPageContent() {
       customerAddress: isPickup ? null : values.address,
       fulfillmentMethod: values.fulfillmentMethod,
       paymentMethod: values.paymentMethod,
-      items: purchasedItems.map((item) => ({
-        productId: item.id,
-        quantity: item.quantity,
-      })),
+      items: orderItems,
     };
 
     setSubmissionError(null);
     setIsSubmitting(true);
 
     try {
-      const result = await createOrder(payload);
+      const idempotencyKey = resolveCheckoutIdempotencyKey(
+        browserCheckoutIdempotencyStorage(),
+        {
+          customerName: values.fullName,
+          customerPhone: values.phone,
+          customerEmail: values.email,
+          customerAddress: isPickup ? "" : values.address,
+          fulfillmentMethod: values.fulfillmentMethod,
+          paymentMethod: values.paymentMethod,
+          items: orderItems,
+        },
+      );
+      const result = await createOrder(payload, idempotencyKey);
 
       setCreatedOrderId(result.orderId);
+      clearCheckoutIdempotencyAttempt(browserCheckoutIdempotencyStorage());
       removeItemsByIds(purchasedIds);
       router.push(`/checkout/success/${result.orderId}`);
     } catch (error) {
