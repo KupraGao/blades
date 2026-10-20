@@ -1,12 +1,18 @@
 -- orders checkout idempotency
 -- Manual execution in the Supabase SQL Editor.
--- Do NOT auto-run from the app. This file has not been executed.
+-- Do NOT auto-run from the app.
+-- Applied on the Production Supabase project blades on October 20, 2026.
+-- Do not rerun it automatically. Another environment still needs its own
+-- approved manual run. This note does not describe that environment.
 --
 -- One transaction. Any failed check or statement rolls the whole script back.
 -- Checkout attempt identity only. It is not the Bank of Georgia
 -- Idempotency-Key and it is not payment_provider_order_id.
 -- Existing order rows stay NULL. No backfill and no data update.
--- The current create_checkout_order function is intentionally unchanged.
+-- This file does not replace create_checkout_order. On Production blades
+-- that function comes from docs/sql/create-checkout-order.sql, also
+-- applied on October 20, 2026. The deployed app calls the 10-argument
+-- overload. BOG payment integration is not implemented.
 
 BEGIN;
 

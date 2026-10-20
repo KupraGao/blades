@@ -1,6 +1,9 @@
 -- public.create_checkout_order
 -- Manual execution in the Supabase SQL Editor.
 -- Do NOT auto-run from the app. This file does not change tables, RLS, or data.
+-- Applied on the Production Supabase project blades on October 20, 2026.
+-- Do not rerun it automatically. Another environment still needs its own
+-- approved manual run. This note does not describe that environment.
 --
 -- One transaction creates the order, its item snapshots, and the stock
 -- decrement. A raised error rolls the whole function call back.
@@ -9,19 +12,23 @@
 -- Guest checkout passes NULL. EXECUTE is limited to service_role.
 --
 -- Two overloads share one implementation:
---   9 arguments: current server actions. The wrapper passes a NULL checkout key.
+--   9 arguments: compatibility wrapper. It passes a NULL checkout key.
 --   10 arguments: p_idempotency_key uuid, with no default, so PostgREST
 --   cannot confuse it with the 9-argument call.
+--   Commit b8d7bf8, deployed to Vercel Production, calls the 10-argument
+--   overload.
 -- NULL key keeps the previous insert and does not read or write
--- idempotency_key / idempotency_fingerprint. Existing production calls
--- therefore stay valid before those columns exist.
--- A non-NULL key requires the Phase 1A columns and
--- orders_idempotency_key_uidx.
+-- idempotency_key / idempotency_fingerprint.
+-- A non-NULL key requires the columns and
+-- orders_idempotency_key_uidx from docs/sql/add-checkout-idempotency.sql.
+-- Production orders #10003 and #10004 were created and verified in the
+-- Production database.
 --
 -- p_idempotency_key is the checkout submission identity.
 -- It is not the Bank of Georgia Idempotency-Key and it is not
 -- payment_provider_order_id. The fingerprint is derived here from
 -- normalized fields. The client cannot supply it.
+-- BOG payment integration is not implemented.
 --
 -- orders.id and orders.order_number are omitted so their defaults apply:
 -- gen_random_uuid() and nextval('orders_order_number_seq').
