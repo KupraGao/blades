@@ -53,12 +53,39 @@ assert.equal(completed.paymentStatus, "paid");
 const seen = new Set<string>();
 const first = applyRecordedBogReceipt(order(), receipt(), seen);
 assert.equal(first.decision.disposition, "applied_paid");
-seen.add(first.fingerprint);
+seen.add(first.recordKey);
 const second = applyRecordedBogReceipt(first.order, receipt(), seen);
-assert.equal(second.decision.disposition, "already_recorded");
+assert.equal(second.decision.disposition, "already_paid");
 assert.equal(second.decision.markPaid, false);
 assert.equal(second.order.paymentStatus, "paid");
 assert.equal(second.order, first.order);
+seen.add(second.recordKey);
+const third = applyRecordedBogReceipt(second.order, receipt(), seen);
+assert.equal(third.decision.disposition, "already_recorded");
+assert.equal(third.decision.markPaid, false);
+assert.equal(third.order, second.order);
+
+const blockedSeen = new Set<string>();
+const blocked = applyRecordedBogReceipt(
+  order({ providerOrderId: null, paymentStatus: "unpaid" }),
+  receipt(),
+  blockedSeen,
+);
+assert.equal(blocked.decision.disposition, "provider_order_missing");
+assert.equal(blocked.decision.markPaid, false);
+blockedSeen.add(blocked.recordKey);
+const recovered = applyRecordedBogReceipt(
+  {
+    ...blocked.order,
+    paymentStatus: "pending",
+    providerOrderId: PROVIDER_ID,
+  },
+  receipt(),
+  blockedSeen,
+);
+assert.equal(recovered.decision.disposition, "applied_paid");
+assert.equal(recovered.decision.markPaid, true);
+assert.equal(recovered.order.paymentStatus, "paid");
 
 const sameMoneyDifferentText = applyRecordedBogReceipt(
   first.order,
@@ -153,7 +180,7 @@ const lateFirst = applyRecordedBogReceipt(
   receipt(),
   lateSeen,
 );
-lateSeen.add(lateFirst.fingerprint);
+lateSeen.add(lateFirst.recordKey);
 const lateSecond = applyRecordedBogReceipt(
   lateFirst.order,
   receipt(),

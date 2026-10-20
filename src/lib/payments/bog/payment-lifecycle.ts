@@ -280,22 +280,33 @@ export function decideBogReceipt(
   return unchanged("unknown_status");
 }
 
+export function receiptRecordKey(
+  fingerprint: string,
+  disposition: string,
+): string {
+  return `${fingerprint}\n${disposition}`;
+}
+
 export function applyRecordedBogReceipt(
   order: LocalOrderPayment,
   receipt: BogReceiptSnapshot,
-  seenFingerprints: ReadonlySet<string>,
+  seenRecordKeys: ReadonlySet<string>,
 ): {
   order: LocalOrderPayment;
   decision: ReceiptDecision;
   fingerprint: string;
+  recordKey: string;
 } {
   const snapshot = assertSnapshot(receipt);
   const fingerprint = receiptFingerprint(snapshot);
+  const decision = decideBogReceipt(order, snapshot);
+  const recordKey = receiptRecordKey(fingerprint, decision.disposition);
 
-  if (seenFingerprints.has(fingerprint)) {
+  if (seenRecordKeys.has(recordKey)) {
     return {
       order,
       fingerprint,
+      recordKey,
       decision: {
         disposition: "already_recorded",
         paymentStatus: order.paymentStatus,
@@ -304,14 +315,13 @@ export function applyRecordedBogReceipt(
     };
   }
 
-  const decision = decideBogReceipt(order, snapshot);
-
   if (!decision.markPaid) {
-    return { order, decision, fingerprint };
+    return { order, decision, fingerprint, recordKey };
   }
 
   return {
     fingerprint,
+    recordKey,
     decision,
     order: {
       ...order,

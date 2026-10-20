@@ -162,8 +162,10 @@ function readApplyResult(
 /**
  * Accepts one signed BOG callback. The callback body supplies only the
  * provider order id. Payment status, amounts, and currency come from
- * getBogReceipt. apply_bog_payment_receipt is the lifecycle writer:
- * repeated fingerprints return already_recorded and do not mark paid again.
+ * getBogReceipt. apply_bog_payment_receipt is the lifecycle writer.
+ * The same receipt disposition is not applied twice. A later eligible
+ * disposition, such as completed after the provider id is attached, can
+ * still mark the order paid.
  */
 export async function processBogPaymentCallback(
   rawBody: Uint8Array,
