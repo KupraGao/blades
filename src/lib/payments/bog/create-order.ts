@@ -75,6 +75,164 @@ function unexpectedResponse(): never {
   );
 }
 
+const UNKNOWN_CREATE_ORDER_ERROR = "unknown_create_order_error";
+const SAFE_ERROR_CODE = /^[a-z][a-z0-9_]{0,48}$/;
+const LONG_HEX = /^[0-9a-f]{16,}$/i;
+const FIELD_SEGMENT = /^([a-z_]+)((?:\[\d+\])*)$/;
+const ERROR_CODE_KEYS = [
+  "error",
+  "code",
+  "key",
+  "error_code",
+  "errorCode",
+  "type",
+  "reason",
+] as const;
+const FIELD_KEYS = ["field", "property", "param", "parameter"] as const;
+const SAFE_FIELD_NAMES = new Set([
+  "callback_url",
+  "external_order_id",
+  "purchase_units",
+  "currency",
+  "total_amount",
+  "basket",
+  "product_id",
+  "quantity",
+  "unit_price",
+  "description",
+  "redirect_urls",
+  "success",
+  "fail",
+  "capture",
+  "ttl",
+  "language",
+  "payment_method",
+  "buyer",
+  "idempotency_key",
+]);
+
+type CreateOrderFailureDiagnostic = {
+  createOrderError: string;
+  field?: string;
+};
+
+function readSafeErrorCode(value: unknown): string | null {
+  if (
+    typeof value === "number" &&
+    Number.isInteger(value) &&
+    value >= 0 &&
+    value <= 999
+  ) {
+    return String(value);
+  }
+
+  if (typeof value !== "string") {
+    return null;
+  }
+
+  const code = value.trim();
+
+  if (!SAFE_ERROR_CODE.test(code) || LONG_HEX.test(code)) {
+    return null;
+  }
+
+  return code;
+}
+
+function readSafeFieldName(value: unknown): string | null {
+  if (typeof value !== "string") {
+    return null;
+  }
+
+  const field = value.trim();
+  const segments = field.split(".");
+
+  if (!field || field.length > 80 || segments.length === 0 || segments.length > 6) {
+    return null;
+  }
+
+  for (const segment of segments) {
+    const indexed = FIELD_SEGMENT.exec(segment);
+
+    if (!indexed || !SAFE_FIELD_NAMES.has(indexed[1])) {
+      return null;
+    }
+  }
+
+  return field;
+}
+
+function readNamedValue(
+  payload: Record<string, unknown>,
+  keys: readonly string[],
+  read: (value: unknown) => string | null,
+): string | null {
+  for (const key of keys) {
+    if (!Object.hasOwn(payload, key)) {
+      continue;
+    }
+
+    const value = read(payload[key]);
+
+    if (value) {
+      return value;
+    }
+  }
+
+  return null;
+}
+
+function readCreateOrderFailureDiagnostic(
+  payload: Record<string, unknown>,
+): CreateOrderFailureDiagnostic {
+  let createOrderError = readNamedValue(payload, ERROR_CODE_KEYS, readSafeErrorCode);
+  let field = readNamedValue(payload, FIELD_KEYS, readSafeFieldName);
+
+  if (Array.isArray(payload.errors)) {
+    for (const item of payload.errors.slice(0, 5)) {
+      if (!isRecord(item)) {
+        continue;
+      }
+
+      createOrderError ??= readNamedValue(item, ERROR_CODE_KEYS, readSafeErrorCode);
+      field ??= readNamedValue(item, FIELD_KEYS, readSafeFieldName);
+
+      if (createOrderError && field) {
+        break;
+      }
+    }
+  }
+
+  return {
+    createOrderError: createOrderError ?? UNKNOWN_CREATE_ORDER_ERROR,
+    ...(field ? { field } : {}),
+  };
+}
+
+async function readFailedCreateOrderDiagnostic(
+  response: Response,
+): Promise<CreateOrderFailureDiagnostic> {
+  const fallback = { createOrderError: UNKNOWN_CREATE_ORDER_ERROR };
+
+  try {
+    const text = await response.text();
+
+    if (!text.trim()) {
+      return fallback;
+    }
+
+    const parsed: unknown = JSON.parse(text);
+
+    if (!isRecord(parsed)) {
+      return fallback;
+    }
+
+    return readCreateOrderFailureDiagnostic(parsed);
+  } catch {
+    return fallback;
+  }
+}
+
 const IDEMPOTENCY_KEY_V4 =
   /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
@@ -383,14 +541,20 @@ export async function createBogOrder(
   }
 
   if (!response.ok) {
+    const kind =
+      response.status === 401 || response.status === 403
+        ? "authentication"
+        : "network";
+    const diagnostic = await readFailedCreateOrderDiagnostic(response);
+
+    console.error("BOG create-order request failed", {
+      kind,
+      status: response.status,
+      ...diagnostic,
+    });
+
     throw tagBankOrderDispatch(
-      providerFailure(
-        response.status === 401 || response.status === 403
-          ? "authentication"
-          : "network",
-        "BOG create-order request failed.",
-        response.status,
-      ),
+      providerFailure(kind, "BOG create-order request failed.", response.status),
       "uncertain",
     );
   }

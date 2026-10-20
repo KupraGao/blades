@@ -466,6 +466,139 @@ await withMockedCreateOrder(
   },
 );
 
+const CREATE_ORDER_LEAKS = [
+  "https://shop.example/api/payments/bog/callback",
+  "CUSTOMER_SHOULD_NOT_LEAK",
+  "RAW_BODY_SHOULD_NOT_LEAK",
+  "test-token",
+  "sandbox-secret",
+  "order-1",
+  "Bad Request",
+];
+
+function assertCreateOrderLogHasNoLeaks(log: unknown): void {
+  const serialized = JSON.stringify(log);
+
+  for (const leak of CREATE_ORDER_LEAKS) {
+    assert.equal(serialized.includes(leak), false);
+  }
+}
+
+async function captureCreateOrderFailure(
+  response: Response,
+): Promise<{ error: unknown; log: unknown; idempotencyKey: string | undefined }> {
+  let error: unknown;
+  let log: unknown;
+  let idempotencyKey: string | undefined;
+  const originalConsoleError = console.error;
+  console.error = (message: unknown, details: unknown) => {
+    if (message === "BOG create-order request failed") {
+      log = details;
+    }
+  };
+
+  try {
+    await withMockedCreateOrder(
+      sandboxEnv,
+      (url) => {
+        if (url === SANDBOX_OAUTH_URL) {
+          return tokenResponse();
+        }
+
+        return response;
+      },
+      async (calls) => {
+        await assert.rejects(
+          () => createBogOrder(orderInput()),
+          (caught: unknown) => {
+            error = caught;
+            return true;
+          },
+        );
+        idempotencyKey = calls[1]?.idempotencyKey;
+      },
+    );
+  } finally {
+    console.error = originalConsoleError;
+  }
+
+  return { error, log, idempotencyKey };
+}
+
+const safeFailure = await captureCreateOrderFailure(
+  Response.json(
+    {
+      error: "Bad Request",
+      message:
+        "https://shop.example/api/payments/bog/callback CUSTOMER_SHOULD_NOT_LEAK order-1",
+      access_token: "test-token",
+      callback_url: "https://shop.example/api/payments/bog/callback",
+      errors: [
+        {
+          field: "purchase_units.basket[0].unit_price",
+          code: "invalid_amount",
+          message: "RAW_BODY_SHOULD_NOT_LEAK",
+        },
+      ],
+    },
+    { status: 400 },
+  ),
+);
+expectBogError(safeFailure.error, "network", "BOG create-order request failed.");
+assert.ok(safeFailure.error instanceof BogError);
+assert.equal(safeFailure.error.status, 400);
+assert.equal(readBankOrderDispatch(safeFailure.error), "uncertain");
+assert.equal(safeFailure.idempotencyKey, KEY);
+assert.deepEqual(safeFailure.log, {
+  kind: "network",
+  status: 400,
+  createOrderError: "invalid_amount",
+  field: "purchase_units.basket[0].unit_price",
+});
+assertCreateOrderLogHasNoLeaks(safeFailure.log);
+
+const unsafeFailure = await captureCreateOrderFailure(
+  Response.json(
+    {
+      error: "CUSTOMER_SHOULD_NOT_LEAK",
+      message: "https://shop.example/api/payments/bog/callback",
+      field: "customer_email",
+    },
+    { status: 400 },
+  ),
+);
+expectBogError(unsafeFailure.error, "network", "BOG create-order request failed.");
+assert.ok(unsafeFailure.error instanceof BogError);
+assert.equal(unsafeFailure.error.status, 400);
+assert.equal(readBankOrderDispatch(unsafeFailure.error), "uncertain");
+assert.deepEqual(unsafeFailure.log, {
+  kind: "network",
+  status: 400,
+  createOrderError: "unknown_create_order_error",
+});
+assertCreateOrderLogHasNoLeaks(unsafeFailure.log);
+
+const unreadableFailure = await captureCreateOrderFailure(
+  new Response("RAW_BODY_SHOULD_NOT_LEAK", {
+    status: 400,
+    headers: { "Content-Type": "text/plain" },
+  }),
+);
+expectBogError(
+  unreadableFailure.error,
+  "network",
+  "BOG create-order request failed.",
+);
+assert.ok(unreadableFailure.error instanceof BogError);
+assert.equal(unreadableFailure.error.status, 400);
+assert.equal(readBankOrderDispatch(unreadableFailure.error), "uncertain");
+assert.deepEqual(unreadableFailure.log, {
+  kind: "network",
+  status: 400,
+  createOrderError: "unknown_create_order_error",
+});
+assertCreateOrderLogHasNoLeaks(unreadableFailure.log);
+
 await withMockedCreateOrder(
   sandboxEnv,
   (url) => {
