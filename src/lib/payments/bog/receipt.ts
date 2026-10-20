@@ -1,5 +1,5 @@
 import { getBogAccessToken } from "./auth";
-import { BOG_CREATE_ORDER_URL, assertBogServerOnly } from "./config";
+import { assertBogServerOnly, getBogCreateOrderUrl } from "./config";
 import { providerFailure, isRecord, readJsonBody } from "./http";
 
 export const BOG_RECEIPT_STATUS_KEYS = [
@@ -110,7 +110,7 @@ export function readBogReceipt(payload: unknown, requestedOrderId: string): BogR
 }
 
 function receiptUrl(orderId: string): string {
-  const origin = new URL(BOG_CREATE_ORDER_URL).origin;
+  const origin = new URL(getBogCreateOrderUrl()).origin;
   return `${origin}/payments/v1/receipt/${encodeURIComponent(orderId)}`;
 }
 

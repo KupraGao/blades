@@ -1,4 +1,4 @@
-import { BOG_OAUTH_TOKEN_URL, getBogClientCredentials } from "./config";
+import { getBogClientCredentials, getBogOAuthTokenUrl } from "./config";
 import { providerFailure, isRecord, readJsonBody } from "./http";
 
 function basicAuthHeader(clientId: string, clientSecret: string): string {
@@ -44,7 +44,7 @@ export async function getBogAccessToken(): Promise<string> {
   let response: Response;
 
   try {
-    response = await fetch(BOG_OAUTH_TOKEN_URL, {
+    response = await fetch(getBogOAuthTokenUrl(), {
       method: "POST",
       headers: {
         Authorization: basicAuthHeader(clientId, clientSecret),

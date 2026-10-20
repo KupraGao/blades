@@ -1,5 +1,9 @@
 import { getBogAccessToken } from "./auth";
-import { BOG_CREATE_ORDER_URL, assertBogServerOnly } from "./config";
+import {
+  assertBogServerOnly,
+  getBogCreateOrderUrl,
+  getBogPaymentRedirectHost,
+} from "./config";
 import { providerFailure, isRecord, readJsonBody } from "./http";
 
 export type BogCreateOrderLanguage = "ka" | "en";
@@ -41,9 +45,6 @@ const CURRENCIES: readonly BogCreateOrderCurrency[] = [
   "EUR",
   "GBP",
 ];
-
-// Host from the official create-order response example. Other hosts are rejected.
-const DOCUMENTED_PAYMENT_REDIRECT_HOST = "payment.bog.ge";
 
 function requireNonEmptyString(value: string | undefined, label: string): string {
   const trimmed = value?.trim() ?? "";
@@ -291,7 +292,7 @@ export function readCreateOrderResult(payload: unknown): BogCreateOrderResult {
     url.password ||
     !url.hostname ||
     url.port !== "" ||
-    url.hostname !== DOCUMENTED_PAYMENT_REDIRECT_HOST
+    url.hostname !== getBogPaymentRedirectHost()
   ) {
     unexpectedResponse();
   }
@@ -319,7 +320,7 @@ export async function createBogOrder(
   let response: Response;
 
   try {
-    response = await fetch(BOG_CREATE_ORDER_URL, {
+    response = await fetch(getBogCreateOrderUrl(), {
       method: "POST",
       headers,
       body: JSON.stringify(requestBody),
