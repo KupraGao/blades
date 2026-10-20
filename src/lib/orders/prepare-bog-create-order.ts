@@ -1,5 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { assertBogServerOnly, getBogCallbackUrl } from "@/lib/payments/bog/config";
+import { buildBogCheckoutReturnUrls } from "@/lib/payments/bog/return-urls";
 import {
   assertIdempotencyKey,
   buildCreateOrderBody,
@@ -129,6 +130,7 @@ export async function prepareOnlineBogCreateOrderInput(
     external_order_id: databaseOrderId,
     idempotencyKey: databaseOrderId,
     capture: "automatic",
+    redirect_urls: buildBogCheckoutReturnUrls(callbackUrl, databaseOrderId),
     purchase_units: {
       currency: "GEL",
       total_amount: readMoney(order.total_price, "total_price"),

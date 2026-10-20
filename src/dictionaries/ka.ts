@@ -345,6 +345,22 @@ export const ka = {
     "ამ რეფერენსით შეკვეთა ვერ მოიძებნა.",
   orderReceivedWithNumber:
     "შეკვეთა {orderNumber} წარმატებით მიღებულია.",
+  paymentReturnPaidTitle: "გადახდა დადასტურებულია",
+  paymentReturnPaidBody:
+    "შეკვეთა {orderNumber}-ის გადახდა ბანკის დადასტურებით არის მიღებული.",
+  paymentReturnPendingTitle: "გადახდა მოწმდება",
+  paymentReturnPendingBody:
+    "შეკვეთა {orderNumber} ჯერ გადახდილად არ არის დადასტურებული. ბანკიდან დაბრუნება საკმარისი არ არის.",
+  paymentReturnFailedTitle: "გადახდა ვერ დადასტურდა",
+  paymentReturnFailedBody:
+    "შეკვეთა {orderNumber}-ის გადახდა დადასტურებული არ არის.",
+  paymentReturnRefundPendingTitle: "თანხის დაბრუნება მუშავდება",
+  paymentReturnRefundPendingBody:
+    "შეკვეთა {orderNumber}-ის გადახდა დაბრუნების პროცესშია.",
+  paymentReturnRefundedTitle: "თანხა დაბრუნებულია",
+  paymentReturnRefundedBody:
+    "შეკვეთა {orderNumber}-ის გადახდა დაბრუნებულია.",
+  paymentReturnCheckAgain: "სტატუსის შემოწმება",
 
   // =====================================
   // ORDER STATUS LABELS (presentation only)

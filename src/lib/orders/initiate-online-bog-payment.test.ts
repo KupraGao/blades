@@ -504,6 +504,7 @@ assert.equal(initiationSource.includes("payment_status: \"paid\""), false);
 assert.equal(prepareSource.includes("idempotencyKey: databaseOrderId"), true);
 assert.equal(prepareSource.includes("external_order_id: databaseOrderId"), true);
 assert.equal(prepareSource.includes("currency: \"GEL\""), true);
+assert.equal(prepareSource.includes("redirect_urls: buildBogCheckoutReturnUrls"), true);
 assert.equal(actionSource.includes("initiateOnlineBogPayment(orderId)"), true);
 assert.equal(actionSource.includes("order.paymentMethod === \"online\""), true);
 assert.equal(actionSource.includes("createCheckoutOrderRecord"), true);

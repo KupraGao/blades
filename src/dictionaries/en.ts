@@ -346,6 +346,22 @@ export const en = {
     "We could not find an order with this reference.",
   orderReceivedWithNumber:
     "Order {orderNumber} has been received successfully.",
+  paymentReturnPaidTitle: "Payment confirmed",
+  paymentReturnPaidBody:
+    "Payment for order {orderNumber} has been confirmed by the bank.",
+  paymentReturnPendingTitle: "Payment is being checked",
+  paymentReturnPendingBody:
+    "Order {orderNumber} is not confirmed as paid yet. Returning from the bank is not enough.",
+  paymentReturnFailedTitle: "Payment was not confirmed",
+  paymentReturnFailedBody:
+    "Payment for order {orderNumber} has not been confirmed.",
+  paymentReturnRefundPendingTitle: "Refund in progress",
+  paymentReturnRefundPendingBody:
+    "The payment for order {orderNumber} is being refunded.",
+  paymentReturnRefundedTitle: "Payment refunded",
+  paymentReturnRefundedBody:
+    "The payment for order {orderNumber} has been refunded.",
+  paymentReturnCheckAgain: "Check status",
 
   // =====================================
   // ORDER STATUS LABELS (presentation only)
