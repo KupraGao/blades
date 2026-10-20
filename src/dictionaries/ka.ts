@@ -303,6 +303,9 @@ export const ka = {
   placingOrder: "შეკვეთა იგზავნება...",
   checkoutFormIncomplete: "მომხმარებლის ინფორმაცია არასრულია.",
   checkoutFormReady: "შეკვეთის ინფორმაცია მზადაა.",
+  checkoutQuoteLoading: "მიმდინარე ფასები მოწმდება...",
+  checkoutQuotePriceChanged:
+    "ფასი შეიცვალა. გადაამოწმეთ ახალი ჯამი და ხელახლა დააჭირეთ შეკვეთის გაფორმებას.",
   orderSubmitting: "შეკვეთა იგზავნება...",
   orderCreatedSuccess: "შეკვეთა წარმატებით შეიქმნა. შეკვეთის ID: {orderId}",
   orderErrorGeneric: "შეკვეთის გაფორმება ვერ მოხერხდა. სცადეთ თავიდან.",

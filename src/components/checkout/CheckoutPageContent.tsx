@@ -1,8 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createOrder } from "@/actions/orders/create-order";
+import {
+  quoteCheckoutOrder,
+  type QuoteCheckoutActionErrorCode,
+  type QuoteCheckoutActionResult,
+} from "@/actions/orders/quote-checkout";
 import { useCart } from "@/context/CartContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { localizeStorefrontMessage } from "@/lib/i18n/localize-storefront-message";
@@ -11,7 +16,13 @@ import {
   clearCheckoutIdempotencyAttempt,
   resolveCheckoutIdempotencyKey,
 } from "@/lib/orders/checkout-idempotency-key";
-import { isDeliverySubtotalAllowed } from "@/lib/orders/delivery-rules";
+import {
+  isCurrentQuoteResponse,
+  quotePricesMatch,
+  quoteSelectionKey,
+  type QuotePriceSnapshot,
+} from "@/lib/orders/quote-checkout-display";
+import type { QuoteCheckoutLine } from "@/lib/orders/quote-checkout";
 import {
   DEFAULT_PAYMENT_METHOD,
   isValidFulfillmentPaymentCombination,
@@ -34,10 +45,100 @@ import {
   isCustomerFormValid,
 } from "./form/validate-customer-form";
 
+const CART_STORAGE_KEY = "cart";
+const CART_CHANGE_EVENT = "blades-cart-change";
+
+type QuoteSelection = {
+  productId: string;
+  quantity: number;
+};
+
+type CheckoutQuoteRecord =
+  | {
+      status: "ready";
+      selectionKey: string;
+      refreshId: number;
+      lines: QuoteCheckoutLine[];
+      subtotal: string;
+      deliveryAllowed: boolean;
+    }
+  | {
+      status: "error";
+      selectionKey: string;
+      refreshId: number;
+      code: QuoteCheckoutActionErrorCode;
+      title: string | null;
+    };
+
+type PriceChangeNotice = {
+  selectionKey: string;
+  refreshId: number;
+};
+
+function selectionLinesFrom(
+  items: readonly { id: string; quantity: number }[],
+): QuoteSelection[] {
+  return items.map((item) => ({
+    productId: item.id,
+    quantity: item.quantity,
+  }));
+}
+
+function priceSnapshot(
+  subtotal: string,
+  lines: readonly QuoteCheckoutLine[],
+): QuotePriceSnapshot {
+  return {
+    subtotal,
+    lines: lines.map((line) => ({
+      productId: line.productId,
+      quantity: line.quantity,
+      unitPrice: line.unitPrice,
+    })),
+  };
+}
+
+function quoteErrorText(
+  code: QuoteCheckoutActionErrorCode,
+  title: string | null,
+  t: {
+    orderErrorProductsNotFound: string;
+    orderErrorInsufficientStock: string;
+    orderErrorInvalidStock: string;
+    orderErrorInvalidPrice: string;
+    orderErrorProductTitleRequired: string;
+    orderErrorQuantityInvalid: string;
+    orderErrorCartEmpty: string;
+    orderErrorGeneric: string;
+  },
+): string {
+  const product = title?.trim() || "unknown";
+
+  switch (code) {
+    case "missing_product":
+    case "invalid_product_id":
+      return t.orderErrorProductsNotFound;
+    case "insufficient_stock":
+      return t.orderErrorInsufficientStock.replace("{product}", product);
+    case "unavailable_stock":
+      return t.orderErrorInvalidStock.replace("{product}", product);
+    case "invalid_price":
+      return t.orderErrorInvalidPrice.replace("{product}", product);
+    case "empty_title":
+      return t.orderErrorProductTitleRequired;
+    case "invalid_quantity":
+      return t.orderErrorQuantityInvalid;
+    case "empty_cart":
+      return t.orderErrorCartEmpty;
+    default:
+      return t.orderErrorGeneric;
+  }
+}
+
 export default function CheckoutPageContent() {
   const router = useRouter();
   const { t } = useLanguage();
-  const { selectedItems, selectedCartTotal, removeItemsByIds } = useCart();
+  const { selectedItems, removeItemsByIds } = useCart();
 
   const [values, setValues] = useState<CheckoutCustomerFormValues>(
     initialCheckoutCustomerFormValues,
@@ -51,13 +152,174 @@ export default function CheckoutPageContent() {
   const [createdOrderId, setCreatedOrderId] = useState<string | null>(
     null,
   );
+  const [quoteRefreshId, setQuoteRefreshId] = useState(0);
+  const [priceChangeNotice, setPriceChangeNotice] =
+    useState<PriceChangeNotice | null>(null);
 
-  const deliveryAllowed = isDeliverySubtotalAllowed(selectedCartTotal);
+  const selectionLines = selectionLinesFrom(selectedItems);
+  const selectionKey = quoteSelectionKey(selectionLines);
+  const [activeKey, setActiveKey] = useState(selectionKey);
+  const [activeLines, setActiveLines] = useState(selectionLines);
+  const [quoteRecord, setQuoteRecord] = useState<CheckoutQuoteRecord | null>(
+    null,
+  );
+  // Starts unset so delivery is not accepted before the first verified quote.
+  const [appliedDeliveryAllowed, setAppliedDeliveryAllowed] = useState<
+    boolean | null
+  >(null);
+
+  if (activeKey !== selectionKey) {
+    setActiveKey(selectionKey);
+    setActiveLines(selectionLines);
+  }
+
+  const generationRef = useRef(0);
+  const selectionKeyRef = useRef(selectionKey);
+  const submitLockRef = useRef(false);
+
+  const storeQuote = useCallback(
+    (
+      result: QuoteCheckoutActionResult,
+      key: string,
+      refreshId: number,
+    ) => {
+      if (!result.ok) {
+        setQuoteRecord({
+          status: "error",
+          selectionKey: key,
+          refreshId,
+          code: result.error.code,
+          title: result.error.title,
+        });
+        return;
+      }
+
+      setQuoteRecord({
+        status: "ready",
+        selectionKey: key,
+        refreshId,
+        lines: result.lines,
+        subtotal: result.subtotal,
+        deliveryAllowed: result.deliveryAllowed,
+      });
+    },
+    [],
+  );
+
+  useEffect(() => {
+    const invalidate = () => {
+      generationRef.current += 1;
+      setQuoteRefreshId((current) => current + 1);
+    };
+    const onStorage = (event: StorageEvent) => {
+      if (event.key !== null && event.key !== CART_STORAGE_KEY) {
+        return;
+      }
+
+      invalidate();
+    };
+
+    window.addEventListener(CART_CHANGE_EVENT, invalidate);
+    window.addEventListener("storage", onStorage);
+
+    return () => {
+      window.removeEventListener(CART_CHANGE_EVENT, invalidate);
+      window.removeEventListener("storage", onStorage);
+    };
+  }, []);
+
+  useEffect(() => {
+    const onVisible = () => {
+      if (document.visibilityState !== "visible" || submitLockRef.current) {
+        return;
+      }
+
+      generationRef.current += 1;
+      setQuoteRefreshId((current) => current + 1);
+    };
+
+    document.addEventListener("visibilitychange", onVisible);
+
+    return () => {
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, []);
+
+  useEffect(() => {
+    const key = activeKey;
+    const refreshId = quoteRefreshId;
+    const generation = ++generationRef.current;
+    selectionKeyRef.current = key;
+
+    if (activeLines.length === 0) {
+      return;
+    }
+
+    let active = true;
+    const lines = activeLines;
+
+    void quoteCheckoutOrder(lines)
+      .then((result) => {
+        if (!active) {
+          return;
+        }
+
+        if (
+          !isCurrentQuoteResponse(
+            { generation, selectionKey: key },
+            {
+              generation: generationRef.current,
+              selectionKey: selectionKeyRef.current,
+            },
+          )
+        ) {
+          return;
+        }
+
+        storeQuote(result, key, refreshId);
+      })
+      .catch(() => {
+        if (!active) {
+          return;
+        }
+
+        if (
+          !isCurrentQuoteResponse(
+            { generation, selectionKey: key },
+            {
+              generation: generationRef.current,
+              selectionKey: selectionKeyRef.current,
+            },
+          )
+        ) {
+          return;
+        }
+
+        setQuoteRecord({
+          status: "error",
+          selectionKey: key,
+          refreshId,
+          code: "quote_unavailable",
+          title: null,
+        });
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [activeKey, activeLines, quoteRefreshId, storeQuote]);
+
+  const readyQuote =
+    quoteRecord?.status === "ready" &&
+    quoteRecord.selectionKey === selectionKey &&
+    quoteRecord.refreshId === quoteRefreshId
+      ? quoteRecord
+      : null;
+  const quoteReady = readyQuote !== null;
+  const deliveryAllowed = readyQuote?.deliveryAllowed ?? false;
   const deliveryDisabled = !deliveryAllowed;
-  // Starts true so an initial subtotal under 150 GEL still forces pickup.
-  const [appliedDeliveryAllowed, setAppliedDeliveryAllowed] = useState(true);
 
-  if (appliedDeliveryAllowed !== deliveryAllowed) {
+  if (quoteReady && appliedDeliveryAllowed !== deliveryAllowed) {
     setAppliedDeliveryAllowed(deliveryAllowed);
 
     if (!deliveryAllowed) {
@@ -83,7 +345,18 @@ export default function CheckoutPageContent() {
 
   const errors = getCustomerFormErrors(values);
   const isFormValid = isCustomerFormValid(values);
-  const hasSelection = selectedItems.length > 0;
+  const quoteError =
+    quoteRecord?.status === "error" &&
+    quoteRecord.selectionKey === selectionKey &&
+    quoteRecord.refreshId === quoteRefreshId
+      ? quoteErrorText(quoteRecord.code, quoteRecord.title, t)
+      : null;
+  const priceChanged =
+    readyQuote !== null &&
+    priceChangeNotice !== null &&
+    priceChangeNotice.selectionKey === selectionKey &&
+    priceChangeNotice.refreshId === quoteRefreshId;
+  const quoteLoading = selectedItems.length > 0 && !quoteReady && !quoteError;
 
   function handleChange(
     field: CheckoutCustomerFormField,
@@ -148,22 +421,27 @@ export default function CheckoutPageContent() {
   }
 
   async function handlePlaceOrder() {
+    if (submitLockRef.current || isSubmitting || createdOrderId) {
+      return;
+    }
+
     setSubmitAttempted(true);
 
     const purchasedItems = selectedItems;
+    const lines = selectionLinesFrom(purchasedItems);
+    const key = quoteSelectionKey(lines);
 
-    if (
-      !isFormValid ||
-      purchasedItems.length === 0 ||
-      isSubmitting ||
-      createdOrderId
-    ) {
+    if (!isFormValid || lines.length === 0 || readyQuote === null) {
+      return;
+    }
+
+    if (readyQuote.selectionKey !== key) {
       return;
     }
 
     if (
       values.fulfillmentMethod === "delivery" &&
-      !isDeliverySubtotalAllowed(selectedCartTotal)
+      !readyQuote.deliveryAllowed
     ) {
       setSubmissionError(t.deliveryMinimumRequired);
       return;
@@ -179,27 +457,82 @@ export default function CheckoutPageContent() {
       return;
     }
 
+    const displayedQuote = priceSnapshot(
+      readyQuote.subtotal,
+      readyQuote.lines,
+    );
     const purchasedIds = purchasedItems.map((item) => item.id);
-    const isPickup = values.fulfillmentMethod === "pickup";
-    const orderItems = purchasedItems.map((item) => ({
-      productId: item.id,
-      quantity: item.quantity,
-    }));
+    const generation = ++generationRef.current;
 
-    const payload: CreateOrderInput = {
-      customerName: values.fullName,
-      customerEmail: values.email.trim() || undefined,
-      customerPhone: values.phone,
-      customerAddress: isPickup ? null : values.address,
-      fulfillmentMethod: values.fulfillmentMethod,
-      paymentMethod: values.paymentMethod,
-      items: orderItems,
-    };
-
+    submitLockRef.current = true;
     setSubmissionError(null);
     setIsSubmitting(true);
 
     try {
+      const result = await quoteCheckoutOrder(lines);
+      const currentResponse = {
+        generation: generationRef.current,
+        selectionKey: selectionKeyRef.current,
+      };
+
+      if (
+        !isCurrentQuoteResponse(
+          { generation, selectionKey: key },
+          currentResponse,
+        )
+      ) {
+        return;
+      }
+
+      if (!result.ok) {
+        storeQuote(result, key, quoteRefreshId);
+        setPriceChangeNotice(null);
+        return;
+      }
+
+      const freshQuote = priceSnapshot(result.subtotal, result.lines);
+
+      if (!quotePricesMatch(displayedQuote, freshQuote)) {
+        storeQuote(result, key, quoteRefreshId);
+        setPriceChangeNotice({
+          selectionKey: key,
+          refreshId: quoteRefreshId,
+        });
+        return;
+      }
+
+      if (
+        values.fulfillmentMethod === "delivery" &&
+        !result.deliveryAllowed
+      ) {
+        storeQuote(result, key, quoteRefreshId);
+        setPriceChangeNotice(null);
+        setSubmissionError(t.deliveryMinimumRequired);
+        return;
+      }
+
+      if (
+        !isCurrentQuoteResponse(
+          { generation, selectionKey: key },
+          {
+            generation: generationRef.current,
+            selectionKey: selectionKeyRef.current,
+          },
+        )
+      ) {
+        return;
+      }
+
+      const isPickup = values.fulfillmentMethod === "pickup";
+      const payload: CreateOrderInput = {
+        customerName: values.fullName,
+        customerEmail: values.email.trim() || undefined,
+        customerPhone: values.phone,
+        customerAddress: isPickup ? null : values.address,
+        fulfillmentMethod: values.fulfillmentMethod,
+        paymentMethod: values.paymentMethod,
+        items: lines,
+      };
       const idempotencyKey = resolveCheckoutIdempotencyKey(
         browserCheckoutIdempotencyStorage(),
         {
@@ -209,15 +542,16 @@ export default function CheckoutPageContent() {
           customerAddress: isPickup ? "" : values.address,
           fulfillmentMethod: values.fulfillmentMethod,
           paymentMethod: values.paymentMethod,
-          items: orderItems,
+          items: lines,
         },
       );
-      const result = await createOrder(payload, idempotencyKey);
+      const created = await createOrder(payload, idempotencyKey);
 
-      setCreatedOrderId(result.orderId);
+      setPriceChangeNotice(null);
+      setCreatedOrderId(created.orderId);
       clearCheckoutIdempotencyAttempt(browserCheckoutIdempotencyStorage());
       removeItemsByIds(purchasedIds);
-      router.push(`/checkout/success/${result.orderId}`);
+      router.push(`/checkout/success/${created.orderId}`);
     } catch (error) {
       console.error("Failed to create order:", error);
 
@@ -228,6 +562,7 @@ export default function CheckoutPageContent() {
 
       setSubmissionError(message);
     } finally {
+      submitLockRef.current = false;
       setIsSubmitting(false);
     }
   }
@@ -291,6 +626,12 @@ export default function CheckoutPageContent() {
             isSubmitting={isSubmitting}
             submissionError={submissionError}
             createdOrderId={createdOrderId}
+            quoteReady={quoteReady}
+            quoteLoading={quoteLoading}
+            quoteLines={readyQuote ? readyQuote.lines : null}
+            quoteSubtotal={readyQuote ? readyQuote.subtotal : null}
+            quoteError={quoteError}
+            priceChanged={priceChanged}
             onPlaceOrder={handlePlaceOrder}
           />
         </div>

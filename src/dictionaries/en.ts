@@ -304,6 +304,9 @@ export const en = {
   placingOrder: "Placing Order...",
   checkoutFormIncomplete: "Customer information is incomplete.",
   checkoutFormReady: "Checkout information is ready.",
+  checkoutQuoteLoading: "Checking current prices...",
+  checkoutQuotePriceChanged:
+    "The price changed. Review the new total and place the order again.",
   orderSubmitting: "Order is being submitted...",
   orderCreatedSuccess: "Order created successfully. Order ID: {orderId}",
   orderErrorGeneric: "Unable to place order. Please try again.",

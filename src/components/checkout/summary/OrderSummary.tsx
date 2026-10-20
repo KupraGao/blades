@@ -4,7 +4,8 @@ import Link from "next/link";
 import { ProductPrice } from "@/components/product/ProductPrice";
 import { useCart } from "@/context/CartContext";
 import { useLanguage } from "@/context/LanguageContext";
-import { getCartItemPricing } from "@/lib/products/pricing";
+import type { QuoteCheckoutLine } from "@/lib/orders/quote-checkout";
+import type { ProductPricing } from "@/lib/products/pricing";
 import PlaceOrderButton from "../form/PlaceOrderButton";
 
 type Props = {
@@ -12,28 +13,56 @@ type Props = {
   isSubmitting: boolean;
   submissionError: string | null;
   createdOrderId: string | null;
+  quoteReady: boolean;
+  quoteLoading: boolean;
+  quoteLines: readonly QuoteCheckoutLine[] | null;
+  quoteSubtotal: string | null;
+  quoteError: string | null;
+  priceChanged: boolean;
   onPlaceOrder: () => void;
 };
+
+function quoteLinePricing(line: QuoteCheckoutLine): ProductPricing {
+  return {
+    price: Number(line.regularPrice),
+    sale_price:
+      line.regularPrice === line.unitPrice ? null : Number(line.unitPrice),
+  };
+}
 
 export default function OrderSummary({
   isFormValid,
   isSubmitting,
   submissionError,
   createdOrderId,
+  quoteReady,
+  quoteLoading,
+  quoteLines,
+  quoteSubtotal,
+  quoteError,
+  priceChanged,
   onPlaceOrder,
 }: Props) {
   const { t } = useLanguage();
   const {
     selectedItems,
     selectedCartCount,
-    selectedCartTotal,
   } = useCart();
   const hasSelection = selectedItems.length > 0;
+  const quotedLines = new Map(
+    (quoteLines ?? []).map((line) => [
+      line.productId.trim().toLowerCase(),
+      line,
+    ]),
+  );
   const isPlaceOrderDisabled =
     !isFormValid ||
     !hasSelection ||
     isSubmitting ||
-    Boolean(createdOrderId);
+    Boolean(createdOrderId) ||
+    !quoteReady ||
+    quoteLoading ||
+    Boolean(quoteError);
 
   let statusMessage = t.checkoutFormIncomplete;
   let statusClassName = "text-zinc-500 dark:text-zinc-400";
@@ -47,11 +76,20 @@ export default function OrderSummary({
   } else if (submissionError) {
     statusMessage = submissionError;
     statusClassName = "text-red-600";
+  } else if (quoteError) {
+    statusMessage = quoteError;
+    statusClassName = "text-red-600";
   } else if (!hasSelection) {
     statusMessage = t.noCartItemsSelected;
     statusClassName = "text-red-600";
   } else if (isSubmitting) {
     statusMessage = t.orderSubmitting;
+    statusClassName = "text-zinc-500 dark:text-zinc-400";
+  } else if (priceChanged) {
+    statusMessage = t.checkoutQuotePriceChanged;
+    statusClassName = "text-red-600";
+  } else if (quoteLoading || !quoteReady) {
+    statusMessage = t.checkoutQuoteLoading;
     statusClassName = "text-zinc-500 dark:text-zinc-400";
   } else if (isFormValid) {
     statusMessage = t.checkoutFormReady;
@@ -79,30 +117,40 @@ export default function OrderSummary({
             {t.noCartItemsSelected}
           </p>
         ) : (
-          selectedItems.map((item) => (
-            <div
-              key={item.id}
-              className="flex items-start justify-between gap-3"
-            >
-              <div className="min-w-0">
-                <p className="truncate font-medium">
-                  {item.title}
-                </p>
-                <p className="mt-1.5 flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1 text-sm text-zinc-500 dark:text-zinc-400">
-                  <ProductPrice
-                    product={getCartItemPricing(item)}
-                    size="compact"
-                    showPercent={false}
-                  />
-                  <span>× {item.quantity}</span>
-                </p>
-              </div>
+          selectedItems.map((item) => {
+            const quoteLine = quotedLines.get(item.id.trim().toLowerCase());
 
-              <span className="shrink-0 text-base font-semibold tabular-nums">
-                ₾{item.price * item.quantity}
-              </span>
-            </div>
-          ))
+            return (
+              <div
+                key={item.id}
+                className="flex items-start justify-between gap-3"
+              >
+                <div className="min-w-0">
+                  <p className="truncate font-medium">
+                    {item.title}
+                  </p>
+                  <p className="mt-1.5 flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1 text-sm text-zinc-500 dark:text-zinc-400">
+                    {quoteLine ? (
+                      <ProductPrice
+                        product={quoteLinePricing(quoteLine)}
+                        size="compact"
+                        showPercent={false}
+                      />
+                    ) : null}
+                    <span>
+                      × {quoteLine ? quoteLine.quantity : item.quantity}
+                    </span>
+                  </p>
+                </div>
+
+                {quoteLine ? (
+                  <span className="shrink-0 text-base font-semibold tabular-nums">
+                    ₾{quoteLine.lineTotal}
+                  </span>
+                ) : null}
+              </div>
+            );
+          })
         )}
       </div>
 
@@ -129,7 +177,7 @@ export default function OrderSummary({
           </span>
 
           <span className="font-medium">
-            ₾{selectedCartTotal}
+            {quoteSubtotal === null ? "—" : `₾${quoteSubtotal}`}
           </span>
 
         </div>
@@ -154,7 +202,7 @@ export default function OrderSummary({
 
         <span>{t.total}</span>
 
-        <span>₾{selectedCartTotal}</span>
+        <span>{quoteSubtotal === null ? "—" : `₾${quoteSubtotal}`}</span>
 
       </div>
 

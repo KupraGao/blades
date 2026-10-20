@@ -9,6 +9,7 @@ import {
   isOrderStatus,
 } from "@/lib/orders/order-status";
 import { updateOrderStatusRecord } from "@/lib/orders/update-order-status-record";
+import { assessOnlineFulfillment } from "@/lib/payments/bog/payment-lifecycle";
 
 // =================================================
 // UPDATE ORDER STATUS
@@ -71,7 +72,7 @@ export async function updateOrderStatus(
 
   const { data: order, error } = await supabase
     .from("orders")
-    .select("id, status, fulfillment_method")
+    .select("id, status, fulfillment_method, payment_method, payment_status")
     .eq("id", orderId.trim())
     .maybeSingle();
 
@@ -112,6 +113,21 @@ export async function updateOrderStatus(
     return {
       success: false,
       error: "This status transition is not allowed.",
+    };
+  }
+
+  if (
+    assessOnlineFulfillment({
+      paymentMethod:
+        typeof order.payment_method === "string" ? order.payment_method : null,
+      paymentStatus:
+        typeof order.payment_status === "string" ? order.payment_status : null,
+      nextStatus: targetStatus,
+    }) === "blocked_unpaid"
+  ) {
+    return {
+      success: false,
+      error: "Unpaid online orders cannot be fulfilled.",
     };
   }
 

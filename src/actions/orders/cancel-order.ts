@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { canCancelOrderStatus } from "@/lib/orders/order-status";
+import { assessOnlineCancellation } from "@/lib/payments/bog/payment-lifecycle";
 
 // =================================================
 // CANCEL ORDER
@@ -58,6 +59,10 @@ function mapCancelOrderError(error: {
     return "შეკვეთის სტატუსი შეიცვალა. განაახლეთ გვერდი და სცადეთ თავიდან.";
   }
 
+  if (haystack.includes("PAYMENT:ONLINE_CANCEL_BLOCKED")) {
+    return "მიმდინარე ან გადახდილი ონლაინ შეკვეთის გაუქმება შეუძლებელია.";
+  }
+
   return "შეკვეთის გაუქმება ვერ მოხერხდა.";
 }
 
@@ -102,7 +107,9 @@ export async function cancelOrder(
 
   const { data: order, error: loadError } = await supabase
     .from("orders")
-    .select("id, status, fulfillment_method")
+    .select(
+      "id, status, fulfillment_method, payment_method, payment_status, payment_provider_order_id",
+    )
     .eq("id", normalizedOrderId)
     .maybeSingle();
 
@@ -144,6 +151,32 @@ export async function cancelOrder(
     return {
       success: false,
       error: "ამ სტატუსის შეკვეთის გაუქმება შეუძლებელია.",
+    };
+  }
+
+  const cancellation = assessOnlineCancellation({
+    paymentMethod:
+      typeof order.payment_method === "string" ? order.payment_method : null,
+    paymentStatus:
+      typeof order.payment_status === "string" ? order.payment_status : null,
+    providerOrderId:
+      typeof order.payment_provider_order_id === "string"
+        ? order.payment_provider_order_id
+        : null,
+  });
+
+  if (cancellation === "blocked_in_progress") {
+    return {
+      success: false,
+      error: "მიმდინარე ონლაინ გადახდისას შეკვეთის გაუქმება შეუძლებელია.",
+    };
+  }
+
+  if (cancellation === "blocked_paid") {
+    return {
+      success: false,
+      error:
+        "გადახდილი ონლაინ შეკვეთის გაუქმება თანხის დაბრუნებას არ იწვევს და ამ ეტაპზე დაბლოკილია.",
     };
   }
 
