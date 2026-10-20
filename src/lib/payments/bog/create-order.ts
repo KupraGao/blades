@@ -1,4 +1,5 @@
 import { getBogAccessToken } from "./auth";
+import { tagBankOrderDispatch } from "./bank-order-dispatch";
 import {
   assertBogServerOnly,
   getBogCreateOrderUrl,
@@ -323,12 +324,37 @@ export function readCreateOrderResult(payload: unknown): BogCreateOrderResult {
 
 export async function createBogOrder(
   input: BogCreateOrderInput,
+  options?: { beforeCreateOrder?: () => Promise<void> },
 ): Promise<BogCreateOrderResult> {
   assertBogServerOnly();
 
   const idempotencyKey = assertIdempotencyKey(input.idempotencyKey);
   const requestBody = buildCreateOrderBody(input);
-  const accessToken = await getBogAccessToken();
+  let accessToken: string;
+
+  try {
+    accessToken = await getBogAccessToken();
+  } catch (error) {
+    if (error instanceof Error) {
+      throw tagBankOrderDispatch(error, "unsent");
+    }
+
+    throw error;
+  }
+
+  if (options?.beforeCreateOrder) {
+    try {
+      await options.beforeCreateOrder();
+    } catch (error) {
+      const failure =
+        error instanceof Error
+          ? error
+          : new Error("BOG create-order attempt was not recorded.");
+
+      throw tagBankOrderDispatch(failure, "uncertain");
+    }
+  }
+
   const headers = buildCreateOrderHeaders(
     accessToken,
     idempotencyKey,
@@ -345,24 +371,38 @@ export async function createBogOrder(
       cache: "no-store",
     });
   } catch (cause) {
-    throw providerFailure(
-      "network",
-      "BOG create-order request failed.",
-      undefined,
-      cause,
+    throw tagBankOrderDispatch(
+      providerFailure(
+        "network",
+        "BOG create-order request failed.",
+        undefined,
+        cause,
+      ),
+      "uncertain",
     );
   }
 
   if (!response.ok) {
-    throw providerFailure(
-      response.status === 401 || response.status === 403
-        ? "authentication"
-        : "network",
-      "BOG create-order request failed.",
-      response.status,
+    throw tagBankOrderDispatch(
+      providerFailure(
+        response.status === 401 || response.status === 403
+          ? "authentication"
+          : "network",
+        "BOG create-order request failed.",
+        response.status,
+      ),
+      "uncertain",
     );
   }
 
-  const payload = await readJsonBody(response);
-  return readCreateOrderResult(payload);
+  try {
+    const payload = await readJsonBody(response);
+    return readCreateOrderResult(payload);
+  } catch (error) {
+    if (error instanceof Error) {
+      throw tagBankOrderDispatch(error, "uncertain");
+    }
+
+    throw error;
+  }
 }

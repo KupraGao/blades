@@ -1,6 +1,49 @@
 import { getBogClientCredentials, getBogOAuthTokenUrl } from "./config";
 import { providerFailure, isRecord, readJsonBody } from "./http";
 
+const OAUTH_ERROR_CODES = [
+  "invalid_request",
+  "invalid_client",
+  "invalid_grant",
+  "unauthorized_client",
+  "unsupported_grant_type",
+  "invalid_scope",
+] as const;
+
+export type BogOAuthErrorCode =
+  | (typeof OAUTH_ERROR_CODES)[number]
+  | "unknown_oauth_error";
+
+export function readBogOAuthErrorCode(payload: unknown): BogOAuthErrorCode {
+  if (!isRecord(payload) || typeof payload.error !== "string") {
+    return "unknown_oauth_error";
+  }
+
+  const code = payload.error.trim();
+
+  if ((OAUTH_ERROR_CODES as readonly string[]).includes(code)) {
+    return code as Exclude<BogOAuthErrorCode, "unknown_oauth_error">;
+  }
+
+  return "unknown_oauth_error";
+}
+
+async function readFailedOAuthErrorCode(
+  response: Response,
+): Promise<BogOAuthErrorCode> {
+  try {
+    const text = await response.text();
+
+    if (!text.trim()) {
+      return "unknown_oauth_error";
+    }
+
+    return readBogOAuthErrorCode(JSON.parse(text) as unknown);
+  } catch {
+    return "unknown_oauth_error";
+  }
+}
+
 function basicAuthHeader(clientId: string, clientSecret: string): string {
   return `Basic ${Buffer.from(`${clientId}:${clientSecret}`, "utf8").toString("base64")}`;
 }
@@ -63,6 +106,14 @@ export async function getBogAccessToken(): Promise<string> {
   }
 
   if (!response.ok) {
+    const oauthError = await readFailedOAuthErrorCode(response);
+
+    console.error("BOG authentication failed", {
+      kind: "authentication",
+      status: response.status,
+      oauthError,
+    });
+
     throw providerFailure(
       "authentication",
       "BOG authentication failed.",

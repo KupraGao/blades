@@ -12,7 +12,8 @@ import {
 import { assertCheckoutIdempotencyKey } from "@/lib/orders/checkout-idempotency-key";
 import { createCheckoutOrderRecord } from "@/lib/orders/create-checkout-order-record";
 import { initiateOnlineBogPayment } from "@/lib/orders/initiate-online-bog-payment";
-import { orderError } from "@/lib/i18n/localize-storefront-message";
+import { releaseUnsentOnlineOrder } from "@/lib/orders/release-unsent-online-order";
+import { readBankOrderDispatch } from "@/lib/payments/bog/bank-order-dispatch";
 import {
   assertOrderAccessSecretConfigured,
   issueOrderAccessProof,
@@ -24,11 +25,58 @@ import { getAuthUser } from "@/lib/auth/get-auth-user";
 // CREATE ORDER
 // =================================================
 
-type CreateOrderResult = {
-  success: true;
-  orderId: string;
-  paymentRedirectUrl?: string;
-};
+const PAYMENT_NOT_STARTED_MESSAGE_CODES = [
+  "orderErrorPaymentStartFailed",
+  "orderErrorPaymentAttachFailed",
+  "orderErrorPaymentAlreadyStarted",
+  "orderErrorPaymentConflict",
+  "orderErrorPaymentUnavailable",
+] as const;
+
+export type PaymentNotStartedMessageCode =
+  | (typeof PAYMENT_NOT_STARTED_MESSAGE_CODES)[number]
+  | "orderErrorPaymentStartReleased";
+
+export type CreateOrderResult =
+  | {
+      success: true;
+      orderId: string;
+      paymentRedirectUrl?: string;
+    }
+  | {
+      success: false;
+      reason: "payment_not_started";
+      messageCode: PaymentNotStartedMessageCode;
+      stockReleased: boolean;
+    };
+
+function readPaymentNotStartedMessageCode(
+  error: unknown,
+): PaymentNotStartedMessageCode | null {
+  if (!(error instanceof Error)) {
+    return null;
+  }
+
+  const code = error.message.split("|")[0];
+
+  if ((PAYMENT_NOT_STARTED_MESSAGE_CODES as readonly string[]).includes(code)) {
+    return code as PaymentNotStartedMessageCode;
+  }
+
+  return null;
+}
+
+function paymentNotStarted(
+  messageCode: PaymentNotStartedMessageCode,
+  stockReleased = false,
+): CreateOrderResult {
+  return {
+    success: false,
+    reason: "payment_not_started",
+    messageCode,
+    stockReleased,
+  };
+}
 
 export async function createOrder(
   order: CreateOrderInput,
@@ -73,20 +121,38 @@ export async function createOrder(
   await issueOrderAccessProof(orderId);
 
   if (order.paymentMethod === "online") {
-    const payment = await initiateOnlineBogPayment(orderId);
-    const paymentRedirectUrl = readBankPaymentRedirectUrl(
-      payment.redirectUrl,
-    );
+    try {
+      const payment = await initiateOnlineBogPayment(orderId);
+      const paymentRedirectUrl = readBankPaymentRedirectUrl(
+        payment.redirectUrl,
+      );
 
-    if (!paymentRedirectUrl) {
-      throw orderError("orderErrorPaymentStartFailed");
+      if (!paymentRedirectUrl) {
+        return paymentNotStarted("orderErrorPaymentStartFailed");
+      }
+
+      return {
+        success: true,
+        orderId,
+        paymentRedirectUrl,
+      };
+    } catch (error) {
+      const messageCode = readPaymentNotStartedMessageCode(error);
+
+      if (!messageCode) {
+        throw error;
+      }
+
+      const stockReleased =
+        readBankOrderDispatch(error) === "unsent"
+          ? await releaseUnsentOnlineOrder(orderId)
+          : false;
+
+      return paymentNotStarted(
+        stockReleased ? "orderErrorPaymentStartReleased" : messageCode,
+        stockReleased,
+      );
     }
-
-    return {
-      success: true,
-      orderId,
-      paymentRedirectUrl,
-    };
   }
 
   return {

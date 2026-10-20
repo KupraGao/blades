@@ -8,7 +8,9 @@ import {
   type BogCreateOrderBasketItem,
   type BogCreateOrderResult,
 } from "@/lib/payments/bog/create-order";
+import { tagBankOrderDispatch } from "@/lib/payments/bog/bank-order-dispatch";
 import { BogError } from "@/lib/payments/bog/errors";
+import { markBogCreateOrderAttempted } from "@/lib/orders/release-unsent-online-order";
 
 // Input accepted by createBogOrder. This helper does not call it.
 type OnlineBogCreateOrderRequest = Parameters<typeof createBogOrder>[0];
@@ -151,6 +153,19 @@ export async function prepareOnlineBogCreateOrderInput(
 export async function createOnlineBogOrder(
   orderId: string,
 ): Promise<BogCreateOrderResult> {
-  const input = await prepareOnlineBogCreateOrderInput(orderId);
-  return createBogOrder(input);
+  let input: OnlineBogCreateOrderRequest;
+
+  try {
+    input = await prepareOnlineBogCreateOrderInput(orderId);
+  } catch (error) {
+    if (error instanceof Error) {
+      throw tagBankOrderDispatch(error, "unsent");
+    }
+
+    throw error;
+  }
+
+  return createBogOrder(input, {
+    beforeCreateOrder: () => markBogCreateOrderAttempted(orderId),
+  });
 }

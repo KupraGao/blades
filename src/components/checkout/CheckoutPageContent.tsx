@@ -547,6 +547,15 @@ export default function CheckoutPageContent() {
         },
       );
       const created = await createOrder(payload, idempotencyKey);
+
+      if (!created.success) {
+        setSubmissionError(t[created.messageCode]);
+        if (created.stockReleased) {
+          clearCheckoutIdempotencyAttempt(browserCheckoutIdempotencyStorage());
+        }
+        return;
+      }
+
       const navigation = resolveCheckoutPaymentNavigation({
         paymentMethod: payload.paymentMethod,
         paymentRedirectUrl: created.paymentRedirectUrl,

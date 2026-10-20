@@ -1,4 +1,8 @@
 import { orderError } from "@/lib/i18n/localize-storefront-message";
+import {
+  readBankOrderDispatch,
+  tagBankOrderDispatch,
+} from "@/lib/payments/bog/bank-order-dispatch";
 import { createOnlineBogOrder } from "@/lib/orders/prepare-bog-create-order";
 import { BogError } from "@/lib/payments/bog/errors";
 import { isRecord } from "@/lib/payments/bog/http";
@@ -276,7 +280,14 @@ export async function runOnlineBogPaymentInitiation(
     }
 
     logInitiationFailure(error);
-    throw orderError("orderErrorPaymentStartFailed");
+    const failure = orderError("orderErrorPaymentStartFailed");
+    const dispatch = readBankOrderDispatch(error);
+
+    if (dispatch) {
+      tagBankOrderDispatch(failure, dispatch);
+    }
+
+    throw failure;
   }
 
   const bank = readInitiatedBankPayment(bankResult);

@@ -467,6 +467,7 @@ assert.deepEqual(
 
 for (const code of [
   "orderErrorPaymentStartFailed",
+  "orderErrorPaymentStartReleased",
   "orderErrorPaymentAttachFailed",
   "orderErrorPaymentAlreadyStarted",
   "orderErrorPaymentConflict",
@@ -508,17 +509,32 @@ assert.equal(prepareSource.includes("redirect_urls: buildBogCheckoutReturnUrls")
 assert.equal(actionSource.includes("initiateOnlineBogPayment(orderId)"), true);
 assert.equal(actionSource.includes("order.paymentMethod === \"online\""), true);
 assert.equal(actionSource.includes("createCheckoutOrderRecord"), true);
+assert.equal(actionSource.includes("reason: \"payment_not_started\""), true);
+assert.equal(actionSource.includes("readBankOrderDispatch(error) === \"unsent\""), true);
+assert.equal(actionSource.includes("releaseUnsentOnlineOrder"), true);
+assert.equal(actionSource.includes("cancel_order"), false);
+assert.equal(
+  actionSource.includes("throw orderError(\"orderErrorPaymentStartFailed\")"),
+  false,
+);
 assert.equal(actionSource.includes(".from("), false);
 assert.equal(checkoutSource.includes("resolveCheckoutPaymentNavigation"), true);
+assert.equal(checkoutSource.includes("if (!created.success)"), true);
 assert.equal(checkoutSource.includes("window.location.assign(navigation.redirectUrl)"), true);
 assert.equal(checkoutSource.includes("location.search"), false);
 assert.equal(checkoutSource.includes("payment_status"), false);
 
 const createdAt = checkoutSource.indexOf("const created = await createOrder");
+const paymentNotStartedAt = checkoutSource.indexOf("if (!created.success)", createdAt);
 const rejectedAt = checkoutSource.indexOf("navigation.type === \"error\"");
-const clearedAt = checkoutSource.indexOf("clearCheckoutIdempotencyAttempt", createdAt);
+const failureBlock = checkoutSource.slice(paymentNotStartedAt, rejectedAt);
+const clearedAt = checkoutSource.indexOf("clearCheckoutIdempotencyAttempt", rejectedAt);
 const removedAt = checkoutSource.indexOf("removeItemsByIds", createdAt);
-assert.ok(createdAt >= 0 && rejectedAt > createdAt);
+assert.ok(createdAt >= 0 && paymentNotStartedAt > createdAt);
+assert.ok(rejectedAt > paymentNotStartedAt);
+assert.equal(failureBlock.includes("created.stockReleased"), true);
+assert.equal(failureBlock.includes("clearCheckoutIdempotencyAttempt"), true);
+assert.equal(failureBlock.includes("removeItemsByIds"), false);
 assert.ok(clearedAt > rejectedAt && removedAt > rejectedAt);
 
 }

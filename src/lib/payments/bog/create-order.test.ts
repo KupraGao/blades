@@ -7,7 +7,9 @@ import {
   readCreateOrderResult,
   type BogCreateOrderInput,
 } from "./create-order";
+import { readBankOrderDispatch } from "./bank-order-dispatch";
 import { BogError, type BogErrorKind } from "./errors";
+import { BogCreateOrderAttemptNotDeployed } from "../../orders/release-unsent-online-order";
 
 const KEY = "550e8400-e29b-41d4-a716-446655440000";
 const KEY_UPPER = "550E8400-E29B-41D4-A716-446655440000";
@@ -525,6 +527,82 @@ await withMockedCreateOrder(
           "malformed",
           "BOG create-order returned an unexpected response.",
         );
+        return true;
+      },
+    );
+  },
+);
+
+await withMockedCreateOrder(
+  sandboxEnv,
+  (url) => {
+    if (url === SANDBOX_OAUTH_URL) {
+      return Response.json({ error: "invalid_client" }, { status: 400 });
+    }
+
+    throw new Error("create order must not be called");
+  },
+  async (calls) => {
+    await assert.rejects(
+      () => createBogOrder(orderInput()),
+      (error: unknown) => {
+        expectBogError(error, "authentication", "BOG authentication failed.");
+        assert.equal(readBankOrderDispatch(error), "unsent");
+        return true;
+      },
+    );
+    assert.deepEqual(
+      calls.map((call) => call.url),
+      [SANDBOX_OAUTH_URL],
+    );
+  },
+);
+
+await withMockedCreateOrder(
+  sandboxEnv,
+  (url) => {
+    if (url === SANDBOX_OAUTH_URL) {
+      return tokenResponse();
+    }
+
+    throw new Error("create order must not be called");
+  },
+  async (calls) => {
+    await assert.rejects(
+      () =>
+        createBogOrder(orderInput(), {
+          beforeCreateOrder: async () => {
+            throw new BogCreateOrderAttemptNotDeployed();
+          },
+        }),
+      (error: unknown) => {
+        assert.ok(error instanceof BogCreateOrderAttemptNotDeployed);
+        assert.equal(readBankOrderDispatch(error), "uncertain");
+        return true;
+      },
+    );
+    assert.deepEqual(
+      calls.map((call) => call.url),
+      [SANDBOX_OAUTH_URL],
+    );
+  },
+);
+
+await withMockedCreateOrder(
+  sandboxEnv,
+  (url) => {
+    if (url === SANDBOX_OAUTH_URL) {
+      return tokenResponse();
+    }
+
+    throw new Error("socket down");
+  },
+  async () => {
+    await assert.rejects(
+      () => createBogOrder(orderInput()),
+      (error: unknown) => {
+        expectBogError(error, "network", "BOG create-order request failed.");
+        assert.equal(readBankOrderDispatch(error), "uncertain");
         return true;
       },
     );

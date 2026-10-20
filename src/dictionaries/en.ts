@@ -417,6 +417,8 @@ export const en = {
   orderErrorCleanupItems: "Unable to clean up order items.",
   orderErrorPaymentStartFailed:
     "Online payment could not be started. Your order was saved, but you were not sent to the bank. Please try again.",
+  orderErrorPaymentStartReleased:
+    "Online payment could not be started. This attempt was cancelled and the items were returned to stock. Please place the order again.",
   orderErrorPaymentAttachFailed:
     "The bank payment could not be linked to your order. Your order was saved, but you were not sent to the bank. Please try again.",
   orderErrorPaymentAlreadyStarted:
