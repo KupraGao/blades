@@ -11,6 +11,7 @@ import {
 import { useCart } from "@/context/CartContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { localizeStorefrontMessage } from "@/lib/i18n/localize-storefront-message";
+import { resolveCheckoutPaymentNavigation } from "@/lib/orders/checkout-payment-navigation";
 import {
   browserCheckoutIdempotencyStorage,
   clearCheckoutIdempotencyAttempt,
@@ -546,11 +547,26 @@ export default function CheckoutPageContent() {
         },
       );
       const created = await createOrder(payload, idempotencyKey);
+      const navigation = resolveCheckoutPaymentNavigation({
+        paymentMethod: payload.paymentMethod,
+        paymentRedirectUrl: created.paymentRedirectUrl,
+      });
+
+      if (navigation.type === "error") {
+        setSubmissionError(t[navigation.messageCode]);
+        return;
+      }
 
       setPriceChangeNotice(null);
       setCreatedOrderId(created.orderId);
       clearCheckoutIdempotencyAttempt(browserCheckoutIdempotencyStorage());
       removeItemsByIds(purchasedIds);
+
+      if (navigation.type === "bank") {
+        window.location.assign(navigation.redirectUrl);
+        return;
+      }
+
       router.push(`/checkout/success/${created.orderId}`);
     } catch (error) {
       console.error("Failed to create order:", error);

@@ -399,6 +399,16 @@ export const en = {
   orderErrorRestoreStock: "Unable to restore stock.",
   orderErrorCleanupOrder: "Unable to clean up the order.",
   orderErrorCleanupItems: "Unable to clean up order items.",
+  orderErrorPaymentStartFailed:
+    "Online payment could not be started. Your order was saved, but you were not sent to the bank. Please try again.",
+  orderErrorPaymentAttachFailed:
+    "The bank payment could not be linked to your order. Your order was saved, but you were not sent to the bank. Please try again.",
+  orderErrorPaymentAlreadyStarted:
+    "A bank payment is already linked to this order. A new payment was not started, and you were not sent to the bank.",
+  orderErrorPaymentConflict:
+    "This order is already linked to a different bank payment. You were not sent to the bank.",
+  orderErrorPaymentUnavailable:
+    "Online payment cannot be started for this order. You were not sent to the bank.",
 
   // =====================================
   // ADMIN — SHARED
