@@ -24,6 +24,10 @@
 - Orders Backend Foundation
 - Admin Orders List
 - Checkout → Orders Integration (secure createOrder + stock)
+- Atomic Checkout order creation (`b8d7bf8`; Production SQL applied;
+  server price, stock lock, UUID v4 idempotency). BOG payment is not
+  included. Exact stock delta, concurrency, and Production replay were
+  not independently verified — see Changelog
 - Order Confirmation (clear cart, success page, redirect with orderId)
 - Cart Item Selection / partial purchase (persisted `selected`; Drawer
   checkboxes; `/cart` + Checkout use selected lines only; partial cart
@@ -50,7 +54,8 @@
 - Sale Price foundation (`products.price` regular; nullable `sale_price`;
   on sale iff `sale_price IS NOT NULL`; executed production CHECK)
 - Effective-price helpers + storefront / cart / checkout integration
-  (checkout `resolveOrderItems` is authoritative; cart snapshot is not)
+  (cart snapshot is not authoritative; checkout prices inside
+  `create_checkout_order`)
 - Virtual storefront Sale filter (ფასდაკლება → `sale_price IS NOT NULL`)
 - Admin Sale management (On Sale + Sale Price; derived %; Create/Edit)
 - Homepage Sale Products Slider #2 (`sale_price IS NOT NULL`; not category)
@@ -117,6 +122,19 @@ Customer auth is separate from Admin authorization (`admin_users`).
   decrement. Persists `payment_method`; server sets `payment_status = unpaid`
   for all current combinations. **No** COD. Online = method selection only
   (not a real charge).
+- ✅ Checkout order transaction — commit `b8d7bf8`, pushed to `origin/main`.
+  Vercel Production is Ready (`https://blades-psi.vercel.app/`).
+  Production SQL `docs/sql/add-checkout-idempotency.sql` and
+  `docs/sql/create-checkout-order.sql` were applied manually.
+  `createOrder` calls the 10-argument `create_checkout_order` RPC:
+  server price, row-locked stock decrement, and a UUID v4 idempotency
+  key with a server fingerprint, in one transaction. `payment_status`
+  stays `unpaid`. This does **not** call BOG. Production `#10003` was
+  created from local development against Production. `#10004` was created
+  on the deployed site and read back as `pending`, Freetiger FT961-CF,
+  quantity 1, total 90 GEL, current product stock 0, idempotency key
+  present. Exact stock delta, concurrency, and Production replay were
+  **not** independently verified.
 - ✅ **S7C-4** Targeted Payment Implementation Inspection — complete
   (read-only mapping of checkout / stock / payment fields).
 - ✅ **S7C-5** Payment Persistence Foundation — **LIVE** nullable
@@ -151,9 +169,10 @@ end-to-end გადახდა, refunds. ბრაუზერის redirect 
 
 ### Production hardening (remaining)
 
-⬜ Production DB transaction / RPC for order creation
-
-⬜ Full idempotency protection
+Order creation is the `create_checkout_order` transaction (`b8d7bf8`;
+both SQL files applied on Production). The idempotency contract is
+implemented. Production replay, concurrency, and the exact stock delta
+were **not** independently verified.
 
 ⬜ Guest `createOrder` abuse controls (rate limits / CAPTCHA / etc.)
 
@@ -173,8 +192,10 @@ behavior change). Home Latest YouTube Videos is shipped (Atom feed,
 no Admin/CMS). Home YouTube hydration fix is commit `a0e3bc2` (this
 section only; not every hydration issue in the project). Payments:
 BOG-05C can prepare a Create Order and is **not** wired to Checkout.
-S7A–S7B + S7C-5 `payment_provider_order_id` are LIVE as columns; the
-app still does not write that column. Callback returns **503**.
+Order creation itself is the Production `create_checkout_order`
+transaction (`b8d7bf8`). S7A–S7B + S7C-5 `payment_provider_order_id`
+are LIVE as columns; the app still does not write that column.
+Callback returns **503**.
 
 ---
 
@@ -255,8 +276,10 @@ app still does not write that column. Callback returns **503**.
 ⬜ Payments (S7) — **partial:** S7A DB ✅ + S7B-1 ✅ + S7B ✅ + S7C-4 ✅ +
   S7C-5 `payment_provider_order_id` **LIVE** ✅ + S7C-6 ✅ + Payment
   Details/Callback კოდი ✅ (route **503**) + BOG-05C helper ✅ (`00c1bf0`).
-  Checkout wiring, provider-id write, payment-status update, and a live
-  bank payment are **Planned**. **No** COD. Integration is not complete.
+  Atomic order creation (`b8d7bf8`) is shipped and is not this payment
+  integration. Checkout wiring, provider-id write, payment-status update,
+  and a live bank payment are **Planned**. **No** COD. Integration is
+  not complete.
 
 ⬜ Coupons
 
@@ -360,6 +383,6 @@ app still does not write that column. Callback returns **503**.
 
 ⬜ Deployment
 
-⬜ Production DB transaction / RPC for order creation
-
-⬜ Full idempotency protection
+✅ Checkout order-creation RPC on Production (`b8d7bf8`). Idempotency is
+  implemented. Production replay, concurrency, and the exact stock delta
+  were not independently verified.

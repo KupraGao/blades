@@ -41,11 +41,23 @@ BOG ინტეგრაცია **დასრულებული არ �
 3. Callback-ის შემდეგ თანხის, ვალუტის და შეკვეთის იდენტიფიკატორების სერვერზე შედარება და გადახდის სტატუსის იდემპოტენტური განახლება
 4. რეალური ბანკის გადახდის end-to-end შემოწმება
 
-ბრაუზერის redirect ან ახლანდელი 503 callback შეკვეთას `paid`-ად არ მონიშნავს. stock და `payment_status` შექმნისას კვლავ უცვლელია: შექმნა რჩება `unpaid`.
+ბრაუზერის redirect ან ახლანდელი 503 callback შეკვეთას `paid`-ად არ მონიშნავს. BOG helper-ები stock-სა და `payment_status`-ს არ ცვლის. Checkout-ის შექმნა ცალკეა: იქ `payment_status` რჩება `unpaid`, ხოლო მარაგი მცირდება `create_checkout_order` ტრანზაქციაში. იხილე შემდეგი სექცია.
 
 ---
 
-## 2. YouTube hydration — Home (**Implemented**, ლოკალურად **Verified**)
+## 2. Checkout შეკვეთის შექმნა (**Implemented**; Production-ში ნაწილობრივ **Verified**)
+
+Commit `b8d7bf8`, `origin/main`. Vercel Production: Ready, https://blades-psi.vercel.app/
+
+Production-ში ხელით გაშვებულია `docs/sql/add-checkout-idempotency.sql` და `docs/sql/create-checkout-order.sql`. `createOrder` იძახებს 10-არგუმენტიან RPC-ს. ფასი, ჯამი, სტატუსი და მარაგი სერვერისაა. UUID v4 გასაღები და fingerprint იგივე ტრანზაქციაშია. ეს BOG გადახდა არ არის.
+
+**Verified:** `#10003` შეიქმნა ლოკალური development-იდან Production-ის წინააღმდეგ. `#10004` შეიქმნა განთავსებული საიტიდან. `#10004`: `pending`, Freetiger FT961-CF, რაოდენობა 1, ჯამი 90 GEL, პროდუქტის მიმდინარე მარაგი 0, idempotency key არსებობს.
+
+**დამოუკიდებლად Verified არ არის:** ზუსტი მარაგის დელტა, concurrency და Production replay. Guest `createOrder` abuse controls კვლავ **Planned**-ია.
+
+---
+
+## 3. YouTube hydration — Home (**Implemented**, ლოკალურად **Verified**)
 
 Commit `a0e3bc2`. ფაილი: `src/components/home/LatestYoutubeVideos.tsx`.
 
@@ -55,14 +67,14 @@ Cursor-ის ლოკალურ შემოწმებაში ამ You
 
 ---
 
-## 3. გადადებული და შემდეგი (**Deferred** / **Planned**)
+## 4. გადადებული და შემდეგი (**Deferred** / **Planned**)
 
 დეტალური ეტაპები: [02_ROADMAP.md](02_ROADMAP.md).
 
 - **Planned:** Checkout BOG redirect და ზემოთ ჩამოთვლილი გადახდის დახურვა
 - **Planned:** refunds; ავტომატური `paid` მხოლოდ სერვერზე დადასტურებული სტატუსით
 - **Planned:** Order Confirmation email Guest და Customer მისამართზე
-- **Planned:** Guest `createOrder` abuse controls; order creation-ის production transaction / RPC; სრული idempotency
+- **Planned:** Guest `createOrder` abuse controls. შეკვეთის ტრანზაქცია და idempotency ინფრასტრუქტურა სექცია 2-შია; Production replay დამოუკიდებლად დადასტურებული არ არის
 - **Deferred:** მომხმარებლის ელფოსტის შეცვლა; Admin-ის მიერ მომხმარებლის რედაქტირება, წაშლა, ban, invite; Admin-ის პაროლი და როლები
 - **Deferred:** კლიენტის მხრიდან შეკვეთის გაუქმება ან რედაქტირება; ინვოისი; კუპონები; გადასახადები; მიწოდების ფასი 150 GEL მინიმუმის და უფასო თბილისის მიწოდების გარდა
 - **Deferred:** Dashboard analytics; SEO / metadata / sitemap

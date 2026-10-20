@@ -408,9 +408,10 @@ Storefront filter **ფასდაკლება / Sale** is virtual:
   by name only: KA `ფასდაკლება` / EN discount|sale; categories have no slug)
 - That `categories` row was **not** deleted (optional future cleanup)
 
-Checkout: `resolveOrderItems` selects `id, title, price, sale_price, stock`
-and charges `getEffectiveProductPrice`. Cart/localStorage is **not**
-authoritative. `order_items.product_price` is the unit charged at create.
+Checkout charges the effective unit price inside `create_checkout_order`:
+`sale_price` when it is set, greater than 0, and below `price`, otherwise
+`price`. Cart/localStorage is **not** authoritative.
+`order_items.product_price` is the unit charged at create.
 
 Delivery minimum remains **150 GEL** on the authoritative **effective**
 subtotal (no fee; no COD). Example: regular 200 / sale 120 → 120 →
@@ -421,8 +422,9 @@ Catalog min/max and Admin `price-asc` / `price-desc` use live generated
 `products_effective_price_idx`. SQL:
 `docs/sql/add-products-effective-price.sql` — **executed** (history;
 app never auto-applies). Admin still edits only `price` / `sale_price`.
-Storefront has no customer-facing price-sort UI. Checkout still resolves
-`price` + `sale_price`. Historical `order_items.product_price` unchanged.
+Storefront has no customer-facing price-sort UI. Checkout still reads
+`price` and `sale_price` from the locked product row. Historical
+`order_items.product_price` unchanged.
 
 ---
 
@@ -905,7 +907,7 @@ UI
   → disabled state + floating “Added to Cart” feedback
 Cart mutation (`addToCart` action + CartContext)
   → client-side stock enforcement + operation result
-Checkout `resolveOrderItems`
+Checkout `create_checkout_order`
   → server-side product / price / stock authority
 ```
 
@@ -936,8 +938,9 @@ Button states (localized):
 
 Out of Stock ≠ cart already holding all available units.
 
-Sale pricing is unchanged: cart still snapshots effective price;
-checkout still re-resolves from the database.
+Sale pricing is unchanged: cart still snapshots effective price.
+The checkout RPC re-reads `price`, `sale_price`, and `stock` under
+row locks.
 
 ---
 
@@ -958,32 +961,50 @@ Place Order → `createOrder` Server Action
 
 ↓
 
-Validate (incl. payment method + fulfillment/payment combo) + consolidate items
+`assertOrderAccessSecretConfigured` + `validateOrder` (payment method and
+fulfillment/payment combo) + UUID v4 `assertCheckoutIdempotencyKey`
 
 ↓
 
-Resolve authoritative products (`products` table)
+Consolidate selected items. `user_id` comes only from `getAuthUser()`;
+Guest stays `NULL`. Client price, stock, and total are ignored.
 
 ↓
 
-Delivery minimum (S7B-1): if `fulfillmentMethod === "delivery"` and
-authoritative resolved **effective selling** subtotal < 150 GEL → reject
-**before** inserts / stock decrement (client also gates on
-`selectedCartTotal`, which uses the cart’s effective-price snapshot).
-Cart / client prices are **not** authoritative.
+`createCheckoutOrderRecord` → `create_checkout_order` (10 arguments,
+`SECURITY INVOKER`, `EXECUTE` only for `service_role`). One database
+transaction. SQL history: `docs/sql/add-checkout-idempotency.sql` and
+`docs/sql/create-checkout-order.sql`, both applied on Production.
+Commit `b8d7bf8`.
 
-↓
+Inside that transaction:
 
-Map order (`total_price`, `status: "pending"`, `payment_method`,
-`payment_status: "unpaid"` — status server-authoritative)
+- normalize customer fields; pickup forces address NULL
+- UUID v4 checkout key; server fingerprint `v=1` from normalized name,
+  phone, email, address, note, fulfillment, payment, `user_id`, and
+  items merged by product id. Prices and stock are not in the fingerprint.
+  The client cannot supply it. This key is not the BOG `Idempotency-Key`
+  and not `payment_provider_order_id`
+- same key is resolved **before** product locks. Same fingerprint returns
+  the existing `order_id` with no second stock decrement. A different
+  request raises `checkout:idempotency_conflict`. An already created order
+  can still be returned after its stock is gone
+- `FOR UPDATE` on products, ordered by id. Effective unit price and
+  server subtotal. Delivery below 150 GEL is rejected before insert
+- insert `orders` (`pending`, `payment_status = unpaid`) with
+  `idempotency_key` and `idempotency_fingerprint`, then item snapshots,
+  then stock decrement. `unique_violation` returns the existing order
+  when the fingerprint matches and does not create a second order
+- a raised error rolls the function call back. There is no best-effort
+  compensation on this path
 
-↓
-
-Insert `orders` → insert `order_items` → decrement stock
-
-↓
-
-Best-effort compensation on partial failure
+The browser keeps the key in `sessionStorage`
+(`blades.checkout.idempotency.v1`) for the same attempt and clears it
+after success. Production replay of that key was **not** independently
+verified. Concurrency and the exact stock delta of `#10003` / `#10004`
+were **not** independently verified. `#10004` was read back as `pending`,
+Freetiger FT961-CF, quantity 1, total 90 GEL, current product stock 0,
+with an idempotency key present.
 
 ↓
 
@@ -1416,6 +1437,15 @@ Admin role management; Admin Add/Invite Customer.
 - ✅ Catalog min/max (and Admin price sort) use live generated
   `effective_price` — SQL `docs/sql/add-products-effective-price.sql`
   **executed**; Min/Max runtime-verified
+- ✅ Checkout order transaction — `b8d7bf8`. Production SQL
+  `docs/sql/add-checkout-idempotency.sql` and
+  `docs/sql/create-checkout-order.sql` applied.
+  `createOrder` calls 10-argument `create_checkout_order`.
+  `#10003` came from local development against Production. `#10004`
+  came from the deployed site: `pending`, Freetiger FT961-CF, quantity 1,
+  total 90 GEL, current product stock 0, idempotency key present.
+  Exact stock delta, concurrency, and Production replay were not
+  independently verified. This is not a bank payment
 - ⬜ Checkout BOG redirect / persist provider order id / compare amount,
   currency, and order ids / safe payment-status update
 - ⬜ Refunds / automatic `paid` (not implied by the browser redirect or
