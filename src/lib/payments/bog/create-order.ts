@@ -31,6 +31,7 @@ export type BogCreateOrderInput = {
   };
   language?: BogCreateOrderLanguage;
   capture?: BogCreateOrderCapture;
+  ttl?: number;
   idempotencyKey: string;
 };
 
@@ -153,6 +154,19 @@ function assertQuantity(quantity: number): number {
   return quantity;
 }
 
+function assertTtl(value: number): number {
+  if (
+    typeof value !== "number" ||
+    !Number.isInteger(value) ||
+    value < 2 ||
+    value > 1440
+  ) {
+    invalid("ttl");
+  }
+
+  return value;
+}
+
 function assertCurrency(value: string): BogCreateOrderCurrency {
   if (!(CURRENCIES as readonly string[]).includes(value)) {
     invalid("purchase_units.currency");
@@ -259,6 +273,10 @@ export function buildCreateOrderBody(
     }
 
     body.capture = input.capture;
+  }
+
+  if (input.ttl !== undefined) {
+    body.ttl = assertTtl(input.ttl);
   }
 
   return body;
