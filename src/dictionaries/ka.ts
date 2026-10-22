@@ -249,6 +249,7 @@ export const ka = {
   subtotal: "ქვეჯამი",
   shipping: "მიწოდება",
   shippingFree: "უფასო",
+  summaryReceiptMethod: "მიღების მეთოდი",
   productsCountLabel: "პროდუქტები",
 
   // =====================================

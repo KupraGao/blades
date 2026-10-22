@@ -657,6 +657,7 @@ export default function CheckoutPageContent() {
             quoteSubtotal={readyQuote ? readyQuote.subtotal : null}
             quoteError={quoteError}
             priceChanged={priceChanged}
+            fulfillmentMethod={values.fulfillmentMethod}
             onPlaceOrder={handlePlaceOrder}
           />
         </div>

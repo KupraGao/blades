@@ -250,6 +250,7 @@ export const en = {
   subtotal: "Subtotal",
   shipping: "Shipping",
   shippingFree: "Free",
+  summaryReceiptMethod: "Receipt method",
   productsCountLabel: "Products",
 
   // =====================================

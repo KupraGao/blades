@@ -6,6 +6,7 @@ import { useCart } from "@/context/CartContext";
 import { useLanguage } from "@/context/LanguageContext";
 import type { QuoteCheckoutLine } from "@/lib/orders/quote-checkout";
 import type { ProductPricing } from "@/lib/products/pricing";
+import type { FulfillmentMethod } from "@/lib/orders/validate-order";
 import PlaceOrderButton from "../form/PlaceOrderButton";
 
 type Props = {
@@ -19,6 +20,7 @@ type Props = {
   quoteSubtotal: string | null;
   quoteError: string | null;
   priceChanged: boolean;
+  fulfillmentMethod: FulfillmentMethod;
   onPlaceOrder: () => void;
 };
 
@@ -41,6 +43,7 @@ export default function OrderSummary({
   quoteSubtotal,
   quoteError,
   priceChanged,
+  fulfillmentMethod,
   onPlaceOrder,
 }: Props) {
   const { t } = useLanguage();
@@ -185,11 +188,21 @@ export default function OrderSummary({
         <div className="flex items-center justify-between">
 
           <span className="text-zinc-600 dark:text-zinc-400">
-            {t.shipping}
+            {fulfillmentMethod === "pickup"
+              ? t.summaryReceiptMethod
+              : t.shipping}
           </span>
 
-          <span className="font-medium text-green-600">
-            {t.shippingFree}
+          <span
+            className={
+              fulfillmentMethod === "pickup"
+                ? "font-medium"
+                : "font-medium text-green-600"
+            }
+          >
+            {fulfillmentMethod === "pickup"
+              ? t.fulfillmentPickup
+              : t.shippingFree}
           </span>
 
         </div>
