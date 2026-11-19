@@ -9,15 +9,16 @@ export type BrandBySlugResult = {
   logo: string | null;
 };
 
-/**
- * Fail-closed slug resolution for storefront routes.
- * Exactly one match → brand; 0 or >1 → null (caller should notFound()).
- */
+type BrandLookup =
+  | { status: "found"; brand: BrandBySlugResult }
+  | { status: "missing" }
+  | { status: "unavailable" };
+
 export async function getBrandBySlug(
   slug: string,
-): Promise<BrandBySlugResult | null> {
+): Promise<BrandLookup> {
   const trimmed = slug.trim();
-  if (!trimmed) return null;
+  if (!trimmed) return { status: "missing" };
 
   const supabase = await createClient();
 
@@ -27,20 +28,23 @@ export async function getBrandBySlug(
     .eq("slug", trimmed);
 
   if (error) {
-    console.log("GET BRAND BY SLUG ERROR:", error);
-    return null;
+    console.error("Brand query failed", { code: error.code });
+    return { status: "unavailable" };
   }
 
   if (!data || data.length !== 1) {
-    return null;
+    return { status: "missing" };
   }
 
   const brand = data[0];
 
   return {
-    id: brand.id,
-    name: brand.name,
-    slug: brand.slug,
-    logo: brand.logo ?? null,
+    status: "found",
+    brand: {
+      id: brand.id,
+      name: brand.name,
+      slug: brand.slug,
+      logo: brand.logo ?? null,
+    },
   };
 }

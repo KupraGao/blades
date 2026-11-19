@@ -59,11 +59,10 @@ export default async function Home() {
 
   return (
     <HomeClient
-      latestProducts={latestResult.products ?? []}
+      latestProducts={latestResult?.products ?? null}
       saleProducts={saleProducts}
       promoBanners={promoBanners}
-      discoveryProducts={discovery.products}
-      discoveryCatalogSize={discovery.catalogSize}
+      discovery={discovery}
       categories={storefrontCategories}
       brands={brands}
       accountHref={user ? "/account" : "/account/login"}

@@ -3,7 +3,9 @@
 import { useCallback, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
+import type { getProducts } from "@/actions/products/get-products";
 import { CategoriesSidebar } from "@/components/common/CategoriesSidebar";
+import { CatalogLoadError } from "@/components/product/CatalogLoadError";
 import { CatalogPagination } from "@/components/product/CatalogPagination";
 import { CatalogSortSelect } from "@/components/product/CatalogSortSelect";
 import { ProductCard } from "@/components/product/ProductCard";
@@ -17,19 +19,15 @@ import {
 } from "@/lib/catalog/catalog-search-params";
 
 type Props = {
-  products: any[];
-  total: number;
+  catalog: Awaited<ReturnType<typeof getProducts>>;
   currentPage: number;
-  totalPages: number;
   categories: CatalogCategory[];
   brands: CatalogBrandOption[];
 };
 
 export function ProductsPageContent({
-  products,
-  total,
+  catalog,
   currentPage,
-  totalPages,
   categories,
   brands,
 }: Props) {
@@ -43,9 +41,7 @@ export function ProductsPageContent({
   }, []);
 
   const isFiltersOpen = !filtersCollapsed;
-  const safeProducts = Array.isArray(products) ? products : [];
-  const isEmpty = total === 0 || safeProducts.length === 0;
-  const countLabel = formatCatalogProductsFound(total, language, t);
+  const products = catalog?.products ?? [];
 
   return (
     <div className="container-page">
@@ -66,9 +62,11 @@ export function ProductsPageContent({
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div className="min-w-0">
               <h1 className="storefront-section-heading">{t.products}</h1>
-              <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-                {countLabel}
-              </p>
+              {catalog && (
+                <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+                  {formatCatalogProductsFound(catalog.total, language, t)}
+                </p>
+              )}
             </div>
 
             <CatalogSortSelect className="hidden w-full shrink-0 sm:max-w-xs md:block" />
@@ -76,7 +74,7 @@ export function ProductsPageContent({
         </header>
 
         <section id="products" className="mt-8">
-          {isEmpty ? (
+          {!catalog ? <CatalogLoadError /> : products.length === 0 ? (
             <div className="rounded-xl border border-dashed border-zinc-300 bg-white/60 px-6 py-16 text-center dark:border-white/15 dark:bg-white/[0.03]">
               <p className="text-lg font-semibold text-zinc-900 dark:text-white">
                 {t.catalogNoMatchingProducts}
@@ -88,14 +86,14 @@ export function ProductsPageContent({
           ) : (
             <>
               <div className="grid grid-cols-2 gap-x-3 gap-y-4 sm:grid-cols-3 sm:gap-6 lg:grid-cols-4 2xl:grid-cols-5">
-                {safeProducts.map((product: any) => (
+                {products.map((product) => (
                   <ProductCard key={product.id} product={product} />
                 ))}
               </div>
 
               <CatalogPagination
                 currentPage={currentPage}
-                totalPages={totalPages}
+                totalPages={catalog.totalPages}
               />
             </>
           )}

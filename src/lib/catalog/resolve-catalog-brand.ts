@@ -3,16 +3,17 @@ import { getBrandBySlug } from "@/actions/brands/get-brand-by-slug";
 export async function resolveCatalogBrandQuery(brandSlug: string | null): Promise<{
   brandId?: string;
   unknownBrand: boolean;
-}> {
+} | null> {
   if (!brandSlug) {
     return { brandId: undefined, unknownBrand: false };
   }
 
-  const brand = await getBrandBySlug(brandSlug);
+  const result = await getBrandBySlug(brandSlug);
+  if (result.status === "unavailable") return null;
 
-  if (!brand) {
+  if (result.status === "missing") {
     return { brandId: undefined, unknownBrand: true };
   }
 
-  return { brandId: String(brand.id), unknownBrand: false };
+  return { brandId: String(result.brand.id), unknownBrand: false };
 }

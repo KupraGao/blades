@@ -58,9 +58,6 @@ export default function Sidebar({ adminDisplayName = null }: Props) {
           {t.users}
         </Link>
 
-        <Link href="/admin/settings" className={linkClass("/admin/settings")}>
-          {t.settings}
-        </Link>
       </nav>
 
       <div className="mt-6 space-y-3 border-t border-zinc-800 pt-4">

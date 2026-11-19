@@ -107,13 +107,6 @@ export default function MobileSidebar({
             {t.users}
           </Link>
 
-          <Link
-            href="/admin/settings"
-            className={linkClass("/admin/settings")}
-            onClick={onClose}
-          >
-            {t.settings}
-          </Link>
         </nav>
 
         <div className="mt-auto space-y-3 border-t border-zinc-800 pt-4">

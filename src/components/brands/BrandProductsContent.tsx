@@ -3,8 +3,10 @@
 import { useCallback, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
+import type { getProducts } from "@/actions/products/get-products";
 import { BrandLogo } from "@/components/brands/BrandLogo";
 import { CategoriesSidebar } from "@/components/common/CategoriesSidebar";
+import { CatalogLoadError } from "@/components/product/CatalogLoadError";
 import { CatalogPagination } from "@/components/product/CatalogPagination";
 import { CatalogSortSelect } from "@/components/product/CatalogSortSelect";
 import { ProductCard } from "@/components/product/ProductCard";
@@ -20,20 +22,16 @@ import {
 
 type Props = {
   brand: BrandBySlugResult;
-  products: any[];
-  total: number;
+  catalog: Awaited<ReturnType<typeof getProducts>>;
   currentPage: number;
-  totalPages: number;
   categories: CatalogCategory[];
   brands: CatalogBrandOption[];
 };
 
 export function BrandProductsContent({
   brand,
-  products,
-  total,
+  catalog,
   currentPage,
-  totalPages,
   categories,
   brands,
 }: Props) {
@@ -46,8 +44,7 @@ export function BrandProductsContent({
   }, []);
 
   const isFiltersOpen = !filtersCollapsed;
-  const countLabel = formatBrandProductCount(total, language, t);
-  const isEmpty = total === 0 || products.length === 0;
+  const products = catalog?.products ?? [];
 
   const catalogFilters = catalogFiltersFromSearchParams(searchParams);
   const activeFilterCount = countActiveCatalogFilterGroups({
@@ -56,7 +53,7 @@ export function BrandProductsContent({
     maxPrice: catalogFilters.maxPrice,
     sort: catalogFilters.sort,
   });
-  const hasActiveFilters = activeFilterCount > 0;
+  const hasActiveFilters = activeFilterCount > 0 || Boolean(catalogFilters.stock || catalogFilters.search);
 
   return (
     <div className="container-page">
@@ -88,9 +85,11 @@ export function BrandProductsContent({
               <h1 className="font-serif text-3xl font-bold tracking-tight text-zinc-900 dark:text-white sm:text-4xl">
                 {brand.name}
               </h1>
-              <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400 sm:text-base">
-                {countLabel}
-              </p>
+              {catalog && (
+                <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400 sm:text-base">
+                  {formatBrandProductCount(catalog.total, language, t)}
+                </p>
+              )}
             </div>
           </div>
 
@@ -98,7 +97,7 @@ export function BrandProductsContent({
         </header>
 
         <section id="products" className="mt-10">
-          {isEmpty ? (
+          {!catalog ? <CatalogLoadError /> : products.length === 0 ? (
             <div className="rounded-xl border border-dashed border-zinc-300 bg-white/60 px-6 py-16 text-center dark:border-white/15 dark:bg-white/[0.03]">
               {hasActiveFilters ? (
                 <>
@@ -123,14 +122,14 @@ export function BrandProductsContent({
           ) : (
             <>
               <div className="grid grid-cols-2 gap-x-3 gap-y-4 sm:grid-cols-3 sm:gap-6 lg:grid-cols-4 2xl:grid-cols-5">
-                {products.map((product: any) => (
+                {products.map((product) => (
                   <ProductCard key={product.id} product={product} />
                 ))}
               </div>
 
               <CatalogPagination
                 currentPage={currentPage}
-                totalPages={totalPages}
+                totalPages={catalog.totalPages}
               />
             </>
           )}

@@ -11,6 +11,13 @@ npm run dev
 
 Open: http://localhost:3000
 
+## Contact form
+
+To send messages directly from the site, configure the server with a Resend
+`RESEND_API_KEY` that has sending permission and a `CONTACT_FROM_EMAIL` sender
+on a domain verified in Resend. With either setting absent, the contact form
+opens a prefilled draft in the visitor's email app for them to review and send.
+
 ## Structure (high level)
 
 - `src/app/(shop)` — storefront routes (home, products, cart, checkout, wishlist)

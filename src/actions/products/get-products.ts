@@ -123,23 +123,26 @@ export async function getProducts({
 
   query = query.range(from, to);
 
-  const { data, error, count } = await query;
+  let { data, error, count } = await query;
 
-  if (error) {
-    console.log("PRODUCTS FETCH ERROR:", error);
-
-    return {
-      products: [],
-      total: 0,
-      totalPages: 0,
-    };
+  // An offset beyond the last row is a paging issue, e.g. a bookmarked
+  // page after products were removed. Read the count for the same filters
+  // so the storefront can redirect to the first page.
+  if (error?.code === "PGRST103" && safePage > 1) {
+    const firstPage = await query.range(0, 0);
+    data = [];
+    error = firstPage.error;
+    count = firstPage.count;
   }
 
-  const total = count ?? 0;
+  if (error || !data || count === null) {
+    console.error("Products query failed", { code: error?.code ?? "incomplete_result" });
+    return null;
+  }
 
   return {
     products: data,
-    total,
-    totalPages: Math.ceil(total / safeLimit),
+    total: count,
+    totalPages: Math.ceil(count / safeLimit),
   };
 }

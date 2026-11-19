@@ -6,6 +6,7 @@ import { Header } from "@/components/layout/Header";
 
 import { HomepageHeroSliders } from "@/components/home/HomepageHeroSliders";
 import { LatestProductsSlider } from "@/components/product/LatestProductsSlider";
+import { CatalogLoadError } from "@/components/product/CatalogLoadError";
 import { FeatureStrip } from "@/components/home/FeatureStrip";
 
 import { ProductSectionClient } from "@/components/product/ProductSectionClient";
@@ -20,18 +21,16 @@ export function HomeClient({
   latestProducts,
   saleProducts,
   promoBanners,
-  discoveryProducts,
-  discoveryCatalogSize,
+  discovery,
   categories,
   brands,
   accountHref = "/account/login",
   children,
 }: {
-  latestProducts: any[];
+  latestProducts: any[] | null;
   saleProducts: SaleSliderProduct[];
   promoBanners: StorefrontPromoBanner[];
-  discoveryProducts: any[];
-  discoveryCatalogSize: number;
+  discovery: { products: any[]; catalogSize: number } | null;
   categories: CatalogCategory[];
   brands: CatalogBrandOption[];
   accountHref?: string;
@@ -57,18 +56,26 @@ export function HomeClient({
           promoBanners={promoBanners}
         />
 
-        <LatestProductsSlider products={latestProducts} />
+        {latestProducts ? (
+          <LatestProductsSlider products={latestProducts} />
+        ) : discovery ? (
+          <div className="container-page py-12"><CatalogLoadError /></div>
+        ) : null}
 
         <FeatureStrip />
 
-        <ProductSectionClient
-          products={discoveryProducts}
-          catalogSize={discoveryCatalogSize}
-          categories={categories}
-          brands={brands}
-          filtersCollapsed={filtersCollapsed}
-          onFiltersCollapsedChange={handleFiltersCollapsedChange}
-        />
+        {discovery ? (
+          <ProductSectionClient
+            products={discovery.products}
+            catalogSize={discovery.catalogSize}
+            categories={categories}
+            brands={brands}
+            filtersCollapsed={filtersCollapsed}
+            onFiltersCollapsedChange={handleFiltersCollapsedChange}
+          />
+        ) : (
+          <section id="products" className="container-page py-12"><CatalogLoadError /></section>
+        )}
 
         {children}
       </main>

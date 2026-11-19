@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { ContactPageContent } from "@/components/contact/ContactPageContent";
 import { Header } from "@/components/layout/Header";
 import { getAuthUser } from "@/lib/auth/get-auth-user";
+import { getContactMailConfig } from "@/lib/storefront/contact-mail-config";
 
 export const metadata: Metadata = {
   title: "Contact | Blades Premium Store",
@@ -22,7 +23,7 @@ export default async function ContactPage() {
 
       <main className="section-pad">
         <div className="container-page">
-          <ContactPageContent />
+          <ContactPageContent directMailAvailable={Boolean(getContactMailConfig())} />
         </div>
       </main>
     </>

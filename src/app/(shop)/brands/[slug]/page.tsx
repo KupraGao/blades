@@ -18,6 +18,7 @@ import {
   toStorefrontFilterCategories,
 } from "@/lib/catalog/sale-filter";
 import { BrandProductsContent } from "@/components/brands/BrandProductsContent";
+import { CatalogLoadError } from "@/components/product/CatalogLoadError";
 import { Header } from "@/components/layout/Header";
 
 type Props = {
@@ -35,16 +36,16 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const brand = await getBrandBySlug(decodeURIComponent(slug));
+  const result = await getBrandBySlug(decodeURIComponent(slug));
 
-  if (!brand) {
+  if (result.status !== "found") {
     return {
       title: "Brand | Blades Premium Store",
     };
   }
 
   return {
-    title: `${brand.name} | Blades Premium Store`,
+    title: `${result.brand.name} | Blades Premium Store`,
   };
 }
 
@@ -57,11 +58,12 @@ export default async function BrandProductsPage({
   const query = await searchParams;
   const filters = parseCatalogSearchParams(query);
 
-  const brand = await getBrandBySlug(slug);
+  const result = await getBrandBySlug(slug);
 
-  if (!brand) {
+  if (result.status === "missing") {
     notFound();
   }
+  const brand = result.status === "found" ? result.brand : null;
 
   const [categories, user, storefrontBrands] = await Promise.all([
     getCategories(),
@@ -74,7 +76,7 @@ export default async function BrandProductsPage({
     categories ?? [],
   );
 
-  if (catalogQuery.needsSaleUrlCanonicalization) {
+  if (brand && catalogQuery.needsSaleUrlCanonicalization) {
     const qs = buildCatalogQueryString({
       categoryId: catalogQuery.urlCategoryId,
       minPrice: filters.minPrice,
@@ -91,19 +93,20 @@ export default async function BrandProductsPage({
     );
   }
 
-  const catalog = await getProducts({
+  const catalog = brand ? await getProducts({
     brandId: String(brand.id),
     categoryId: catalogQuery.categoryId,
     onSale: catalogQuery.onSale,
     minPrice: filters.minPrice,
     maxPrice: filters.maxPrice,
+    stock: filters.stock ?? undefined,
     sort: filters.sort ?? undefined,
     search: filters.search ?? undefined,
     page: filters.page,
     limit: CATALOG_PAGE_SIZE,
-  });
+  }) : null;
 
-  if (catalog.totalPages > 0 && filters.page > catalog.totalPages) {
+  if (brand && catalog && catalog.totalPages > 0 && filters.page > catalog.totalPages) {
     const qs = buildCatalogQueryString({
       categoryId: catalogQuery.urlCategoryId,
       minPrice: filters.minPrice,
@@ -134,20 +137,22 @@ export default async function BrandProductsPage({
         categories={storefrontCategories}
         accountHref={user ? "/account" : "/account/login"}
         brands={brands}
-        routeBrandSlug={brand.slug}
+        routeBrandSlug={brand?.slug ?? slug}
       />
 
       <main className="section-pad lg:pt-14">
         <Suspense fallback={null}>
-          <BrandProductsContent
-            brand={brand}
-            products={catalog.products ?? []}
-            total={catalog.total}
-            currentPage={filters.page}
-            totalPages={catalog.totalPages}
-            categories={storefrontCategories}
-            brands={brands}
-          />
+          {brand ? (
+            <BrandProductsContent
+              brand={brand}
+              catalog={catalog}
+              currentPage={filters.page}
+              categories={storefrontCategories}
+              brands={brands}
+            />
+          ) : (
+            <div className="container-page"><CatalogLoadError /></div>
+          )}
         </Suspense>
       </main>
     </>

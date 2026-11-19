@@ -22,7 +22,7 @@ export default function ProductPurchaseActions({
   // CART
   // =====================================
 
-  const { addToCart } = useCart();
+  const { addToCart, cartItems } = useCart();
   const { t } = useLanguage();
   const floatFeedback = useAddToCartFloatFeedback();
 
@@ -30,13 +30,21 @@ export default function ProductPurchaseActions({
   // QUANTITY
   // =====================================
 
-  const [quantity, setQuantity] = useState(1);
+  const [requestedQuantity, setRequestedQuantity] = useState(1);
 
   // =====================================
   // PRODUCT DATA
   // =====================================
 
   const stock = Number(product.stock) || 0;
+  const inCart = cartItems.find((item) => item.id === product.id)?.quantity ?? 0;
+  const remainingStock = Math.max(0, stock - inCart);
+  const quantity = Math.min(requestedQuantity, remainingStock);
+  const addLabel = stock <= 0
+    ? t.addToCartOutOfStock
+    : remainingStock === 0
+      ? t.stockLimitReached
+      : t.addToCart;
 
   // =====================================
   // DECREASE
@@ -45,7 +53,7 @@ export default function ProductPurchaseActions({
   function decrease() {
     if (quantity <= 1) return;
 
-    setQuantity((current) => current - 1);
+    setRequestedQuantity(quantity - 1);
   }
 
   // =====================================
@@ -53,9 +61,9 @@ export default function ProductPurchaseActions({
   // =====================================
 
   function increase() {
-    if (quantity >= stock) return;
+    if (quantity >= remainingStock) return;
 
-    setQuantity((current) => current + 1);
+    setRequestedQuantity(quantity + 1);
   }
 
   // =====================================
@@ -63,13 +71,13 @@ export default function ProductPurchaseActions({
   // =====================================
 
   function handleAddToCart() {
-    if (stock <= 0) return;
-
-    for (let i = 0; i < quantity; i++) {
-      addToCart(product);
+    let added = 0;
+    while (added < quantity) {
+      if (!addToCart(product).success) break;
+      added += 1;
     }
 
-    floatFeedback.notifyAdded();
+    if (added > 0) floatFeedback.notifyAdded(added);
   }
 
   // =====================================
@@ -91,7 +99,7 @@ export default function ProductPurchaseActions({
           </p>
 
           <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-            {t.maxQuantity.replace("{count}", String(stock))}
+            {t.maxQuantity.replace("{count}", String(remainingStock))}
           </p>
         </div>
 
@@ -121,7 +129,7 @@ export default function ProductPurchaseActions({
             type="button"
             aria-label={t.increaseQuantity}
             onClick={increase}
-            disabled={quantity >= stock}
+            disabled={quantity >= remainingStock}
             className="grid h-11 w-11 place-items-center transition hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-30 dark:hover:bg-white/10"
           >
             <Plus size={17} />
@@ -150,13 +158,13 @@ export default function ProductPurchaseActions({
           />
           <button
             type="button"
-            disabled={stock <= 0}
+            disabled={remainingStock === 0}
             onClick={handleAddToCart}
             className="flex w-full items-center justify-center gap-2 rounded-xl bg-brand-orange px-5 py-4 font-bold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
           >
             <ShoppingBag size={19} />
 
-            <ProductDetailsContent label="addToCart" />
+            {addLabel}
           </button>
         </div>
 

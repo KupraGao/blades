@@ -5,6 +5,7 @@ import { ExternalLink, Mail, MapPin, Phone } from "lucide-react";
 
 import { submitContactMessage } from "@/actions/contact/submit-contact-message";
 import { useLanguage } from "@/context/LanguageContext";
+import { contactDraftUrl, prepareContactMessage } from "@/lib/storefront/contact-message";
 import {
   STORE_CONTACT,
   getStoreAddressLines,
@@ -21,7 +22,7 @@ const linkClassName =
 const cardClassName =
   "flex h-full flex-col rounded-xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 sm:p-7";
 
-export function ContactPageContent() {
+export function ContactPageContent({ directMailAvailable }: { directMailAvailable: boolean }) {
   const { t, language } = useLanguage();
   const addressLines = getStoreAddressLines(language);
   const mapsUrl = getStoreMapsDirectionsUrl();
@@ -32,53 +33,37 @@ export function ContactPageContent() {
   const [phone, setPhone] = useState("");
   const [message, setMessage] = useState("");
   const [company, setCompany] = useState("");
+  const [draftMode, setDraftMode] = useState(!directMailAvailable);
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
   const [feedback, setFeedback] = useState<string | null>(null);
   const [isSending, setIsSending] = useState(false);
   const sendLock = useRef(false);
-
-  function messageForErrorKey(
-    errorKey:
-      | "contactFormNameRequired"
-      | "contactFormEmailInvalid"
-      | "contactFormMessageRequired"
-      | "contactFormTooLong"
-      | "contactFormSendFailed",
-  ) {
-    switch (errorKey) {
-      case "contactFormNameRequired":
-        return t.contactFormNameRequired;
-      case "contactFormEmailInvalid":
-        return t.contactFormEmailInvalid;
-      case "contactFormMessageRequired":
-        return t.contactFormMessageRequired;
-      case "contactFormTooLong":
-        return t.contactFormTooLong;
-      default:
-        return t.contactFormSendFailed;
-    }
-  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     if (sendLock.current || isSending) return;
 
-    sendLock.current = true;
-    setIsSending(true);
     setStatus("idle");
     setFeedback(null);
+    const input = { fullName, email, phone, message, company };
+    if (draftMode) {
+      const prepared = prepareContactMessage(input);
+      if (!prepared.success) {
+        setStatus("error");
+        setFeedback(t[prepared.errorKey]);
+        return;
+      }
+      window.location.assign(contactDraftUrl(prepared.message));
+      return;
+    }
 
+    sendLock.current = true;
+    setIsSending(true);
     try {
-      const result = await submitContactMessage({
-        fullName,
-        email,
-        phone,
-        message,
-        company,
-      });
+      const result = await submitContactMessage(input);
 
-      if (result.success) {
+      if (result.status === "sent") {
         setFullName("");
         setEmail("");
         setPhone("");
@@ -89,11 +74,16 @@ export function ContactPageContent() {
         return;
       }
 
+      if (result.status === "draft_available") {
+        setDraftMode(true);
+        return;
+      }
+
       setStatus("error");
-      setFeedback(messageForErrorKey(result.errorKey));
+      setFeedback(t[result.errorKey]);
     } catch {
       setStatus("error");
-      setFeedback(t.contactFormSendFailed);
+      setFeedback(t.contactFormSendUnconfirmed);
     } finally {
       sendLock.current = false;
       setIsSending(false);
@@ -215,6 +205,11 @@ export function ContactPageContent() {
             onSubmit={handleSubmit}
             noValidate
           >
+            {draftMode && (
+              <p role="status" className="text-sm text-zinc-600 dark:text-zinc-400">
+                {t.contactFormDraftHint}
+              </p>
+            )}
             <div
               className="absolute -left-[10000px] h-0 w-0 overflow-hidden"
               aria-hidden="true"
@@ -326,7 +321,7 @@ export function ContactPageContent() {
               aria-busy={isSending}
               className="mt-1 inline-flex w-full items-center justify-center rounded-xl bg-zinc-900 px-4 py-3 text-sm font-bold text-white transition hover:bg-brand-gold hover:text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold/50 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-white dark:text-black dark:hover:bg-brand-gold dark:focus-visible:ring-offset-zinc-900 sm:w-auto sm:min-w-[12rem]"
             >
-              {isSending ? t.contactFormSending : t.contactFormSubmit}
+              {isSending ? t.contactFormSending : draftMode ? t.contactFormOpenDraft : t.contactFormSubmit}
             </button>
           </form>
         </section>

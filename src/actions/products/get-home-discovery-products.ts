@@ -30,7 +30,7 @@ function shuffleUniqueIds(ids: string[]): string[] {
 
 async function fetchAllStorefrontProductIds(
   supabase: Awaited<ReturnType<typeof createClient>>,
-): Promise<string[]> {
+): Promise<string[] | null> {
   const ids: string[] = [];
   let from = 0;
 
@@ -41,8 +41,10 @@ async function fetchAllStorefrontProductIds(
       .range(from, from + ID_PAGE_SIZE - 1);
 
     if (error) {
-      console.log("HOME DISCOVERY IDS ERROR:", error);
-      return ids;
+      // A full final batch requires one more request to discover the end.
+      if (error.code === "PGRST103" && from > 0) break;
+      console.error("Home discovery ID query failed", { code: error.code });
+      return null;
     }
 
     if (!data?.length) break;
@@ -66,11 +68,12 @@ async function fetchAllStorefrontProductIds(
  */
 export async function getHomeDiscoveryProducts(
   previousIds?: string[],
-): Promise<{ products: any[]; catalogSize: number }> {
+): Promise<{ products: any[]; catalogSize: number } | null> {
   await connection();
 
   const supabase = await createClient();
   const allIds = await fetchAllStorefrontProductIds(supabase);
+  if (!allIds) return null;
   const catalogSize = new Set(allIds).size;
 
   if (allIds.length === 0) {
@@ -102,8 +105,8 @@ export async function getHomeDiscoveryProducts(
     .order("sort_order", PRODUCT_IMAGES_NESTED_ORDER);
 
   if (error) {
-    console.log("HOME DISCOVERY PRODUCTS ERROR:", error);
-    return { products: [], catalogSize };
+    console.error("Home discovery product query failed", { code: error.code });
+    return null;
   }
 
   const byId = new Map(

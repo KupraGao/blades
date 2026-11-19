@@ -1,3 +1,5 @@
+import { redirect } from "next/navigation";
+
 import { getBrands } from "@/actions/brands/get-brands";
 import { getCategories } from "@/actions/categories/get-categories";
 import { getProducts } from "@/actions/products/get-products";
@@ -7,6 +9,7 @@ import ProductSearch from "@/components/admin/products/list/ProductSearch";
 import ProductToolbar from "@/components/admin/products/list/ProductToolbar";
 import ProductsPageHeader from "@/components/admin/products/list/ProductsPageHeader";
 import ProductsResultsCounter from "@/components/admin/products/list/ProductsResultsCounter";
+import { CatalogLoadError } from "@/components/product/CatalogLoadError";
 
 type Props = {
   searchParams: Promise<{
@@ -20,10 +23,16 @@ type Props = {
   }>;
 };
 
+function positiveInteger(value: string | undefined, fallback: number) {
+  const number = Number(value);
+  return Number.isFinite(number) && number >= 1 ? Math.floor(number) : fallback;
+}
+
 export default async function ProductsPage({
   searchParams,
 }: Props) {
 
+  const params = await searchParams;
   const {
     search,
     sort,
@@ -32,19 +41,15 @@ export default async function ProductsPage({
     stock,
     page,
     limit,
-  } = await searchParams;
+  } = params;
 
-  const currentPage = Number(page ?? 1);
-  const pageSize = Number(limit ?? 5);
+  const currentPage = positiveInteger(page, 1);
+  const pageSize = positiveInteger(limit, 5);
 
   const [
     brands,
     categories,
-    {
-      products,
-      total,
-      totalPages,
-    },
+    catalog,
   ] = await Promise.all([
     getBrands(),
     getCategories(),
@@ -59,8 +64,14 @@ export default async function ProductsPage({
     }),
   ]);
 
-  const from = total === 0 ? 0 : (currentPage - 1) * pageSize + 1;
-  const to = Math.min(currentPage * pageSize, total);
+  if (catalog && currentPage > Math.max(1, catalog.totalPages)) {
+    const query = new URLSearchParams();
+    for (const [name, value] of Object.entries(params)) {
+      if (typeof value === "string") query.set(name, value);
+    }
+    query.set("page", String(Math.max(1, catalog.totalPages)));
+    redirect(`/admin/products?${query}`);
+  }
 
   return (
 
@@ -73,21 +84,21 @@ export default async function ProductsPage({
         categories={categories}
       />
 
-      <ProductsResultsCounter
-        from={from}
-        to={to}
-        total={total}
-      />
-
-      <ProductBulkTable
-        products={products}
-        categories={categories}
-      />
-
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-      />
+      {catalog ? (
+        <>
+          <ProductsResultsCounter
+            from={catalog.total === 0 ? 0 : (currentPage - 1) * pageSize + 1}
+            to={Math.min(currentPage * pageSize, catalog.total)}
+            total={catalog.total}
+          />
+          <ProductBulkTable products={catalog.products} categories={categories} />
+          {catalog.totalPages > 1 && (
+            <Pagination currentPage={currentPage} totalPages={catalog.totalPages} />
+          )}
+        </>
+      ) : (
+        <CatalogLoadError />
+      )}
 
     </div>
 

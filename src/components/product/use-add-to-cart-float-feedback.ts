@@ -35,11 +35,11 @@ export function useAddToCartFloatFeedback(
     };
   }, []);
 
-  function notifyAdded() {
+  function notifyAdded(quantity = 1) {
     clearTimers();
     setExiting(false);
     setVisible(true);
-    setCount((current) => current + 1);
+    setCount((current) => current + quantity);
 
     hideTimerRef.current = setTimeout(() => {
       setExiting(true);

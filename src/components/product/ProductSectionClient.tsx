@@ -37,6 +37,7 @@ export function ProductSectionClient({
   );
   const [availableCount, setAvailableCount] = useState(catalogSize);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [refreshFailed, setRefreshFailed] = useState(false);
   const refreshLock = useRef(false);
 
   const isEmpty = recommended.length === 0;
@@ -47,6 +48,7 @@ export function ProductSectionClient({
 
     refreshLock.current = true;
     setIsRefreshing(true);
+    setRefreshFailed(false);
 
     try {
       const previousIds = recommended
@@ -56,15 +58,14 @@ export function ProductSectionClient({
 
       const result = await getHomeDiscoveryProducts(previousIds);
 
-      if (typeof result.catalogSize === "number") {
-        setAvailableCount(result.catalogSize);
+      if (!result) {
+        setRefreshFailed(true);
+        return;
       }
-
-      if (Array.isArray(result.products) && result.products.length > 0) {
-        setRecommended(result.products);
-      }
+      setAvailableCount(result.catalogSize);
+      setRecommended(result.products);
     } catch {
-      // Keep the current grid; button becomes usable again in finally.
+      setRefreshFailed(true);
     } finally {
       refreshLock.current = false;
       setIsRefreshing(false);
@@ -115,6 +116,7 @@ export function ProductSectionClient({
           </div>
         </div>
 
+        {refreshFailed && <p role="alert" className="mb-4">{t.catalogLoadFailed}</p>}
         {isEmpty ? (
           <div className="rounded-xl border border-dashed border-zinc-300 bg-white/60 px-6 py-16 text-center dark:border-white/15 dark:bg-white/[0.03]">
             <p className="text-lg font-semibold text-zinc-900 dark:text-white">

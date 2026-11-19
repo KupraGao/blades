@@ -62,7 +62,7 @@ export default async function ProductsPage({ searchParams }: Props) {
     redirect(query ? `/products?${query}` : "/products");
   }
 
-  const catalog = catalogBrand.unknownBrand
+  const catalog = catalogBrand && (catalogBrand.unknownBrand
     ? { products: [], total: 0, totalPages: 0 }
     : await getProducts({
         page: filters.page,
@@ -75,9 +75,9 @@ export default async function ProductsPage({ searchParams }: Props) {
         stock: filters.stock ?? undefined,
         sort: filters.sort ?? undefined,
         search: filters.search ?? undefined,
-      });
+      }));
 
-  if (catalog.totalPages > 0 && filters.page > catalog.totalPages) {
+  if (catalog && catalog.totalPages > 0 && filters.page > catalog.totalPages) {
     const query = buildCatalogQueryString({
       categoryId: catalogQuery.urlCategoryId,
       minPrice: filters.minPrice,
@@ -110,10 +110,8 @@ export default async function ProductsPage({ searchParams }: Props) {
       <main className="section-pad lg:pt-14">
         <Suspense fallback={null}>
           <ProductsPageContent
-            products={catalog.products ?? []}
-            total={catalog.total}
+            catalog={catalog}
             currentPage={filters.page}
-            totalPages={catalog.totalPages}
             categories={storefrontCategories}
             brands={brands}
           />
